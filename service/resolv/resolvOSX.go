@@ -80,23 +80,23 @@ func (resolv Resolv) Clean() {
 
 	if resolv.Status() {
 		err := run([]string{"sudo", "rm", fullPath})
-		if err == nil {
-			model.Green(fmt.Sprintf("Resolver removed"))
-		} else {
+		if err != nil {
 			model.Red(fmt.Sprintf("Error while removing the resolver"))
 		}
-	}
 
-	model.Green(fmt.Sprintln("Removing resolver file and loopback alias IP, this may require sudo"))
-	ifConfig := exec.Command("/bin/sh", "-c", "ifconfig", "lo0 -alias 172.16.172.16")
-	err := ifConfig.Run()
-	if err != nil {
-		model.Red(fmt.Sprintf("error creating loopback UP alias"))
-	}
-	killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
-	err = killAll.Run()
-	if err != nil {
-		model.Green(fmt.Sprintf("error restarting mDNSResponder"))
+		model.Green(fmt.Sprintln("Removing resolver file and loopback alias IP, this may require sudo"))
+		ifConfig := exec.Command("/bin/sh", "-c", "sudo", "ifconfig", "lo0 -alias 172.16.172.16")
+		err = ifConfig.Run()
+		if err != nil {
+			model.Red(fmt.Sprintf("error removing loopback UP alias", err))
+		}
+		killAll := exec.Command("/bin/sh", "-c", "sudo", "killall mDNSResponder")
+		err = killAll.Run()
+		if err != nil {
+			model.Green(fmt.Sprintf("error restarting mDNSResponder"))
+		}
+	} else {
+		model.Green(fmt.Sprintf("Resolver already removed"))
 	}
 
 }
