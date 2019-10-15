@@ -5,7 +5,6 @@ package resolv
 import (
 	"fmt"
 	model "github.com/fubarhouse/pygmy/service/interface"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -51,7 +50,7 @@ func (resolv Resolv) Configure() {
 		//err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
 		//if err != nil {
 		//	fmt.Println(err)
-		}
+		//}
 
 	}
 
