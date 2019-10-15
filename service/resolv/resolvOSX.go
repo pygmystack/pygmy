@@ -55,7 +55,7 @@ func (resolv Resolv) Configure() {
 			}
 
 		}
-		ifConfig := exec.Command("/bin/sh", "-c", "sudo", "ifconfig", "lo0 alias 172.16.172.16")
+		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
 		err := ifConfig.Run()
 		if err != nil {
 			model.Red(fmt.Sprintf("error creating loopback UP alias"))
@@ -85,12 +85,12 @@ func (resolv Resolv) Clean() {
 		}
 
 		model.Green(fmt.Sprintln("Removing resolver file and loopback alias IP, this may require sudo"))
-		ifConfig := exec.Command("/bin/sh", "-c", "sudo", "ifconfig", "lo0 -alias 172.16.172.16")
+		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 		err = ifConfig.Run()
 		if err != nil {
 			model.Red(fmt.Sprintf("error removing loopback UP alias", err))
 		}
-		killAll := exec.Command("/bin/sh", "-c", "sudo", "killall mDNSResponder")
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 		err = killAll.Run()
 		if err != nil {
 			model.Green(fmt.Sprintf("error restarting mDNSResponder"))
