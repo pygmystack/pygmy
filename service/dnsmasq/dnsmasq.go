@@ -20,7 +20,7 @@ func New() model.Service {
 			"6053:53/udp",
 			"--name=amazeeio-dnsmasq",
 			"--cap-add=NET_ADMIN",
-			"andyshinn/dnsmasq:2.75",
+			"andyshinn/dnsmasq:2.78",
 			"-A",
 			"/docker.amazee.io/127.0.0.1",
 		},
