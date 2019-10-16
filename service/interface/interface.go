@@ -70,7 +70,9 @@ func (ds *Service) Start() ([]byte, error) {
 		return []byte{}, e
 	}
 	if s {
-		Green(fmt.Sprintf("Already running %v", ds.ContainerName))
+		if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
+			Green(fmt.Sprintf("Already running %v", ds.ContainerName))
+		}
 		return []byte{}, nil
 	}
 
