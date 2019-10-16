@@ -58,7 +58,7 @@ func (resolv Resolv) Configure() {
 		}
 	} else {
 		// Open and write to the file if it exists.
-		file, error := os.Open(fullPath)
+		file, error := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 		if error != nil {
 			fmt.Println(error)
 		}
