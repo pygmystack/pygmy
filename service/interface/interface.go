@@ -11,7 +11,7 @@ import (
 
 type DockerService interface {
 	HasDockerClient() bool
-	PS() (bool, error)
+	Status() (bool, error)
 	Start() ([]byte, error)
 	Stop() error
 }
@@ -68,7 +68,7 @@ func (ds *Service) Start() ([]byte, error) {
 
 	s := true
 	if ds.ContainerName != "amazeeio-ssh-agent-key-add" {
-		s, e := ds.PS()
+		s, e := ds.Status()
 		if e != nil {
 			return []byte{}, e
 		}
@@ -89,7 +89,7 @@ func (ds *Service) Start() ([]byte, error) {
 	return d, e
 }
 
-func (ds *Service) PS() (bool, error) {
+func (ds *Service) Status() (bool, error) {
 
 	data, e := DockerRun([]string{"ps", "--format", "{{.Names}}"})
 	if e != nil {
@@ -109,7 +109,7 @@ func (ds *Service) HasDockerClient() bool { return false }
 
 func (ds *Service) Stop() error {
 
-	s, e := ds.PS()
+	s, e := ds.Status()
 	if e != nil {
 		return e
 	}

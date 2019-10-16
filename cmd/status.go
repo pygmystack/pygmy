@@ -42,14 +42,14 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		dnsmasq := dnsmasq.New()
-		if s, _ := dnsmasq.PS(); s {
+		if s, _ := dnsmasq.Status(); s {
 			model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", dnsmasq.ContainerName))
 		} else {
 			model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
 		}
 
 		haproxy := haproxy.New()
-		if s, _ := haproxy.PS(); s {
+		if s, _ := haproxy.Status(); s {
 			model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", dnsmasq.ContainerName))
 		} else {
 			model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
@@ -70,7 +70,7 @@ to quickly create a Cobra application.`,
 		}
 
 		mailhog := mailhog.New()
-		if s, _ := mailhog.PS(); s {
+		if s, _ := mailhog.Status(); s {
 			model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", mailhog.ContainerName))
 		} else {
 			model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
@@ -84,7 +84,7 @@ to quickly create a Cobra application.`,
 		}
 
 		sshAgent := ssh_agent.New()
-		if s, _ := sshAgent.PS(); s {
+		if s, _ := sshAgent.Status(); s {
 			model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", sshAgent.ContainerName))
 			sshKeyShower := ssh_addkey.NewShower()
 			data, _ := sshKeyShower.Start()
