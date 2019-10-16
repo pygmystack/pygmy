@@ -65,16 +65,13 @@ func DockerRun(args []string) ([]byte, error) {
 
 func (ds *Service) Start() ([]byte, error) {
 
-	s := true
-	if ds.ContainerName != "amazeeio-ssh-agent-key-add" {
-		s, e := ds.Status()
-		if e != nil {
-			return []byte{}, e
-		}
-		if s {
-			Green(fmt.Sprintf("Already running %v", ds.ContainerName))
-			return []byte{}, nil
-		}
+	s, e := ds.Status()
+	if e != nil {
+		return []byte{}, e
+	}
+	if s {
+		Green(fmt.Sprintf("Already running %v", ds.ContainerName))
+		return []byte{}, nil
 	}
 
 	d, e := DockerRun(ds.RunCmd)
@@ -92,6 +89,10 @@ func (ds *Service) Start() ([]byte, error) {
 
 func (ds *Service) Status() (bool, error) {
 
+	// amazeeio-ssh-agent-add-key will not show in `docker ps`.
+	if ds.ContainerName == "amazeeio-ssh-agent-add-key" {
+		return true, nil
+	}
 	data, e := DockerRun([]string{"ps", "--format", "{{.Names}}"})
 	if e != nil {
 		return false, e
