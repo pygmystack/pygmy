@@ -10,7 +10,6 @@ import (
 )
 
 type DockerService interface {
-	HasDockerClient() bool
 	Status() (bool, error)
 	Start() ([]byte, error)
 	Stop() error
@@ -104,8 +103,6 @@ func (ds *Service) Status() (bool, error) {
 	return false, nil
 
 }
-
-func (ds *Service) HasDockerClient() bool { return false }
 
 func (ds *Service) Stop() error {
 
