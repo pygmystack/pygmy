@@ -4,10 +4,12 @@ package resolv
 
 import (
 	"fmt"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
+
+	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() Resolv {
@@ -56,8 +58,17 @@ func (resolv Resolv) Configure() {
 		} else {
 			// Open and write to the file if it exists.
 			file, error := os.Open(fullPath)
-			file.WriteString(resolv.Contents)
-			file.Close()
+			if error != nil {
+				fmt.Println(error)
+			}
+			_, error = file.WriteString(resolv.Contents)
+			if error != nil {
+				fmt.Println(error)
+			}
+			error = file.Close()
+			if error != nil {
+				fmt.Println(error)
+			}
 		}
 
 	}
