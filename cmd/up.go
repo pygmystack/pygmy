@@ -20,6 +20,7 @@ import (
 	"github.com/fubarhouse/pygmy/service/haproxy"
 	haproxy_connector "github.com/fubarhouse/pygmy/service/haproxy_connector"
 	"github.com/fubarhouse/pygmy/service/mailhog"
+	"github.com/fubarhouse/pygmy/service/network"
 	"github.com/fubarhouse/pygmy/service/resolv"
 	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
@@ -44,6 +45,11 @@ to quickly create a Cobra application.`,
 
 		haproxy := haproxy.New()
 		haproxy.Start()
+
+		netStat, _ := network.Status()
+		if !netStat {
+			network.Status()
+		}
 		haproxy_connector.Connect()
 
 		mailhog := mailhog.New()
