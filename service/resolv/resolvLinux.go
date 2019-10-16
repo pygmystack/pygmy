@@ -83,8 +83,6 @@ func (resolv Resolv) Configure() {
 
 func (resolv Resolv) Clean() {
 
-	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
-
 	if resolv.Status() {
 		// @TODO: Make this linuxy.
 		//err := run([]string{"sudo", "rm", fullPath})
@@ -94,16 +92,26 @@ func (resolv Resolv) Clean() {
 		//	model.Red(fmt.Sprintf("Error while removing the resolver"))
 		//}
 	}
+	//fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
 
 }
 
 func (resolv Resolv) Status() bool {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
-	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-		return false
+	if _, err := os.Stat(fullPath); os.IsExist(err) {
+
+		bytes, error := ioutil.ReadFile(fullPath)
+		if error != nil {
+			fmt.Println(error)
+		}
+
+		if strings.Contains(string(bytes), resolv.Contents) {
+			return true
+		}
+
 	}
 
-	return true
+	return false
 
 }
