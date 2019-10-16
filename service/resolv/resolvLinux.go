@@ -24,33 +24,41 @@ func (resolv Resolv) Configure() {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-		// @TODO: Make this linuxy.
-		//if _, err := os.Stat(resolv.Path); os.IsNotExist(err) {
-		//	err := run([]string{"sudo", "mkdir", "-p", resolv.Path})
-		//	if err != nil {
-		//		fmt.Println(err)
-		//	}
-		//	err = run([]string{"sudo", "chmod", "777", resolv.Path})
-		//	if err != nil {
-		//		fmt.Println(err)
-		//	}
-		//}
-		//tmpFile, error := ioutil.TempFile("", "pygmy-")
-		//if error != nil {
-		//	fmt.Println(error)
-		//}
-		//error = os.Chmod(tmpFile.Name(), 0777)
-		//if error != nil {
-		//	fmt.Println(error)
-		//}
-		//_, error = tmpFile.WriteString(resolv.Contents)
-		//if error != nil {
-		//	fmt.Println(error)
-		//}
-		//err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
-		//if err != nil {
-		//	fmt.Println(err)
-		//}
+		// Create the directory if it doesn't exist.
+		if _, err := os.Stat(resolv.Path); os.IsNotExist(err) {
+			err := run([]string{"sudo", "mkdir", "-p", resolv.Path})
+			if err != nil {
+				fmt.Println(err)
+			}
+			err = run([]string{"sudo", "chmod", "777", resolv.Path})
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+		// Create the file if it doesn't exist.
+		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
+			tmpFile, error := ioutil.TempFile("", "pygmy-")
+			if error != nil {
+				fmt.Println(error)
+			}
+			error = os.Chmod(tmpFile.Name(), 0777)
+			if error != nil {
+				fmt.Println(error)
+			}
+			_, error = tmpFile.WriteString(resolv.Contents)
+			if error != nil {
+				fmt.Println(error)
+			}
+			err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else {
+			// Open and write to the file if it exists.
+			file, error := os.Open(fullPath)
+			file.WriteString(resolv.Contents)
+			file.Close()
+		}
 
 	}
 
