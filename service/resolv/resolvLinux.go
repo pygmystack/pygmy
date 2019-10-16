@@ -94,7 +94,34 @@ func (resolv Resolv) Configure() {
 
 func (resolv Resolv) Clean() {
 
-	//fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+	if _, err := os.Stat(fullPath); err == nil {
+
+		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+		cmdOut, cmdErr := cmd.Output()
+		if cmdErr != nil {
+			model.Red(cmdErr.Error())
+		}
+		if strings.Contains(string(cmdOut), resolv.Contents) {
+			newFile := strings.Replace(string(cmdOut), resolv.Contents, "", -1)
+			tmpFile, error := ioutil.TempFile("", "pygmy-")
+			if error != nil {
+				fmt.Println(error)
+			}
+			error = os.Chmod(tmpFile.Name(), 0777)
+			if error != nil {
+				fmt.Println(error)
+			}
+			_, error = tmpFile.WriteString(newFile)
+			if error != nil {
+				fmt.Println(error)
+			}
+			err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	}
 
 }
 
