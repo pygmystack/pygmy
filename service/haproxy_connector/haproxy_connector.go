@@ -6,8 +6,11 @@ import (
 )
 
 func Connect() error {
-	_, error := model.DockerRun([]string{"network", "connect", "amazeeio-network", "amazeeio-haproxy"})
-	return error
+	if s, _ := Connected(); !s {
+		_, error := model.DockerRun([]string{"network", "connect", "amazeeio-network", "amazeeio-haproxy"})
+		return error
+	}
+	return nil
 }
 
 func Connected() (bool, error) {
