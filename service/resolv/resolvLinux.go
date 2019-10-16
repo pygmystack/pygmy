@@ -1,4 +1,4 @@
-// +build linux
+// +build darwin
 
 package resolv
 
@@ -55,22 +55,21 @@ func (resolv Resolv) Configure() {
 			if err != nil {
 				fmt.Println(err)
 			}
-		} else {
-			// Open and write to the file if it exists.
-			file, error := os.Open(fullPath)
-			if error != nil {
-				fmt.Println(error)
-			}
-			_, error = file.WriteString(resolv.Contents)
-			if error != nil {
-				fmt.Println(error)
-			}
-			error = file.Close()
-			if error != nil {
-				fmt.Println(error)
-			}
 		}
-
+	} else {
+		// Open and write to the file if it exists.
+		file, error := os.Open(fullPath)
+		if error != nil {
+			fmt.Println(error)
+		}
+		_, error = file.WriteString(resolv.Contents)
+		if error != nil {
+			fmt.Println(error)
+		}
+		error = file.Close()
+		if error != nil {
+			fmt.Println(error)
+		}
 	}
 
 	if resolv.Status() {
@@ -83,15 +82,6 @@ func (resolv Resolv) Configure() {
 
 func (resolv Resolv) Clean() {
 
-	if resolv.Status() {
-		// @TODO: Make this linuxy.
-		//err := run([]string{"sudo", "rm", fullPath})
-		//if err == nil {
-		//	model.Green(fmt.Sprintf("Resolver removed"))
-		//} else {
-		//	model.Red(fmt.Sprintf("Error while removing the resolver"))
-		//}
-	}
 	//fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
 
 }
