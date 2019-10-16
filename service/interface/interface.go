@@ -119,16 +119,6 @@ func (ds *Service) Stop() error {
 	if _, e := DockerRun([]string{"stop", ds.ContainerName}); e == nil { Green(fmt.Sprintf("%v container stopped", ds.Name)) }
 	if _, e := DockerRun([]string{"rm", ds.ContainerName}); e != nil { Green(fmt.Sprintf("%v container successfully deleted", ds.Name)) }
 
-	s, e = ds.PS()
-	if e != nil {
-		return e
-	}
-
-	if !s {
-		Green(fmt.Sprintf("Stopped %v", ds.ContainerName))
-	} else {
-		Red(fmt.Sprintf("Failed to stop %v", ds.ContainerName))
-	}
 	return nil
 }
 
