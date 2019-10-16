@@ -21,6 +21,6 @@ var ResolvOSX = Resolv{
 
 var ResolvGeneric = Resolv{
 	File:     "resolv.conf",
-	Contents: "nameserver 127.0.0.1 # added by amazee.io pygmy",
+	Contents: "\nnameserver 127.0.0.1 # added by amazee.io pygmy",
 	Path:     "/etc",
 }

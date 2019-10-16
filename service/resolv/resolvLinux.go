@@ -56,19 +56,31 @@ func (resolv Resolv) Configure() {
 				fmt.Println(err)
 			}
 		}
-	} else {
-		// Open and write to the file if it exists.
-		file, error := os.OpenFile(fullPath, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+	}
+	if _, err := os.Stat(fullPath); err == nil {
+
+		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+		cmdOut, cmdErr := cmd.Output()
+		if cmdErr != nil {
+			model.Red(cmdErr.Error())
+		}
+
+		tmpFile, error := ioutil.TempFile("", "pygmy-")
 		if error != nil {
 			fmt.Println(error)
 		}
-		_, error = file.WriteString(resolv.Contents)
+		error = os.Chmod(tmpFile.Name(), 0777)
 		if error != nil {
 			fmt.Println(error)
 		}
-		error = file.Close()
+		_, error = tmpFile.WriteString(string(cmdOut))
+		_, error = tmpFile.WriteString(resolv.Contents)
 		if error != nil {
 			fmt.Println(error)
+		}
+		err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
+		if err != nil {
+			fmt.Println(err)
 		}
 	}
 
@@ -89,17 +101,16 @@ func (resolv Resolv) Clean() {
 func (resolv Resolv) Status() bool {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
-	if _, err := os.Stat(fullPath); os.IsExist(err) {
+	if _, err := os.Stat(fullPath); err == nil {
 
-		bytes, error := ioutil.ReadFile(fullPath)
-		if error != nil {
-			fmt.Println(error)
+		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+		cmdOut, cmdErr := cmd.Output()
+		if cmdErr != nil {
+			model.Red(cmdErr.Error())
 		}
-
-		if strings.Contains(string(bytes), resolv.Contents) {
+		if strings.Contains(string(cmdOut), resolv.Contents) {
 			return true
 		}
-
 	}
 
 	return false
