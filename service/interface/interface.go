@@ -16,16 +16,16 @@ type DockerService interface {
 }
 
 type Service struct {
-	Name string
-	Address string
+	Name          string
+	Address       string
 	ContainerName string
-	Domain string
-	Shell string
-	ImageName string
-	Cmds struct {
-		RunCmd []string
+	Domain        string
+	Shell         string
+	ImageName     string
+	Cmds          struct {
+		RunCmd  []string
 		StopCmd []string
-		DelCmd []string
+		DelCmd  []string
 	}
 	RunCmd []string
 }
@@ -118,8 +118,12 @@ func (ds *Service) Stop() error {
 		return nil
 	}
 
-	if _, e := DockerRun([]string{"stop", ds.ContainerName}); e == nil { Green(fmt.Sprintf("%v container stopped", ds.Name)) }
-	if _, e := DockerRun([]string{"rm", ds.ContainerName}); e != nil { Green(fmt.Sprintf("%v container successfully deleted", ds.Name)) }
+	if _, e := DockerRun([]string{"stop", ds.ContainerName}); e == nil {
+		Green(fmt.Sprintf("%v container stopped", ds.Name))
+	}
+	if _, e := DockerRun([]string{"rm", ds.ContainerName}); e != nil {
+		Green(fmt.Sprintf("%v container successfully deleted", ds.Name))
+	}
 
 	return nil
 }
