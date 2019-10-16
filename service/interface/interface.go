@@ -80,7 +80,9 @@ func (ds *Service) Start() ([]byte, error) {
 	d, e := DockerRun(ds.RunCmd)
 
 	if s {
-		Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+		if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
+			Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+		}
 	} else {
 		Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
 	}
