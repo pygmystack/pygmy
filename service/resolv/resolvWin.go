@@ -3,9 +3,13 @@
 package resolv
 
 import (
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"bytes"
+	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
+
+	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() Resolv {
@@ -18,7 +22,7 @@ func New() Resolv {
 	}
 }
 
-func runCommand(args []string) ([]bytes, error) {
+func runCommand(args []string) ([]byte, error) {
 
 	powershell, err := exec.LookPath("powershell")
 	if err != nil {
@@ -27,7 +31,7 @@ func runCommand(args []string) ([]bytes, error) {
 
 	// Generate the command, based on input.
 	cmd := exec.Cmd{}
-	cmd.Path = docker
+	cmd.Path = powershell
 	cmd.Args = []string{powershell}
 
 	// Add our arguments to the command.
@@ -53,20 +57,20 @@ func runCommand(args []string) ([]bytes, error) {
 }
 
 func (r *Resolv) Clean() {
-	_, error := runCommand("Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain")
+	_, error := runCommand([]string{"Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain"})
 	if error != nil {
-		model.Red(error)
+		model.Red(error.Error())
 	}
 }
 func (r *Resolv) Configure() {
-	_, error := runCommand("Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value #{self.domain}")
+	_, error := runCommand([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
 	if error != nil {
-		model.Red(error)
+		model.Red(error.Error())
 	}
 }
 
 func (r *Resolv) Status() bool {
-	data, error := runCommand("Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters")
+	data, error := runCommand([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
 	if error != nil {
 		return false
 	}
