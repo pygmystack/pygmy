@@ -3,9 +3,13 @@
 package resolv
 
 import (
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"bytes"
+	"fmt"
 	"os/exec"
 	"strings"
+	"sync"
+
+	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() Resolv {
