@@ -50,7 +50,7 @@ to quickly create a Cobra application.`,
 
 		haproxy := haproxy.New()
 		if s, _ := haproxy.Status(); s {
-			model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", dnsmasq.ContainerName))
+			model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", haproxy.ContainerName))
 		} else {
 			model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
 		}
