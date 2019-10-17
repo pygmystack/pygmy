@@ -63,7 +63,7 @@ func (r *Resolv) Clean() {
 	}
 }
 func (r *Resolv) Configure() {
-	_, error := runCommand([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value #{self.domain}"})
+	_, error := runCommand([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
 	if error != nil {
 		model.Red(error.Error())
 	}
