@@ -18,7 +18,7 @@ func New() Resolv {
 	}
 }
 
-func runCommand(args []string) ([]bytes, error) {
+func runCommand(args []string) ([]byte, error) {
 
 	powershell, err := exec.LookPath("powershell")
 	if err != nil {
