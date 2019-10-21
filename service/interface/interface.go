@@ -2,11 +2,15 @@ package model
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"github.com/logrusorgru/aurora"
 	"os/exec"
 	"strings"
 	"sync"
+
+	"github.com/docker/docker/client"
+	"github.com/docker/docker/api/types"
+	"github.com/logrusorgru/aurora"
 )
 
 type DockerService interface {
@@ -95,13 +99,19 @@ func (ds *Service) Status() (bool, error) {
 	if ds.ContainerName == "amazeeio-ssh-agent-add-key" {
 		return true, nil
 	}
-	data, e := DockerRun([]string{"ps", "--format", "{{.Names}}"})
-	if e != nil {
-		return false, e
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
 	}
-	for _, line := range strings.Split(string(data), "\n") {
-		if strings.Contains(line, ds.ContainerName) {
-			return true, nil
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		Quiet:   true,
+	})
+	for _, container := range containers {
+		for _, name := range container.Names {
+			if strings.Contains(name, ds.ContainerName) {
+				return true, nil
+			}
 		}
 	}
 
