@@ -8,8 +8,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/docker/docker/client"
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
 )
 
@@ -33,6 +33,18 @@ type Service struct {
 	}
 	RunCmd []string
 }
+
+//func DockerRun(name string, args []string) ([]byte, error) {
+//	ctx := context.Background()
+//	cli, err := client.NewEnvClient()
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//	if err := cli.ContainerStart(ctx, name, types.ContainerStartOptions{}); err != nil {
+//		fmt.Println(err)
+//	}
+//	return []byte{}, err
+//}
 
 func DockerRun(args []string) ([]byte, error) {
 
@@ -66,6 +78,95 @@ func DockerRun(args []string) ([]byte, error) {
 
 	return output.Bytes(), nil
 }
+
+func DockerKill(name string) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+	err = cli.ContainerKill(ctx, name, "")
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DockerRemove(name string) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+	err = cli.ContainerRemove(ctx, name, types.ContainerRemoveOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DockerNetworkCreate(name string, args []string) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+	_, err = cli.NetworkCreate(ctx, name, types.NetworkCreate{})
+	if err != nil {
+		fmt.Println(err)
+	}
+	return nil
+}
+
+func DockerNetworkConnect(source, destination string, args []string) error {
+	//ctx := context.Background()
+	//cli, err := client.NewEnvClient()
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//config := network.EndpointSettings{
+	//	EndpointSettings: nil,
+	//	IPAMOperational:  false,
+	//}
+	//err = cli.NetworkConnect(ctx, destination, source, config)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	return nil
+}
+
+//func DockerRun(args []string) ([]byte, error) {
+//
+//	docker, err := exec.LookPath("docker")
+//	if err != nil {
+//		fmt.Println(err)
+//	}
+//
+//	// Generate the command, based on input.
+//	cmd := exec.Cmd{}
+//	cmd.Path = docker
+//	cmd.Args = []string{docker}
+//
+//	// Add our arguments to the command.
+//	cmd.Args = append(cmd.Args, args...)
+//
+//	var output bytes.Buffer
+//	cmd.Stdout = &output
+//	cmd.Stderr = &output
+//
+//	// Check the errors, return as needed.
+//	var wg sync.WaitGroup
+//	wg.Add(1)
+//	err = cmd.Run()
+//
+//	if err != nil {
+//		fmt.Println(err)
+//		return []byte{}, err
+//	}
+//	wg.Done()
+//
+//	return output.Bytes(), nil
+//}
 
 func (ds *Service) Start() ([]byte, error) {
 
@@ -131,10 +232,10 @@ func (ds *Service) Stop() error {
 		return nil
 	}
 
-	if _, e := DockerRun([]string{"stop", ds.ContainerName}); e == nil {
+	if e := DockerKill(ds.ContainerName); e == nil {
 		Green(fmt.Sprintf("%v container stopped", ds.Name))
 	}
-	if _, e := DockerRun([]string{"rm", ds.ContainerName}); e != nil {
+	if e := DockerRemove(ds.ContainerName); e != nil {
 		Green(fmt.Sprintf("%v container successfully deleted", ds.Name))
 	}
 
