@@ -119,7 +119,7 @@ func DockerRemove(name string) error {
 	return nil
 }
 
-func DockerNetworkCreate(name string, args []string) error {
+func DockerNetworkCreate(name string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
