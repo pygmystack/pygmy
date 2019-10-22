@@ -9,6 +9,10 @@ func Create() error {
 	return model.DockerNetworkCreate("amazeeio-network")
 }
 
+func Connect() error {
+	return model.DockerNetworkConnect("amazeeio-network", "amazeeio-haproxy")
+}
+
 func Status() (bool, error) {
 	output, error := model.DockerRun([]string{"network", "ls", "--format", "'{{.Name}}'"})
 	if strings.Contains(string(output), "amazeeio-network") {

@@ -134,20 +134,16 @@ func DockerNetworkCreate(name string) error {
 	return nil
 }
 
-func DockerNetworkConnect(source, destination string, args []string) error {
-	//ctx := context.Background()
-	//cli, err := client.NewEnvClient()
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
-	//config := network.EndpointSettings{
-	//	EndpointSettings: nil,
-	//	IPAMOperational:  false,
-	//}
-	//err = cli.NetworkConnect(ctx, destination, source, config)
-	//if err != nil {
-	//	fmt.Println(err)
-	//}
+func DockerNetworkConnect(network string, container string) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+	err = cli.NetworkConnect(ctx, network, container, nil)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
