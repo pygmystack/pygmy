@@ -3,10 +3,12 @@ package model
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -195,17 +197,21 @@ func (ds *Service) Start() ([]byte, error) {
 		return []byte{}, nil
 	}
 
-	d, e := DockerRun(ds.RunCmd)
-
-	if s {
-		if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
-			Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+	container, _ := ds.GetDetails()
+	if container.ImageID == "" {
+		if !s {
+			if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
+				DockerRun(ds.RunCmd)
+				if c, _ := ds.GetDetails(); c.ID != "" {
+					Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+				}
+			}
+		} else {
+			Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
 		}
-	} else {
-		Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
 	}
 
-	return d, e
+	return []byte{}, nil
 }
 
 func (ds *Service) Status() (bool, error) {
@@ -234,23 +240,44 @@ func (ds *Service) Status() (bool, error) {
 
 }
 
+func (ds *Service) GetDetails() (types.Container, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		Quiet:   true,
+	})
+
+	for _, container := range containers {
+		for _, name := range container.Names {
+			if strings.Contains(name, ds.ContainerName) {
+				return container, nil
+			}
+		}
+	}
+	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", ds.ContainerName))
+}
+
 func (ds *Service) Stop() error {
 
-	s, e := ds.Status()
-	if e != nil {
-		return e
-	}
-
-	if !s {
+	container, err := ds.GetDetails()
+	if err != nil {
 		Green(fmt.Sprintf("Not running %v", ds.ContainerName))
 		return nil
 	}
 
-	if e := DockerKill(ds.ContainerName); e == nil {
-		Green(fmt.Sprintf("%v container stopped", ds.Name))
-	}
-	if e := DockerRemove(ds.ContainerName); e != nil {
-		Green(fmt.Sprintf("%v container successfully deleted", ds.Name))
+	for _, name := range container.Names {
+		if e := DockerStop(container.ID); e == nil {
+			Green(fmt.Sprintf("%v container stopped", name))
+		}
+		if e := DockerKill(container.ID); e == nil {
+			Green(fmt.Sprintf("%v container killed", name))
+		}
+		if e := DockerRemove(container.ID); e != nil {
+			Green(fmt.Sprintf("%v container successfully removed", name))
+		}
 	}
 
 	return nil
