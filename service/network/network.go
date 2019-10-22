@@ -6,8 +6,7 @@ import (
 )
 
 func Create() error {
-	_, error := model.DockerRun([]string{"network", "create", "amazeeio-network"})
-	return error
+	return model.DockerNetworkCreate("amazeeio-network")
 }
 
 func Status() (bool, error) {
