@@ -79,6 +79,20 @@ func DockerRun(args []string) ([]byte, error) {
 	return output.Bytes(), nil
 }
 
+func DockerStop(name string) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+	timeout := time.Duration(10)
+	err = cli.ContainerStop(ctx, name, &timeout)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func DockerKill(name string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
