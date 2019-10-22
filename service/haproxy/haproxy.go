@@ -2,7 +2,6 @@ package haproxy
 
 import (
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	model "github.com/fubarhouse/pygmy/service/interface"
@@ -16,14 +15,7 @@ func New() model.Service {
 
 		},
 		HostConfig:    container.HostConfig{
-			Mounts: []mount.Mount{
-				{
-					Type: "bind",
-					Source: "/var/run/docker.sock",
-					Target: "/tmp/docker.sock",
-					ReadOnly: false,
-				},
-			},
+			Binds: []string{"/var/run/docker.sock:/tmp/docker.sock"},
 			AutoRemove: false,
 			RestartPolicy: struct {
 				Name              string
@@ -32,13 +24,13 @@ func New() model.Service {
 			PortBindings: nat.PortMap{
 				"80/tcp": []nat.PortBinding{
 					{
-						HostIP: "0.0.0.0",
+						HostIP: "",
 						HostPort: "80",
 					},
 				},
 				"443/tcp": []nat.PortBinding{
 					{
-						HostIP: "0.0.0.0",
+						HostIP: "",
 						HostPort: "443",
 					},
 				},

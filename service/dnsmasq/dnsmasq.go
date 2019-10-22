@@ -20,15 +20,15 @@ func New() model.Service {
 			AutoRemove: false,
 			CapAdd:     []string{"NET_ADMIN"},
 			PortBindings: nat.PortMap{
-				"6053/tcp": []nat.PortBinding{
+				"53/tcp": []nat.PortBinding{
 					{
-						HostIP: "0.0.0.0",
+						HostIP: "",
 						HostPort: "6053",
 					},
 				},
-				"6053/udp": []nat.PortBinding{
+				"53/udp": []nat.PortBinding{
 					{
-						HostIP: "0.0.0.0",
+						HostIP: "",
 						HostPort: "6053",
 					},
 				},

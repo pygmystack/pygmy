@@ -33,7 +33,7 @@ func New() model.Service {
 			PortBindings: nat.PortMap{
 				"1025/tcp": []nat.PortBinding{
 					{
-						HostIP: "0.0.0.0",
+						HostIP: "",
 						HostPort: "1025",
 					},
 				},

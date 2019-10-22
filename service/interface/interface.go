@@ -207,10 +207,10 @@ func (ds *Service) GetDetails() (types.Container, error) {
 
 func (ds *Service) Clean() error {
 
-	if ds.Name == "" {
+	if ds.ContainerName == "" {
 		return nil
 	}
-	names := []string{"/"+ds.Name, ds.Name}
+	names := []string{"/"+ds.ContainerName, ds.ContainerName}
 
 	for _, name := range names {
 		if e := DockerKill(name); e == nil {
