@@ -205,6 +205,28 @@ func (ds *Service) GetDetails() (types.Container, error) {
 	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", ds.ContainerName))
 }
 
+func (ds *Service) Clean() error {
+
+	if ds.Name == "" {
+		return nil
+	}
+	names := []string{"/"+ds.Name, ds.Name}
+
+	for _, name := range names {
+		if e := DockerKill(name); e == nil {
+			Green(fmt.Sprintf("%v container killed", name))
+		}
+		if e := DockerStop(name); e == nil {
+			Green(fmt.Sprintf("%v container stopped", name))
+		}
+		if e := DockerRemove(name); e != nil {
+			Green(fmt.Sprintf("%v container successfully removed", name))
+		}
+	}
+
+	return nil
+}
+
 func (ds *Service) Stop() error {
 
 	container, err := ds.GetDetails()
