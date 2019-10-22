@@ -1,13 +1,12 @@
 package model
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
-	"os/exec"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/docker/docker/api/types"
@@ -34,51 +33,30 @@ type Service struct {
 		DelCmd  []string
 	}
 	RunCmd []string
+
+	Config container.Config
+	HostConfig container.HostConfig
+	NetworkConfig network.NetworkingConfig
 }
 
-//func DockerRun(name string, args []string) ([]byte, error) {
-//	ctx := context.Background()
-//	cli, err := client.NewEnvClient()
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//	if err := cli.ContainerStart(ctx, name, types.ContainerStartOptions{}); err != nil {
-//		fmt.Println(err)
-//	}
-//	return []byte{}, err
-//}
+func DockerRun(ds *Service) ([]byte, error) {
 
-func DockerRun(args []string) ([]byte, error) {
-
-	docker, err := exec.LookPath("docker")
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Println(err)
-	}
-
-	// Generate the command, based on input.
-	cmd := exec.Cmd{}
-	cmd.Path = docker
-	cmd.Args = []string{docker}
-
-	// Add our arguments to the command.
-	cmd.Args = append(cmd.Args, args...)
-
-	var output bytes.Buffer
-	cmd.Stdout = &output
-	cmd.Stderr = &output
-
-	// Check the errors, return as needed.
-	var wg sync.WaitGroup
-	wg.Add(1)
-	err = cmd.Run()
-
-	if err != nil {
-		fmt.Println(err)
 		return []byte{}, err
 	}
-	wg.Done()
 
-	return output.Bytes(), nil
+	resp, err := cli.ContainerCreate(ctx, &ds.Config, &ds.HostConfig, &ds.NetworkConfig, ds.ContainerName)
+	if err != nil {
+		return []byte{}, err
+	}
+
+	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		return []byte{}, err
+	}
+
+	return []byte{}, nil
 }
 
 func DockerStop(name string) error {
@@ -147,43 +125,11 @@ func DockerNetworkConnect(network string, container string) error {
 	return nil
 }
 
-//func DockerRun(args []string) ([]byte, error) {
-//
-//	docker, err := exec.LookPath("docker")
-//	if err != nil {
-//		fmt.Println(err)
-//	}
-//
-//	// Generate the command, based on input.
-//	cmd := exec.Cmd{}
-//	cmd.Path = docker
-//	cmd.Args = []string{docker}
-//
-//	// Add our arguments to the command.
-//	cmd.Args = append(cmd.Args, args...)
-//
-//	var output bytes.Buffer
-//	cmd.Stdout = &output
-//	cmd.Stderr = &output
-//
-//	// Check the errors, return as needed.
-//	var wg sync.WaitGroup
-//	wg.Add(1)
-//	err = cmd.Run()
-//
-//	if err != nil {
-//		fmt.Println(err)
-//		return []byte{}, err
-//	}
-//	wg.Done()
-//
-//	return output.Bytes(), nil
-//}
-
 func (ds *Service) Start() ([]byte, error) {
 
 	s, e := ds.Status()
 	if e != nil {
+		fmt.Println(e)
 		return []byte{}, e
 	}
 	if s {
@@ -197,9 +143,12 @@ func (ds *Service) Start() ([]byte, error) {
 	if container.ImageID == "" {
 		if !s {
 			if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
-				DockerRun(ds.RunCmd)
+				_, err := DockerRun(ds)
 				if c, _ := ds.GetDetails(); c.ID != "" {
 					Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+				}
+				if err != nil {
+					fmt.Println(err)
 				}
 			}
 		} else {
@@ -265,11 +214,11 @@ func (ds *Service) Stop() error {
 	}
 
 	for _, name := range container.Names {
-		if e := DockerStop(container.ID); e == nil {
-			Green(fmt.Sprintf("%v container stopped", name))
-		}
 		if e := DockerKill(container.ID); e == nil {
 			Green(fmt.Sprintf("%v container killed", name))
+		}
+		if e := DockerStop(container.ID); e == nil {
+			Green(fmt.Sprintf("%v container stopped", name))
 		}
 		if e := DockerRemove(container.ID); e != nil {
 			Green(fmt.Sprintf("%v container successfully removed", name))

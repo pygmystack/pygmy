@@ -4,14 +4,12 @@ package ssh_addkey
 
 import (
 	"fmt"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
+	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/service/interface"
 	"github.com/mitchellh/go-homedir"
 	"os"
-)
-
-var (
-	image_name = "amazeeio/ssh-agent"
-	container_name = "amazeeio-ssh-agent-add-key"
 )
 
 func NewAdder(key string) model.Service {
@@ -21,38 +19,43 @@ func NewAdder(key string) model.Service {
 	}
 
 	return model.Service{
-		Name: "amazeeio-ssh-agent-add-key",
-		Address: "",
 		ContainerName: "amazeeio-ssh-agent-add-key",
-		Domain: "",
-		ImageName: "amazeeio/ssh-agent",
-		RunCmd: []string{
-			"run",
-			"--rm",
-			fmt.Sprintf("--volume=%v:/%v", key, key),
-			"--volumes-from=amazeeio-ssh-agent",
-			"--name="+container_name,
-			image_name,
-			"ssh-add",
-			key,
+		Config:        container.Config{
+			Image:    "amazeeio/ssh-agent",
+			Cmd: []string{
+				"ssh-add",
+				key,
+			},
 		},
+		HostConfig:    container.HostConfig{
+			AutoRemove:  true,
+			Mounts: []mount.Mount{
+				{
+					Type: "bind",
+					Source: key,
+					Target: key,
+					ReadOnly: true,
+				},
+			},
+		},
+		NetworkConfig: network.NetworkingConfig{},
 	}
 }
 
 func NewShower() model.Service {
 	return model.Service{
-		Address: "",
 		ContainerName: "amazeeio-ssh-agent-add-key",
-		Domain: "",
-		ImageName: "amazeeio/ssh-agent",
-		RunCmd: []string{
-			"run",
-			"--rm",
-			"--volumes-from=amazeeio-ssh-agent",
-			"--name="+container_name,
-			image_name,
-			"ssh-add",
-			"-l",
+		Config:        container.Config{
+			Image:    "amazeeio/ssh-agent",
+			Cmd: []string{
+				"ssh-add",
+				"-l",
+			},
 		},
+		HostConfig:    container.HostConfig{
+			AutoRemove:  true,
+			VolumesFrom: []string{"amazeeio-ssh-agent"},
+		},
+		NetworkConfig: network.NetworkingConfig{},
 	}
 }

@@ -16,6 +16,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/fubarhouse/pygmy/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/service/haproxy"
 	haproxy_connector "github.com/fubarhouse/pygmy/service/haproxy_connector"
