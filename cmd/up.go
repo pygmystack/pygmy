@@ -48,7 +48,7 @@ to quickly create a Cobra application.`,
 
 		netStat, _ := network.Status()
 		if !netStat {
-			network.Status()
+			network.Create()
 		}
 		haproxy_connector.Connect()
 
