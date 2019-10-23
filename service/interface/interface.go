@@ -37,8 +37,8 @@ type Service struct {
 	}
 	RunCmd []string
 
-	Config container.Config
-	HostConfig container.HostConfig
+	Config        container.Config
+	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig
 }
 
@@ -132,6 +132,30 @@ func DockerRun(ds *Service) ([]byte, error) {
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return []byte{}, err
+	}
+
+	// Ensure we have the image available:
+	images, _ := DockerImageList()
+
+	// Specify a false boolean which we can switch to true if the image is in the registry:
+	imageFound := false
+
+	// Loop over our images
+	for _, image := range images {
+
+		// Check if it contains the desired string
+		if strings.Contains(ds.Config.Image, fmt.Sprint(image.RepoTags)) {
+
+			// We found the image, we don't need to pull it into the registry.
+			imageFound = true
+
+		}
+
+	}
+
+	// If we don't have the image available in the registry, pull it in!
+	if !imageFound {
+		ds.Setup()
 	}
 
 	resp, err := cli.ContainerCreate(ctx, &ds.Config, &ds.HostConfig, &ds.NetworkConfig, ds.ContainerName)
@@ -258,7 +282,7 @@ func (ds *Service) Status() (bool, error) {
 		fmt.Println(err)
 	}
 	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
-		Quiet:   true,
+		Quiet: true,
 	})
 	for _, container := range containers {
 		for _, name := range container.Names {
@@ -279,7 +303,7 @@ func (ds *Service) GetDetails() (types.Container, error) {
 		fmt.Println(err)
 	}
 	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
-		Quiet:   true,
+		Quiet: true,
 	})
 
 	for _, container := range containers {
