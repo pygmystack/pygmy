@@ -2,19 +2,22 @@ package model
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
+	"io"
 	"strings"
 	"time"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
 )
 
 type DockerService interface {
+	Setup() error
 	Status() (bool, error)
 	Start() ([]byte, error)
 	Stop() error
@@ -37,6 +40,90 @@ type Service struct {
 	Config container.Config
 	HostConfig container.HostConfig
 	NetworkConfig network.NetworkingConfig
+}
+
+func DockerImageList() ([]types.ImageSummary, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	images, err := cli.ImageList(ctx, types.ImageListOptions{})
+	if err != nil {
+		return []types.ImageSummary{}, err
+	}
+
+	return images, nil
+
+}
+
+func DockerImagePull(image string) (error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	data, err := cli.ImagePull(ctx, "docker.io/"+image, types.ImagePullOptions{})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	d := json.NewDecoder(data)
+
+	type Event struct {
+		Status         string `json:"status"`
+		Error          string `json:"error"`
+		Progress       string `json:"progress"`
+		ProgressDetail struct {
+			Current int `json:"current"`
+			Total   int `json:"total"`
+		} `json:"progressDetail"`
+	}
+
+	var event *Event
+	for {
+		if err := d.Decode(&event); err != nil {
+			if err == io.EOF {
+				break
+			}
+
+			panic(err)
+		}
+	}
+
+	if event != nil {
+		if strings.Contains(event.Status, fmt.Sprintf("Downloaded newer image for %s", image)) {
+			fmt.Printf("Successfully pulled %v\n", image)
+		}
+
+		if strings.Contains(event.Status, fmt.Sprintf("Image is up to date for %s", image)) {
+			fmt.Printf("Image %v is up to date", image)
+		}
+	}
+	return nil
+}
+
+func (ds *Service) Setup() error {
+	if ds.Config.Image == "" {
+		return nil
+	}
+
+	images, _ := DockerImageList()
+	for _, image := range images {
+		if strings.Contains(fmt.Sprint(image.RepoTags), ds.Config.Image) {
+			return nil
+		}
+	}
+
+	err := DockerImagePull(ds.Config.Image)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return nil
 }
 
 func DockerRun(ds *Service) ([]byte, error) {
