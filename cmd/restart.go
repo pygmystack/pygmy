@@ -57,6 +57,8 @@ to quickly create a Cobra application.`,
 		sshAgent.Start()
 		sshKeyAdder.Start()
 
+		sshKeyAdder.Clean()
+
 	},
 }
 

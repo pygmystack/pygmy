@@ -89,6 +89,7 @@ to quickly create a Cobra application.`,
 			sshKeyShower := ssh_addkey.NewShower()
 			data, _ := sshKeyShower.Start()
 			fmt.Println(string(data))
+			sshKeyShower.Clean()
 		} else {
 			model.Red(fmt.Sprintf("[ ] ssh-agent is not running"))
 		}

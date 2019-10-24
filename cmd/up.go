@@ -64,6 +64,7 @@ to quickly create a Cobra application.`,
 
 		sshKeyAdder := ssh_addkey.NewAdder("")
 		data, _ := sshKeyAdder.Start()
+		sshKeyAdder.Clean()
 		fmt.Println(string(data))
 
 	},
