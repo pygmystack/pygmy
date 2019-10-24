@@ -99,7 +99,7 @@ func DockerImagePull(image string) (error) {
 		}
 
 		if strings.Contains(event.Status, fmt.Sprintf("Image is up to date for %s", image)) {
-			fmt.Printf("Image %v is up to date", image)
+			fmt.Printf("Image %v is up to date\n", image)
 		}
 	}
 	return nil
