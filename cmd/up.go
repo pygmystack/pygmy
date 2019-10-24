@@ -15,16 +15,7 @@
 package cmd
 
 import (
-	"fmt"
-
-	"github.com/fubarhouse/pygmy/service/dnsmasq"
-	"github.com/fubarhouse/pygmy/service/haproxy"
-	haproxy_connector "github.com/fubarhouse/pygmy/service/haproxy_connector"
-	"github.com/fubarhouse/pygmy/service/mailhog"
-	"github.com/fubarhouse/pygmy/service/network"
-	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh_addkey"
-	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/fubarhouse/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 
@@ -41,31 +32,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		dnsmasq := dnsmasq.New()
-		dnsmasq.Start()
-
-		haproxy := haproxy.New()
-		haproxy.Start()
-
-		netStat, _ := network.Status()
-		if !netStat {
-			network.Create()
-		}
-		haproxy_connector.Connect()
-
-		mailhog := mailhog.New()
-		mailhog.Start()
-
-		sshAgent := ssh_agent.New()
-		sshAgent.Start()
-
-		resolv := resolv.New()
-		resolv.Configure()
-
-		sshKeyAdder := ssh_addkey.NewAdder("")
-		data, _ := sshKeyAdder.Start()
-		sshKeyAdder.Clean()
-		fmt.Println(string(data))
+		library.Up(args)
 
 	},
 }

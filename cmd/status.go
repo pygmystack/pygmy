@@ -15,16 +15,7 @@
 package cmd
 
 import (
-	"fmt"
-	"github.com/fubarhouse/pygmy/service/dnsmasq"
-	"github.com/fubarhouse/pygmy/service/haproxy"
-	haproxy_connector "github.com/fubarhouse/pygmy/service/haproxy_connector"
-	model "github.com/fubarhouse/pygmy/service/interface"
-	"github.com/fubarhouse/pygmy/service/mailhog"
-	"github.com/fubarhouse/pygmy/service/network"
-	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh_addkey"
-	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/fubarhouse/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 
@@ -37,58 +28,7 @@ var statusCmd = &cobra.Command{
 This inslcudes the docker services, the resolver and SSH key status`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		dnsmasq := dnsmasq.New()
-		if s, _ := dnsmasq.Status(); s {
-			model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", dnsmasq.ContainerName))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
-		}
-
-		haproxy := haproxy.New()
-		if s, _ := haproxy.Status(); s {
-			model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", haproxy.ContainerName))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
-		}
-
-		netStat, _ := network.Status()
-		if netStat {
-			model.Green(fmt.Sprintf("[*] Network: Exists as name amazeeio-network"))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Network: amazeeio-network does not exist"))
-		}
-
-		haproxyStatus, _ := haproxy_connector.Connected()
-		if haproxyStatus {
-			model.Green(fmt.Sprintf("[*] Network: Haproxy amazeeio-haproxy connected to amazeeio-network"))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Network: Haproxy amazeeio-haproxy is not connected to amazeeio-network"))
-		}
-
-		mailhog := mailhog.New()
-		if s, _ := mailhog.Status(); s {
-			model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", mailhog.ContainerName))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
-		}
-
-		resolver := resolv.New()
-		if resolver.Status() {
-			model.Green(fmt.Sprintf("[*] Resolv is property connected"))
-		} else {
-			model.Red(fmt.Sprintf("[ ] Resolv is not properly connected"))
-		}
-
-		sshAgent := ssh_agent.New()
-		if s, _ := sshAgent.Status(); s {
-			model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", sshAgent.ContainerName))
-			sshKeyShower := ssh_addkey.NewShower()
-			data, _ := sshKeyShower.Start()
-			fmt.Println(string(data))
-			sshKeyShower.Clean()
-		} else {
-			model.Red(fmt.Sprintf("[ ] ssh-agent is not running"))
-		}
+		library.Status(args)
 
 	},
 }
