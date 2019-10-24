@@ -1,6 +1,7 @@
 package model
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -167,7 +168,15 @@ func DockerRun(ds *Service) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	return []byte{}, nil
+	b, _ := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{
+		ShowStdout: true,
+		ShowStderr: true,
+	})
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(b)
+
+	return buf.Bytes(), nil
 }
 
 func DockerStop(name string) error {
@@ -249,9 +258,12 @@ func (ds *Service) Start() ([]byte, error) {
 	}
 
 	if !s {
-		_, err := DockerRun(ds)
+
+		output, err := DockerRun(ds)
+
 		if c, _ := ds.GetDetails(); c.ID != "" {
 			Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+			return output, nil
 		}
 		if err != nil {
 			fmt.Println(err)
