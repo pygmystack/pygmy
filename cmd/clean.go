@@ -15,24 +15,19 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/fubarhouse/pygmy/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/service/haproxy"
-	haproxy_connector "github.com/fubarhouse/pygmy/service/haproxy_connector"
 	"github.com/fubarhouse/pygmy/service/mailhog"
-	"github.com/fubarhouse/pygmy/service/network"
 	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
 	"github.com/spf13/cobra"
 )
 
-// upCmd represents the up command
-var upCmd = &cobra.Command{
-	Use:   "up",
-	Example: "pygmy up",
-	Short: "# Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
+// stopCmd represents the stop command
+var cleanCmd = &cobra.Command{
+	Use:   "clean",
+	Example: "pygmy clean",
+	Short: "# Hard stop and destroy all pygmy services",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -42,44 +37,33 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		dnsmasq := dnsmasq.New()
-		dnsmasq.Start()
+		dnsmasq.Clean()
 
 		haproxy := haproxy.New()
-		haproxy.Start()
-
-		netStat, _ := network.Status()
-		if !netStat {
-			network.Create()
-		}
-		haproxy_connector.Connect()
+		haproxy.Clean()
 
 		mailhog := mailhog.New()
-		mailhog.Start()
+		mailhog.Clean()
 
 		sshAgent := ssh_agent.New()
-		sshAgent.Start()
+		sshAgent.Clean()
 
 		resolv := resolv.New()
-		resolv.Configure()
-
-		sshKeyAdder := ssh_addkey.NewAdder("")
-		data, _ := sshKeyAdder.Start()
-		sshKeyAdder.Clean()
-		fmt.Println(string(data))
+		resolv.Clean()
 
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(upCmd)
+	rootCmd.AddCommand(cleanCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// upCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// stopCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// upCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// stopCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

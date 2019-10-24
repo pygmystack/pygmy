@@ -1,25 +1,25 @@
 package ssh_agent
 
 import (
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() model.Service {
 	return model.Service{
-		Name: "amazeeio-ssh-agent",
-		Address: "",
 		ContainerName: "amazeeio-ssh-agent",
-		Domain: "",
-		ImageName: "amazeeio/ssh-agent",
-		RunCmd: []string{
-			"run",
-			"-d",
-			"--restart=always",
-			"--name",
-			"amazeeio-ssh-agent",
-			"amazeeio/ssh-agent",
+		Config:        container.Config{
+			Image:    "amazeeio/ssh-agent",
 		},
-
+		HostConfig:    container.HostConfig{
+			AutoRemove:  false,
+			RestartPolicy: struct {
+				Name              string
+				MaximumRetryCount int
+			}{Name: "always", MaximumRetryCount: 0},
+		},
+		NetworkConfig: network.NetworkingConfig{},
 	}
 }
 

@@ -1,22 +1,34 @@
 package haproxy_connector
 
 import (
+	"context"
+
+	"github.com/docker/docker/client"
 	model "github.com/fubarhouse/pygmy/service/interface"
-	"strings"
 )
 
 func Connect() error {
 	if s, _ := Connected(); !s {
-		_, error := model.DockerRun([]string{"network", "connect", "amazeeio-network", "amazeeio-haproxy"})
-		return error
+		return model.DockerNetworkConnect("amazeeio-network", "amazeeio-haproxy")
 	}
 	return nil
 }
 
 func Connected() (bool, error) {
-	output, error := model.DockerRun([]string{"network", "inspect", "amazeeio-network", "-f", "'{{.Containers}}'"})
-	if strings.Contains(string(output), "amazeeio-haproxy") {
-		return true, nil
+
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return false, err
 	}
-	return false, error
+	x, err := cli.NetworkInspect(ctx, "amazeeio-network")
+	if err != nil {
+		return false, err
+	}
+	for _, container := range x.Containers {
+		if container.Name == "amazeeio-haproxy" {
+			return true, nil
+		}
+	}
+	return false, nil
 }

@@ -1,4 +1,4 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2019 Karl Hepworth <Karl.Hepworth@gmail.com>
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,6 +56,8 @@ to quickly create a Cobra application.`,
 		resolver.Configure()
 		sshAgent.Start()
 		sshKeyAdder.Start()
+
+		sshKeyAdder.Clean()
 
 	},
 }
