@@ -244,27 +244,20 @@ func (ds *Service) Start() ([]byte, error) {
 		return []byte{}, e
 	}
 	if s {
-		if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
-			Green(fmt.Sprintf("Already running %v", ds.ContainerName))
-		}
+		Green(fmt.Sprintf("Already running %v", ds.ContainerName))
 		return []byte{}, nil
 	}
 
-	container, _ := ds.GetDetails()
-	if container.ImageID == "" {
-		if !s {
-			if ds.ContainerName != "amazeeio-ssh-agent-add-key" {
-				_, err := DockerRun(ds)
-				if c, _ := ds.GetDetails(); c.ID != "" {
-					Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
-				}
-				if err != nil {
-					fmt.Println(err)
-				}
-			}
-		} else {
-			Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
+	if !s {
+		_, err := DockerRun(ds)
+		if c, _ := ds.GetDetails(); c.ID != "" {
+			Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
 		}
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
 	}
 
 	return []byte{}, nil
@@ -321,7 +314,7 @@ func (ds *Service) Clean() error {
 	if ds.ContainerName == "" {
 		return nil
 	}
-	names := []string{"/"+ds.ContainerName, ds.ContainerName}
+	names := []string{"/" + ds.ContainerName, ds.ContainerName}
 
 	for _, name := range names {
 		if e := DockerKill(name); e == nil {
