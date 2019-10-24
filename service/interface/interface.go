@@ -252,24 +252,28 @@ func (ds *Service) Start() ([]byte, error) {
 		fmt.Println(e)
 		return []byte{}, e
 	}
-	if s {
+
+
+	if s && !ds.HostConfig.AutoRemove {
 		Green(fmt.Sprintf("Already running %v", ds.ContainerName))
 		return []byte{}, nil
 	}
 
-	if !s {
+	if !s || ds.HostConfig.AutoRemove {
 
 		output, err := DockerRun(ds)
 
 		if c, _ := ds.GetDetails(); c.ID != "" {
-			Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+			if !ds.HostConfig.AutoRemove {
+				Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
+			}
 			return output, nil
 		}
 		if err != nil {
 			fmt.Println(err)
 		}
 	} else {
-		Red(fmt.Sprintf("Failed to run %v.  Command docker %v failed", ds.ContainerName, strings.Join(ds.RunCmd, " ")))
+		Red(fmt.Sprintf("Failed to run %v.", ds.ContainerName))
 	}
 
 	return []byte{}, nil
@@ -330,13 +334,19 @@ func (ds *Service) Clean() error {
 
 	for _, name := range names {
 		if e := DockerKill(name); e == nil {
-			Green(fmt.Sprintf("%v container killed", name))
+			if !ds.HostConfig.AutoRemove {
+				Green(fmt.Sprintf("%v container killed", name))
+			}
 		}
 		if e := DockerStop(name); e == nil {
-			Green(fmt.Sprintf("%v container stopped", name))
+			if !ds.HostConfig.AutoRemove {
+				Green(fmt.Sprintf("%v container stopped", name))
+			}
 		}
 		if e := DockerRemove(name); e != nil {
-			Green(fmt.Sprintf("%v container successfully removed", name))
+			if !ds.HostConfig.AutoRemove {
+				Green(fmt.Sprintf("%v container successfully removed", name))
+			}
 		}
 	}
 
