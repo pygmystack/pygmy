@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	model "github.com/fubarhouse/pygmy/service/interface"
+	"strings"
 )
 
 // AmazeeImagePull is the entrypoint for this module.
@@ -32,10 +33,12 @@ func list() ([]types.ImageSummary, error) {
 func pull_all() {
 	list, _ := list()
 	for _, image := range list {
-		for _, tag := range image.RepoTags {
-			err := pull(tag)
-			if err != nil {
-				fmt.Println(err)
+		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio") {
+			for _, tag := range image.RepoTags {
+				err := pull(tag)
+				if err != nil {
+					fmt.Println(err)
+				}
 			}
 		}
 	}
