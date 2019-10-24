@@ -15,11 +15,7 @@
 package cmd
 
 import (
-	"github.com/fubarhouse/pygmy/service/dnsmasq"
-	"github.com/fubarhouse/pygmy/service/haproxy"
-	"github.com/fubarhouse/pygmy/service/mailhog"
-	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/fubarhouse/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 
@@ -36,20 +32,7 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		dnsmasq := dnsmasq.New()
-		dnsmasq.Stop()
-
-		haproxy := haproxy.New()
-		haproxy.Stop()
-
-		mailhog := mailhog.New()
-		mailhog.Stop()
-
-		sshAgent := ssh_agent.New()
-		sshAgent.Stop()
-
-		resolv := resolv.New()
-		resolv.Clean()
+		library.Stop(args)
 
 	},
 }
