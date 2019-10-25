@@ -40,18 +40,16 @@ func SshKeyAdd(c Config) {
 func Clean(c Config) {
 
 	dnsmasq := dnsmasq.New()
-	dnsmasq.Clean()
-
 	haproxy := haproxy.New()
-	haproxy.Clean()
-
 	mailhog := mailhog.New()
-	mailhog.Clean()
-
 	sshAgent := ssh_agent.New()
+	resolv := resolv.New()
+
+	dnsmasq.Clean()
+	haproxy.Clean()
+	mailhog.Clean()
 	sshAgent.Clean()
 
-	resolv := resolv.New()
 	resolv.Clean()
 }
 
@@ -119,18 +117,16 @@ func Status(c Config) {
 func Stop(c Config) {
 
 	dnsmasq := dnsmasq.New()
-	dnsmasq.Stop()
-
 	haproxy := haproxy.New()
-	haproxy.Stop()
-
 	mailhog := mailhog.New()
-	mailhog.Stop()
-
 	sshAgent := ssh_agent.New()
+	resolv := resolv.New()
+
+	dnsmasq.Stop()
+	haproxy.Stop()
+	mailhog.Stop()
 	sshAgent.Stop()
 
-	resolv := resolv.New()
 	resolv.Clean()
 }
 
