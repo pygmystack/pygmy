@@ -22,7 +22,7 @@ func SshKeyAdd(args []string) {
 
 	// TODO: key needs to be parametered...
 	var key string
-	if args[0] != "" {
+	if len(args) >= 1 && args[0] != "" {
 		if _, err := os.Stat(args[0]); err == nil {
 			key = args[0]
 		} else {
