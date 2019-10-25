@@ -34,5 +34,7 @@ This inslcudes the docker services, the resolver and SSH key status`,
 }
 
 func init() {
+
 	rootCmd.AddCommand(statusCmd)
+
 }

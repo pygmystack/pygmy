@@ -33,7 +33,7 @@ func list() ([]types.ImageSummary, error) {
 func pull_all() {
 	list, _ := list()
 	for _, image := range list {
-		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio") {
+		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio") || strings.Contains(fmt.Sprint(image.RepoTags), "mailhog/mailhog") || strings.Contains(fmt.Sprint(image.RepoTags), "andyshinn/dnsmasq") {
 			for _, tag := range image.RepoTags {
 				err := pull(tag)
 				if err != nil {

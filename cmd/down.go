@@ -24,12 +24,9 @@ var downCmd = &cobra.Command{
 	Use:   "down",
 	Example: "pygmy down",
 	Short: "Stop and remove all pygmy services",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `Check if any pygmy containers are running and removes
+then if they are, it will not attempt to remove any
+services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		library.Down(c)
