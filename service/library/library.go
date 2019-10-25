@@ -15,40 +15,29 @@ import (
 	"github.com/fubarhouse/pygmy/service/resolv"
 	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
-	"github.com/mitchellh/go-homedir"
 )
 
-func SshKeyAdd(args []string) {
+type Config struct {
+	Key string
+}
 
-	// TODO: key needs to be parametered...
-	var key string
-	if len(args) >= 1 && args[0] != "" {
-		if _, err := os.Stat(args[0]); err == nil {
-			key = args[0]
-		} else {
-			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
-		}
-	} else {
-		homedir, _ := homedir.Dir()
-		fp := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-		if _, err := os.Stat(fp); err == nil {
-			key = fp
-		} else {
-			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
+func SshKeyAdd(c Config) {
+
+	if c.Key != "" {
+		if _, err := os.Stat(c.Key); err != nil {
+			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", c.Key, err)
+			return
 		}
 	}
 
-	if key != "" {
-		sshKeyAdder := ssh_addkey.NewAdder(key)
-		data, _ := sshKeyAdder.Start()
-		sshKeyAdder.Clean()
-		fmt.Println(string(data))
-	}
+	sshKeyAdder := ssh_addkey.NewAdder(c.Key)
+	data, _ := sshKeyAdder.Start()
+	sshKeyAdder.Clean()
+	fmt.Println(string(data))
 
 }
 
-func Clean(args []string) {
-	fmt.Sprint(args)
+func Clean(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	dnsmasq.Clean()
@@ -66,14 +55,12 @@ func Clean(args []string) {
 	resolv.Clean()
 }
 
-func Restart(args []string) {
-	fmt.Sprint(args)
-	Stop(args)
-	Up(args)
+func Restart(c Config) {
+	Stop(c)
+	Up(c)
 }
 
-func Status(args []string) {
-	fmt.Sprint(args)
+func Status(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	if s, _ := dnsmasq.Status(); s {
@@ -129,8 +116,7 @@ func Status(args []string) {
 	}
 }
 
-func Stop(args []string) {
-	fmt.Sprint(args)
+func Stop(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	dnsmasq.Stop()
@@ -148,8 +134,7 @@ func Stop(args []string) {
 	resolv.Clean()
 }
 
-func Up(args []string) {
-	fmt.Sprint(args)
+func Up(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	dnsmasq.Start()
@@ -172,15 +157,13 @@ func Up(args []string) {
 	resolv := resolv.New()
 	resolv.Configure()
 
-	SshKeyAdd(args)
+	SshKeyAdd(c)
 }
 
-func Update(args []string) {
-	fmt.Sprint(args)
+func Update(c Config) {
 	amazee.AmazeeImagePull()
 }
 
-func Version(args []string) {
-	fmt.Sprint(args)
+func Version(c Config) {
 	fmt.Println("version called")
 }

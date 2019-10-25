@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -27,11 +31,18 @@ var addkeyCmd = &cobra.Command{
 	Long: `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.SshKeyAdd(args)
+		c.Key, _ = cmd.Flags().GetString("key")
+		library.SshKeyAdd(c)
 
 	},
 }
 
 func init() {
+
+	homedir, _ := homedir.Dir()
+	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
 	rootCmd.AddCommand(addkeyCmd)
+	addkeyCmd.Flags().StringP("key", "k", keypath, "Path of SSH key to add")
+
 }

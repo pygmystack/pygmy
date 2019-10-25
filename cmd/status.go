@@ -28,7 +28,7 @@ var statusCmd = &cobra.Command{
 This inslcudes the docker services, the resolver and SSH key status`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Status(args)
+		library.Status(c)
 
 	},
 }
