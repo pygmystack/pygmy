@@ -37,6 +37,7 @@ to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		c.Key, _ = cmd.Flags().GetString("key")
+		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		library.Up(c)
 
 	},
@@ -48,7 +49,8 @@ func init() {
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
 	rootCmd.AddCommand(upCmd)
-	upCmd.Flags().StringP("key", "k", keypath, "Path of SSH key to add")
+	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 
 
 }

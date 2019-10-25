@@ -43,6 +43,6 @@ func init() {
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
 	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().StringP("key", "k", keypath, "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 
 }

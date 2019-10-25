@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -32,11 +36,20 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		c.Key, _ = cmd.Flags().GetString("key")
+		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		library.Restart(c)
 
 	},
 }
 
 func init() {
+
+	homedir, _ := homedir.Dir()
+	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
 	rootCmd.AddCommand(restartCmd)
+	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+
 }

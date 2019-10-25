@@ -17,11 +17,22 @@ import (
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
 )
 
+// Config is a struct of configurable options which can
+// be passed to package library to configure logic for
+// continued abstraction.
 type Config struct {
+	// Key is the path to the Key which should be added.
 	Key string
+
+	// SkipKey indicates key adding should be skipped.
+	SkipKey bool
 }
 
 func SshKeyAdd(c Config) {
+
+	if c.SkipKey {
+		return
+	}
 
 	if c.Key != "" {
 		if _, err := os.Stat(c.Key); err != nil {
@@ -153,7 +164,9 @@ func Up(c Config) {
 	resolv := resolv.New()
 	resolv.Configure()
 
-	SshKeyAdd(c)
+	if !c.SkipKey {
+		SshKeyAdd(c)
+	}
 }
 
 func Update(c Config) {
