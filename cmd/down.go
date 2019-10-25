@@ -19,11 +19,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// stopCmd represents the stop command
-var stopCmd = &cobra.Command{
-	Use:   "stop",
-	Example: "pygmy stop",
-	Short: "# Stop and destroy all pygmy services",
+// downCmd represents the down command
+var downCmd = &cobra.Command{
+	Use:   "down",
+	Example: "pygmy down",
+	Short: "Stop and remove all pygmy services",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
 
@@ -32,13 +32,13 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Stop(c)
+		library.Down(c)
 
 	},
 }
 
 func init() {
 
-	rootCmd.AddCommand(stopCmd)
+	rootCmd.AddCommand(downCmd)
 
 }

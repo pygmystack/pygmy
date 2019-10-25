@@ -70,7 +70,7 @@ func Clean(c Config) {
 }
 
 func Restart(c Config) {
-	Stop(c)
+	Down(c)
 	Up(c)
 }
 
@@ -130,7 +130,7 @@ func Status(c Config) {
 	}
 }
 
-func Stop(c Config) {
+func Down(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	haproxy := haproxy.New()
