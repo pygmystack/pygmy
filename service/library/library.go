@@ -26,6 +26,7 @@ func SshKeyAdd(args []string) {
 	} else {
 		fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
 	}
+
 }
 
 func Clean(args []string) {
