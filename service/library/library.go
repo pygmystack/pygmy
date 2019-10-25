@@ -3,6 +3,8 @@ package library
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/amazee"
 	"github.com/fubarhouse/pygmy/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/service/haproxy"
@@ -15,9 +17,15 @@ import (
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
 )
 
-func SshKeyAdd(key string, args []string) {
-	fmt.Sprint(key, args)
-	fmt.Println("addkey called")
+func SshKeyAdd(args []string) {
+	if _, err := os.Stat(args[0]); err == nil {
+		sshKeyAdder := ssh_addkey.NewAdder(args[0])
+		data, _ := sshKeyAdder.Start()
+		sshKeyAdder.Clean()
+		fmt.Println(string(data))
+	} else {
+		fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
+	}
 }
 
 func Clean(args []string) {

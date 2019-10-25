@@ -16,10 +16,6 @@ package cmd
 
 import (
 	"github.com/fubarhouse/pygmy/service/library"
-	"fmt"
-	"os"
-
-	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/spf13/cobra"
 )
 
@@ -30,16 +26,8 @@ var addkeyCmd = &cobra.Command{
 	Short: "Add/re-add an SSH key to the agent",
 	Long: `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		library.SshKeyAdd("", args)
 
-		if _, err := os.Stat(args[0]); err == nil {
-			sshKeyAdder := ssh_addkey.NewAdder(args[0])
-			data, _ := sshKeyAdder.Start()
-			sshKeyAdder.Clean()
-			fmt.Println(string(data))
-		} else {
-			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
-		}
+		library.SshKeyAdd(args)
 
 	},
 }
