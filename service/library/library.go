@@ -26,6 +26,11 @@ type Config struct {
 
 	// SkipKey indicates key adding should be skipped.
 	SkipKey bool
+
+	// SkipResolver indicates the resolver adding/removal
+	// should be skipped - for more specific or manual
+	// environment implementations.
+	SkipResolver bool
 }
 
 func SshKeyAdd(c Config) {
@@ -138,7 +143,9 @@ func Stop(c Config) {
 	mailhog.Stop()
 	sshAgent.Stop()
 
-	resolv.Clean()
+	if !c.SkipResolver {
+		resolv.Clean()
+	}
 }
 
 func Up(c Config) {
@@ -161,8 +168,10 @@ func Up(c Config) {
 	sshAgent := ssh_agent.New()
 	sshAgent.Start()
 
-	resolv := resolv.New()
-	resolv.Configure()
+	if !c.SkipResolver {
+		resolv := resolv.New()
+		resolv.Configure()
+	}
 
 	if !c.SkipKey {
 		SshKeyAdd(c)

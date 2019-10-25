@@ -38,6 +38,7 @@ to quickly create a Cobra application.`,
 
 		c.Key, _ = cmd.Flags().GetString("key")
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
+		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 		library.Up(c)
 
 	},
@@ -51,6 +52,7 @@ func init() {
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
 
 }
