@@ -15,16 +15,34 @@ import (
 	"github.com/fubarhouse/pygmy/service/resolv"
 	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/mitchellh/go-homedir"
 )
 
 func SshKeyAdd(args []string) {
-	if _, err := os.Stat(args[0]); err == nil {
-		sshKeyAdder := ssh_addkey.NewAdder(args[0])
+
+	// TODO: key needs to be parametered...
+	var key string
+	if args[0] != "" {
+		if _, err := os.Stat(args[0]); err == nil {
+			key = args[0]
+		} else {
+			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
+		}
+	} else {
+		homedir, _ := homedir.Dir()
+		fp := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+		if _, err := os.Stat(fp); err == nil {
+			key = fp
+		} else {
+			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
+		}
+	}
+
+	if key != "" {
+		sshKeyAdder := ssh_addkey.NewAdder(key)
 		data, _ := sshKeyAdder.Start()
 		sshKeyAdder.Clean()
 		fmt.Println(string(data))
-	} else {
-		fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", args[0], err)
 	}
 
 }
@@ -154,10 +172,7 @@ func Up(args []string) {
 	resolv := resolv.New()
 	resolv.Configure()
 
-	sshKeyAdder := ssh_addkey.NewAdder("")
-	data, _ := sshKeyAdder.Start()
-	sshKeyAdder.Clean()
-	fmt.Println(string(data))
+	SshKeyAdd(args)
 }
 
 func Update(args []string) {
