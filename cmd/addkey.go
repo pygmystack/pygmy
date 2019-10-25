@@ -15,36 +15,34 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
-// addkeyCmd represents the addkey command
+// addkeyCmd is the SSH key add command.
 var addkeyCmd = &cobra.Command{
 	Use:   "addkey",
-	Example: "pygmy addkey [~/.ssh/id_rsa]",
-	Short: "# Add additional ssh-key",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Example: "pygmy addkey ~/.ssh/id_rsa",
+	Short: "Add/re-add an SSH key to the agent",
+	Long: `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		library.SshKeyAdd("", args)
+
+		c.Key, _ = cmd.Flags().GetString("key")
+		library.SshKeyAdd(c)
+
 	},
 }
 
 func init() {
+
+	homedir, _ := homedir.Dir()
+	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
 	rootCmd.AddCommand(addkeyCmd)
+	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addkeyCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addkeyCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

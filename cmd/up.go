@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -23,30 +27,29 @@ import (
 var upCmd = &cobra.Command{
 	Use:   "up",
 	Example: "pygmy up",
-	Short: "# Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
+	Long: `Launch Pygmy - a set of containers and a resolver with very specific
+configurations designed for use with Amazee.io local development.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Up(args)
+		c.Key, _ = cmd.Flags().GetString("key")
+		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
+		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
+		library.Up(c)
 
 	},
 }
 
 func init() {
+
+	homedir, _ := homedir.Dir()
+	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
 	rootCmd.AddCommand(upCmd)
+	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// upCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// upCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

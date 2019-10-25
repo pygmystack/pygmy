@@ -15,7 +15,11 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -23,20 +27,26 @@ import (
 var restartCmd = &cobra.Command{
 	Use:   "restart",
 	Example: "pygmy restart",
-	Short: "# Report status of the pygmy services",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: "Restart all pygmy containers.",
+	Long: `This command will trigger the Down and Up commands`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Restart(args)
+		c.Key, _ = cmd.Flags().GetString("key")
+		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
+		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
+		library.Restart(c)
 
 	},
 }
 
 func init() {
+
+	homedir, _ := homedir.Dir()
+	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
 	rootCmd.AddCommand(restartCmd)
+	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	restartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+
 }

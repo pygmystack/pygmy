@@ -362,14 +362,10 @@ func (ds *Service) Stop() error {
 	}
 
 	for _, name := range container.Names {
-		if e := DockerKill(container.ID); e == nil {
-			Green(fmt.Sprintf("%v container killed", name))
-		}
 		if e := DockerStop(container.ID); e == nil {
-			Green(fmt.Sprintf("%v container stopped", name))
-		}
-		if e := DockerRemove(container.ID); e != nil {
-			Green(fmt.Sprintf("%v container successfully removed", name))
+			if e := DockerRemove(container.ID); e == nil {
+				Green(fmt.Sprintf("%v container successfully removed", name))
+			}
 		}
 	}
 

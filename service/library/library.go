@@ -3,6 +3,8 @@ package library
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy/service/amazee"
 	"github.com/fubarhouse/pygmy/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/service/haproxy"
@@ -15,38 +17,64 @@ import (
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
 )
 
-func SshKeyAdd(key string, args []string) {
-	fmt.Sprint(key, args)
-	fmt.Println("addkey called")
+// Config is a struct of configurable options which can
+// be passed to package library to configure logic for
+// continued abstraction.
+type Config struct {
+	// Key is the path to the Key which should be added.
+	Key string
+
+	// SkipKey indicates key adding should be skipped.
+	SkipKey bool
+
+	// SkipResolver indicates the resolver adding/removal
+	// should be skipped - for more specific or manual
+	// environment implementations.
+	SkipResolver bool
 }
 
-func Clean(args []string) {
-	fmt.Sprint(args)
+func SshKeyAdd(c Config) {
+
+	if c.SkipKey {
+		return
+	}
+
+	if c.Key != "" {
+		if _, err := os.Stat(c.Key); err != nil {
+			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", c.Key, err)
+			return
+		}
+	}
+
+	sshKeyAdder := ssh_addkey.NewAdder(c.Key)
+	data, _ := sshKeyAdder.Start()
+	sshKeyAdder.Clean()
+	fmt.Println(string(data))
+
+}
+
+func Clean(c Config) {
 
 	dnsmasq := dnsmasq.New()
-	dnsmasq.Clean()
-
 	haproxy := haproxy.New()
-	haproxy.Clean()
-
 	mailhog := mailhog.New()
-	mailhog.Clean()
-
 	sshAgent := ssh_agent.New()
+	resolv := resolv.New()
+
+	dnsmasq.Clean()
+	haproxy.Clean()
+	mailhog.Clean()
 	sshAgent.Clean()
 
-	resolv := resolv.New()
 	resolv.Clean()
 }
 
-func Restart(args []string) {
-	fmt.Sprint(args)
-	Stop(args)
-	Up(args)
+func Restart(c Config) {
+	Down(c)
+	Up(c)
 }
 
-func Status(args []string) {
-	fmt.Sprint(args)
+func Status(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	if s, _ := dnsmasq.Status(); s {
@@ -102,27 +130,25 @@ func Status(args []string) {
 	}
 }
 
-func Stop(args []string) {
-	fmt.Sprint(args)
+func Down(c Config) {
 
 	dnsmasq := dnsmasq.New()
-	dnsmasq.Stop()
-
 	haproxy := haproxy.New()
-	haproxy.Stop()
-
 	mailhog := mailhog.New()
-	mailhog.Stop()
-
 	sshAgent := ssh_agent.New()
+	resolv := resolv.New()
+
+	dnsmasq.Stop()
+	haproxy.Stop()
+	mailhog.Stop()
 	sshAgent.Stop()
 
-	resolv := resolv.New()
-	resolv.Clean()
+	if !c.SkipResolver {
+		resolv.Clean()
+	}
 }
 
-func Up(args []string) {
-	fmt.Sprint(args)
+func Up(c Config) {
 
 	dnsmasq := dnsmasq.New()
 	dnsmasq.Start()
@@ -142,21 +168,20 @@ func Up(args []string) {
 	sshAgent := ssh_agent.New()
 	sshAgent.Start()
 
-	resolv := resolv.New()
-	resolv.Configure()
+	if !c.SkipResolver {
+		resolv := resolv.New()
+		resolv.Configure()
+	}
 
-	sshKeyAdder := ssh_addkey.NewAdder("")
-	data, _ := sshKeyAdder.Start()
-	sshKeyAdder.Clean()
-	fmt.Println(string(data))
+	if !c.SkipKey {
+		SshKeyAdd(c)
+	}
 }
 
-func Update(args []string) {
-	fmt.Sprint(args)
+func Update(c Config) {
 	amazee.AmazeeImagePull()
 }
 
-func Version(args []string) {
-	fmt.Sprint(args)
+func Version(c Config) {
 	fmt.Println("version called")
 }

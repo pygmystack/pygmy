@@ -19,21 +19,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// versionCmd represents the version command
-var versionCmd = &cobra.Command{
-	Use:   "version",
-	Example: "pygmy version",
-	Short: "# Check current installed version of pygmy",
-	Long: ``,
+// downCmd represents the down command
+var downCmd = &cobra.Command{
+	Use:   "down",
+	Example: "pygmy down",
+	Short: "Stop and remove all pygmy services",
+	Long: `Check if any pygmy containers are running and removes
+then if they are, it will not attempt to remove any
+services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Version(c)
+		library.Down(c)
 
 	},
 }
 
 func init() {
 
-	rootCmd.AddCommand(versionCmd)
+	rootCmd.AddCommand(downCmd)
 
 }
