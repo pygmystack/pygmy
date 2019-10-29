@@ -34,6 +34,7 @@ var restartCmd = &cobra.Command{
 		c.Key, _ = cmd.Flags().GetString("key")
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
+
 		library.Restart(c)
 
 	},

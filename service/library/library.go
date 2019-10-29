@@ -16,6 +16,7 @@ import (
 	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh/ssh_agent"
 	"github.com/imdario/mergo"
+	"github.com/spf13/viper"
 )
 
 // Config is a struct of configurable options which can
@@ -24,6 +25,9 @@ import (
 type Config struct {
 	// Key is the path to the Key which should be added.
 	Key string `yaml:"Key"`
+
+	// Network
+	Network string `yaml:"Network"`
 
 	// SkipKey indicates key adding should be skipped.
 	SkipKey bool
@@ -41,6 +45,11 @@ type Config struct {
 	SshKeyLister model.Service `yaml:"SshKeyLister"`
 }
 
+func getService(s model.Service, c model.Service) model.Service {
+	Service, _ := mergeService(&s, c)
+	return Service
+}
+
 func SshKeyAdd(c Config) {
 
 	if c.SkipKey {
@@ -54,10 +63,14 @@ func SshKeyAdd(c Config) {
 		}
 	}
 
+	e := viper.Unmarshal(&c)
+	if e != nil {
+		fmt.Println(e)
+	}
+
 	if !ssh_agent.Search(c.Key) {
-		sshKeyAdder := ssh_addkey.NewAdder(c.Key)
-		data, _ := sshKeyAdder.Start()
-		sshKeyAdder.Clean()
+		SshKeyService := getService(ssh_addkey.NewAdder(c.Key), c.SshKeyAdder)
+		data, _ := SshKeyService.Start()
 		fmt.Println(string(data))
 	} else {
 		fmt.Printf("Already added key file %v.\n", c.Key)
@@ -66,10 +79,15 @@ func SshKeyAdd(c Config) {
 
 func Clean(c Config) {
 
-	dnsmasq := dnsmasq.New()
-	haproxy := haproxy.New()
-	mailhog := mailhog.New()
-	sshAgent := ssh_agent.New()
+	e := viper.Unmarshal(&c)
+	if e != nil {
+		fmt.Println(e)
+	}
+
+	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
+	haproxy := getService(haproxy.New(), c.HaProxy)
+	mailhog := getService(mailhog.New(), c.MailHog)
+	sshAgent := getService(ssh_agent.New(), c.SshAgent)
 	resolv := resolv.New()
 
 	dnsmasq.Clean()
@@ -87,37 +105,42 @@ func Restart(c Config) {
 
 func Status(c Config) {
 
-	dnsmasq := dnsmasq.New()
-	if s, _ := dnsmasq.Status(); s {
-		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", dnsmasq.ContainerName))
+	e := viper.Unmarshal(&c)
+	if e != nil {
+		fmt.Println(e)
+	}
+
+	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
+	if s, _ := DnsMasqService.Status(); s {
+		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", DnsMasqService.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
 	}
 
-	haproxy := haproxy.New()
-	if s, _ := haproxy.Status(); s {
-		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", haproxy.ContainerName))
+	HaProxyService := getService(haproxy.New(), c.HaProxy)
+	if s, _ := HaProxyService.Status(); s {
+		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", HaProxyService.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
 	}
 
-	netStat, _ := network.Status()
+	netStat, _ := network.Status(c.Network)
 	if netStat {
-		model.Green(fmt.Sprintf("[*] Network: Exists as name amazeeio-network"))
+		model.Green(fmt.Sprintf("[*] Network: Exists as name %v", c.Network))
 	} else {
-		model.Red(fmt.Sprintf("[ ] Network: amazeeio-network does not exist"))
+		model.Red(fmt.Sprintf("[ ] Network: %v does not exist", c.Network))
 	}
 
-	haproxyStatus, _ := haproxy_connector.Connected()
+	haproxyStatus, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network)
 	if haproxyStatus {
-		model.Green(fmt.Sprintf("[*] Network: Haproxy amazeeio-haproxy connected to amazeeio-network"))
+		model.Green(fmt.Sprintf("[*] Network: Haproxy %v connected to %v", c.HaProxy.ContainerName, c.Network))
 	} else {
-		model.Red(fmt.Sprintf("[ ] Network: Haproxy amazeeio-haproxy is not connected to amazeeio-network"))
+		model.Red(fmt.Sprintf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network))
 	}
 
-	mailhog := mailhog.New()
-	if s, _ := mailhog.Status(); s {
-		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", mailhog.ContainerName))
+	MailHogService := getService(mailhog.New(), c.MailHog)
+	if s, _ := MailHogService.Status(); s {
+		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", MailHogService.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
 	}
@@ -129,10 +152,10 @@ func Status(c Config) {
 		model.Red(fmt.Sprintf("[ ] Resolv is not properly connected"))
 	}
 
-	sshAgent := ssh_agent.New()
-	if s, _ := sshAgent.Status(); s {
-		model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", sshAgent.ContainerName))
-		sshKeyShower := ssh_addkey.NewShower()
+	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
+	if s, _ := SshAgentService.Status(); s {
+		model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", SshAgentService.ContainerName))
+		sshKeyShower := getService(ssh_addkey.NewShower(), c.SshAgent)
 		data, _ := sshKeyShower.Start()
 		fmt.Println(string(data))
 		sshKeyShower.Clean()
@@ -143,46 +166,56 @@ func Status(c Config) {
 
 func Down(c Config) {
 
-	dnsmasq := dnsmasq.New()
-	haproxy := haproxy.New()
-	mailhog := mailhog.New()
-	sshAgent := ssh_agent.New()
-	resolv := resolv.New()
+	e := viper.Unmarshal(&c)
+	if e != nil {
+		fmt.Println(e)
+	}
 
-	dnsmasq.Stop()
-	haproxy.Stop()
-	mailhog.Stop()
-	sshAgent.Stop()
+	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
+	DnsMasqService.Stop()
+
+	HaProxyService := getService(haproxy.New(), c.HaProxy)
+	HaProxyService.Stop()
+
+	MailHogService := getService(mailhog.New(), c.MailHog)
+	MailHogService.Stop()
+
+	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
+	SshAgentService.Stop()
 
 	if !c.SkipResolver {
+		resolv := resolv.New()
 		resolv.Clean()
 	}
 }
 
 func Up(c Config) {
 
-	dnsmasq := dnsmasq.New()
-	mergeService(&c.DnsMasq, dnsmasq)
-	dnsmasq.Start()
+	e := viper.Unmarshal(&c)
+	if e != nil {
+		fmt.Println(e)
+	}
+
+	DnsMasqService, _ := mergeService(&dnsmasq, c.DnsMasq)
+	DnsMasqService.Start()
 
 	haproxy := haproxy.New()
-	mergeService(&c.HaProxy, haproxy)
-	haproxy.Start()
-	fmt.Println(haproxy.HostConfig.PortBindings)
+	HaProxyService, _ := mergeService(&haproxy, c.HaProxy)
+	HaProxyService.Start()
 
-	netStat, _ := network.Status()
+	netStat, _ := network.Status(c.Network)
 	if !netStat {
-		network.Create()
+		network.Create(c.Network)
 	}
-	haproxy_connector.Connect()
+	haproxy_connector.Connect(c.HaProxy.ContainerName, c.Network)
 
 	mailhog := mailhog.New()
-	mergeService(&c.MailHog, mailhog)
-	mailhog.Start()
+	MailHogService, _ := mergeService(&mailhog, c.MailHog)
+	MailHogService.Start()
 
-	sshAgent := ssh_agent.New()
-	mergeService(&c.DnsMasq, dnsmasq)
-	sshAgent.Start()
+	SshAgent := ssh_agent.New()
+	SshAgentService, _ := mergeService(&SshAgent, c.SshAgent)
+	SshAgentService.Start()
 
 	if !c.SkipResolver {
 		resolv := resolv.New()
@@ -190,6 +223,7 @@ func Up(c Config) {
 	}
 
 	if !c.SkipKey {
+
 		SshKeyAdd(c)
 	}
 }
@@ -202,8 +236,10 @@ func Version(c Config) {
 	fmt.Println("version called")
 }
 
-func mergeService(src *model.Service, destination model.Service) {
-	if err := mergo.Merge(&destination, src); err != nil {
+func mergeService(src *model.Service, destination model.Service) (model.Service, error) {
+	if err := mergo.Merge(&destination, src, mergo.WithOverrideEmptySlice); err != nil {
 		fmt.Println(err)
+		return *src, err
 	}
+	return destination, nil
 }

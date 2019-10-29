@@ -269,8 +269,8 @@ func (ds *Service) Start() ([]byte, error) {
 
 func (ds *Service) Status() (bool, error) {
 
-	// amazeeio-ssh-agent-add-key will not show in `docker ps`.
-	if ds.ContainerName == "amazeeio-ssh-agent-add-key" {
+	// If the container doesn't persist we should invalidate the status check.
+	if ds.HostConfig.AutoRemove {
 		return true, nil
 	}
 	ctx := context.Background()

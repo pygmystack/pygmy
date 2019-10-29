@@ -32,6 +32,7 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		c.Key, _ = cmd.Flags().GetString("key")
+
 		library.SshKeyAdd(c)
 
 	},
