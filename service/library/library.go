@@ -58,7 +58,7 @@ func getService(s model.Service, c model.Service) model.Service {
 	return Service
 }
 
-func SshKeyAdd(c Config) {
+func SshKeyAdd(c Config, key string) {
 
 	if c.SkipKey {
 		return
@@ -230,7 +230,7 @@ func Up(c Config) {
 
 	if !c.SkipKey {
 
-		SshKeyAdd(c)
+		SshKeyAdd(c, c.Key)
 	}
 }
 
