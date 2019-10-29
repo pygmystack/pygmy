@@ -15,6 +15,7 @@ import (
 	"github.com/fubarhouse/pygmy/service/resolv"
 	"github.com/fubarhouse/pygmy/service/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/imdario/mergo"
 )
 
 // Config is a struct of configurable options which can
@@ -22,7 +23,7 @@ import (
 // continued abstraction.
 type Config struct {
 	// Key is the path to the Key which should be added.
-	Key string
+	Key string `yaml:"Key"`
 
 	// SkipKey indicates key adding should be skipped.
 	SkipKey bool
@@ -30,7 +31,14 @@ type Config struct {
 	// SkipResolver indicates the resolver adding/removal
 	// should be skipped - for more specific or manual
 	// environment implementations.
-	SkipResolver bool
+	SkipResolver bool `yaml:"DisableResolver"`
+
+	SshAgent     model.Service `yaml:"SshAgent"`
+	DnsMasq      model.Service `yaml:"DnsMasq"`
+	HaProxy      model.Service `yaml:"HaProxy"`
+	MailHog      model.Service `yaml:"MailHog"`
+	SshKeyAdder  model.Service `yaml:"SshKeyAdder"`
+	SshKeyLister model.Service `yaml:"SshKeyLister"`
 }
 
 func SshKeyAdd(c Config) {
@@ -151,10 +159,13 @@ func Down(c Config) {
 func Up(c Config) {
 
 	dnsmasq := dnsmasq.New()
+	mergeService(&c.DnsMasq, dnsmasq)
 	dnsmasq.Start()
 
 	haproxy := haproxy.New()
+	mergeService(&c.HaProxy, haproxy)
 	haproxy.Start()
+	fmt.Println(haproxy.HostConfig.PortBindings)
 
 	netStat, _ := network.Status()
 	if !netStat {
@@ -163,9 +174,11 @@ func Up(c Config) {
 	haproxy_connector.Connect()
 
 	mailhog := mailhog.New()
+	mergeService(&c.MailHog, mailhog)
 	mailhog.Start()
 
 	sshAgent := ssh_agent.New()
+	mergeService(&c.DnsMasq, dnsmasq)
 	sshAgent.Start()
 
 	if !c.SkipResolver {
@@ -184,4 +197,10 @@ func Update(c Config) {
 
 func Version(c Config) {
 	fmt.Println("version called")
+}
+
+func mergeService(src *model.Service, destination model.Service) {
+	if err := mergo.Merge(&destination, src); err != nil {
+		fmt.Println(err)
+	}
 }
