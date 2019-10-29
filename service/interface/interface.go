@@ -25,19 +25,7 @@ type DockerService interface {
 }
 
 type Service struct {
-	Name          string
-	Address       string
 	ContainerName string
-	Domain        string
-	Shell         string
-	ImageName     string
-	Cmds          struct {
-		RunCmd  []string
-		StopCmd []string
-		DelCmd  []string
-	}
-	RunCmd []string
-
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig

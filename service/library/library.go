@@ -13,8 +13,8 @@ import (
 	"github.com/fubarhouse/pygmy/service/mailhog"
 	"github.com/fubarhouse/pygmy/service/network"
 	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh_addkey"
-	"github.com/fubarhouse/pygmy/service/ssh_agent"
+	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
+	"github.com/fubarhouse/pygmy/service/ssh/ssh_agent"
 	"github.com/imdario/mergo"
 )
 
@@ -54,11 +54,14 @@ func SshKeyAdd(c Config) {
 		}
 	}
 
-	sshKeyAdder := ssh_addkey.NewAdder(c.Key)
-	data, _ := sshKeyAdder.Start()
-	sshKeyAdder.Clean()
-	fmt.Println(string(data))
-
+	if !ssh_agent.Search(c.Key) {
+		sshKeyAdder := ssh_addkey.NewAdder(c.Key)
+		data, _ := sshKeyAdder.Start()
+		sshKeyAdder.Clean()
+		fmt.Println(string(data))
+	} else {
+		fmt.Printf("Already added key file %v.\n", c.Key)
+	}
 }
 
 func Clean(c Config) {
