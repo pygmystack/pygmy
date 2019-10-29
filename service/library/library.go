@@ -3,6 +3,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/imdario/mergo"
 	"os"
 
 	"github.com/fubarhouse/pygmy/service/amazee"
@@ -15,7 +16,6 @@ import (
 	"github.com/fubarhouse/pygmy/service/resolv"
 	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
 	"github.com/fubarhouse/pygmy/service/ssh/ssh_agent"
-	"github.com/imdario/mergo"
 	"github.com/spf13/viper"
 )
 
@@ -45,6 +45,14 @@ type Config struct {
 	SshKeyLister model.Service `yaml:"SshKeyLister"`
 }
 
+func mergeService(src *model.Service, destination model.Service) (model.Service, error) {
+	if err := mergo.Merge(&destination, src, mergo.WithOverrideEmptySlice); err != nil {
+		fmt.Println(err)
+		return *src, err
+	}
+	return destination, nil
+}
+
 func getService(s model.Service, c model.Service) model.Service {
 	Service, _ := mergeService(&s, c)
 	return Service
@@ -63,10 +71,7 @@ func SshKeyAdd(c Config) {
 		}
 	}
 
-	e := viper.Unmarshal(&c)
-	if e != nil {
-		fmt.Println(e)
-	}
+	Setup(c)
 
 	if !ssh_agent.Search(c.Key) {
 		SshKeyService := getService(ssh_addkey.NewAdder(c.Key), c.SshKeyAdder)
@@ -79,23 +84,21 @@ func SshKeyAdd(c Config) {
 
 func Clean(c Config) {
 
-	e := viper.Unmarshal(&c)
-	if e != nil {
-		fmt.Println(e)
-	}
+	Setup(c)
 
 	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
-	haproxy := getService(haproxy.New(), c.HaProxy)
-	mailhog := getService(mailhog.New(), c.MailHog)
-	sshAgent := getService(ssh_agent.New(), c.SshAgent)
-	resolv := resolv.New()
-
 	dnsmasq.Clean()
-	haproxy.Clean()
-	mailhog.Clean()
-	sshAgent.Clean()
 
-	resolv.Clean()
+	haproxy := getService(haproxy.New(), c.HaProxy)
+	haproxy.Clean()
+
+	mailhog := getService(mailhog.New(), c.MailHog)
+	mailhog.Clean()
+
+	sshagent := getService(ssh_agent.New(), c.SshAgent)
+	sshagent.Clean()
+
+	resolv.New().Clean()
 }
 
 func Restart(c Config) {
@@ -105,48 +108,42 @@ func Restart(c Config) {
 
 func Status(c Config) {
 
-	e := viper.Unmarshal(&c)
-	if e != nil {
-		fmt.Println(e)
-	}
+	Setup(c)
 
-	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
-	if s, _ := DnsMasqService.Status(); s {
-		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", DnsMasqService.ContainerName))
+	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
+	if s, _ := dnsmasq.Status(); s {
+		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", c.DnsMasq.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
 	}
 
-	HaProxyService := getService(haproxy.New(), c.HaProxy)
-	if s, _ := HaProxyService.Status(); s {
-		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", HaProxyService.ContainerName))
+	haproxy := getService(haproxy.New(), c.HaProxy)
+	if s, _ := haproxy.Status(); s {
+		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", c.HaProxy.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
 	}
 
-	netStat, _ := network.Status(c.Network)
-	if netStat {
+	if s, _ := network.Status(c.Network); s {
 		model.Green(fmt.Sprintf("[*] Network: Exists as name %v", c.Network))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Network: %v does not exist", c.Network))
 	}
 
-	haproxyStatus, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network)
-	if haproxyStatus {
+	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); s {
 		model.Green(fmt.Sprintf("[*] Network: Haproxy %v connected to %v", c.HaProxy.ContainerName, c.Network))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network))
 	}
 
-	MailHogService := getService(mailhog.New(), c.MailHog)
-	if s, _ := MailHogService.Status(); s {
-		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", MailHogService.ContainerName))
+	mailhog :=getService(mailhog.New(), c.MailHog)
+	if s, _ :=  mailhog.Status(); s {
+		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
 	}
 
-	resolver := resolv.New()
-	if resolver.Status() {
+	if resolv.New().Status() {
 		model.Green(fmt.Sprintf("[*] Resolv is property connected"))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Resolv is not properly connected"))
@@ -166,11 +163,8 @@ func Status(c Config) {
 
 func Down(c Config) {
 
-	e := viper.Unmarshal(&c)
-	if e != nil {
-		fmt.Println(e)
-	}
-
+	Setup(c)
+	
 	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
 	DnsMasqService.Stop()
 
@@ -189,32 +183,39 @@ func Down(c Config) {
 	}
 }
 
-func Up(c Config) {
+func Setup(c Config) {
+	viper.SetDefault("Network", "amazeeio-network")
+	viper.SetDefault("HaProxy.HostConfig.PortBindings", "map[80/tcp:[map[HostPort:80]]]")
 
 	e := viper.Unmarshal(&c)
 	if e != nil {
 		fmt.Println(e)
 	}
 
-	DnsMasqService, _ := mergeService(&dnsmasq, c.DnsMasq)
+}
+
+func Up(c Config) {
+
+	Setup(c)
+
+	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
 	DnsMasqService.Start()
 
-	haproxy := haproxy.New()
-	HaProxyService, _ := mergeService(&haproxy, c.HaProxy)
+	HaProxyService := getService(haproxy.New(), c.HaProxy)
 	HaProxyService.Start()
 
 	netStat, _ := network.Status(c.Network)
 	if !netStat {
 		network.Create(c.Network)
 	}
-	haproxy_connector.Connect(c.HaProxy.ContainerName, c.Network)
+	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); !s {
+		haproxy_connector.Connect(c.HaProxy.ContainerName, c.Network)
+	}
 
-	mailhog := mailhog.New()
-	MailHogService, _ := mergeService(&mailhog, c.MailHog)
+	MailHogService := getService(mailhog.New(), c.MailHog)
 	MailHogService.Start()
 
-	SshAgent := ssh_agent.New()
-	SshAgentService, _ := mergeService(&SshAgent, c.SshAgent)
+	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
 	SshAgentService.Start()
 
 	if !c.SkipResolver {
@@ -234,12 +235,4 @@ func Update(c Config) {
 
 func Version(c Config) {
 	fmt.Println("version called")
-}
-
-func mergeService(src *model.Service, destination model.Service) (model.Service, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverrideEmptySlice); err != nil {
-		fmt.Println(err)
-		return *src, err
-	}
-	return destination, nil
 }
