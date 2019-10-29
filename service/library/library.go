@@ -89,7 +89,7 @@ func SshKeyAdd(c Config, key string) {
 
 func Clean(c Config) {
 
-	Setup(c)
+	Setup(&c)
 
 	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
 	dnsmasq.Clean()
@@ -113,7 +113,7 @@ func Restart(c Config) {
 
 func Status(c Config) {
 
-	Setup(c)
+	Setup(&c)
 
 	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
 	if s, _ := dnsmasq.Status(); s {
@@ -168,7 +168,7 @@ func Status(c Config) {
 
 func Down(c Config) {
 
-	Setup(c)
+	Setup(&c)
 	
 	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
 	DnsMasqService.Stop()
@@ -188,7 +188,7 @@ func Down(c Config) {
 	}
 }
 
-func Setup(c Config) {
+func Setup(c *Config) {
 	viper.SetDefault("Network", "amazeeio-network")
 	viper.SetDefault("HaProxy.HostConfig.PortBindings", "map[80/tcp:[map[HostPort:80]]]")
 
@@ -201,7 +201,7 @@ func Setup(c Config) {
 
 func Up(c Config) {
 
-	Setup(c)
+	Setup(&c)
 
 	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
 	DnsMasqService.Start()
