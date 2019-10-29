@@ -64,17 +64,22 @@ func SshKeyAdd(c Config) {
 		return
 	}
 
-	if c.Key != "" {
-		if _, err := os.Stat(c.Key); err != nil {
-			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", c.Key, err)
+	Setup(&c)
+
+	if key != "" {
+		if _, err := os.Stat(key); err != nil {
+			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", key, err)
 			return
 		}
 	}
 
-	Setup(c)
+	if !ssh_agent.Search(key) {
+		SshKeyService := getService(ssh_addkey.NewAdder(key), c.SshKeyAdder)
 
-	if !ssh_agent.Search(c.Key) {
-		SshKeyService := getService(ssh_addkey.NewAdder(c.Key), c.SshKeyAdder)
+		if key != "" {
+			c.Key = key
+		}
+
 		data, _ := SshKeyService.Start()
 		fmt.Println(string(data))
 	} else {
