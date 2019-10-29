@@ -1,9 +1,12 @@
 package ssh_agent
 
 import (
+	"strings"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
 )
 
 func New() model.Service {
@@ -23,3 +26,20 @@ func New() model.Service {
 	}
 }
 
+func List() ([]byte, error) {
+	i := ssh_addkey.NewShower()
+	return i.Start()
+}
+
+func Search(key string) bool {
+	items, _ := List()
+	for _, item := range strings.Split(string(items), "\n") {
+		if strings.Contains(item, "The agent has no identities") {
+			return false
+		}
+		if strings.Contains(item, key) {
+			return true
+		}
+	}
+	return false
+}

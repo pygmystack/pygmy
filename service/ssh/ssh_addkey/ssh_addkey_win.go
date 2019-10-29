@@ -1,10 +1,10 @@
-// +build darwin linux
+// +build windows
 
 package ssh_addkey
 
 import (
-	"fmt"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/service/interface"
 )
@@ -12,18 +12,23 @@ import (
 func NewAdder(key string) model.Service {
 	return model.Service{
 		ContainerName: "amazeeio-ssh-agent-add-key",
-		Config: container.Config{
-			Image: "amazeeio/ssh-agent",
+		Config:        container.Config{
+			Image:    "amazeeio/ssh-agent",
 			Cmd: []string{
-				"ssh-add",
-				key,
+				"windows-key-add",
+				"/key",
 			},
 		},
-		HostConfig: container.HostConfig{
-			IpcMode:     "private",
+		HostConfig:    container.HostConfig{
 			AutoRemove:  true,
-			Binds:       []string{fmt.Sprintf("%v:%v", key, key)},
-			VolumesFrom: []string{"amazeeio-ssh-agent"},
+			Mounts: []mount.Mount{
+				{
+					Type: "bind",
+					Source: key,
+					Target: key,
+					ReadOnly: true,
+				},
+			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}
@@ -31,15 +36,15 @@ func NewAdder(key string) model.Service {
 
 func NewShower() model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-ssh-agent-add-key",
-		Config: container.Config{
-			Image: "amazeeio/ssh-agent",
+		ContainerName: "amazeeio-ssh-agent-show-keys",
+		Config:        container.Config{
+			Image:    "amazeeio/ssh-agent",
 			Cmd: []string{
 				"ssh-add",
 				"-l",
 			},
 		},
-		HostConfig: container.HostConfig{
+		HostConfig:    container.HostConfig{
 			AutoRemove:  true,
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
