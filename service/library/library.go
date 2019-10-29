@@ -45,17 +45,18 @@ type Config struct {
 	SshKeyLister model.Service `yaml:"SshKeyLister"`
 }
 
-func mergeService(src *model.Service, destination model.Service) (model.Service, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverrideEmptySlice); err != nil {
+func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
+	if err := mergo.Merge(&destination, src); err != nil {
 		fmt.Println(err)
-		return *src, err
+		return src, err
 	}
-	return destination, nil
+	fmt.Println(destination)
+	return &destination, nil
 }
 
 func getService(s model.Service, c model.Service) model.Service {
-	Service, _ := mergeService(&s, c)
-	return Service
+	Service, _ := mergeService(s, &c)
+	return *Service
 }
 
 func SshKeyAdd(c Config, key string) {
@@ -141,7 +142,7 @@ func Status(c Config) {
 		model.Red(fmt.Sprintf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network))
 	}
 
-	mailhog :=getService(mailhog.New(), c.MailHog)
+	mailhog := getService(mailhog.New(), c.MailHog)
 	if s, _ :=  mailhog.Status(); s {
 		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName))
 	} else {
@@ -193,6 +194,7 @@ func Setup(c *Config) {
 	viper.SetDefault("HaProxy.HostConfig.PortBindings", "map[80/tcp:[map[HostPort:80]]]")
 
 	e := viper.Unmarshal(&c)
+
 	if e != nil {
 		fmt.Println(e)
 	}
@@ -213,6 +215,7 @@ func Up(c Config) {
 	if !netStat {
 		network.Create(c.Network)
 	}
+
 	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); !s {
 		haproxy_connector.Connect(c.HaProxy.ContainerName, c.Network)
 	}
