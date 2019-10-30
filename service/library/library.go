@@ -14,8 +14,8 @@ import (
 	"github.com/fubarhouse/pygmy/service/mailhog"
 	"github.com/fubarhouse/pygmy/service/network"
 	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
-	"github.com/fubarhouse/pygmy/service/ssh/ssh_agent"
+	"github.com/fubarhouse/pygmy/service/ssh/key"
+	"github.com/fubarhouse/pygmy/service/ssh/agent"
 	"github.com/spf13/viper"
 )
 
@@ -73,8 +73,8 @@ func SshKeyAdd(c Config, key string) {
 		}
 	}
 
-	if !ssh_agent.Search(key) {
-		c.SshKeyAdder = getService(ssh_addkey.NewAdder(key), c.SshKeyAdder)
+	if !agent.Search(key) {
+		c.SshKeyAdder = getService(key.NewAdder(key), c.SshKeyAdder)
 
 		if key != "" {
 			c.Key = key
@@ -100,7 +100,7 @@ func Clean(c Config) {
 	c.MailHog = getService(mailhog.New(), c.MailHog)
 	c.MailHog.Clean()
 
-	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent = getService(agent.New(), c.SshAgent)
 	c.SshAgent.Clean()
 
 	resolv.New().Clean()
@@ -154,10 +154,10 @@ func Status(c Config) {
 		fmt.Printf("[ ] Resolv is not properly connected\n")
 	}
 
-	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent = getService(agent.New(), c.SshAgent)
 	if s, _ := c.SshAgent.Status(); s {
 		fmt.Printf("[*] ssh-agent: Running as docker container %v, loaded keys:\n", c.SshAgent.ContainerName)
-		c.SshKeyLister = getService(ssh_addkey.NewShower(), c.SshKeyLister)
+		c.SshKeyLister = getService(key.NewShower(), c.SshKeyLister)
 		data, _ := c.SshKeyLister.Start()
 		fmt.Println(string(data))
 		c.SshKeyLister.Clean()
@@ -179,7 +179,7 @@ func Down(c Config) {
 	c.MailHog = getService(mailhog.New(), c.MailHog)
 	c.MailHog.Stop()
 
-	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent = getService(agent.New(), c.SshAgent)
 	c.SshAgent.Stop()
 
 	if !c.SkipResolver {
@@ -223,7 +223,7 @@ func Up(c Config) {
 	c.MailHog = getService(mailhog.New(), c.MailHog)
 	c.MailHog.Start()
 
-	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent = getService(agent.New(), c.SshAgent)
 	c.SshAgent.Start()
 
 	if !c.SkipResolver {

@@ -1,4 +1,4 @@
-package ssh_agent
+package agent
 
 import (
 	"strings"
@@ -6,7 +6,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/service/interface"
-	"github.com/fubarhouse/pygmy/service/ssh/ssh_addkey"
+	"github.com/fubarhouse/pygmy/service/ssh/key"
 )
 
 func New() model.Service {
@@ -30,7 +30,7 @@ func New() model.Service {
 }
 
 func List() ([]byte, error) {
-	i := ssh_addkey.NewShower()
+	i := key.NewShower()
 	return i.Start()
 }
 
