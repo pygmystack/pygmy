@@ -117,52 +117,52 @@ func Status(c Config) {
 
 	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
 	if s, _ := c.DnsMasq.Status(); s {
-		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", c.DnsMasq.ContainerName))
+		fmt.Printf("[*] Dnsmasq: Running as container %v", c.DnsMasq.ContainerName)
 	} else {
-		model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
+		fmt.Printf("[ ] Dnsmasq is not running")
 	}
 
 	c.HaProxy = getService(haproxy.New(), c.HaProxy)
 	if s, _ := c.HaProxy.Status(); s {
-		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", c.HaProxy.ContainerName))
+		fmt.Printf("[*] Haproxy: Haproxy as container %v", c.HaProxy.ContainerName)
 	} else {
-		model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
+		fmt.Printf("[ ] Haproxy is not running")
 	}
 
 	if s, _ := network.Status(c.Network); s {
-		model.Green(fmt.Sprintf("[*] Network: Exists as name %v", c.Network))
+		fmt.Printf("[*] Network: Exists as name %v", c.Network)
 	} else {
-		model.Red(fmt.Sprintf("[ ] Network: %v does not exist", c.Network))
+		fmt.Printf("[ ] Network: %v does not exist", c.Network)
 	}
 
 	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); s {
-		model.Green(fmt.Sprintf("[*] Network: Haproxy %v connected to %v", c.HaProxy.ContainerName, c.Network))
+		fmt.Printf("[*] Network: Haproxy %v connected to %v", c.HaProxy.ContainerName, c.Network)
 	} else {
-		model.Red(fmt.Sprintf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network))
+		fmt.Printf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network)
 	}
 
 	c.MailHog = getService(mailhog.New(), c.MailHog)
 	if s, _ :=  c.MailHog.Status(); s {
-		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName))
+		fmt.Printf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName)
 	} else {
-		model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
+		fmt.Printf("[ ] Mailhog is not running")
 	}
 
 	if resolv.New().Status() {
-		model.Green(fmt.Sprintf("[*] Resolv is property connected"))
+		fmt.Printf("[*] Resolv is property conneted")
 	} else {
-		model.Red(fmt.Sprintf("[ ] Resolv is not properly connected"))
+		fmt.Printf("[ ] Resolv is not properly connected")
 	}
 
 	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
 	if s, _ := c.SshAgent.Status(); s {
-		model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", c.SshAgent.ContainerName))
+		fmt.Printf("[*] ssh-agent: Running as docker container %v, loaded keys:", c.SshAgent.ContainerName)
 		c.SshKeyLister = getService(ssh_addkey.NewShower(), c.SshKeyLister)
 		data, _ := c.SshKeyLister.Start()
 		fmt.Println(string(data))
 		c.SshKeyLister.Clean()
 	} else {
-		model.Red(fmt.Sprintf("[ ] ssh-agent is not running"))
+		fmt.Printf("[ ] ssh-agent is not running")
 	}
 }
 

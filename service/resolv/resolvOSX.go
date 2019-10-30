@@ -4,7 +4,6 @@ package resolv
 
 import (
 	"fmt"
-	model "github.com/fubarhouse/pygmy/service/interface"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -25,7 +24,7 @@ func (resolv Resolv) Configure() {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
 	if !resolv.Status() {
-		model.Green(fmt.Sprintln("Configuring resolver file and loopback alias IP, this may require sudo"))
+		fmt.Println("Configuring resolver file and loopback alias IP, this may require sudo")
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 			if _, err := os.Stat(resolv.Path); os.IsNotExist(err) {
 				err := run([]string{"sudo", "mkdir", "-p", resolv.Path})
@@ -58,19 +57,19 @@ func (resolv Resolv) Configure() {
 		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
 		err := ifConfig.Run()
 		if err != nil {
-			model.Red(fmt.Sprintf("error creating loopback UP alias"))
+			fmt.Println("error creating loopback UP alias")
 		}
 		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 		err = killAll.Run()
 		if err != nil {
-			model.Green(fmt.Sprintf("error restarting mDNSResponder"))
+			fmt.Println("error restarting mDNSResponder")
 		}
 	}
 
 	if resolv.Status() {
-		model.Green(fmt.Sprintf("Successfully configured local resolver"))
+		fmt.Println("Successfully configured local resolver")
 	} else {
-		model.Red(fmt.Sprintf("Could not configure local resolver"))
+		fmt.Println("Could not configure local resolver")
 	}
 }
 
@@ -81,22 +80,22 @@ func (resolv Resolv) Clean() {
 	if resolv.Status() {
 		err := run([]string{"sudo", "rm", fullPath})
 		if err != nil {
-			model.Red(fmt.Sprintf("Error while removing the resolver"))
+			fmt.Println("Error while removing the resolver")
 		}
 
-		model.Green(fmt.Sprintln("Removing resolver file and loopback alias IP, this may require sudo"))
+		fmt.Println("Removing resolver file and loopback alias IP, this may require sudo")
 		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 		err = ifConfig.Run()
 		if err != nil {
-			model.Red(fmt.Sprintf("error removing loopback UP alias", err))
+			fmt.Println("error removing loopback UP alias", err)
 		}
 		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 		err = killAll.Run()
 		if err != nil {
-			model.Green(fmt.Sprintf("error restarting mDNSResponder"))
+			fmt.Println("error restarting mDNSResponder")
 		}
 	} else {
-		model.Green(fmt.Sprintf("Resolver already removed"))
+		fmt.Println("Resolver already removed")
 	}
 
 }
@@ -113,7 +112,7 @@ func (resolv Resolv) statusNet() bool {
 	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig")
 	ifConfigResp, ifConfigErr := ifConfigCmd.Output()
 	if ifConfigErr != nil {
-		model.Red(ifConfigErr.Error())
+		fmt.Println(ifConfigErr.Error())
 	}
 	for _, v := range strings.Split(string(ifConfigResp), "\n") {
 		if strings.Contains(v, "172.16.172.16") {

@@ -8,8 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() Resolv {
@@ -25,7 +23,7 @@ func run(args []string) error {
 func (resolv Resolv) Configure() {
 
 	if resolv.Status() {
-		model.Green(fmt.Sprintln("Already configured resolvr"))
+		fmt.Println("Already configured resolvr")
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -65,7 +63,7 @@ func (resolv Resolv) Configure() {
 			cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
 			cmdOut, cmdErr := cmd.Output()
 			if cmdErr != nil {
-				model.Red(cmdErr.Error())
+				fmt.Println(cmdErr.Error())
 			}
 
 			tmpFile, error := ioutil.TempFile("", "pygmy-")
@@ -88,9 +86,9 @@ func (resolv Resolv) Configure() {
 		}
 
 		if resolv.Status() {
-			model.Green(fmt.Sprintf("Successfully configured local resolver"))
+			fmt.Println("Successfully configured local resolver")
 		} else {
-			model.Red(fmt.Sprintf("Could not configure local resolver"))
+			fmt.Println("Could not configure local resolver")
 		}
 	}
 
@@ -104,7 +102,7 @@ func (resolv Resolv) Clean() {
 		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
 		cmdOut, cmdErr := cmd.Output()
 		if cmdErr != nil {
-			model.Red(cmdErr.Error())
+			fmt.Println(cmdErr.Error())
 		}
 		if strings.Contains(string(cmdOut), resolv.Contents) {
 			newFile := strings.Replace(string(cmdOut), resolv.Contents, "", -1)
@@ -137,7 +135,7 @@ func (resolv Resolv) Status() bool {
 		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
 		cmdOut, cmdErr := cmd.Output()
 		if cmdErr != nil {
-			model.Red(cmdErr.Error())
+			fmt.Println(cmdErr.Error())
 		}
 		if strings.Contains(string(cmdOut), resolv.Contents) {
 			return true

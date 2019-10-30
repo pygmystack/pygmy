@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/docker/docker/client"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/service/interface"
 )
 
 func Connect(containerName string, network string) error {
