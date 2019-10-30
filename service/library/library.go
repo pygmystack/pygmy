@@ -149,7 +149,7 @@ func Status(c Config) {
 	}
 
 	if resolv.New().Status() {
-		fmt.Printf("[*] Resolv is property conneted\n")
+		fmt.Printf("[*] Resolv is properly conneted\n")
 	} else {
 		fmt.Printf("[ ] Resolv is not properly connected\n")
 	}
