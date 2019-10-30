@@ -18,6 +18,9 @@ func NewAdder(key string) model.Service {
 				"ssh-add",
 				key,
 			},
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
+			},
 		},
 		HostConfig: container.HostConfig{
 			IpcMode:     "private",
@@ -37,6 +40,9 @@ func NewShower() model.Service {
 			Cmd: []string{
 				"ssh-add",
 				"-l",
+			},
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
 			},
 		},
 		HostConfig: container.HostConfig{

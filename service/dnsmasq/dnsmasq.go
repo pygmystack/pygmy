@@ -15,7 +15,11 @@ func New() model.Service {
 			Cmd: []string{
 				"-A",
 				"/docker.amazee.io/127.0.0.1",
-			},},
+			},
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
+			},
+		},
 		HostConfig:    container.HostConfig{
 			AutoRemove: false,
 			CapAdd:     []string{"NET_ADMIN"},

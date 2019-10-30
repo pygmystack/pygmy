@@ -23,6 +23,9 @@ func New() model.Service {
 				"AMAZEEIO=AMAZEEIO",
 			},
 			Image: "mailhog/mailhog",
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
+			},
 		},
 		HostConfig:    container.HostConfig{
 			AutoRemove: false,

@@ -11,6 +11,9 @@ func New() model.Service {
 		ContainerName: "amazeeio-haproxy",
 		Config:        container.Config{
 			Image:    "amazeeio/haproxy",
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
+			},
 
 		},
 		HostConfig:    container.HostConfig{
