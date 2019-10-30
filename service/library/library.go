@@ -46,7 +46,7 @@ type Config struct {
 }
 
 func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
-	if err := mergo.Merge(&destination, src); err != nil {
+	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
 	}
