@@ -117,52 +117,52 @@ func Status(c Config) {
 
 	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
 	if s, _ := c.DnsMasq.Status(); s {
-		fmt.Printf("[*] Dnsmasq: Running as container %v", c.DnsMasq.ContainerName)
+		fmt.Printf("[*] Dnsmasq: Running as container %v\n", c.DnsMasq.ContainerName)
 	} else {
-		fmt.Printf("[ ] Dnsmasq is not running")
+		fmt.Printf("[ ] Dnsmasq is not running\n")
 	}
 
 	c.HaProxy = getService(haproxy.New(), c.HaProxy)
 	if s, _ := c.HaProxy.Status(); s {
-		fmt.Printf("[*] Haproxy: Haproxy as container %v", c.HaProxy.ContainerName)
+		fmt.Printf("[*] Haproxy: Haproxy as container %v\n", c.HaProxy.ContainerName)
 	} else {
 		fmt.Printf("[ ] Haproxy is not running")
 	}
 
 	if s, _ := network.Status(c.Network); s {
-		fmt.Printf("[*] Network: Exists as name %v", c.Network)
+		fmt.Printf("[*] Network: Exists as name %v\n", c.Network)
 	} else {
-		fmt.Printf("[ ] Network: %v does not exist", c.Network)
+		fmt.Printf("[ ] Network: %v does not exist\n", c.Network)
 	}
 
 	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); s {
-		fmt.Printf("[*] Network: Haproxy %v connected to %v", c.HaProxy.ContainerName, c.Network)
+		fmt.Printf("[*] Network: Haproxy %v connected to %v\n", c.HaProxy.ContainerName, c.Network)
 	} else {
-		fmt.Printf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network)
+		fmt.Printf("[ ] Network: Haproxy %v is not connected to %v\n", c.HaProxy.ContainerName, c.Network)
 	}
 
 	c.MailHog = getService(mailhog.New(), c.MailHog)
 	if s, _ :=  c.MailHog.Status(); s {
-		fmt.Printf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName)
+		fmt.Printf("[*] Mailhog: Running as docker container %v\n", c.MailHog.ContainerName)
 	} else {
-		fmt.Printf("[ ] Mailhog is not running")
+		fmt.Printf("[ ] Mailhog is not running\n")
 	}
 
 	if resolv.New().Status() {
-		fmt.Printf("[*] Resolv is property conneted")
+		fmt.Printf("[*] Resolv is property conneted\n")
 	} else {
-		fmt.Printf("[ ] Resolv is not properly connected")
+		fmt.Printf("[ ] Resolv is not properly connected\n")
 	}
 
 	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
 	if s, _ := c.SshAgent.Status(); s {
-		fmt.Printf("[*] ssh-agent: Running as docker container %v, loaded keys:", c.SshAgent.ContainerName)
+		fmt.Printf("[*] ssh-agent: Running as docker container %v, loaded keys:\n", c.SshAgent.ContainerName)
 		c.SshKeyLister = getService(ssh_addkey.NewShower(), c.SshKeyLister)
 		data, _ := c.SshKeyLister.Start()
 		fmt.Println(string(data))
 		c.SshKeyLister.Clean()
 	} else {
-		fmt.Printf("[ ] ssh-agent is not running")
+		fmt.Printf("[ ] ssh-agent is not running\n")
 	}
 }
 
