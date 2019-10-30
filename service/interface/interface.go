@@ -220,13 +220,13 @@ func DockerNetworkCreate(name string) error {
 	return nil
 }
 
-func DockerNetworkConnect(network string, container string) error {
+func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	err = cli.NetworkConnect(ctx, network, container, nil)
+	err = cli.NetworkConnect(ctx, network, containerName, nil)
 	if err != nil {
 		return err
 	}

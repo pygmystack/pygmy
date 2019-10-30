@@ -50,7 +50,6 @@ func mergeService(destination model.Service, src *model.Service) (*model.Service
 		fmt.Println(err)
 		return src, err
 	}
-	fmt.Println(destination)
 	return &destination, nil
 }
 
@@ -75,13 +74,13 @@ func SshKeyAdd(c Config, key string) {
 	}
 
 	if !ssh_agent.Search(key) {
-		SshKeyService := getService(ssh_addkey.NewAdder(key), c.SshKeyAdder)
+		c.SshKeyAdder = getService(ssh_addkey.NewAdder(key), c.SshKeyAdder)
 
 		if key != "" {
 			c.Key = key
 		}
 
-		data, _ := SshKeyService.Start()
+		data, _ := c.SshKeyAdder.Start()
 		fmt.Println(string(data))
 	} else {
 		fmt.Printf("Already added key file %v.\n", c.Key)
@@ -92,17 +91,17 @@ func Clean(c Config) {
 
 	Setup(&c)
 
-	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
-	dnsmasq.Clean()
+	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
+	c.DnsMasq.Clean()
 
-	haproxy := getService(haproxy.New(), c.HaProxy)
-	haproxy.Clean()
+	c.HaProxy = getService(haproxy.New(), c.HaProxy)
+	c.HaProxy.Clean()
 
-	mailhog := getService(mailhog.New(), c.MailHog)
-	mailhog.Clean()
+	c.MailHog = getService(mailhog.New(), c.MailHog)
+	c.MailHog.Clean()
 
-	sshagent := getService(ssh_agent.New(), c.SshAgent)
-	sshagent.Clean()
+	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent.Clean()
 
 	resolv.New().Clean()
 }
@@ -116,15 +115,15 @@ func Status(c Config) {
 
 	Setup(&c)
 
-	dnsmasq := getService(dnsmasq.New(), c.DnsMasq)
-	if s, _ := dnsmasq.Status(); s {
+	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
+	if s, _ := c.DnsMasq.Status(); s {
 		model.Green(fmt.Sprintf("[*] Dnsmasq: Running as container %v", c.DnsMasq.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Dnsmasq is not running"))
 	}
 
-	haproxy := getService(haproxy.New(), c.HaProxy)
-	if s, _ := haproxy.Status(); s {
+	c.HaProxy = getService(haproxy.New(), c.HaProxy)
+	if s, _ := c.HaProxy.Status(); s {
 		model.Green(fmt.Sprintf("[*] Haproxy: Haproxy as container %v", c.HaProxy.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Haproxy is not running"))
@@ -142,8 +141,8 @@ func Status(c Config) {
 		model.Red(fmt.Sprintf("[ ] Network: Haproxy %v is not connected to %v", c.HaProxy.ContainerName, c.Network))
 	}
 
-	mailhog := getService(mailhog.New(), c.MailHog)
-	if s, _ :=  mailhog.Status(); s {
+	c.MailHog = getService(mailhog.New(), c.MailHog)
+	if s, _ :=  c.MailHog.Status(); s {
 		model.Green(fmt.Sprintf("[*] Mailhog: Running as docker container %v", c.MailHog.ContainerName))
 	} else {
 		model.Red(fmt.Sprintf("[ ] Mailhog is not running"))
@@ -155,13 +154,13 @@ func Status(c Config) {
 		model.Red(fmt.Sprintf("[ ] Resolv is not properly connected"))
 	}
 
-	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
-	if s, _ := SshAgentService.Status(); s {
-		model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", SshAgentService.ContainerName))
-		sshKeyShower := getService(ssh_addkey.NewShower(), c.SshAgent)
-		data, _ := sshKeyShower.Start()
+	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	if s, _ := c.SshAgent.Status(); s {
+		model.Green(fmt.Sprintf("[*] ssh-agent: Running as docker container %v, loaded keys:", c.SshAgent.ContainerName))
+		c.SshKeyLister = getService(ssh_addkey.NewShower(), c.SshKeyLister)
+		data, _ := c.SshKeyLister.Start()
 		fmt.Println(string(data))
-		sshKeyShower.Clean()
+		c.SshKeyLister.Clean()
 	} else {
 		model.Red(fmt.Sprintf("[ ] ssh-agent is not running"))
 	}
@@ -171,17 +170,17 @@ func Down(c Config) {
 
 	Setup(&c)
 	
-	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
-	DnsMasqService.Stop()
+	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
+	c.DnsMasq.Stop()
 
-	HaProxyService := getService(haproxy.New(), c.HaProxy)
-	HaProxyService.Stop()
+	c.HaProxy = getService(haproxy.New(), c.HaProxy)
+	c.HaProxy.Stop()
 
-	MailHogService := getService(mailhog.New(), c.MailHog)
-	MailHogService.Stop()
+	c.MailHog = getService(mailhog.New(), c.MailHog)
+	c.MailHog.Stop()
 
-	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
-	SshAgentService.Stop()
+	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent.Stop()
 
 	if !c.SkipResolver {
 		resolv := resolv.New()
@@ -205,11 +204,11 @@ func Up(c Config) {
 
 	Setup(&c)
 
-	DnsMasqService := getService(dnsmasq.New(), c.DnsMasq)
-	DnsMasqService.Start()
+	c.DnsMasq = getService(dnsmasq.New(), c.DnsMasq)
+	c.DnsMasq.Start()
 
-	HaProxyService := getService(haproxy.New(), c.HaProxy)
-	HaProxyService.Start()
+	c.HaProxy = getService(haproxy.New(), c.HaProxy)
+	c.HaProxy.Start()
 
 	netStat, _ := network.Status(c.Network)
 	if !netStat {
@@ -217,14 +216,15 @@ func Up(c Config) {
 	}
 
 	if s, _ := haproxy_connector.Connected(c.HaProxy.ContainerName, c.Network); !s {
+		fmt.Printf("Connecting %v to %v\n", c.HaProxy.ContainerName, c.Network)
 		haproxy_connector.Connect(c.HaProxy.ContainerName, c.Network)
 	}
 
-	MailHogService := getService(mailhog.New(), c.MailHog)
-	MailHogService.Start()
+	c.MailHog = getService(mailhog.New(), c.MailHog)
+	c.MailHog.Start()
 
-	SshAgentService := getService(ssh_agent.New(), c.SshAgent)
-	SshAgentService.Start()
+	c.SshAgent = getService(ssh_agent.New(), c.SshAgent)
+	c.SshAgent.Start()
 
 	if !c.SkipResolver {
 		resolv := resolv.New()
