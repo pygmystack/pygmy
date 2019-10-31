@@ -5,8 +5,8 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy/service/interface"
-	"github.com/fubarhouse/pygmy/service/ssh/key"
+	model "github.com/fubarhouse/pygmy/v0/service/interface"
+	"github.com/fubarhouse/pygmy/v0/service/ssh/key"
 )
 
 func New() model.Service {

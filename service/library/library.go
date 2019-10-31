@@ -6,16 +6,16 @@ import (
 	"github.com/imdario/mergo"
 	"os"
 
-	"github.com/fubarhouse/pygmy/service/amazee"
-	"github.com/fubarhouse/pygmy/service/dnsmasq"
-	"github.com/fubarhouse/pygmy/service/haproxy"
-	"github.com/fubarhouse/pygmy/service/haproxy_connector"
-	model "github.com/fubarhouse/pygmy/service/interface"
-	"github.com/fubarhouse/pygmy/service/mailhog"
-	"github.com/fubarhouse/pygmy/service/network"
-	"github.com/fubarhouse/pygmy/service/resolv"
-	"github.com/fubarhouse/pygmy/service/ssh/key"
-	"github.com/fubarhouse/pygmy/service/ssh/agent"
+	"github.com/fubarhouse/pygmy/v0/service/amazee"
+	"github.com/fubarhouse/pygmy/v0/service/dnsmasq"
+	"github.com/fubarhouse/pygmy/v0/service/haproxy"
+	"github.com/fubarhouse/pygmy/v0/service/haproxy_connector"
+	model "github.com/fubarhouse/pygmy/v0/service/interface"
+	"github.com/fubarhouse/pygmy/v0/service/mailhog"
+	"github.com/fubarhouse/pygmy/v0/service/network"
+	"github.com/fubarhouse/pygmy/v0/service/resolv"
+	sshkey "github.com/fubarhouse/pygmy/v0/service/ssh/key"
+	"github.com/fubarhouse/pygmy/v0/service/ssh/agent"
 	"github.com/spf13/viper"
 )
 
@@ -74,7 +74,7 @@ func SshKeyAdd(c Config, key string) {
 	}
 
 	if !agent.Search(key) {
-		c.SshKeyAdder = getService(key.NewAdder(key), c.SshKeyAdder)
+		c.SshKeyAdder = getService(sshkey.NewAdder(key), c.SshKeyAdder)
 
 		if key != "" {
 			c.Key = key
@@ -157,7 +157,7 @@ func Status(c Config) {
 	c.SshAgent = getService(agent.New(), c.SshAgent)
 	if s, _ := c.SshAgent.Status(); s {
 		fmt.Printf("[*] ssh-agent: Running as docker container %v, loaded keys:\n", c.SshAgent.ContainerName)
-		c.SshKeyLister = getService(key.NewShower(), c.SshKeyLister)
+		c.SshKeyLister = getService(sshkey.NewShower(), c.SshKeyLister)
 		data, _ := c.SshKeyLister.Start()
 		fmt.Println(string(data))
 		c.SshKeyLister.Clean()
