@@ -25,6 +25,7 @@ type DockerService interface {
 
 type Service struct {
 	Name          string
+	Disabled      bool
 	Discrete      bool
 	Output        bool
 	Config        container.Config

@@ -118,7 +118,7 @@ func Status(c Config) {
 	Setup(&c)
 
 	for Label, Service := range c.Services {
-		if !Service.Discrete {
+		if !Service.Discrete && !Service.Disabled {
 			if s, _ := model.Status(&Service); s {
 				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
 			} else {
@@ -159,7 +159,9 @@ func Down(c Config) {
 	Setup(&c)
 
 	for _, Service := range c.Services {
-		model.Stop(&Service)
+		if !Service.Disabled {
+			model.Stop(&Service)
+		}
 	}
 
 	if !c.SkipResolver {
@@ -188,7 +190,9 @@ func Up(c Config) {
 	Setup(&c)
 
 	for _, Service := range c.Services {
-		model.Start(&Service)
+		if !Service.Disabled {
+			model.Start(&Service)
+		}
 	}
 
 	for _, Network := range c.Networks {
