@@ -11,7 +11,7 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-ssh-agent",
+		Name: "amazeeio-ssh-agent",
 		Config:        container.Config{
 			Image:    "amazeeio/ssh-agent",
 			Labels:		map[string]string{
@@ -29,13 +29,14 @@ func New() model.Service {
 	}
 }
 
-func List() ([]byte, error) {
+func List() []byte {
 	i := key.NewShower()
-	return i.Start()
+	r, _ := model.Start(&i)
+	return r
 }
 
 func Search(key string) bool {
-	items, _ := List()
+	items := List()
 	for _, item := range strings.Split(string(items), "\n") {
 		if strings.Contains(item, "The agent has no identities") {
 			return false

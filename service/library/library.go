@@ -3,8 +3,6 @@ package library
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types"
-	"github.com/imdario/mergo"
 	"os"
 
 	"github.com/fubarhouse/pygmy/v1/service/amazee"
@@ -13,6 +11,7 @@ import (
 	"github.com/fubarhouse/pygmy/v1/service/network"
 	"github.com/fubarhouse/pygmy/v1/service/resolv"
 	"github.com/fubarhouse/pygmy/v1/service/ssh/agent"
+	"github.com/imdario/mergo"
 	"github.com/spf13/viper"
 )
 
@@ -31,24 +30,25 @@ type Config struct {
 	// environment implementations.
 	SkipResolver bool `yaml:"DisableResolver"`
 
-	// Services is a []types.Container for an index of all Services.
-	Services []types.Container `yaml:"services"`
+	// Services is a []model.Service for an index of all Services.
+	Services map[string]model.Service `yaml:"services"`
 
 	// Networks is for network configuration
-	Networks []struct{
-		Name string `yaml:"name"`
+	Networks []struct {
+		Name       string   `yaml:"name"`
 		Containers []string `yaml:"containers"`
 	} `yaml:"networks"`
 
 	// Resolvers is for all resolvers
-	Resolvers []struct{
+	Resolvers []struct {
+		Name string `yaml:"name"`
 		Path string `yaml:"path"`
 		Data string `yaml:"contents"`
 		// command afterwards?
 	} `yaml:"resolvers"`
 }
 
-func mergeService(destination types.Container, src *types.Container) (*types.Container, error) {
+func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -56,7 +56,7 @@ func mergeService(destination types.Container, src *types.Container) (*types.Con
 	return &destination, nil
 }
 
-func getService(s types.Container, c types.Container) types.Container {
+func getService(s model.Service, c model.Service) model.Service {
 	Service, _ := mergeService(s, &c)
 	return *Service
 }
@@ -82,8 +82,8 @@ func SshKeyAdd(c Config, key string) {
 			c.Key = key
 		}
 
-		data, _ := model.Start(Service)
-		fmt.Println(string(data))
+		//data, _ := model.Start(Service)
+		//fmt.Println(string(data))
 	} else {
 		fmt.Printf("Already added key file %v.\n", c.Key)
 	}
@@ -95,10 +95,17 @@ func Clean(c Config) {
 	Containers, _ := model.DockerContainerList()
 
 	for _, Container := range Containers {
-		model.Clean(&Container)
+		//model.Clean(&Container)
+		fmt.Println(Container)
 	}
 
-	resolv.New().Clean()
+	for _, resolver := range c.Resolvers {
+		resolv.New(struct {
+			Name     string
+			Contents string
+			Path     string
+		}{Name: string(resolver.Name), Contents: string(resolver.Data), Path: string(resolver.Path)}).Clean()
+	}
 }
 
 func Restart(c Config) {
@@ -110,18 +117,39 @@ func Status(c Config) {
 
 	Setup(&c)
 
-	for _, Service := range c.Services {
-		if s, _ := model.Status(&Service); s {
-			fmt.Printf("[*] %v: Running as container %v\n", Service.Names[0], Service.Names[0])
-		} else {
-			fmt.Printf("[ ] %v is not running\n", Service.Names[0])
+	for Label, Service := range c.Services {
+		if !Service.Discrete {
+			if s, _ := model.Status(&Service); s {
+				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
+			} else {
+				fmt.Printf("[ ] %v is not running\n", Label)
+			}
 		}
 	}
 
-	if resolv.New().Status() {
-		fmt.Printf("[*] Resolv is properly conneted\n")
-	} else {
-		fmt.Printf("[ ] Resolv is not properly connected\n")
+	for _, Network := range c.Networks {
+		netStat, _ := network.Status(Network.Name)
+		if netStat {
+			for _, Container := range Network.Containers {
+				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
+					fmt.Printf("[*] %v is connected to network %v\n", Container, Network.Name)
+				} else {
+					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network.Name)
+				}
+			}
+		}
+	}
+
+	for _, resolver := range c.Resolvers {
+		if resolv.New(struct {
+			Name     string
+			Contents string
+			Path     string
+		}{Name: string(resolver.Name), Contents: string(resolver.Data), Path: string(resolver.Path)}).Status() {
+			fmt.Printf("[*] Resolv %v is properly conneted\n", resolver.Name)
+		} else {
+			fmt.Printf("[ ] Resolv %v is not properly connected\n", resolver.Name)
+		}
 	}
 
 }
@@ -135,14 +163,17 @@ func Down(c Config) {
 	}
 
 	if !c.SkipResolver {
-		resolv := resolv.New()
-		resolv.Clean()
+		for _, resolver := range c.Resolvers {
+			resolv.New(struct {
+				Name     string
+				Contents string
+				Path     string
+			}{Name: string(resolver.Name), Contents: string(resolver.Data), Path: string(resolver.Path)}).Clean()
+		}
 	}
 }
 
 func Setup(c *Config) {
-	viper.SetDefault("Network", "amazeeio-network")
-	viper.SetDefault("HaProxy.HostConfig.PortBindings", "map[80/tcp:[map[HostPort:80]]]")
 
 	e := viper.Unmarshal(&c)
 
@@ -167,20 +198,32 @@ func Up(c Config) {
 		}
 		for _, Container := range Network.Containers {
 			if s, _ := haproxy_connector.Connected(Container, Network.Name); !s {
-				fmt.Printf("Connecting %v to %v\n", Container, Network.Name)
 				haproxy_connector.Connect(Container, Network.Name)
+				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
+					fmt.Printf("Successfully connected %v to %v\n", Container, Network.Name)
+				} else {
+					fmt.Printf("Could not connect %v to %v\n", Container, Network.Name)
+				}
+			} else {
+				fmt.Printf("Already connected %v to %v\n", Container, Network.Name)
 			}
 		}
 	}
 
 	if !c.SkipResolver {
-		resolv := resolv.New()
-		resolv.Configure()
+		for _, resolver := range c.Resolvers {
+			resolv.New(struct {
+				Name     string
+				Contents string
+				Path     string
+			}{Name: string(resolver.Name), Contents: string(resolver.Data), Path: string(resolver.Path)}).Configure()
+		}
 	}
 
 	if !c.SkipKey {
 
 		SshKeyAdd(c, c.Key)
+
 	}
 }
 

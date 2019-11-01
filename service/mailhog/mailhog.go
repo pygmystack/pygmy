@@ -9,7 +9,7 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		ContainerName: "mailhog.docker.amazee.io",
+		Name: "mailhog.docker.amazee.io",
 		Config:        container.Config{
 			User:       "0",
 			ExposedPorts: nat.PortSet{

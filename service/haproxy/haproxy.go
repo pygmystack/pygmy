@@ -8,7 +8,7 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-haproxy",
+		Name: "amazeeio-haproxy",
 		Config:        container.Config{
 			Image:    "amazeeio/haproxy",
 			Labels:		map[string]string{

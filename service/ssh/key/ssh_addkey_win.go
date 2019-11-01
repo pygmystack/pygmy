@@ -11,7 +11,9 @@ import (
 
 func NewAdder(key string) model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-ssh-agent-add-key",
+		Name: "amazeeio-ssh-agent-add-key",
+		Discrete: true,
+		Output: true,
 		Config:        container.Config{
 			Image:    "amazeeio/ssh-agent",
 			Cmd: []string{
