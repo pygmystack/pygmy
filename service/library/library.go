@@ -189,28 +189,12 @@ func Setup(c *Config) {
 	// If Services have been provided in complete or partially,
 	// this will override the defaults allowing any value to
 	// be changed by the user in the configuration file ~/.pygmy.yml
-	for n, _ := range c.Services {
-		switch n {
-		case "DnsMasq":
-			c.Services[n] = getService(dnsmasq.New(), c.Services[n])
-			break
-		case "HaProxy":
-			c.Services[n] = getService(haproxy.New(), c.Services[n])
-			break
-		case "MailHog":
-			c.Services[n] = getService(mailhog.New(), c.Services[n])
-			break
-		case "amazeeio-ssh-agent":
-			c.Services[n] = getService(agent.New(), c.Services[n])
-			break
-		case "amazeeio-ssh-agent-add-key":
-			c.Services[n] = getService(key.NewAdder(c.Key), c.Services[n])
-			break
-		case "amazeeio-ssh-agent-show-keys":
-			c.Services[n] = getService(key.NewShower(), c.Services[n])
-			break
-		}
-	}
+	c.Services["DnsMasq"] = getService(dnsmasq.New(), c.Services["DnsMasq"])
+	c.Services["HaProxy"] = getService(haproxy.New(), c.Services["HaProxy"])
+	c.Services["MailHog"] = getService(mailhog.New(), c.Services["MailHog"])
+	c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
+	c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(c.Key), c.Services["amazeeio-ssh-agent-add-key"])
+	c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
 
 }
 
