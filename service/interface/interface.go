@@ -299,6 +299,11 @@ func DockerRun(Service *Service) ([]byte, error) {
 		Setup(Service)
 	}
 
+	// All pygmy services need some sort of reference for pygmy to consume:
+	if Service.Config.Labels["pygmy"] != "pygmy" {
+		Service.Config.Labels["pygmy"] = "pygmy"
+	}
+
 	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, Service.Name)
 	if err != nil {
 		return []byte{}, err
