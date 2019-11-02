@@ -6,11 +6,15 @@ import (
 	"os"
 
 	"github.com/fubarhouse/pygmy/v1/service/amazee"
+	"github.com/fubarhouse/pygmy/v1/service/dnsmasq"
+	"github.com/fubarhouse/pygmy/v1/service/haproxy"
 	"github.com/fubarhouse/pygmy/v1/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy/v1/service/interface"
+	"github.com/fubarhouse/pygmy/v1/service/mailhog"
 	"github.com/fubarhouse/pygmy/v1/service/network"
 	"github.com/fubarhouse/pygmy/v1/service/resolv"
 	"github.com/fubarhouse/pygmy/v1/service/ssh/agent"
+	"github.com/fubarhouse/pygmy/v1/service/ssh/key"
 	"github.com/imdario/mergo"
 	"github.com/spf13/viper"
 )
@@ -44,7 +48,6 @@ type Config struct {
 		Name string `yaml:"name"`
 		Path string `yaml:"path"`
 		Data string `yaml:"contents"`
-		// command afterwards?
 	} `yaml:"resolvers"`
 }
 
@@ -181,6 +184,32 @@ func Setup(c *Config) {
 
 	if e != nil {
 		fmt.Println(e)
+	}
+
+	// If Services have been provided in complete or partially,
+	// this will override the defaults allowing any value to
+	// be changed by the user in the configuration file ~/.pygmy.yml
+	for n, _ := range c.Services {
+		switch n {
+		case "DnsMasq":
+			c.Services[n] = getService(dnsmasq.New(), c.Services[n])
+			break
+		case "HaProxy":
+			c.Services[n] = getService(haproxy.New(), c.Services[n])
+			break
+		case "MailHog":
+			c.Services[n] = getService(mailhog.New(), c.Services[n])
+			break
+		case "amazeeio-ssh-agent":
+			c.Services[n] = getService(agent.New(), c.Services[n])
+			break
+		case "amazeeio-ssh-agent-add-key":
+			c.Services[n] = getService(key.NewAdder(c.Key), c.Services[n])
+			break
+		case "amazeeio-ssh-agent-show-keys":
+			c.Services[n] = getService(key.NewShower(), c.Services[n])
+			break
+		}
 	}
 
 }
