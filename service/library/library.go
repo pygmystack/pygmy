@@ -4,6 +4,7 @@ package library
 import (
 	"fmt"
 	"os"
+	"sort"
 
 	"github.com/fubarhouse/pygmy/v1/service/amazee"
 	"github.com/fubarhouse/pygmy/v1/service/dnsmasq"
@@ -37,11 +38,10 @@ type Config struct {
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]model.Service `yaml:"services"`
 
+	SortedServices []string
+
 	// Networks is for network configuration
-	Networks []struct {
-		Name       string   `yaml:"name"`
-		Containers []string `yaml:"containers"`
-	} `yaml:"networks"`
+	Networks map[string][]string `yaml:"networks"`
 
 	// Resolvers is for all resolvers
 	Resolvers []struct {
@@ -87,6 +87,7 @@ func SshKeyAdd(c Config, key string) {
 
 		//data, _ := model.Start(Service)
 		//fmt.Println(string(data))
+
 	} else {
 		fmt.Printf("Already added key file %v.\n", c.Key)
 	}
@@ -121,7 +122,7 @@ func Status(c Config) {
 	Setup(&c)
 
 	for Label, Service := range c.Services {
-		if !Service.Discrete && !Service.Disabled {
+		if !Service.Disabled && !Service.Discrete {
 			if s, _ := model.Status(&Service); s {
 				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
 			} else {
@@ -130,14 +131,14 @@ func Status(c Config) {
 		}
 	}
 
-	for _, Network := range c.Networks {
-		netStat, _ := network.Status(Network.Name)
+	for Network, Containers := range c.Networks {
+		netStat, _ := network.Status(Network)
 		if netStat {
-			for _, Container := range Network.Containers {
-				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
-					fmt.Printf("[*] %v is connected to network %v\n", Container, Network.Name)
+			for _, Container := range Containers {
+				if s, _ := haproxy_connector.Connected(Container, Network); s {
+					fmt.Printf("[*] %v is connected to network %v\n", Container, Network)
 				} else {
-					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network.Name)
+					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network)
 				}
 			}
 		}
@@ -180,6 +181,12 @@ func Down(c Config) {
 
 func Setup(c *Config) {
 
+	viper.SetDefault("Networks", map[string][]string{
+		"amazeeio-network": []string{
+			"amazeeio-haproxy",
+		},
+	})
+
 	e := viper.Unmarshal(&c)
 
 	if e != nil {
@@ -189,12 +196,19 @@ func Setup(c *Config) {
 	// If Services have been provided in complete or partially,
 	// this will override the defaults allowing any value to
 	// be changed by the user in the configuration file ~/.pygmy.yml
+	c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
+	c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(c.Key), c.Services["amazeeio-ssh-agent-add-key"])
 	c.Services["DnsMasq"] = getService(dnsmasq.New(), c.Services["DnsMasq"])
 	c.Services["HaProxy"] = getService(haproxy.New(), c.Services["HaProxy"])
 	c.Services["MailHog"] = getService(mailhog.New(), c.Services["MailHog"])
 	c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
-	c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(c.Key), c.Services["amazeeio-ssh-agent-add-key"])
-	c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
+	c.SortedServices = make([]string, 0, len(c.Services))
+
+	// We need services to be sortable...
+	for key := range c.Services {
+		c.SortedServices = append(c.SortedServices, key)
+	}
+	sort.Strings(c.SortedServices)
 
 }
 
@@ -202,27 +216,32 @@ func Up(c Config) {
 
 	Setup(&c)
 
-	for _, Service := range c.Services {
-		if !Service.Disabled {
-			model.Start(&Service)
+	// Maps are... bad for predictable sequencing.
+	// Look over the sorted slice and start them in
+	// alphabetical order - so that one can configure
+	// an ssh-agent like amazeeio-ssh-agent.
+	for _, service := range c.SortedServices {
+		s := c.Services[service]
+		if !s.Disabled {
+			model.Start(&s)
 		}
 	}
 
-	for _, Network := range c.Networks {
-		netStat, _ := network.Status(Network.Name)
+	for Network, Containers := range c.Networks {
+		netStat, _ := network.Status(Network)
 		if !netStat {
-			network.Create(Network.Name)
+			network.Create(Network)
 		}
-		for _, Container := range Network.Containers {
-			if s, _ := haproxy_connector.Connected(Container, Network.Name); !s {
-				haproxy_connector.Connect(Container, Network.Name)
-				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
-					fmt.Printf("Successfully connected %v to %v\n", Container, Network.Name)
+		for _, Container := range Containers {
+			if s, _ := haproxy_connector.Connected(Container, Network); !s {
+				haproxy_connector.Connect(Container, Network)
+				if s, _ := haproxy_connector.Connected(Container, Network); s {
+					fmt.Printf("Successfully connected %v to %v\n", Container, Network)
 				} else {
-					fmt.Printf("Could not connect %v to %v\n", Container, Network.Name)
+					fmt.Printf("Could not connect %v to %v\n", Container, Network)
 				}
 			} else {
-				fmt.Printf("Already connected %v to %v\n", Container, Network.Name)
+				fmt.Printf("Already connected %v to %v\n", Container, Network)
 			}
 		}
 	}
