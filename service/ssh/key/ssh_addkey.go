@@ -37,6 +37,8 @@ func NewAdder(key string) model.Service {
 func NewShower() model.Service {
 	return model.Service{
 		Name: "amazeeio-ssh-agent-show-keys",
+		Discrete: true,
+		Output: true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
