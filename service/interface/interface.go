@@ -169,7 +169,9 @@ func Stop(Service *Service) error {
 
 	container, err := GetDetails(Service)
 	if err != nil {
-		fmt.Printf("Not running %v\n", Service.Name)
+		if !Service.Discrete {
+			fmt.Printf("Not running %v\n", Service.Name)
+		}
 		return nil
 	}
 
