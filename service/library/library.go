@@ -123,7 +123,7 @@ func Status(c Config) {
 
 	for Label, Service := range c.Services {
 		if !Service.Disabled && !Service.Discrete {
-			if s, _ := model.Status(&Service); s {
+			if s, _ := Service.Status(); s {
 				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
 			} else {
 				fmt.Printf("[ ] %v is not running\n", Label)
@@ -164,7 +164,7 @@ func Down(c Config) {
 
 	for _, Service := range c.Services {
 		if !Service.Disabled {
-			model.Stop(&Service)
+			Service.Stop()
 		}
 	}
 
@@ -223,7 +223,7 @@ func Up(c Config) {
 	for _, service := range c.SortedServices {
 		s := c.Services[service]
 		if !s.Disabled {
-			model.Start(&s)
+			s.Stop()
 		}
 	}
 

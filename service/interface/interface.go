@@ -33,7 +33,7 @@ type Service struct {
 	NetworkConfig network.NetworkingConfig
 }
 
-func Setup(Service *Service) error {
+func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
 		return nil
 	}
@@ -54,9 +54,9 @@ func Setup(Service *Service) error {
 	return nil
 }
 
-func Start(Service *Service) ([]byte, error) {
+func (Service *Service) Start() ([]byte, error) {
 
-	s, e := Status(Service)
+	s, e := Service.Status()
 	if e != nil {
 		fmt.Println(e)
 		return []byte{}, e
@@ -91,7 +91,7 @@ func Start(Service *Service) ([]byte, error) {
 	return []byte{}, nil
 }
 
-func Status(Service *Service) (bool, error) {
+func (Service *Service) Status() (bool, error) {
 
 	// If the container doesn't persist we should invalidate the status check.
 	if Service.HostConfig.AutoRemove {
@@ -137,7 +137,7 @@ func GetDetails(Service *Service) (types.Container, error) {
 	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", Service.Name))
 }
 
-func Clean(Service *Service) error {
+func (Service *Service) Clean() error {
 
 	if Service.Name == "" {
 		return nil
@@ -165,7 +165,7 @@ func Clean(Service *Service) error {
 	return nil
 }
 
-func Stop(Service *Service) error {
+func (Service *Service) Stop() error {
 
 	container, err := GetDetails(Service)
 	if err != nil {
@@ -188,7 +188,7 @@ func Stop(Service *Service) error {
 	return nil
 }
 
-//var _ DockerService = (*Service)(nil)
+var _ DockerService = (*Service)(nil)
 
 func DockerContainerList() ([]types.Container, error) {
 	ctx := context.Background()
@@ -298,7 +298,7 @@ func DockerRun(Service *Service) ([]byte, error) {
 
 	// If we don't have the image available in the registry, pull it in!
 	if !imageFound {
-		Setup(Service)
+		Service.Setup()
 	}
 
 	// All pygmy services need some sort of reference for pygmy to consume:

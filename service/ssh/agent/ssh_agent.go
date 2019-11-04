@@ -31,7 +31,7 @@ func New() model.Service {
 
 func List() []byte {
 	i := key.NewShower()
-	r, _ := model.Start(&i)
+	r, _ := i.Start()
 	return r
 }
 
