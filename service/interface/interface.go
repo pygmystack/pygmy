@@ -13,6 +13,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 )
 
@@ -390,4 +391,29 @@ func DockerNetworkConnect(network string, containerName string) error {
 		return err
 	}
 	return nil
+}
+
+func DockerVolumeExists(name string) (bool, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return false, err
+	}
+	_, _, err = cli.VolumeInspectWithRaw(ctx, name)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func DockerVolumeCreate(name string) (types.Volume, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return types.Volume{}, err
+	}
+	return cli.VolumeCreate(ctx, volume.VolumesCreateBody{
+		Name:       name,
+	})
 }
