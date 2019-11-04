@@ -178,7 +178,7 @@ func (resolv Resolv) Clean() {
 
 func (resolv Resolv) Status() bool {
 
-	if runtime.GOOS == "Darwin" {
+	if runtime.GOOS == "darwin" {
 		return resolv.statusFile() && resolv.statusNet()
 	}
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
@@ -207,15 +207,11 @@ func (resolv Resolv) statusFile() bool {
 }
 
 func (resolv Resolv) statusNet() bool {
-	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig")
-	ifConfigResp, ifConfigErr := ifConfigCmd.Output()
+	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig lo0")
+	out, ifConfigErr := ifConfigCmd.Output()
 	if ifConfigErr != nil {
 		fmt.Println(ifConfigErr.Error())
+		return false
 	}
-	for _, v := range strings.Split(string(ifConfigResp), "\n") {
-		if strings.Contains(v, "172.16.172.16") {
-			return true
-		}
-	}
-	return false
+	return strings.Contains(string(out), "172.16.172.16")
 }
