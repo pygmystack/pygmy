@@ -99,8 +99,18 @@ func Clean(c Config) {
 	Containers, _ := model.DockerContainerList()
 
 	for _, Container := range Containers {
-		//model.Clean(&Container)
-		fmt.Println(Container)
+		if l := Container.Labels["pygmy"]; l == "pygmy" {
+
+			err := model.DockerKill(Container.ID)
+			if err == nil {
+				fmt.Printf("Killed  %v.\n", Container.Names[0])
+			}
+
+			err = model.DockerRemove(Container.ID)
+			if err == nil {
+				fmt.Printf("Removed %v.\n", Container.Names[0])
+			}
+		}
 	}
 
 	for _, resolver := range c.Resolvers {
