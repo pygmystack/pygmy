@@ -10,10 +10,10 @@ import (
 )
 
 type Resolv struct {
-	Name     string
-	File     string
-	Contents string
-	Path     string
+	Name string `yaml:"name"`
+	Path string `yaml:"path"`
+	Data string `yaml:"contents"`
+	File string `yaml:"file"`
 }
 
 type resolv interface {
@@ -23,18 +23,14 @@ type resolv interface {
 	Status() bool
 }
 
-func New(d struct {
-	Name     string
-	Contents string
-	Path     string
-}) Resolv {
+func New(d Resolv) Resolv {
 	p := strings.Split(d.Path, string(os.PathSeparator))
 	filename := p[len(p)-1]
 	return Resolv{
-		Name: 		d.Name,
-		File:     filename,
-		Contents: d.Contents,
-		Path:     strings.Replace(d.Path, string(os.PathSeparator)+filename, "", -1),
+		Name: d.Name,
+		File: filename,
+		Data: d.Data,
+		Path: strings.Replace(d.Path, string(os.PathSeparator)+filename, "", -1),
 	}
 }
 
@@ -72,7 +68,7 @@ func (resolv Resolv) Configure() {
 				if error != nil {
 					fmt.Println(error)
 				}
-				_, error = tmpFile.WriteString(resolv.Contents)
+				_, error = tmpFile.WriteString(resolv.Data)
 				if error != nil {
 					fmt.Println(error)
 				}
@@ -99,7 +95,7 @@ func (resolv Resolv) Configure() {
 				fmt.Println(error)
 			}
 			_, error = tmpFile.WriteString(string(cmdOut))
-			_, error = tmpFile.WriteString(resolv.Contents)
+			_, error = tmpFile.WriteString(resolv.Data)
 			if error != nil {
 				fmt.Println(error)
 			}
@@ -139,8 +135,8 @@ func (resolv Resolv) Clean() {
 		if cmdErr != nil {
 			fmt.Println(cmdErr.Error())
 		}
-		if strings.Contains(string(cmdOut), resolv.Contents) {
-			newFile := strings.Replace(string(cmdOut), resolv.Contents, "", -1)
+		if strings.Contains(string(cmdOut), resolv.Data) {
+			newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
 			tmpFile, error := ioutil.TempFile("", "pygmy-")
 			if error != nil {
 				fmt.Println(error)
@@ -189,7 +185,7 @@ func (resolv Resolv) Status() bool {
 		if cmdErr != nil {
 			fmt.Println(cmdErr.Error())
 		}
-		if strings.Contains(string(cmdOut), resolv.Contents) {
+		if strings.Contains(string(cmdOut), resolv.Data) {
 			return true
 		}
 	}
