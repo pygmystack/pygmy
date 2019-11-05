@@ -168,6 +168,9 @@ func (Service *Service) Clean() error {
 
 func (Service *Service) Stop() error {
 
+	if Service.Name == "" {
+		return nil
+	}
 	container, err := GetDetails(Service)
 	if err != nil {
 		if !Service.Discrete {
