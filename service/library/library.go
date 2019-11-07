@@ -103,12 +103,12 @@ func Clean(c Config) {
 
 			err := model.DockerKill(Container.ID)
 			if err == nil {
-				fmt.Printf("Killed  %v.\n", Container.Names[0])
+				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
 			}
 
 			err = model.DockerRemove(Container.ID)
 			if err == nil {
-				fmt.Printf("Removed %v.\n", Container.Names[0])
+				fmt.Printf("Successfully removed %v.\n", Container.Names[0])
 			}
 		}
 	}
