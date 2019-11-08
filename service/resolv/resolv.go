@@ -10,10 +10,10 @@ import (
 )
 
 type Resolv struct {
-	Name string `yaml:"name"`
-	Path string `yaml:"path"`
 	Data string `yaml:"contents"`
 	File string `yaml:"file"`
+	Folder string `yaml:"folder"`
+	Name string `yaml:"name"`
 }
 
 type resolv interface {
@@ -23,15 +23,8 @@ type resolv interface {
 	Status() bool
 }
 
-func New(d Resolv) Resolv {
-	p := strings.Split(d.Path, string(os.PathSeparator))
-	filename := p[len(p)-1]
-	return Resolv{
-		Name: d.Name,
-		File: filename,
-		Data: d.Data,
-		Path: strings.Replace(d.Path, string(os.PathSeparator)+filename, "", -1),
-	}
+func New(resolv Resolv) Resolv {
+	return resolv
 }
 
 func run(args []string) error {
@@ -45,15 +38,15 @@ func (resolv Resolv) Configure() {
 	if resolv.Status() {
 		fmt.Printf("Already configured resolvr %v\n", resolv.Name)
 	} else {
-		fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
 			// Create the directory if it doesn't exist.
-			if _, err := os.Stat(resolv.Path); os.IsNotExist(err) {
-				err := run([]string{"sudo", "mkdir", "-p", resolv.Path})
+			if _, err := os.Stat(resolv.Folder); os.IsNotExist(err) {
+				err := run([]string{"sudo", "mkdir", "-p", resolv.Folder})
 				if err != nil {
 					fmt.Println(err)
 				}
-				err = run([]string{"sudo", "chmod", "777", resolv.Path})
+				err = run([]string{"sudo", "chmod", "777", resolv.Folder})
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -84,6 +77,9 @@ func (resolv Resolv) Configure() {
 			cmdOut, cmdErr := cmd.Output()
 			if cmdErr != nil {
 				fmt.Println(cmdErr.Error())
+				fmt.Println("/bin/sh", "-c", "cat "+fullPath)
+				fmt.Printf("|%v|%v|%v|%v", resolv.Name, resolv.Folder, resolv.File, resolv.Data)
+				//fmt.Println(11111)
 			}
 
 			tmpFile, error := ioutil.TempFile("", "pygmy-")
@@ -127,7 +123,7 @@ func (resolv Resolv) Configure() {
 
 func (resolv Resolv) Clean() {
 
-	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); err == nil {
 
 		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
@@ -193,7 +189,7 @@ func (resolv Resolv) Status() bool {
 	if runtime.GOOS == "darwin" {
 		return resolv.statusFile() && resolv.statusNet()
 	}
-	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); err == nil {
 
 		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
@@ -211,7 +207,7 @@ func (resolv Resolv) Status() bool {
 }
 
 func (resolv Resolv) statusFile() bool {
-	fullPath := fmt.Sprintf("%v%v%v", resolv.Path, string(os.PathSeparator), resolv.File)
+	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); !os.IsExist(err) {
 		return true
 	}

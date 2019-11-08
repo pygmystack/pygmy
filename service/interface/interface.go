@@ -73,7 +73,7 @@ func (Service *Service) Start() ([]byte, error) {
 		output, err := DockerRun(Service)
 
 		if Service.Output {
-			fmt.Println(string(output))
+			fmt.Println(strings.Trim(string(output), "\n"))
 		}
 
 		if c, _ := GetDetails(Service); c.ID != "" {
