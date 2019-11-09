@@ -10,14 +10,8 @@ import (
 	"sync"
 )
 
-func New() Resolv {
-
-	// Windows is ignored - the implementation is different.
-	return Resolv{
-		File:     "",
-		Contents: "",
-		Path:     "",
-	}
+func New(resolv Resolv) Resolv {
+	return resolv
 }
 
 func runCommand(args []string) ([]byte, error) {

@@ -1,3 +1,5 @@
+// +build !windows
+
 package resolv
 
 import (
@@ -8,20 +10,6 @@ import (
 	"runtime"
 	"strings"
 )
-
-type Resolv struct {
-	Data string `yaml:"contents"`
-	File string `yaml:"file"`
-	Folder string `yaml:"folder"`
-	Name string `yaml:"name"`
-}
-
-type resolv interface {
-	Clean()
-	Configure()
-	New() Resolv
-	Status() bool
-}
 
 func New(resolv Resolv) Resolv {
 	return resolv
