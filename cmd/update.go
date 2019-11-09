@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/fubarhouse/pygmy/v1/service/library"
 	"github.com/spf13/cobra"
 )
 

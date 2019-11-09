@@ -1,22 +1,27 @@
 // +build darwin linux
 
-package ssh_addkey
+package key
 
 import (
 	"fmt"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	model "github.com/fubarhouse/pygmy/v1/service/interface"
 )
 
 func NewAdder(key string) model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-ssh-agent-add-key",
+		Name: "amazeeio-ssh-agent-add-key",
+		Discrete: true,
+		Output: true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
 				"ssh-add",
 				key,
+			},
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -31,12 +36,17 @@ func NewAdder(key string) model.Service {
 
 func NewShower() model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-ssh-agent-show-keys",
+		Name: "amazeeio-ssh-agent-show-keys",
+		Discrete: true,
+		Output: true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
 				"ssh-add",
 				"-l",
+			},
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
 			},
 		},
 		HostConfig: container.HostConfig{

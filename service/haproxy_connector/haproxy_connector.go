@@ -4,29 +4,29 @@ import (
 	"context"
 
 	"github.com/docker/docker/client"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/v1/service/interface"
 )
 
-func Connect() error {
-	if s, _ := Connected(); !s {
-		return model.DockerNetworkConnect("amazeeio-network", "amazeeio-haproxy")
+func Connect(containerName string, network string) error {
+	if s, _ := Connected(containerName, network); !s {
+		return model.DockerNetworkConnect(network, containerName)
 	}
 	return nil
 }
 
-func Connected() (bool, error) {
+func Connected(containerName string, network string) (bool, error) {
 
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return false, err
 	}
-	x, err := cli.NetworkInspect(ctx, "amazeeio-network")
+	x, err := cli.NetworkInspect(ctx, network)
 	if err != nil {
 		return false, err
 	}
 	for _, container := range x.Containers {
-		if container.Name == "amazeeio-haproxy" {
+		if container.Name == containerName {
 			return true, nil
 		}
 	}

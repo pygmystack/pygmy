@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/fubarhouse/pygmy/v1/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
@@ -32,7 +32,8 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		c.Key, _ = cmd.Flags().GetString("key")
-		library.SshKeyAdd(c)
+
+		library.SshKeyAdd(c, c.Key)
 
 	},
 }

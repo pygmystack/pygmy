@@ -8,18 +8,10 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
-
-	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
-func New() Resolv {
-
-	// Windows is ignored - the implementation is different.
-	return Resolv{
-		File:     "",
-		Contents: "",
-		Path:     "",
-	}
+func New(resolv Resolv) Resolv {
+	return resolv
 }
 
 func runCommand(args []string) ([]byte, error) {
@@ -56,20 +48,20 @@ func runCommand(args []string) ([]byte, error) {
 
 }
 
-func (r *Resolv) Clean() {
+func (resolv Resolv) Clean() {
 	_, error := runCommand([]string{"Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain"})
 	if error != nil {
-		model.Red(error.Error())
+		fmt.Println(error.Error())
 	}
 }
-func (r *Resolv) Configure() {
+func (resolv Resolv) Configure() {
 	_, error := runCommand([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
 	if error != nil {
-		model.Red(error.Error())
+		fmt.Println(error.Error())
 	}
 }
 
-func (r *Resolv) Status() bool {
+func (resolv Resolv) Status() bool {
 	data, error := runCommand([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
 	if error != nil {
 		return false

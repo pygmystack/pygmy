@@ -15,7 +15,7 @@
 package cmd
 
 import (
-	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/fubarhouse/pygmy/v1/service/library"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +25,7 @@ var statusCmd = &cobra.Command{
 	Example: "pygmy status",
 	Short: "Report status of the pygmy services",
 	Long: `Loop through all of pygmy's services and identify the present state.
-This inslcudes the docker services, the resolver and SSH key status`,
+This includes the docker services, the resolver and SSH key status`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		library.Status(c)

@@ -3,7 +3,7 @@ package amazee
 import (
 	"fmt"
 	"github.com/docker/docker/api/types"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/v1/service/interface"
 	"strings"
 )
 
@@ -18,7 +18,7 @@ func AmazeeImagePull() {
 // which is provided as a container provided by the
 // Docker API.
 func pull(image string) (error) {
-	return model.DockerImagePull(image)
+	return model.DockerPull(image)
 }
 
 // list will return all running containers,

@@ -3,15 +3,17 @@ package haproxy
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	model "github.com/fubarhouse/pygmy/v1/service/interface"
 )
 
 func New() model.Service {
 	return model.Service{
-		ContainerName: "amazeeio-haproxy",
+		Name: "amazeeio-haproxy",
 		Config:        container.Config{
 			Image:    "amazeeio/haproxy",
+			Labels:		map[string]string{
+				"pygmy": "pygmy",
+			},
 
 		},
 		HostConfig:    container.HostConfig{
@@ -21,20 +23,6 @@ func New() model.Service {
 				Name              string
 				MaximumRetryCount int
 			}{Name: "always", MaximumRetryCount: 0},
-			PortBindings: nat.PortMap{
-				"80/tcp": []nat.PortBinding{
-					{
-						HostIP: "",
-						HostPort: "80",
-					},
-				},
-				"443/tcp": []nat.PortBinding{
-					{
-						HostIP: "",
-						HostPort: "443",
-					},
-				},
-			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

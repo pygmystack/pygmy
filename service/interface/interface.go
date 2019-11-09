@@ -13,8 +13,8 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
-	"github.com/logrusorgru/aurora"
 )
 
 type DockerService interface {
@@ -25,10 +25,189 @@ type DockerService interface {
 }
 
 type Service struct {
-	ContainerName string
+	Name          string
+	Disabled      bool
+	Discrete      bool
+	Output        bool
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig
+}
+
+func (Service *Service) Setup() error {
+	if Service.Config.Image == "" {
+		return nil
+	}
+
+	images, _ := DockerImageList()
+	for _, image := range images {
+		if strings.Contains(fmt.Sprint(image.RepoTags), Service.Config.Image) {
+			return nil
+		}
+	}
+
+	err := DockerPull(Service.Config.Image)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return nil
+}
+
+func (Service *Service) Start() ([]byte, error) {
+
+	s, e := Service.Status()
+	if e != nil {
+		fmt.Println(e)
+		return []byte{}, e
+	}
+
+	if s && !Service.HostConfig.AutoRemove && !Service.Discrete {
+		fmt.Printf("Already running %v\n", Service.Name)
+		return []byte{}, nil
+	}
+
+	if !s || Service.HostConfig.AutoRemove {
+
+		output, err := DockerRun(Service)
+
+		if Service.Output {
+			fmt.Println(strings.Trim(string(output), "\n"))
+		}
+
+		if c, _ := GetDetails(Service); c.ID != "" {
+			if !Service.HostConfig.AutoRemove || !Service.Discrete {
+				fmt.Printf("Successfully started %v\n", Service.Name)
+			}
+			return output, nil
+		}
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		fmt.Printf("Failed to run %v.\n", Service.Name)
+	}
+
+	return []byte{}, nil
+}
+
+func (Service *Service) Status() (bool, error) {
+
+	// If the container doesn't persist we should invalidate the status check.
+	if Service.HostConfig.AutoRemove {
+		return true, nil
+	}
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		Quiet: true,
+	})
+	for _, container := range containers {
+		for _, name := range container.Names {
+			if strings.Contains(name, Service.Name) {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
+
+}
+
+func GetDetails(Service *Service) (types.Container, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		Quiet: true,
+	})
+
+	for _, container := range containers {
+		for _, name := range container.Names {
+			if strings.Contains(name, Service.Name) {
+				return container, nil
+			}
+		}
+	}
+	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", Service.Name))
+}
+
+func (Service *Service) Clean() error {
+
+	if Service.Name == "" {
+		return nil
+	}
+	names := []string{"/" + Service.Name, Service.Name}
+
+	for _, name := range names {
+		if e := DockerKill(name); e == nil {
+			if !Service.HostConfig.AutoRemove {
+				fmt.Printf("Successfully killed %v\n", name)
+			}
+		}
+		if e := DockerStop(name); e == nil {
+			if !Service.HostConfig.AutoRemove {
+				fmt.Printf("Successfully stopped %v\n", name)
+			}
+		}
+		if e := DockerRemove(name); e != nil {
+			if !Service.HostConfig.AutoRemove {
+				fmt.Printf("Successfully removed %v\n", name)
+			}
+		}
+	}
+
+	return nil
+}
+
+func (Service *Service) Stop() error {
+
+	if Service.Name == "" {
+		return nil
+	}
+	container, err := GetDetails(Service)
+	if err != nil {
+		if !Service.Discrete {
+			fmt.Printf("Not running %v\n", Service.Name)
+		}
+		return nil
+	}
+
+	for _, name := range container.Names {
+		if e := DockerStop(container.ID); e == nil {
+			if e := DockerRemove(container.ID); e == nil {
+				if !Service.Discrete {
+					fmt.Printf("Successfully removed %v\n", name)
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+var _ DockerService = (*Service)(nil)
+
+func DockerContainerList() ([]types.Container, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	if err != nil {
+		return []types.Container{}, err
+	}
+
+	return containers, nil
+
 }
 
 func DockerImageList() ([]types.ImageSummary, error) {
@@ -47,7 +226,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 
 }
 
-func DockerImagePull(image string) (error) {
+func DockerPull(image string) (error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -94,28 +273,7 @@ func DockerImagePull(image string) (error) {
 	return nil
 }
 
-func (ds *Service) Setup() error {
-	if ds.Config.Image == "" {
-		return nil
-	}
-
-	images, _ := DockerImageList()
-	for _, image := range images {
-		if strings.Contains(fmt.Sprint(image.RepoTags), ds.Config.Image) {
-			return nil
-		}
-	}
-
-	err := DockerImagePull(ds.Config.Image)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return nil
-}
-
-func DockerRun(ds *Service) ([]byte, error) {
+func DockerRun(Service *Service) ([]byte, error) {
 
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -133,7 +291,7 @@ func DockerRun(ds *Service) ([]byte, error) {
 	for _, image := range images {
 
 		// Check if it contains the desired string
-		if strings.Contains(ds.Config.Image, fmt.Sprint(image.RepoTags)) {
+		if strings.Contains(Service.Config.Image, fmt.Sprint(image.RepoTags)) {
 
 			// We found the image, we don't need to pull it into the registry.
 			imageFound = true
@@ -144,10 +302,18 @@ func DockerRun(ds *Service) ([]byte, error) {
 
 	// If we don't have the image available in the registry, pull it in!
 	if !imageFound {
-		ds.Setup()
+		Service.Setup()
 	}
 
-	resp, err := cli.ContainerCreate(ctx, &ds.Config, &ds.HostConfig, &ds.NetworkConfig, ds.ContainerName)
+	// All pygmy services need some sort of reference for pygmy to consume:
+	if Service.Config.Labels["pygmy"] != "pygmy" {
+		if Service.Config.Labels == nil {
+			Service.Config.Labels = make(map[string]string)
+		}
+		Service.Config.Labels["pygmy"] = "pygmy"
+	}
+
+	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, Service.Name)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -220,152 +386,40 @@ func DockerNetworkCreate(name string) error {
 	return nil
 }
 
-func DockerNetworkConnect(network string, container string) error {
+func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	err = cli.NetworkConnect(ctx, network, container, nil)
+	err = cli.NetworkConnect(ctx, network, containerName, nil)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (ds *Service) Start() ([]byte, error) {
-
-	s, e := ds.Status()
-	if e != nil {
-		fmt.Println(e)
-		return []byte{}, e
-	}
-
-
-	if s && !ds.HostConfig.AutoRemove {
-		Green(fmt.Sprintf("Already running %v", ds.ContainerName))
-		return []byte{}, nil
-	}
-
-	if !s || ds.HostConfig.AutoRemove {
-
-		output, err := DockerRun(ds)
-
-		if c, _ := ds.GetDetails(); c.ID != "" {
-			if !ds.HostConfig.AutoRemove {
-				Green(fmt.Sprintf("Successfully started %v", ds.ContainerName))
-			}
-			return output, nil
-		}
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else {
-		Red(fmt.Sprintf("Failed to run %v.", ds.ContainerName))
-	}
-
-	return []byte{}, nil
-}
-
-func (ds *Service) Status() (bool, error) {
-
-	// amazeeio-ssh-agent-add-key will not show in `docker ps`.
-	if ds.ContainerName == "amazeeio-ssh-agent-add-key" {
-		return true, nil
-	}
+func DockerVolumeExists(name string) (bool, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Println(err)
+		return false, err
 	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
-		Quiet: true,
-	})
-	for _, container := range containers {
-		for _, name := range container.Names {
-			if strings.Contains(name, ds.ContainerName) {
-				return true, nil
-			}
-		}
+	_, _, err = cli.VolumeInspectWithRaw(ctx, name)
+	if err != nil {
+		return false, err
 	}
 
-	return false, nil
-
+	return true, nil
 }
 
-func (ds *Service) GetDetails() (types.Container, error) {
+func DockerVolumeCreate(name string) (types.Volume, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Println(err)
+		return types.Volume{}, err
 	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
-		Quiet: true,
+	return cli.VolumeCreate(ctx, volume.VolumesCreateBody{
+		Name:       name,
 	})
-
-	for _, container := range containers {
-		for _, name := range container.Names {
-			if strings.Contains(name, ds.ContainerName) {
-				return container, nil
-			}
-		}
-	}
-	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", ds.ContainerName))
 }
-
-func (ds *Service) Clean() error {
-
-	if ds.ContainerName == "" {
-		return nil
-	}
-	names := []string{"/" + ds.ContainerName, ds.ContainerName}
-
-	for _, name := range names {
-		if e := DockerKill(name); e == nil {
-			if !ds.HostConfig.AutoRemove {
-				Green(fmt.Sprintf("%v container killed", name))
-			}
-		}
-		if e := DockerStop(name); e == nil {
-			if !ds.HostConfig.AutoRemove {
-				Green(fmt.Sprintf("%v container stopped", name))
-			}
-		}
-		if e := DockerRemove(name); e != nil {
-			if !ds.HostConfig.AutoRemove {
-				Green(fmt.Sprintf("%v container successfully removed", name))
-			}
-		}
-	}
-
-	return nil
-}
-
-func (ds *Service) Stop() error {
-
-	container, err := ds.GetDetails()
-	if err != nil {
-		Green(fmt.Sprintf("Not running %v", ds.ContainerName))
-		return nil
-	}
-
-	for _, name := range container.Names {
-		if e := DockerStop(container.ID); e == nil {
-			if e := DockerRemove(container.ID); e == nil {
-				Green(fmt.Sprintf("%v container successfully removed", name))
-			}
-		}
-	}
-
-	return nil
-}
-
-func Red(input string) {
-	fmt.Println(aurora.Red(input))
-}
-
-func Green(input string) {
-	fmt.Println(aurora.Green(input))
-}
-
-var _ DockerService = (*Service)(nil)
