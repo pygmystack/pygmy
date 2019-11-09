@@ -3,6 +3,8 @@
 package key
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy/v1/service/interface"
@@ -26,7 +28,7 @@ func NewAdder(key string) model.Service {
 		HostConfig: container.HostConfig{
 			IpcMode:     "private",
 			AutoRemove:  true,
-			Binds:       []string{fmt.Sprintf("%v:/%v", key, key)},
+			Binds:       []string{fmt.Sprintf("%v:/key", key)},
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
 		NetworkConfig: network.NetworkingConfig{},

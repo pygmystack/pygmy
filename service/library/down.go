@@ -14,7 +14,7 @@ func Down(c Config) {
 
 	if !c.SkipResolver {
 		for _, resolver := range c.Resolvers {
-			resolv.New(resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}).Clean()
+			resolv.New(resolver).Clean()
 		}
 	}
 }

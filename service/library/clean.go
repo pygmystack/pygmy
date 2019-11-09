@@ -28,6 +28,6 @@ func Clean(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		resolv.New(resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}).Clean()
+		resolv.New(resolver).Clean()
 	}
 }

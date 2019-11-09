@@ -7,6 +7,7 @@ import (
 
 	"github.com/fubarhouse/pygmy/v1/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/v1/service/haproxy"
+	model "github.com/fubarhouse/pygmy/v1/service/interface"
 	"github.com/fubarhouse/pygmy/v1/service/mailhog"
 	"github.com/fubarhouse/pygmy/v1/service/resolv"
 	"github.com/fubarhouse/pygmy/v1/service/ssh/agent"
@@ -44,6 +45,8 @@ func Setup(c *Config) {
 		viper.SetDefault("resolvers", []resolv.Resolv{
 			ResolvGeneric,
 		})
+	} else if runtime.GOOS == "windows" {
+		viper.SetDefault("resolvers", []resolv.Resolv{})
 	}
 
 	e := viper.Unmarshal(&c)
@@ -55,6 +58,9 @@ func Setup(c *Config) {
 	// If Services have been provided in complete or partially,
 	// this will override the defaults allowing any value to
 	// be changed by the user in the configuration file ~/.pygmy.yml
+	if c.Services == nil {
+		c.Services = make(map[string]model.Service, 6)
+	}
 	c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
 	c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(c.Key), c.Services["amazeeio-ssh-agent-add-key"])
 	c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
