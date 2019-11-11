@@ -66,8 +66,6 @@ func (resolv Resolv) Configure() {
 			if cmdErr != nil {
 				fmt.Println(cmdErr.Error())
 				fmt.Println("/bin/sh", "-c", "cat "+fullPath)
-				fmt.Printf("|%v|%v|%v|%v", resolv.Name, resolv.Folder, resolv.File, resolv.Data)
-				//fmt.Println(11111)
 			}
 
 			tmpFile, error := ioutil.TempFile("", "pygmy-")
@@ -112,36 +110,40 @@ func (resolv Resolv) Configure() {
 func (resolv Resolv) Clean() {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
-	if _, err := os.Stat(fullPath); err == nil {
+	if runtime.GOOS == "linux" {
+		if _, err := os.Stat(fullPath); err == nil {
 
-		cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
-		cmdOut, cmdErr := cmd.Output()
-		if cmdErr != nil {
-			fmt.Println(cmdErr.Error())
+			cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+			cmdOut, cmdErr := cmd.Output()
+			if cmdErr != nil {
+				fmt.Println(cmdErr.Error())
+			}
+			if strings.Contains(string(cmdOut), resolv.Data) {
+				newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
+				tmpFile, error := ioutil.TempFile("", "pygmy-")
+				if error != nil {
+					fmt.Println(error)
+				}
+				error = os.Chmod(tmpFile.Name(), 0777)
+				if error != nil {
+					fmt.Println(error)
+				}
+				_, error = tmpFile.WriteString(newFile)
+				if error != nil {
+					fmt.Println(error)
+				}
+				err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
 		}
-		if strings.Contains(string(cmdOut), resolv.Data) {
-			newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
-			tmpFile, error := ioutil.TempFile("", "pygmy-")
-			if error != nil {
-				fmt.Println(error)
-			}
-			error = os.Chmod(tmpFile.Name(), 0777)
-			if error != nil {
-				fmt.Println(error)
-			}
-			_, error = tmpFile.WriteString(newFile)
-			if error != nil {
-				fmt.Println(error)
-			}
-			err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
-			if err != nil {
-				fmt.Println(err)
-			}
-		}
+	}
 
-		if runtime.GOOS == "darwin" {
+	if runtime.GOOS == "darwin" {
 
-			if strings.HasPrefix(fullPath, "/etc/resolver/") {
+		if strings.HasPrefix(fullPath, "/etc/resolver/") {
+			if _, err := os.Stat(fullPath); err == nil {
 				err := run([]string{"sudo", "rm", fullPath})
 				if err != nil {
 					fmt.Println(err)
@@ -152,10 +154,15 @@ func (resolv Resolv) Clean() {
 					fmt.Println("Successfully removed resolver file")
 				}
 			}
+		}
+	}
 
+	if runtime.GOOS == "darwin" {
+
+		if resolv.statusNet() {
 			fmt.Println("Removing loopback alias IP (may require sudo)")
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
-			err = ifConfig.Run()
+			err := ifConfig.Run()
 			if err != nil {
 				fmt.Println("error removing loopback UP alias", err)
 			} else {
@@ -163,14 +170,14 @@ func (resolv Resolv) Clean() {
 					fmt.Println("Successfully removed loopback alias IP.")
 				}
 			}
+		}
 
-			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
-			err = killAll.Run()
-			if err != nil {
-				fmt.Println("error restarting mDNSResponder")
-			} else {
-				fmt.Println("Successfully restarted mDNSResponder")
-			}
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		err := killAll.Run()
+		if err != nil {
+			fmt.Println("error restarting mDNSResponder")
+		} else {
+			fmt.Println("Successfully restarted mDNSResponder")
 		}
 	}
 
