@@ -14,24 +14,11 @@ func Status(c Config) {
 	Setup(&c)
 
 	for Label, Service := range c.Services {
-		if !Service.Disabled && !Service.Discrete {
+		if !Service.Disabled && !Service.Discrete && Service.Name != "" {
 			if s, _ := Service.Status(); s {
 				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
 			} else {
-				fmt.Printf("[ ] %v is not running\n", Label)
-			}
-		}
-	}
-
-	{
-		Containers, _ := model.DockerContainerList()
-		for _, Container := range Containers {
-			if Container.State == "running" {
-				if e := c.Services[fmt.Sprint(Container.Names)]; e.Name == "" {
-					if f := Container.Labels["pygmy"]; f == "pygmy" {
-						fmt.Printf("[!] %v: Still running as container %v\n", Container.Image, Container.Names[0])
-					}
-				}
+				fmt.Printf("[ ] %v is not running\n", Service.Name)
 			}
 		}
 	}
