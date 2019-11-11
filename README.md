@@ -16,17 +16,11 @@ We welcome testers of this tool. You will probably be an existing user of Pygmy 
 can verify the same functionality, or perhaps who has had trouble installing Pygmy in the
 past on Windows.
 
-## Handling the old Pygmy
-
-You should run `pygmy down` to ensure that Pygmy is not running. It is not possible
-to run both together using the default configuration.
+## Is Pygmy running?
 
 These instructions will currently install the new version as `pygmy-go` so that the
-old version is still available. Of course you can remove or move the old version with
-`mv /usr/local/bin/pygmy /usr/local/bin/pygmy-ruby` or `rm /usr/local/bin/pygmy`).
-
-With no Pygmy running, you should get "connection refused" when attempting to 
-connect to the amazee network.
+old version is still available if you have installed it. With no Pygmy running,
+you should get "connection refused" when attempting to connect to the local amazee network.
 
 ```
 curl --HEAD http://myproject.docker.amazee.io
