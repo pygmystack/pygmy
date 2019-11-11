@@ -152,25 +152,28 @@ func (resolv Resolv) Clean() {
 					fmt.Println("Successfully removed resolver file")
 				}
 			}
+		}
+	}
 
-			fmt.Println("Removing loopback alias IP (may require sudo)")
-			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
-			err = ifConfig.Run()
-			if err != nil {
-				fmt.Println("error removing loopback UP alias", err)
-			} else {
-				if !resolv.statusNet() {
-					fmt.Println("Successfully removed loopback alias IP.")
-				}
-			}
+	if runtime.GOOS == "darwin" {
 
-			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
-			err = killAll.Run()
-			if err != nil {
-				fmt.Println("error restarting mDNSResponder")
-			} else {
-				fmt.Println("Successfully restarted mDNSResponder")
+		fmt.Println("Removing loopback alias IP (may require sudo)")
+		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
+		err := ifConfig.Run()
+		if err != nil {
+			fmt.Println("error removing loopback UP alias", err)
+		} else {
+			if !resolv.statusNet() {
+				fmt.Println("Successfully removed loopback alias IP.")
 			}
+		}
+
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		err = killAll.Run()
+		if err != nil {
+			fmt.Println("error restarting mDNSResponder")
+		} else {
+			fmt.Println("Successfully restarted mDNSResponder")
 		}
 	}
 
