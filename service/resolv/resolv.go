@@ -147,9 +147,6 @@ func (resolv Resolv) Clean() {
 				err := run([]string{"sudo", "rm", fullPath})
 				if err != nil {
 					fmt.Println(err)
-				}
-				if err = os.Remove(fullPath); err != nil {
-					fmt.Println(err)
 				} else {
 					fmt.Println("Successfully removed resolver file")
 				}
