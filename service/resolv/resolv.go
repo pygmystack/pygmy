@@ -141,7 +141,11 @@ func (resolv Resolv) Clean() {
 
 		if runtime.GOOS == "darwin" {
 
-			if fullPath == "/etc/resolver/docker.amazee.io" {
+			if strings.HasPrefix(fullPath, "/etc/resolver/") {
+				err := run([]string{"sudo", "rm", fullPath})
+				if err != nil {
+					fmt.Println(err)
+				}
 				if err = os.Remove(fullPath); err != nil {
 					fmt.Println(err)
 				} else {
