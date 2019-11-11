@@ -57,6 +57,10 @@ func (Service *Service) Setup() error {
 
 func (Service *Service) Start() ([]byte, error) {
 
+	if Service.Name == "" {
+		return []byte{}, nil
+	}
+
 	s, e := Service.Status()
 	if e != nil {
 		fmt.Println(e)
