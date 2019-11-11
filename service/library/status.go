@@ -23,6 +23,19 @@ func Status(c Config) {
 		}
 	}
 
+	{
+		Containers, _ := model.DockerContainerList()
+		for _, Container := range Containers {
+			if Container.State == "running" {
+				if e := c.Services[fmt.Sprint(Container.Names)]; e.Name == "" {
+					if f := Container.Labels["pygmy"]; f == "pygmy" {
+						fmt.Printf("[!] %v: Still running as container %v\n", Container.Image, Container.Names[0])
+					}
+				}
+			}
+		}
+	}
+
 	for Network, Containers := range c.Networks {
 		netStat, _ := network.Status(Network)
 		if netStat {
