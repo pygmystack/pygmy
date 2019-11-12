@@ -2,16 +2,75 @@
 
 [![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)]()
 
-> This repository is still very experimental, use at your own risk.
+This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy.readthedocs.io/en/master/)
+currently written in Ruby. The goal is to provide a better cross-platform experience
+for various users running Lagoon, as well as much greater control over configuration
+options via YAML.
 
-`pygmy` is the single tool needed to get the local [amazee.io](https://amazee.io) Docker Drupal Development Environment running on your Linux based system. Its built to work with [Docker for Mac](https://docs.docker.com/docker-for-mac/)! (quite a lot for such a [small whale](https://en.wikipedia.org/wiki/Pygmy_sperm_whale) 🐳)
+Please see the existing [Pygmy documentation](https://pygmy.readthedocs.io) for more information
+about Pygmy as this is designed to be a drop-in replacement.
 
-**What `pygmy` will handle for you:**
+## Early testing
 
-* Starting the necessary Docker Containers for the amazee.io Drupal Docker Development
-* If on Linux: Adds `nameserver 127.0.0.1` to your `/etc/resolv.conf` file, so that your local Linux can resolve `*.docker.amazee.io` via the dnsmasq container
-* If on Mac with Docker for Mac: Creates the file `/etc/resolver/docker.amazee.io` which tells OS X to forward DNS requests for `*.docker.amazee.io` to the dnsmasq container
-* Tries to add the ssh key in `~/.ssh/id_rsa` to the ssh-agent container (no worries if that is the wrong key, you can add more any time)
-* Starts a local mail Mail Transfer Agent (MTA) in order to test and view mails
+We welcome testers of this tool. You will probably be an existing user of Pygmy who
+can verify the same functionality, or perhaps who has had trouble installing Pygmy in the
+past on Windows.
 
-You can find more documentation here: [https://pygmy.readthedocs.io](https://pygmy.readthedocs.io)
+## Is Pygmy running?
+
+These instructions will currently install the new version as `pygmy-go` so that the
+old version is still available if you have installed it. With no Pygmy running,
+you should get "connection refused" when attempting to connect to the local amazee network.
+
+```
+curl --HEAD http://myproject.docker.amazee.io
+curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection refused
+```
+
+## Installation (OSX specific)
+
+These instructions will build Linux, OSX and Windows binaries of Pygmy on OSX,
+and then test the OSX version.
+
+1. `git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go`
+2. `make build`
+3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod -x /usr/local/bin/pygmy-go`
+
+Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
+as `pygmy`. Now start Pygmy and use the new `status` command.
+
+4. `pygmy-go up`
+5. `pygmy-go status`
+
+If you have an Amazee Lagoon project running, you can test the web address and
+expect a `HTTP/1.1 200 OK` response.
+
+```
+$ curl --HEAD http://myproject.docker.amazee.io
+HTTP/1.1 200 OK
+Server: openresty
+Content-Type: text/html; charset=UTF-8
+Cache-Control: must-revalidate, no-cache, private
+Date: Mon, 11 Nov 2019 11:19:29 GMT
+X-UA-Compatible: IE=edge
+Content-language: en
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+X-Drupal-Cache-Tags: config:honeypot.settings config:system.site config:user.role.anonymous http_response rendered
+X-Drupal-Cache-Contexts: languages:language_interface theme url.path url.query_args user.permissions user.roles:authenticated
+Expires: Sun, 19 Nov 1978 05:00:00 GMT
+Vary:
+X-Frame-Options: SameOrigin
+```
+
+If your project is not running you should expect a 503 response:
+
+```
+$ curl --HEAD http://FUBARNOTINDAHOUSE.docker.amazee.io
+HTTP/1.0 503 Service Unavailable
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+```
+
+Thanks for testing, please post issues and successes in the queue.
