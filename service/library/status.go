@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fubarhouse/pygmy/v1/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy/v1/service/interface"
@@ -13,12 +14,26 @@ func Status(c Config) {
 
 	Setup(&c)
 
-	for Label, Service := range c.Services {
-		if !Service.Disabled && !Service.Discrete && Service.Name != "" {
-			if s, _ := Service.Status(); s {
-				fmt.Printf("[*] %v: Running as container %v\n", Label, Service.Name)
+	Containers, _ := model.DockerContainerList()
+	for _, Container := range Containers {
+		if Container.Labels["pygmy"] == "pygmy" {
+			name := strings.TrimLeft(Container.Names[0], "/")
+			for x, Service := range c.Services {
+				if Service.Name == name {
+					name = x
+				}
+			}
+			Service := c.Services[name]
+			if Service.Name != "" {
+				if !Service.Disabled && !Service.Discrete && Service.Name != "" {
+					if s, _ := Service.Status(); s {
+						fmt.Printf("[*] %v: Running as container %v\n", name, Service.Name)
+					} else {
+						fmt.Printf("[ ] %v is not running\n", Service.Name)
+					}
+				}
 			} else {
-				fmt.Printf("[ ] %v is not running\n", Service.Name)
+				fmt.Printf("[!] %v: Still running as (no longer configured)\n", name)
 			}
 		}
 	}
