@@ -8,7 +8,6 @@ services: docker
 before_install:
   # Install dependencies
   - GO111MODULE=on go mod download
-#  - GO111MODULE=on go install .
   # Style checks
   - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true
   - GO111MODULE=on go vet $(go list ./...) || true
@@ -16,6 +15,7 @@ before_install:
 script:
   - make
   - builds/pygmy-go-linux-x86 up
+  - builds/pygmy-go-linux-x86 status
   - builds/pygmy-go-linux-x86 down
   - builds/pygmy-go-linux-x86 clean
 
