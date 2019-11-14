@@ -58,32 +58,38 @@ func (resolv Resolv) Configure() {
 					fmt.Println(err)
 				}
 			}
-		}
-		if _, err := os.Stat(fullPath); err == nil {
+		} else {
 
-			cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
-			cmdOut, cmdErr := cmd.Output()
-			if cmdErr != nil {
-				fmt.Println(cmdErr.Error())
-				fmt.Println("/bin/sh", "-c", "cat "+fullPath)
-			}
+			// If the bytes haven't already been written to the file:
+			if !resolv.statusFileData() {
 
-			tmpFile, error := ioutil.TempFile("", "pygmy-")
-			if error != nil {
-				fmt.Println(error)
-			}
-			error = os.Chmod(tmpFile.Name(), 0777)
-			if error != nil {
-				fmt.Println(error)
-			}
-			_, error = tmpFile.WriteString(string(cmdOut))
-			_, error = tmpFile.WriteString(resolv.Data)
-			if error != nil {
-				fmt.Println(error)
-			}
-			err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
-			if err != nil {
-				fmt.Println(err)
+				if _, err := os.Stat(fullPath); err == nil {
+
+					cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+					cmdOut, cmdErr := cmd.Output()
+					if cmdErr != nil {
+						fmt.Println(cmdErr.Error())
+						fmt.Println("/bin/sh", "-c", "cat "+fullPath)
+					}
+
+					tmpFile, error := ioutil.TempFile("", "pygmy-")
+					if error != nil {
+						fmt.Println(error)
+					}
+					error = os.Chmod(tmpFile.Name(), 0777)
+					if error != nil {
+						fmt.Println(error)
+					}
+					_, error = tmpFile.WriteString(string(cmdOut))
+					_, error = tmpFile.WriteString(resolv.Data)
+					if error != nil {
+						fmt.Println(error)
+					}
+					err := run([]string{"sudo", "cp", tmpFile.Name(), fullPath})
+					if err != nil {
+						fmt.Println(err)
+					}
+				}
 			}
 		}
 
@@ -104,7 +110,6 @@ func (resolv Resolv) Configure() {
 			fmt.Printf("Successfully configured resolvr %v\n", resolv.Name)
 		}
 	}
-
 }
 
 func (resolv Resolv) Clean() {
@@ -186,7 +191,7 @@ func (resolv Resolv) Clean() {
 func (resolv Resolv) Status() bool {
 
 	if runtime.GOOS == "darwin" {
-		return resolv.statusFile() && resolv.statusNet()
+		return resolv.statusFile() && resolv.statusNet() && resolv.statusFileData()
 	}
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); err == nil {
@@ -202,7 +207,16 @@ func (resolv Resolv) Status() bool {
 	}
 
 	return false
+}
 
+func (resolv Resolv) statusFileData() bool {
+	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
+	cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
+	cmdOut, cmdErr := cmd.Output()
+	if cmdErr != nil {
+		fmt.Println(cmdErr.Error())
+	}
+	return strings.Contains(string(cmdOut), resolv.Data)
 }
 
 func (resolv Resolv) statusFile() bool {
