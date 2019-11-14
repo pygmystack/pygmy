@@ -31,6 +31,9 @@ type Config struct {
 	// Networks is for network configuration
 	Networks map[string][]string `yaml:"networks"`
 
+	// NoDefaults will prevent default configuration items.
+	Defaults bool
+
 	// Resolvers is for all resolvers
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
 
