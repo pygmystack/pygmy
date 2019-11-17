@@ -21,7 +21,8 @@ func DryRun(c *Config) []CompatibilityCheck {
 				if strings.Contains(string(PortBinding), "tcp") {
 					for _, Port := range Ports {
 						p := fmt.Sprint(Port.HostPort)
-						_, err := net.Listen("tcp", ":"+p)
+						conn, err := net.Listen("tcp", ":"+p)
+						conn.Close()
 						if err != nil {
 							messages = append(messages, CompatibilityCheck{
 								State:   false,
