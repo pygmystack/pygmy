@@ -151,19 +151,20 @@ func (Service *Service) Clean() error {
 	Containers, _ := DockerContainerList()
 	for _, container := range Containers {
 		if container.Labels["pygmy"] == "pygmy" {
+			name := strings.TrimLeft(container.Names[0], "/")
 			if e := DockerKill(container.ID); e == nil {
 				if !Service.HostConfig.AutoRemove {
-					fmt.Printf("Successfully killed %v\n", container.Names[0])
+					fmt.Printf("Successfully killed %v\n", name)
 				}
 			}
 			if e := DockerStop(container.ID); e == nil {
 				if !Service.HostConfig.AutoRemove {
-					fmt.Printf("Successfully stopped %v\n", container.Names[0])
+					fmt.Printf("Successfully stopped %v\n", name)
 				}
 			}
 			if e := DockerRemove(container.ID); e != nil {
 				if !Service.HostConfig.AutoRemove {
-					fmt.Printf("Successfully removed %v\n", container.Names[0])
+					fmt.Printf("Successfully removed %v\n", name)
 				}
 			}
 		}
@@ -189,7 +190,8 @@ func (Service *Service) Stop() error {
 		if e := DockerStop(container.ID); e == nil {
 			if e := DockerRemove(container.ID); e == nil {
 				if !Service.Discrete {
-					fmt.Printf("Successfully removed %v\n", name)
+					containerName := strings.TrimLeft(name, "/")
+					fmt.Printf("Successfully removed %v\n", containerName)
 				}
 			}
 		}
