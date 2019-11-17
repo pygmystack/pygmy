@@ -153,9 +153,7 @@ func (resolv Resolv) Clean() {
 				if err != nil {
 					fmt.Println(err)
 				}
-				if err = os.Remove(fullPath); err != nil {
-					fmt.Println(err)
-				} else {
+				if !resolv.statusFile() {
 					fmt.Println("Successfully removed resolver file")
 				}
 			}
