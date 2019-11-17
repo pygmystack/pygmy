@@ -34,7 +34,7 @@ and then test the OSX version.
 
 1. `git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go`
 2. `make build`
-3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod -x /usr/local/bin/pygmy-go`
+3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod +x /usr/local/bin/pygmy-go`
 
 Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
 as `pygmy`. Now start Pygmy and use the new `status` command.
