@@ -147,22 +147,24 @@ func (Service *Service) Clean() error {
 	if Service.Name == "" {
 		return nil
 	}
-	names := []string{"/" + Service.Name, Service.Name}
 
-	for _, name := range names {
-		if e := DockerKill(name); e == nil {
-			if !Service.HostConfig.AutoRemove {
-				fmt.Printf("Successfully killed %v\n", name)
+	Containers, _ := DockerContainerList()
+	for _, container := range Containers {
+		if container.Labels["pygmy"] == "pygmy" {
+			if e := DockerKill(container.ID); e == nil {
+				if !Service.HostConfig.AutoRemove {
+					fmt.Printf("Successfully killed %v\n", container.Names[0])
+				}
 			}
-		}
-		if e := DockerStop(name); e == nil {
-			if !Service.HostConfig.AutoRemove {
-				fmt.Printf("Successfully stopped %v\n", name)
+			if e := DockerStop(container.ID); e == nil {
+				if !Service.HostConfig.AutoRemove {
+					fmt.Printf("Successfully stopped %v\n", container.Names[0])
+				}
 			}
-		}
-		if e := DockerRemove(name); e != nil {
-			if !Service.HostConfig.AutoRemove {
-				fmt.Printf("Successfully removed %v\n", name)
+			if e := DockerRemove(container.ID); e != nil {
+				if !Service.HostConfig.AutoRemove {
+					fmt.Printf("Successfully removed %v\n", container.Names[0])
+				}
 			}
 		}
 	}
@@ -364,13 +366,13 @@ func DockerKill(name string) error {
 	return nil
 }
 
-func DockerRemove(name string) error {
+func DockerRemove(id string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	err = cli.ContainerRemove(ctx, name, types.ContainerRemoveOptions{})
+	err = cli.ContainerRemove(ctx, id, types.ContainerRemoveOptions{})
 	if err != nil {
 		return err
 	}
