@@ -15,7 +15,7 @@ func Status(c Config) {
 	Setup(&c)
 	checks := DryRun(&c)
 
-	if checks != nil {
+	if len(checks) > 0 {
 		fmt.Println("Port allocation issue(s) were identified:")
 		for _, check := range checks {
 			fmt.Println(check.Message)
