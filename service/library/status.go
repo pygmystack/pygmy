@@ -15,8 +15,12 @@ func Status(c Config) {
 	Setup(&c)
 	checks := DryRun(&c)
 
-	for _, check := range checks {
-		fmt.Println(check.Message)
+	if checks != nil {
+		fmt.Println("Port allocation issue(s) were identified:")
+		for _, check := range checks {
+			fmt.Println(check.Message)
+		}
+		fmt.Println()
 	}
 
 	// Logic for containers when containers are running.
