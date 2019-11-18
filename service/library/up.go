@@ -1,6 +1,8 @@
 package library
 
 import (
+	"os"
+
 	"fmt"
 	"github.com/fubarhouse/pygmy/v1/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy/v1/service/interface"
@@ -11,6 +13,19 @@ import (
 func Up(c Config) {
 
 	Setup(&c)
+	checks := DryRun(&c)
+
+	foundIssues := 0
+	for _, check := range checks {
+		if !check.State {
+			fmt.Println(check.Message)
+			foundIssues++
+		}
+	}
+	if foundIssues > 0 {
+		fmt.Println("Please address the above issues before you attempt to start Pygmy again.")
+		os.Exit(1)
+	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := model.DockerVolumeExists(volume); !s {

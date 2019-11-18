@@ -13,7 +13,17 @@ import (
 func Status(c Config) {
 
 	Setup(&c)
+	checks := DryRun(&c)
 
+	if len(checks) > 0 {
+		fmt.Println("Port allocation issue(s) were identified:")
+		for _, check := range checks {
+			fmt.Println(check.Message)
+		}
+		fmt.Println()
+	}
+
+	// Logic for containers when containers are running.
 	Containers, _ := model.DockerContainerList()
 	for _, Container := range Containers {
 		if Container.Labels["pygmy"] == "pygmy" {
@@ -35,6 +45,13 @@ func Status(c Config) {
 			} else {
 				fmt.Printf("[!] %v: Still running as (no longer configured)\n", name)
 			}
+		}
+	}
+
+	// Logic for containers when they're not running.
+	for _, Container := range c.Services {
+		if s, _ := Container.Status(); !s {
+			fmt.Printf("[ ] %v is not running\n", Container.Name)
 		}
 	}
 
