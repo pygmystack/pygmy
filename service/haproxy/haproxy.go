@@ -10,6 +10,7 @@ import (
 func New() model.Service {
 	return model.Service{
 		Name: "amazeeio-haproxy",
+		Weight: 14,
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
 			Labels: map[string]string{

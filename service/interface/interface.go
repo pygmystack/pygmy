@@ -29,6 +29,7 @@ type Service struct {
 	Disabled      bool
 	Discrete      bool
 	Output        bool
+	Weight 		  int
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"runtime"
 	"sort"
+	"strings"
 
 	"github.com/fubarhouse/pygmy/v1/service/dnsmasq"
 	"github.com/fubarhouse/pygmy/v1/service/haproxy"
@@ -70,13 +71,24 @@ func Setup(c *Config) {
 		c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
 		c.Services["mailhog.docker.amazee.io"] = getService(mailhog.New(), c.Services["mailhog.docker.amazee.io"])
 		c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
-		c.SortedServices = make([]string, 0, len(c.Services))
+	}
 
-		// We need services to be sortable...
-		for key := range c.Services {
-			c.SortedServices = append(c.SortedServices, key)
+	// It is because of interdependent containers we introduce a weighting system.
+	// Containers are sorted alphabetically, and then sorted based on their weight.
+	// Note that for now, the sorting is handled as a string. So weight identifiers
+	// between 11 and 99 are recommended for reliability.
+	{
+		sorted := make([]string, 0, len(c.Services))
+		for key, value := range c.Services {
+			sorted = append(sorted, fmt.Sprintf("%v|%v", value.Weight, key))
+		}
+		sort.Strings(sorted)
+
+		c.SortedServices = make([]string, 0, len(c.Services))
+		for _, v := range sorted {
+			clean := strings.Split(v, "|")[1]
+			c.SortedServices = append(c.SortedServices, clean)
 		}
 	}
-	sort.Strings(c.SortedServices)
 
 }
