@@ -3,8 +3,6 @@
 package key
 
 import (
-	"fmt"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
@@ -18,10 +16,6 @@ func NewAdder(key string) model.Service {
 		Output:   true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
-			Cmd: []string{
-				"windows-key-add",
-				"/key",
-			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
 			},
@@ -29,7 +23,6 @@ func NewAdder(key string) model.Service {
 		HostConfig: container.HostConfig{
 			IpcMode:     "private",
 			AutoRemove:  true,
-			Binds:       []string{fmt.Sprintf("%v:/key", key)},
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
 		NetworkConfig: network.NetworkingConfig{},

@@ -76,7 +76,9 @@ func Up(c Config) {
 
 	if !c.SkipKey {
 
-		SshKeyAdd(c, c.Key)
+		for _, key := range c.Keys {
+			SshKeyAdd(c, key)
+		}
 
 	}
 }

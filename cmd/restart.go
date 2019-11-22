@@ -31,11 +31,12 @@ var restartCmd = &cobra.Command{
 	Long: `This command will trigger the Down and Up commands`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		c.Key, _ = cmd.Flags().GetString("key")
+		Key, _ := cmd.Flags().GetString("key")
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 
 		library.Restart(c)
+		library.SshKeyAdd(c, Key)
 
 	},
 }

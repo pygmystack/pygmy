@@ -31,9 +31,9 @@ var addkeyCmd = &cobra.Command{
 	Long: `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		c.Key, _ = cmd.Flags().GetString("key")
+		Key, _ := cmd.Flags().GetString("key")
 
-		library.SshKeyAdd(c, c.Key)
+		library.SshKeyAdd(c, Key)
 
 	},
 }

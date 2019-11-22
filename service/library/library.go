@@ -12,8 +12,8 @@ import (
 // be passed to package library to configure logic for
 // continued abstraction.
 type Config struct {
-	// Key is the path to the Key which should be added.
-	Key string `yaml:"Key"`
+	// Keys are the paths to the Keys which should be added.
+	Keys []string `yaml:"Keys"`
 
 	// SkipKey indicates key adding should be skipped.
 	SkipKey bool

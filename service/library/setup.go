@@ -65,7 +65,7 @@ func Setup(c *Config) {
 			c.Services = make(map[string]model.Service, 6)
 		}
 		c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
-		c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(c.Key), c.Services["amazeeio-ssh-agent-add-key"])
+		c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
 		c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
 		c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
 		c.Services["mailhog.docker.amazee.io"] = getService(mailhog.New(), c.Services["mailhog.docker.amazee.io"])
