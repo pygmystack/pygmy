@@ -4,10 +4,10 @@ import (
 	"os"
 
 	"fmt"
-	"github.com/fubarhouse/pygmy/v1/service/haproxy_connector"
-	model "github.com/fubarhouse/pygmy/v1/service/interface"
-	"github.com/fubarhouse/pygmy/v1/service/network"
-	"github.com/fubarhouse/pygmy/v1/service/resolv"
+	"github.com/fubarhouse/pygmy/service/haproxy_connector"
+	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/service/network"
+	"github.com/fubarhouse/pygmy/service/resolv"
 )
 
 func Up(c Config) {

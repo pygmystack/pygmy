@@ -3,8 +3,7 @@ package haproxy
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy/v1/service/interface"
+	model "github.com/fubarhouse/pygmy/service/interface"
 )
 
 func New() model.Service {
@@ -24,14 +23,6 @@ func New() model.Service {
 				Name              string
 				MaximumRetryCount int
 			}{Name: "always", MaximumRetryCount: 0},
-			PortBindings: nat.PortMap{
-				"80/tcp": []nat.PortBinding{
-					{
-						HostIP:   "",
-						HostPort: "80",
-					},
-				},
-			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

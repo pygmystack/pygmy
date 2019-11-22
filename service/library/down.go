@@ -1,6 +1,6 @@
 package library
 
-import "github.com/fubarhouse/pygmy/v1/service/resolv"
+import "github.com/fubarhouse/pygmy/service/resolv"
 
 func Down(c Config) {
 
