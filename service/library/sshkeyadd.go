@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
@@ -24,17 +25,21 @@ func SshKeyAdd(c Config, key string) {
 
 	if !agent.Search(key) {
 
-		if key != "" {
-			c.Key = key
-		}
-
 		for _, Container := range c.Services {
 			if Container.Group == "addkey" {
+				if runtime.GOOS == "windows" {
+					Container.Config.Cmd = []string{"ssh-add", "/key"}
+					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
+				} else {
+					Container.Config.Cmd = []string{"ssh-add", key}
+					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
+				}
+				// TODO: Need to figure out why this specifically isn't working. This should resolve #33.
 				Container.Start()
 			}
 		}
 
 	} else {
-		fmt.Printf("Already added key file %v.\n", c.Key)
+		fmt.Printf("Already added key file %v.\n", key)
 	}
 }
