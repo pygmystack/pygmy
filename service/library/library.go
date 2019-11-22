@@ -3,8 +3,8 @@ package library
 
 import (
 	"fmt"
-	model "github.com/fubarhouse/pygmy/service/interface"
-	"github.com/fubarhouse/pygmy/service/resolv"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
+	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
 )
 

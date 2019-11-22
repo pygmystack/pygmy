@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fubarhouse/pygmy/service/ssh/agent"
+	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
 func SshKeyAdd(c Config, key string) {
