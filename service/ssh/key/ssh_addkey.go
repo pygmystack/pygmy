@@ -42,7 +42,7 @@ func NewShower() model.Service {
 		Group:    "showkey",
 		Weight:   32,
 		Discrete: true,
-		Output:   true,
+		Output:   false,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
