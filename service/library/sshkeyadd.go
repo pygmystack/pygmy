@@ -17,7 +17,7 @@ func SshKeyAdd(c Config, key string) {
 
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {
-			fmt.Printf("The file path %v does not exist, or is not readable.\n%v\n", key, err)
+			fmt.Printf("%v\n", err)
 			return
 		}
 	}
@@ -28,8 +28,11 @@ func SshKeyAdd(c Config, key string) {
 			c.Key = key
 		}
 
-		//data, _ := model.Start(Service)
-		//fmt.Println(string(data))
+		for _, Container := range c.Services {
+			if Container.Group == "addkey" {
+				Container.Start()
+			}
+		}
 
 	} else {
 		fmt.Printf("Already added key file %v.\n", c.Key)

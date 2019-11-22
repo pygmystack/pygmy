@@ -26,10 +26,11 @@ type DockerService interface {
 
 type Service struct {
 	Name          string
+	Group         string
 	Disabled      bool
 	Discrete      bool
 	Output        bool
-	Weight 		  int
+	Weight        int
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig

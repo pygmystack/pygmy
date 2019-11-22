@@ -13,6 +13,7 @@ import (
 func NewAdder(key string) model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-add-key",
+		Group:    "addkey",
 		Weight:   31,
 		Discrete: true,
 		Output:   true,
@@ -24,6 +25,7 @@ func NewAdder(key string) model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
+				"pygmy.addkey": "pygmy.addkey",
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -39,6 +41,7 @@ func NewAdder(key string) model.Service {
 func NewShower() model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-show-keys",
+		Group:    "showkey",
 		Weight:   32,
 		Discrete: true,
 		Output:   true,
@@ -50,6 +53,7 @@ func NewShower() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
+				"pygmy.showkey": "pygmy.showkey",
 			},
 		},
 		HostConfig: container.HostConfig{
