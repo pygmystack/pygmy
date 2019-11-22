@@ -24,6 +24,7 @@ func NewAdder(key string) model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
+				"pygmy.addkey": "pygmy.addkey",
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -51,6 +52,7 @@ func NewShower() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
+				"pygmy.showkey": "pygmy.showkey",
 			},
 		},
 		HostConfig: container.HostConfig{
