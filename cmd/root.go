@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fubarhouse/pygmy/service/library"
+	"github.com/fubarhouse/pygmy-go/service/library"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

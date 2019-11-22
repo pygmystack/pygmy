@@ -7,7 +7,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy-go/service/interface"
 )
 
 func Create(network string) error {

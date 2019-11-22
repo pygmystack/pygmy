@@ -7,7 +7,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
 func NewAdder(key string) model.Service {

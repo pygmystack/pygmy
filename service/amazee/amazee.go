@@ -3,7 +3,7 @@ package amazee
 import (
 	"fmt"
 	"github.com/docker/docker/api/types"
-	"github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy-go/service/interface"
 	"strings"
 )
 

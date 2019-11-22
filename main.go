@@ -20,7 +20,7 @@
 
 package main
 
-import "github.com/fubarhouse/pygmy/cmd"
+import "github.com/fubarhouse/pygmy-go/cmd"
 
 func main() {
 	cmd.Execute()
