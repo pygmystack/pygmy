@@ -2,18 +2,17 @@ package library
 
 import (
 	"fmt"
+	"github.com/fubarhouse/pygmy/service/dnsmasq"
+	"github.com/fubarhouse/pygmy/service/haproxy"
+	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/service/mailhog"
+	"github.com/fubarhouse/pygmy/service/resolv"
+	"github.com/fubarhouse/pygmy/service/ssh/agent"
+	"github.com/fubarhouse/pygmy/service/ssh/key"
+	"github.com/spf13/viper"
 	"runtime"
 	"sort"
 	"strings"
-
-	"github.com/fubarhouse/pygmy/v1/service/dnsmasq"
-	"github.com/fubarhouse/pygmy/v1/service/haproxy"
-	model "github.com/fubarhouse/pygmy/v1/service/interface"
-	"github.com/fubarhouse/pygmy/v1/service/mailhog"
-	"github.com/fubarhouse/pygmy/v1/service/resolv"
-	"github.com/fubarhouse/pygmy/v1/service/ssh/agent"
-	"github.com/fubarhouse/pygmy/v1/service/ssh/key"
-	"github.com/spf13/viper"
 )
 
 func Setup(c *Config) {

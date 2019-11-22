@@ -1,4 +1,4 @@
-module github.com/fubarhouse/pygmy/v1
+module github.com/fubarhouse/pygmy
 
 go 1.12
 

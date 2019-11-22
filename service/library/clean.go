@@ -3,8 +3,8 @@ package library
 import (
 	"fmt"
 
-	model "github.com/fubarhouse/pygmy/v1/service/interface"
-	"github.com/fubarhouse/pygmy/v1/service/resolv"
+	model "github.com/fubarhouse/pygmy/service/interface"
+	"github.com/fubarhouse/pygmy/service/resolv"
 )
 
 func Clean(c Config) {
