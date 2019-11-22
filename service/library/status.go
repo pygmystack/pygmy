@@ -86,7 +86,7 @@ func Status(c Config) {
 	}
 
 	for _, Container := range c.Services {
-		if Container.Group == "showkey" {
+		if Container.Group == "showkeys" {
 			Container.Start()
 		}
 	}
