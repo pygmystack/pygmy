@@ -44,7 +44,7 @@ func Up(c Config) {
 	// an ssh-agent like amazeeio-ssh-agent.
 	for _, service := range c.SortedServices {
 		s := c.Services[service]
-		if !s.Disabled {
+		if !s.Disabled && s.Group != "addkey" && s.Group != "showkey" {
 			s.Start()
 		}
 	}
