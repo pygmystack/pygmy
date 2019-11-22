@@ -49,6 +49,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		}
 
 		library.Up(c)
+		library.SshKeyAdd(c, Key)
 
 	},
 }
