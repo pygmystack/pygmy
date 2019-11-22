@@ -70,6 +70,15 @@ func Setup(c *Config) {
 		c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
 		c.Services["mailhog.docker.amazee.io"] = getService(mailhog.New(), c.Services["mailhog.docker.amazee.io"])
 		c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
+
+		// We need Port 80 to be configured by default.
+		// If a port on amazeeio-haproxy isn't explicitly declared,
+		// then we should set this value. This is far more creative
+		// than needed, so feel free to revisit if you can compile it.
+		if c.Services["amazeeio-haproxy"].HostConfig.PortBindings == nil {
+			c.Services["amazeeio-haproxy"] = getService(haproxy.NewDefaultPorts(), c.Services["amazeeio-haproxy"])
+		}
+
 	}
 
 	// It is because of interdependent containers we introduce a weighting system.
