@@ -38,6 +38,12 @@ func SshKeyAdd(c Config, key string) {
 			}
 		}
 
+		for _, Container := range c.Services {
+			if Container.Group == "addkey" {
+				Container.Start()
+			}
+		}
+
 	} else {
 		fmt.Printf("Already added key file %v.\n", key)
 	}
