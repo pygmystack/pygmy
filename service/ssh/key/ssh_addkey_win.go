@@ -8,7 +8,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
-func NewAdder(key string) model.Service {
+func NewAdder() model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-add-key",
 		Group:    "addkeys",
