@@ -34,7 +34,6 @@ func SshKeyAdd(c Config, key string) {
 					Container.Config.Cmd = []string{"ssh-add", key}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
-				// TODO: Need to figure out why this specifically isn't working. This should resolve #33.
 				Container.Start()
 			}
 		}

@@ -38,8 +38,17 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 
+		keyExistsInConfig := false
+		for _, key := range c.Keys {
+			if key == Key {
+				keyExistsInConfig = true
+			}
+		}
+		if !keyExistsInConfig {
+			c.Keys = append(c.Keys, Key)
+		}
+
 		library.Up(c)
-		library.SshKeyAdd(c, Key)
 
 	},
 }
