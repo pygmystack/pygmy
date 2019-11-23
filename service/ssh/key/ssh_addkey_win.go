@@ -3,35 +3,28 @@
 package key
 
 import (
-	"fmt"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
-func NewAdder(key string) model.Service {
+func NewAdder() model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-add-key",
-		Group:    "addkey",
+		Group:    "addkeys",
 		Weight:   31,
 		Discrete: true,
 		Output:   true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
-			Cmd: []string{
-				"windows-key-add",
-				"/key",
-			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
-				"pygmy.addkey": "pygmy.addkey",
+				"pygmy.addkeys": "pygmy.addkeys",
 			},
 		},
 		HostConfig: container.HostConfig{
 			IpcMode:     "private",
 			AutoRemove:  true,
-			Binds:       []string{fmt.Sprintf("%v:/key", key)},
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
 		NetworkConfig: network.NetworkingConfig{},
@@ -41,10 +34,10 @@ func NewAdder(key string) model.Service {
 func NewShower() model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-show-keys",
-		Group:    "showkey",
+		Group:    "showkeys",
 		Weight:   32,
 		Discrete: true,
-		Output:   true,
+		Output:   false,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
@@ -53,7 +46,7 @@ func NewShower() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy": "pygmy",
-				"pygmy.showkey": "pygmy.showkey",
+				"pygmy.showkeys": "pygmy.showkeys",
 			},
 		},
 		HostConfig: container.HostConfig{

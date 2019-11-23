@@ -34,11 +34,22 @@ configurations designed for use with Amazee.io local development.
 It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		c.Key, _ = cmd.Flags().GetString("key")
+		Key, _ := cmd.Flags().GetString("key")
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 
+		keyExistsInConfig := false
+		for _, key := range c.Keys {
+			if key == Key {
+				keyExistsInConfig = true
+			}
+		}
+		if !keyExistsInConfig {
+			c.Keys = append(c.Keys, Key)
+		}
+
 		library.Up(c)
+		library.SshKeyAdd(c, Key)
 
 	},
 }
