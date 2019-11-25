@@ -79,6 +79,12 @@ func Setup(c *Config) {
 			c.Services["amazeeio-haproxy"] = getService(haproxy.NewDefaultPorts(), c.Services["amazeeio-haproxy"])
 		}
 
+		// It's sensible to use the same logic for port 1025.
+		// If a user needs to configure it, the default value should not be set also.
+		if c.Services["mailhog.docker.amazee.io"].HostConfig.PortBindings == nil {
+			c.Services["mailhog.docker.amazee.io"] = getService(mailhog.NewDefaultPorts(), c.Services["mailhog.docker.amazee.io"])
+		}
+
 	}
 
 	// It is because of interdependent containers we introduce a weighting system.
