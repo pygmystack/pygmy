@@ -34,6 +34,15 @@ func New() model.Service {
 				Name              string
 				MaximumRetryCount int
 			}{Name: "always", MaximumRetryCount: 0},
+		},
+		NetworkConfig: network.NetworkingConfig{},
+	}
+
+}
+
+func NewDefaultPorts() model.Service {
+	return model.Service{
+		HostConfig: container.HostConfig{
 			PortBindings: nat.PortMap{
 				"1025/tcp": []nat.PortBinding{
 					{
@@ -43,7 +52,5 @@ func New() model.Service {
 				},
 			},
 		},
-		NetworkConfig: network.NetworkingConfig{},
 	}
-
 }
