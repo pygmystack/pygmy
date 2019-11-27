@@ -18,8 +18,14 @@ before_install:
   - GO111MODULE=on go vet $(go list ./...) || true
 
 script:
-  # Build Pygmy
-  - make
+  # We need to stash the architecture value for GOOS/GOARCH.
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then export PYGMY_PATH=pygmy-go-linux-x86; fi
+  - if [ $TRAVIS_OS_NAME == "osx" ]; then export PYGMY_PATH=pygmy-go-darwin; fi
+  - if [ $TRAVIS_OS_NAME == "windows" ]; then export PYGMY_PATH=pygmy-go.exe; fi
+
+  # Build Pygmy without make
+  - docker build -t pygmy-go .
+  - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH}
 
   # Launch Pygmy
   - builds/pygmy-go.exe --config .travis.pygmy.yml up
@@ -32,6 +38,7 @@ script:
   # Remove and clean Pygmy
   - builds/pygmy-go.exe --config .travis.pygmy.yml down
   - builds/pygmy-go.exe --config .travis.pygmy.yml clean
+  - docker image rm pygmy-go
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
