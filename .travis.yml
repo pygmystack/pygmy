@@ -14,10 +14,10 @@ before_install:
 
 script:
   - make
-  - builds/pygmy-go-linux-x86 up
-  - builds/pygmy-go-linux-x86 status
-  - builds/pygmy-go-linux-x86 down
-  - builds/pygmy-go-linux-x86 clean
+  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml up
+  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml status
+  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml down
+  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml clean
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
