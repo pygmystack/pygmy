@@ -38,7 +38,7 @@ script:
   # Remove and clean Pygmy
   - builds/${PYGMY_PATH} --config .travis.pygmy.yml down
   - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean
-  - docker image rm pygmy-go
+  - docker image rm pygmy-go --force || true
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
