@@ -22,7 +22,7 @@ script:
 
   # Test Pygmy
   - curl --HEAD http://docker.amazee.io:8080/stats
-  - curl http://mailhog.docker.amazee.io:1025
+  #- curl http://mailhog.docker.amazee.io:1025
 
   # Remove and clean Pygmy
   - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml down
