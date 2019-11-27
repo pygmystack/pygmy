@@ -12,10 +12,10 @@ os:
 
 before_install:
   # Install dependencies
-  - GO111MODULE=on go mod download
+  - go mod download
   # Style checks
-  - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true
-  - GO111MODULE=on go vet $(go list ./...) || true
+  - if [ ! $TRAVIS_OS_NAME == "windows" ]; then diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")); fi || true
+  - if [ ! $TRAVIS_OS_NAME == "windows" ]; then GO111MODULE=on go vet $(go list ./...); fi || true
 
 script:
   # We need to stash the architecture value for GOOS/GOARCH.
