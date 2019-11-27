@@ -28,16 +28,16 @@ script:
   - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH}
 
   # Launch Pygmy
-  - builds/pygmy-go.exe --config .travis.pygmy.yml up
-  - builds/pygmy-go.exe --config .travis.pygmy.yml status
+  - builds/${PYGMY_PATH} --config .travis.pygmy.yml up
+  - builds/${PYGMY_PATH} --config .travis.pygmy.yml status
 
   # Test Pygmy
   - curl --HEAD http://docker.amazee.io:8080/stats
   #- curl http://mailhog.docker.amazee.io:1025
 
   # Remove and clean Pygmy
-  - builds/pygmy-go.exe --config .travis.pygmy.yml down
-  - builds/pygmy-go.exe --config .travis.pygmy.yml clean
+  - builds/${PYGMY_PATH} --config .travis.pygmy.yml down
+  - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean
   - docker image rm pygmy-go
 
 notifications:
