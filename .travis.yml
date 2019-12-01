@@ -3,42 +3,74 @@ language: go
 go:
   - "1.13.4"
 
-services: docker
+matrix:
+  include:
 
-os:
-  - windows
-  - linux
-  - osx
+    - os: linux
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
+        - GO111MODULE=on go vet $(go list ./...) || true;
 
-before_install:
-  # Install dependencies
-  - go mod download
-  # Style checks
-  - if [ ! $TRAVIS_OS_NAME == "windows" ]; then diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")); fi || true
-  - if [ ! $TRAVIS_OS_NAME == "windows" ]; then GO111MODULE=on go vet $(go list ./...); fi || true
+        - docker build -t pygmy-go .;
+      script:
+        - export PYGMY_PATH=pygmy-go-linux-x86;
+        - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH};
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - curl --HEAD http://docker.amazee.io:8080/stats
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
+        - docker image rm pygmy-go --force || true;
 
-script:
-  # We need to stash the architecture value for GOOS/GOARCH.
-  - if [ $TRAVIS_OS_NAME == "linux" ]; then export PYGMY_PATH=pygmy-go-linux-x86; fi
-  - if [ $TRAVIS_OS_NAME == "osx" ]; then export PYGMY_PATH=pygmy-go-darwin; fi
-  - if [ $TRAVIS_OS_NAME == "windows" ]; then export PYGMY_PATH=pygmy-go.exe; fi
+#    - os: osx
+#      services: docker
+#      before_install:
+#        - go mod download;
+#        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
+#        - GO111MODULE=on go vet $(go list ./...) || true;
+#      script:
+#        - export PYGMY_PATH=pygmy-go-darwin;
+#        - /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)";
+#        - brew install docker docker-compose docker-machine xhyve docker-machine-driver-xhyve;
+#        - sudo chown root:wheel /usr/local/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve;
+#        - sudo chmod u+s /usr/local/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve;
+#        - docker-machine create default --driver=xhyve;
+#        - docker-machine start default;
+#        - brew install nejckorasa/tap/dckr;
+#        - dckr --start;
+#
+#        - docker build -t pygmy-go .;
+#        - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH};
+#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
+#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+#        - curl --HEAD http://docker.amazee.io:8080/stats
+#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
+#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
+#        - docker image rm pygmy-go --force || true;
 
-  # Build Pygmy without make
-  - docker build -t pygmy-go .
-  - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH}
+    - os: windows
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
+        - GO111MODULE=on go vet $(go list ./...) || true;
 
-  # Launch Pygmy
-  - builds/${PYGMY_PATH} --config .travis.pygmy.yml up
-  - builds/${PYGMY_PATH} --config .travis.pygmy.yml status
+      script:
+        - export PYGMY_PATH=pygmy-go.exe;
+        - export COMPOSE_CONVERT_WINDOWS_PATHS=1
+        - docker build -t pygmy-go -f .windows/Dockerfile .;
+        #- docker run -v .:/data/ pygmy-go cp /app/${PYGMY_PATH} /data/${PYGMY_PATH};
 
-  # Test Pygmy
-  - curl --HEAD http://docker.amazee.io:8080/stats
-  #- curl http://mailhog.docker.amazee.io:1025
+        - go mod vendor
+        - rm -f go.mod
+        - rm -f go.sum
+        - go build -o pygmy-go.exe .
+        - cp pygmy-go.exe builds/pygmy-go.exe
 
-  # Remove and clean Pygmy
-  - builds/${PYGMY_PATH} --config .travis.pygmy.yml down
-  - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean
-  - docker image rm pygmy-go --force || true
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - docker image rm pygmy-go --force || true;
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY

@@ -1,9 +1,15 @@
 services:
- amazeeio-haproxy:
-   Config:
-     Image: fubarhouse/amazeeio-haproxy-8080
-   HostConfig:
-     PortBindings:
-       8080/tcp:
-         -
-           HostPort: 8080
+  amazeeio-ssh-agent:
+    Disabled: true
+  amazeeio-ssh-agent-show-keys:
+    Disabled: true
+  amazeeio-ssh-agent-add-key:
+    Disabled: true
+  amazeeio-haproxy:
+    Config:
+      Image: fubarhouse/amazeeio-haproxy-8080
+    HostConfig:
+      PortBindings:
+        8080/tcp:
+          -
+            HostPort: 8080
