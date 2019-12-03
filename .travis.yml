@@ -24,32 +24,6 @@ matrix:
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
         - docker image rm pygmy-go --force || true;
 
-#    - os: osx
-#      services: docker
-#      before_install:
-#        - go mod download;
-#        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
-#        - GO111MODULE=on go vet $(go list ./...) || true;
-#      script:
-#        - export PYGMY_PATH=pygmy-go-darwin;
-#        - /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)";
-#        - brew install docker docker-compose docker-machine xhyve docker-machine-driver-xhyve;
-#        - sudo chown root:wheel /usr/local/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve;
-#        - sudo chmod u+s /usr/local/opt/docker-machine-driver-xhyve/bin/docker-machine-driver-xhyve;
-#        - docker-machine create default --driver=xhyve;
-#        - docker-machine start default;
-#        - brew install nejckorasa/tap/dckr;
-#        - dckr --start;
-#
-#        - docker build -t pygmy-go .;
-#        - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH};
-#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
-#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
-#        - curl --HEAD http://docker.amazee.io:8080/stats
-#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
-#        - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
-#        - docker image rm pygmy-go --force || true;
-
     - os: windows
       services: docker
       before_install:
@@ -61,7 +35,6 @@ matrix:
         - export PYGMY_PATH=pygmy-go.exe;
         - export COMPOSE_CONVERT_WINDOWS_PATHS=1
         - docker build -t pygmy-go -f .windows/Dockerfile .;
-        #- docker run -v .:/data/ pygmy-go cp /app/${PYGMY_PATH} /data/${PYGMY_PATH};
 
         - go mod vendor
         - rm -f go.mod
