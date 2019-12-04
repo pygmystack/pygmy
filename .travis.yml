@@ -3,30 +3,47 @@ language: go
 go:
   - "1.13.4"
 
-services: docker
+matrix:
+  include:
 
-before_install:
-  # Install dependencies
-  - GO111MODULE=on go mod download
-  # Style checks
-  - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true
-  - GO111MODULE=on go vet $(go list ./...) || true
+    - os: linux
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
+        - GO111MODULE=on go vet $(go list ./...) || true;
 
-script:
-  # Build Pygmy
-  - make
+        - docker build -t pygmy-go .;
+      script:
+        - export PYGMY_PATH=pygmy-go-linux-x86;
+        - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH};
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - curl --HEAD http://docker.amazee.io:8080/stats
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
+        - docker image rm pygmy-go --force || true;
 
-  # Launch Pygmy
-  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml up
-  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml status
+    - os: windows
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
+        - GO111MODULE=on go vet $(go list ./...) || true;
 
-  # Test Pygmy
-  - curl --HEAD http://docker.amazee.io:8080/stats
-  #- curl http://mailhog.docker.amazee.io:1025
+      script:
+        - export PYGMY_PATH=pygmy-go.exe;
+        - export COMPOSE_CONVERT_WINDOWS_PATHS=1
+        - docker build -t pygmy-go -f .windows/Dockerfile .;
 
-  # Remove and clean Pygmy
-  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml down
-  - builds/pygmy-go-linux-x86 --config .travis.pygmy.yml clean
+        - go mod vendor
+        - rm -f go.mod
+        - rm -f go.sum
+        - go build -o pygmy-go.exe .
+        - cp pygmy-go.exe builds/pygmy-go.exe
+
+        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - docker image rm pygmy-go --force || true;
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
