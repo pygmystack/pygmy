@@ -16,7 +16,6 @@ func Status(c Config) {
 	checks := DryRun(&c)
 
 	if len(checks) > 0 {
-		fmt.Println("Port allocation issue(s) were identified:")
 		for _, check := range checks {
 			fmt.Println(check.Message)
 		}
@@ -65,6 +64,11 @@ func Status(c Config) {
 					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network)
 				}
 			}
+		}
+		if _, e := network.Status(Network); e == nil {
+			fmt.Printf("[*] %v network has been created\n", Network)
+		} else {
+			fmt.Printf("[ ] %v network has not been created\n", Network)
 		}
 	}
 
