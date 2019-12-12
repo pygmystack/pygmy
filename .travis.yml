@@ -33,8 +33,6 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
-        - export COMPOSE_CONVERT_WINDOWS_PATHS=1
-        - docker build -t pygmy-go -f .windows/Dockerfile .;
 
         - go mod vendor
         - rm -f go.mod
@@ -43,7 +41,6 @@ matrix:
         - cp pygmy-go.exe builds/pygmy-go.exe
 
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
-        - docker image rm pygmy-go --force || true;
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY

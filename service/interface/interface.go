@@ -89,7 +89,7 @@ func (Service *Service) Start() ([]byte, error) {
 			return output, nil
 		}
 		if err != nil {
-			fmt.Println(err)
+			return []byte{}, err
 		}
 	} else {
 		fmt.Printf("Failed to run %v.\n", Service.Name)
