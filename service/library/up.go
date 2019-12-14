@@ -81,4 +81,10 @@ func Up(c Config) {
 		}
 
 	}
+
+	for _, service := range c.Services {
+		if s, _ := service.Status(); s && service.URL != "" {
+			fmt.Printf(" - %v (%v)\n", service.URL, service.Name)
+		}
+	}
 }

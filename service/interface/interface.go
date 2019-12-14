@@ -25,12 +25,16 @@ type DockerService interface {
 }
 
 type Service struct {
-	Name          string
-	Group         string
-	Disabled      bool
-	Discrete      bool
-	Output        bool
-	Weight        int
+	Name     string
+	Group    string
+	Disabled bool
+	Discrete bool
+	Output   bool
+	Weight   int
+	// URL is a variable defined by the service definition for the general knowledge
+	// provided to Pygmy users. Optional, it should be a URL with a port and a path
+	// where appropriate.
+	URL           string
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig
