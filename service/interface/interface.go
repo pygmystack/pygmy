@@ -77,6 +77,10 @@ func (Service *Service) Start() ([]byte, error) {
 	if !s || Service.HostConfig.AutoRemove {
 
 		output, err := DockerRun(Service)
+		if err != nil {
+			fmt.Println(err)
+			return []byte{}, err
+		}
 
 		if Service.Output {
 			fmt.Println(strings.Trim(string(output), "\n"))
@@ -236,7 +240,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 
 }
 
-func DockerPull(image string) (error) {
+func DockerPull(image string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -430,6 +434,6 @@ func DockerVolumeCreate(name string) (types.Volume, error) {
 		return types.Volume{}, err
 	}
 	return cli.VolumeCreate(ctx, volume.VolumesCreateBody{
-		Name:       name,
+		Name: name,
 	})
 }

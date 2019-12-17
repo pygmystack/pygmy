@@ -2,9 +2,10 @@ package amazee
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types"
-	"github.com/fubarhouse/pygmy-go/service/interface"
 	"strings"
+
+	"github.com/docker/docker/api/types"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
 // AmazeeImagePull is the entrypoint for this module.
@@ -17,7 +18,7 @@ func AmazeeImagePull() {
 // pull will perform an image update for a single image
 // which is provided as a container provided by the
 // Docker API.
-func pull(image string) (error) {
+func pull(image string) error {
 	return model.DockerPull(image)
 }
 
@@ -33,7 +34,7 @@ func list() ([]types.ImageSummary, error) {
 func pull_all() {
 	list, _ := list()
 	for _, image := range list {
-		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio") || strings.Contains(fmt.Sprint(image.RepoTags), "mailhog/mailhog") || strings.Contains(fmt.Sprint(image.RepoTags), "andyshinn/dnsmasq") {
+		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio/") || strings.Contains(fmt.Sprint(image.RepoTags), "mailhog/mailhog") || strings.Contains(fmt.Sprint(image.RepoTags), "andyshinn/dnsmasq") {
 			for _, tag := range image.RepoTags {
 				err := pull(tag)
 				if err != nil {
