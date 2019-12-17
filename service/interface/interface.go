@@ -74,6 +74,11 @@ func (Service *Service) Start() ([]byte, error) {
 		return []byte{}, nil
 	}
 
+	if Service.Group == "addkeys" || Service.Group == "showkeys" {
+		DockerKill(Service.Name)
+		DockerRemove(Service.Name)
+	}
+
 	if !s || Service.HostConfig.AutoRemove {
 
 		output, err := DockerRun(Service)
