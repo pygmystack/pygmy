@@ -96,4 +96,10 @@ func Status(c Config) {
 		}
 	}
 
+	for _, Container := range c.Services {
+		if Container.URL != "" {
+			fmt.Printf(" - %v (%v)\n", Container.URL, Container.Name)
+		}
+	}
+
 }

@@ -10,6 +10,7 @@ import (
 func New() model.Service {
 	return model.Service{
 		Name:   "amazeeio-haproxy",
+		URL:    "http://docker.amazee.io/stats",
 		Weight: 14,
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
