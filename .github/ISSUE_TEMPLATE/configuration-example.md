@@ -2,7 +2,7 @@
 name: Configuration example
 about: Request an example configuration for a new container.
 title: Request for example pygmy ______ integration
-labels: ''
+labels: configuration-request
 assignees: fubarhouse
 
 ---
