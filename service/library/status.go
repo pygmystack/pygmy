@@ -42,7 +42,7 @@ func Status(c Config) {
 					}
 				}
 			} else {
-				fmt.Printf("[!] %v: Still running as (no longer configured)\n", name)
+				fmt.Printf("[!] %v: Still running (not described in current config)\n", name)
 			}
 		}
 	}
