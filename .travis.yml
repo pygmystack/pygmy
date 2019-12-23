@@ -19,7 +19,7 @@ matrix:
         - docker run -v ${PWD}:/data pygmy-go cp ${PYGMY_PATH} /data/builds/${PYGMY_PATH};
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
-        - curl --HEAD http://docker.amazee.io:8080/stats
+        - curl --HEAD http://docker.amazee.io/stats
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
         - docker image rm pygmy-go --force || true;
