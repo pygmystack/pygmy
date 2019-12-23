@@ -22,7 +22,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 					if strings.Contains(string(PortBinding), "tcp") {
 						for _, Port := range Ports {
 							p := fmt.Sprint(Port.HostPort)
-							conn, err := net.Listen("tcp", ":"+p)
+							conn, err := net.Dial("tcp", ":"+p)
 							if conn != nil {
 								if e := conn.Close(); e != nil {
 									fmt.Println(e)
