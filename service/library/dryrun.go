@@ -28,15 +28,19 @@ func DryRun(c *Config) []CompatibilityCheck {
 									fmt.Println(e)
 								}
 							}
-							if err == nil {
-								messages = append(messages, CompatibilityCheck{
-									State:   false,
-									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", Service.Name, p, err),
-								})
-							} else {
+							if err != nil {
 								messages = append(messages, CompatibilityCheck{
 									State:   true,
 									Message: fmt.Sprintf("[*] %v is able to start on port %v", Service.Name, p),
+								})
+							} else {
+								conn, err := net.Listen("tcp", ":"+p)
+								if conn != nil {
+									defer conn.Close()
+								}
+								messages = append(messages, CompatibilityCheck{
+									State:   false,
+									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", Service.Name, p, err),
 								})
 							}
 						}
