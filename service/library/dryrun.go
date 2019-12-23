@@ -22,13 +22,13 @@ func DryRun(c *Config) []CompatibilityCheck {
 					if strings.Contains(string(PortBinding), "tcp") {
 						for _, Port := range Ports {
 							p := fmt.Sprint(Port.HostPort)
-							conn, err := net.Dial("tcp", ":"+p)
+							conn, err := net.Dial("tcp", "localhost:"+p)
 							if conn != nil {
 								if e := conn.Close(); e != nil {
 									fmt.Println(e)
 								}
 							}
-							if err != nil {
+							if err == nil {
 								messages = append(messages, CompatibilityCheck{
 									State:   false,
 									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", Service.Name, p, err),
