@@ -2,13 +2,13 @@ package library
 
 import (
 	"os"
-
 	"fmt"
 
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
+	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
 
 func Up(c Config) {
@@ -85,7 +85,12 @@ func Up(c Config) {
 
 	for _, service := range c.Services {
 		if s, _ := service.Status(); s && service.URL != "" {
-			fmt.Printf(" - %v (%v)\n", service.URL, service.Name)
+			test_url.Validate(service.URL)
+			if r := test_url.Validate(service.URL); r {
+				fmt.Printf(" - %v (%v)\n", service.URL, service.Name)
+			} else {
+				fmt.Printf(" ! %v (%v)\n", service.URL, service.Name)
+			}
 		}
 	}
 }

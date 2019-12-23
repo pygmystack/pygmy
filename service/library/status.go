@@ -8,6 +8,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
+	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
 
 func Status(c Config) {
@@ -98,7 +99,12 @@ func Status(c Config) {
 
 	for _, Container := range c.Services {
 		if Container.URL != "" {
-			fmt.Printf(" - %v (%v)\n", Container.URL, Container.Name)
+			test_url.Validate(Container.URL)
+			if r := test_url.Validate(Container.URL); r {
+				fmt.Printf(" - %v (%v)\n", Container.URL, Container.Name)
+			} else {
+				fmt.Printf(" ! %v (%v)\n", Container.URL, Container.Name)
+			}
 		}
 	}
 
