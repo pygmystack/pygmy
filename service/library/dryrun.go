@@ -31,7 +31,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 							if err != nil {
 								messages = append(messages, CompatibilityCheck{
 									State:   false,
-									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: already in use", Service.Name, p),
+									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", Service.Name, p, err),
 								})
 							} else {
 								messages = append(messages, CompatibilityCheck{
