@@ -98,7 +98,8 @@ func Status(c Config) {
 	}
 
 	for _, Container := range c.Services {
-		if Container.URL != "" {
+		Status, _ := Container.Status()
+		if Container.URL != "" && Status {
 			test_url.Validate(Container.URL)
 			if r := test_url.Validate(Container.URL); r {
 				fmt.Printf(" - %v (%v)\n", Container.URL, Container.Name)
