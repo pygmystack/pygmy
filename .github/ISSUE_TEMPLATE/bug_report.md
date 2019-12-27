@@ -28,3 +28,11 @@ A copy of the terminal/shell output where possible/useful.
 
 **Additional context**
 Add any other context about the problem here.
+
+**Exported configuration**
+
+Run `pygmy export --output output.yml` and print the contents from `output.yml` below:
+
+```
+Exported configuration goes here.
+```
