@@ -41,9 +41,3 @@ because other checks do for speed convenience.`,
 
 	},
 }
-
-func init() {
-
-	rootCmd.AddCommand(cleanCmd)
-
-}

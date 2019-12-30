@@ -1,10 +1,11 @@
+// Mailhog provides default values for the Mailhog docker container.
 package mailhog
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 )
 
 func New() model.Service {
@@ -41,6 +42,9 @@ func New() model.Service {
 
 }
 
+// NewDefaultPorts returns a bare struct containing the PortBindings for
+// the container. This will be merged into the service if PortBindings
+// are missing from the struct which Pygmy resolves.
 func NewDefaultPorts() model.Service {
 	return model.Service{
 		HostConfig: container.HostConfig{

@@ -38,9 +38,3 @@ the string 'amazeeio', which encompasses all lagoon images.`,
 
 	},
 }
-
-func init() {
-
-	rootCmd.AddCommand(updateCmd)
-
-}

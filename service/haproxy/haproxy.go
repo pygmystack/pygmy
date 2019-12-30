@@ -1,12 +1,17 @@
+// HAProxy provides default values for the HAProxy docker container.
 package haproxy
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 )
 
+// New will return a data structure containing all the default values
+// Pygmy needs for the HAProxy docker container. It does not contain
+// the port configuration - if the port configuration is missing, it
+// will merge in the response struct from NewDefaultPorts().
 func New() model.Service {
 	return model.Service{
 		Name:   "amazeeio-haproxy",
@@ -31,6 +36,9 @@ func New() model.Service {
 	}
 }
 
+// NewDefaultPorts returns a bare struct containing the PortBindings for
+// the container. This will be merged into the service if PortBindings
+// are missing from the struct which Pygmy resolves.
 func NewDefaultPorts() model.Service {
 	return model.Service{
 		HostConfig: container.HostConfig{

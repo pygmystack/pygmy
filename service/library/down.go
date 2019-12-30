@@ -2,6 +2,7 @@ package library
 
 import "github.com/fubarhouse/pygmy-go/service/resolv"
 
+// Down provides business logic for the `down` command.
 func Down(c Config) {
 
 	Setup(&c)

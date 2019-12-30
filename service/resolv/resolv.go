@@ -1,5 +1,6 @@
 // +build !windows
 
+// Resolv is the namespace resolver which routes traffic on the DNS namespace to the specified host.
 package resolv
 
 import (

@@ -21,11 +21,7 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/fubarhouse/pygmy-go/service/library"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -45,16 +41,4 @@ var restartCmd = &cobra.Command{
 		library.SshKeyAdd(c, Key)
 
 	},
-}
-
-func init() {
-
-	homedir, _ := homedir.Dir()
-	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-
-	rootCmd.AddCommand(restartCmd)
-	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
-	restartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-
 }

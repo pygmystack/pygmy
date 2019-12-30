@@ -21,11 +21,7 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/fubarhouse/pygmy-go/service/library"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -58,16 +54,4 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		library.SshKeyAdd(c, Key)
 
 	},
-}
-
-func init() {
-
-	homedir, _ := homedir.Dir()
-	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-
-	rootCmd.AddCommand(upCmd)
-	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
-	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-
 }

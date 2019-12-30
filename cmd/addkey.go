@@ -21,11 +21,7 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/fubarhouse/pygmy-go/service/library"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -42,14 +38,4 @@ var addkeyCmd = &cobra.Command{
 		library.SshKeyAdd(c, Key)
 
 	},
-}
-
-func init() {
-
-	homedir, _ := homedir.Dir()
-	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-
-	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-
 }

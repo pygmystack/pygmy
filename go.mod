@@ -8,10 +8,12 @@ require (
 	github.com/docker/docker v1.13.1
 	github.com/docker/go-connections v0.4.0
 	github.com/docker/go-units v0.4.0 // indirect
+	github.com/ghodss/yaml v1.0.0
 	github.com/imdario/mergo v0.3.8
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/opencontainers/go-digest v1.0.0-rc1 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.4.0
-	golang.org/x/net v0.0.0-20190522155817-f3200d17e092
+	golang.org/x/net v0.0.0-20190620200207-3b0461eec859
+	golang.org/x/tools v0.0.0-20191227053925-7b8e75db28f4 // indirect
 )

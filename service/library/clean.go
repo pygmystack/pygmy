@@ -3,10 +3,11 @@ package library
 import (
 	"fmt"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
+// Clean provides business logic for the `clean` command.
 func Clean(c Config) {
 
 	Setup(&c)

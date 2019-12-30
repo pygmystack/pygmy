@@ -1,11 +1,12 @@
 // +build darwin linux
 
+// Key provides default values for the SSH Key adder and shower docker container(s).
 package key
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 )
 
 func NewAdder() model.Service {

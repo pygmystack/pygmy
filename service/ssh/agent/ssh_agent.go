@@ -1,3 +1,4 @@
+// Agent provides default values and basic functionality for the SSH Agent docker container.
 package agent
 
 import (
@@ -5,7 +6,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 )
 

@@ -8,6 +8,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
+// SSHKeyAdd provides business logic for the `addkey` command.
 func SshKeyAdd(c Config, key string) {
 
 	if c.SkipKey {

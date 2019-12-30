@@ -1,12 +1,14 @@
+// HAProxy_Connector provides functionality to connect and check docker network attachment to a docker container.
 package haproxy_connector
 
 import (
 	"context"
 
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/interface"
+	"github.com/fubarhouse/pygmy-go/service/model"
 )
 
+// Connect will connect a container to a network.
 func Connect(containerName string, network string) error {
 	if s, _ := Connected(containerName, network); !s {
 		return model.DockerNetworkConnect(network, containerName)
@@ -14,6 +16,8 @@ func Connect(containerName string, network string) error {
 	return nil
 }
 
+// Connected will check the network containers to see if they match the
+// container requested.
 func Connected(containerName string, network string) (bool, error) {
 
 	ctx := context.Background()

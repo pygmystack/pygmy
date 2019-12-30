@@ -1,3 +1,18 @@
+// Cmd provides the entrypoint for the commands to initialise the library.
+// These commands are where the end-user will operate in implementations
+// of this library/application.
+package cmd
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/fubarhouse/pygmy-go/service/library"
+	homedir "github.com/mitchellh/go-homedir"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
 // Copyright © 2019 Karl Hepworth <Karl.Hepworth@gmail.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,21 +33,10 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 
-package cmd
-
-import (
-	"fmt"
-	"os"
-
-	"github.com/fubarhouse/pygmy-go/service/library"
-	homedir "github.com/mitchellh/go-homedir"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-)
-
 var (
 	cfgFile string
 	c library.Config
+	keypath string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -67,6 +71,30 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	// Cobra will need the home directory to try to detect the SSH key path.
+	homedir, _ := homedir.Dir()
+	keypath = fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
+	rootCmd.PersistentFlags().StringVar(&keypath, "key", keypath, "Path of your SSH key (default is $HOME/.ssh/id_rsa)")
+
+	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	restartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+
+	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+
+	// Add all of our subcommands to the root command.
+	rootCmd.AddCommand(addkeyCmd)
+	rootCmd.AddCommand(cleanCmd)
+	rootCmd.AddCommand(downCmd)
+	rootCmd.AddCommand(restartCmd)
+	rootCmd.AddCommand(statusCmd)
+	rootCmd.AddCommand(upCmd)
+	rootCmd.AddCommand(updateCmd)
+	rootCmd.AddCommand(versionCmd)
+
+
 }
 
 // initConfig reads in config file and ENV variables if set.

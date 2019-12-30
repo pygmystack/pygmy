@@ -39,9 +39,3 @@ services which are not running.`,
 
 	},
 }
-
-func init() {
-
-	rootCmd.AddCommand(downCmd)
-
-}

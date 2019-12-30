@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/test_url"

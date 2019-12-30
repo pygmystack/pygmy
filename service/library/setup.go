@@ -2,17 +2,18 @@ package library
 
 import (
 	"fmt"
+	"runtime"
+	"sort"
+	"strings"
+
 	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
 	"github.com/fubarhouse/pygmy-go/service/haproxy"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/mailhog"
+	model "github.com/fubarhouse/pygmy-go/service/model"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 	"github.com/spf13/viper"
-	"runtime"
-	"sort"
-	"strings"
 )
 
 func Setup(c *Config) {
