@@ -23,6 +23,9 @@ func run(args []string) error {
 
 func (resolv Resolv) Configure() {
 
+	if resolv.Disabled {
+		return
+	}
 	if resolv.Status() {
 		fmt.Printf("Already configured resolvr %v\n", resolv.Name)
 	} else {
