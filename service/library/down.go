@@ -12,9 +12,7 @@ func Down(c Config) {
 		}
 	}
 
-	if !c.SkipResolver {
-		for _, resolver := range c.Resolvers {
-			resolv.New(resolver).Clean()
-		}
+	for _, resolver := range c.Resolvers {
+		resolv.New(resolver).Clean()
 	}
 }

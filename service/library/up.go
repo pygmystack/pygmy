@@ -69,9 +69,10 @@ func Up(c Config) {
 		}
 	}
 
-	if !c.SkipResolver {
-		for _, resolver := range c.Resolvers {
-			resolv.New(resolver).Configure()
+	for _, resolver := range c.Resolvers {
+		this := resolv.New(resolver)
+		if !this.Disabled {
+			this.Configure()
 		}
 	}
 

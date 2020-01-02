@@ -42,7 +42,6 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 
 		Key, _ := cmd.Flags().GetString("key")
 		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
-		c.SkipResolver, _ = cmd.Flags().GetBool("no-resolver")
 
 		keyExistsInConfig := false
 		for _, key := range c.Keys {

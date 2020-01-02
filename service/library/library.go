@@ -18,11 +18,6 @@ type Config struct {
 	// SkipKey indicates key adding should be skipped.
 	SkipKey bool
 
-	// SkipResolver indicates the resolver adding/removal
-	// should be skipped - for more specific or manual
-	// environment implementations.
-	SkipResolver bool `yaml:"DisableResolver"`
-
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]model.Service `yaml:"services"`
 
