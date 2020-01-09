@@ -55,10 +55,9 @@ func Status(c Config) {
 	}
 
 	for _, Network := range c.Networks {
-		Containers := Network.Containers
 		netStat, _ := NetworkStatus(Network.Name)
 		if netStat {
-			for _, Container := range Containers {
+			for _, Container := range Network.Containers {
 				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
 					fmt.Printf("[*] %v is connected to network %v\n", Container, Network.Name)
 				} else {

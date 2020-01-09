@@ -50,12 +50,11 @@ func Up(c Config) {
 	}
 
 	for _, Network := range c.Networks {
-		Containers := Network.Containers
 		netStat, _ := NetworkStatus(Network.Name)
 		if !netStat {
 			NetworkCreate(c, Network.Name)
 		}
-		for _, Container := range Containers {
+		for _, Container := range Network.Containers {
 			if s, _ := haproxy_connector.Connected(Container, Network.Name); !s {
 				haproxy_connector.Connect(Container, Network.Name)
 				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
