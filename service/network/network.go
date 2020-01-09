@@ -6,6 +6,8 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// New will generate the defaults for the Docker network.
+// If configuration is provided this will not be used at all.
 func New() model.Network {
 	return model.Network{
 		Name:       "amazeeio-network",
