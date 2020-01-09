@@ -2,27 +2,27 @@ package library
 
 import (
 	"fmt"
+	"runtime"
+	"sort"
+	"strings"
+
 	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
 	"github.com/fubarhouse/pygmy-go/service/haproxy"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/mailhog"
+	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 	"github.com/spf13/viper"
-	"runtime"
-	"sort"
-	"strings"
 )
 
 func Setup(c *Config) {
 
 	viper.SetDefault("defaults", true)
 
-	viper.SetDefault("networks", map[string][]string{
-		"amazeeio-network": []string{
-			"amazeeio-haproxy",
-		},
+	viper.SetDefault("networks", map[string]model.Network{
+		"amazeeio-network": network.New(),
 	})
 
 	var ResolvMacOS = resolv.Resolv{

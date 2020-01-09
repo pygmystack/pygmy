@@ -40,6 +40,12 @@ type Service struct {
 	NetworkConfig network.NetworkingConfig
 }
 
+type Network struct {
+	Name string
+	Containers []string
+	Config types.NetworkCreate
+}
+
 func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
 		return nil
@@ -398,17 +404,35 @@ func DockerRemove(id string) error {
 	return nil
 }
 
-func DockerNetworkCreate(name string) error {
+func DockerNetworkCreate(name string, config types.NetworkCreate) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = cli.NetworkCreate(ctx, name, types.NetworkCreate{})
+	_, err = cli.NetworkCreate(ctx, name, config)
 	if err != nil {
 		fmt.Println(err)
 	}
 	return nil
+}
+
+func DockerNetworkGet(name string) (types.NetworkResource, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return types.NetworkResource{}, err
+	}
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	if err != nil {
+		return types.NetworkResource{}, err
+	}
+	for _, network := range networks {
+		if network.Name == name {
+			return network, nil
+		}
+	}
+	return types.NetworkResource{}, nil
 }
 
 func DockerNetworkConnect(network string, containerName string) error {

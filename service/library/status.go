@@ -6,7 +6,6 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
@@ -55,21 +54,22 @@ func Status(c Config) {
 		}
 	}
 
-	for Network, Containers := range c.Networks {
-		netStat, _ := network.Status(Network)
+	for _, Network := range c.Networks {
+		Containers := Network.Containers
+		netStat, _ := NetworkStatus(Network.Name)
 		if netStat {
 			for _, Container := range Containers {
-				if s, _ := haproxy_connector.Connected(Container, Network); s {
-					fmt.Printf("[*] %v is connected to network %v\n", Container, Network)
+				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
+					fmt.Printf("[*] %v is connected to network %v\n", Container, Network.Name)
 				} else {
-					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network)
+					fmt.Printf("[ ] %v is not connected to network %v\n", Container, Network.Name)
 				}
 			}
 		}
-		if _, e := network.Status(Network); e == nil {
-			fmt.Printf("[*] %v network has been created\n", Network)
+		if _, e := NetworkStatus(Network.Name); e == nil {
+			fmt.Printf("[*] %v network has been created\n", Network.Name)
 		} else {
-			fmt.Printf("[ ] %v network has not been created\n", Network)
+			fmt.Printf("[ ] %v network has not been created\n", Network.Name)
 		}
 	}
 

@@ -3,6 +3,7 @@ package library
 
 import (
 	"fmt"
+
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
@@ -24,7 +25,7 @@ type Config struct {
 	SortedServices []string
 
 	// Networks is for network configuration
-	Networks map[string][]string `yaml:"networks"`
+	Networks map[string]model.Network `yaml:"networks"`
 
 	// NoDefaults will prevent default configuration items.
 	Defaults bool
