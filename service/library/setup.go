@@ -82,8 +82,9 @@ func Setup(c *Config) {
 		}
 
 		// If networks are not provided, we should provide defaults.
-		// Defaults will be provided if nothing is found in configuration is
-		// completely absent.
+		// Defaults will be provided if nothing is found in configuration
+		// (is completely absent).
+		// TODO: Make this mergable like container configurations are.
 		viper.SetDefault("networks", map[string]model.Network{
 			"amazeeio-network": network.New(),
 		})
