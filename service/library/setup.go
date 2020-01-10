@@ -85,10 +85,11 @@ func Setup(c *Config) {
 		// Defaults will be provided if nothing is found in configuration
 		// (is completely absent).
 		// TODO: Make this mergable like container configurations are.
-		viper.SetDefault("networks", map[string]model.Network{
-			"amazeeio-network": network.New(),
-		})
-
+		if c.Networks == nil {
+			c.Networks = map[string]model.Network{
+				"amazeeio-network": network.New(),
+			}
+		}
 	}
 
 	// It is because of interdependent containers we introduce a weighting system.
