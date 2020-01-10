@@ -21,6 +21,9 @@ func New() model.Network {
 					},
 				},
 			},
+			Labels: map[string]string{
+				"pygmy": "pygmy",
+			},
 		},
 	}
 }
