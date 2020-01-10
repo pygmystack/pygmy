@@ -40,6 +40,21 @@ type Service struct {
 	NetworkConfig network.NetworkingConfig
 }
 
+// Network is a struct containing the configuration of a single Docker network
+// including some extra fields so that Pygmy knows how to interact with the
+// desired outcome.
+type Network struct {
+	// Name is the name of the network, it is independent of the map key which
+	// will be used to configure pygmy but this field should match the map key.
+	Name string `yaml:"name"`
+	// Containers is a []string which indicates the names of the containers
+	// that need to be connected to this network.
+	Containers []string `yaml:"containers"`
+	// Config is the actual Network configuration for the Docker Network.
+	// It is the Network creation configuration as provided by the Docker API.
+	Config types.NetworkCreate `yaml:"config"`
+}
+
 func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
 		return nil
@@ -398,17 +413,39 @@ func DockerRemove(id string) error {
 	return nil
 }
 
-func DockerNetworkCreate(name string) error {
+// DockerNetworkCreate is an abstraction layer on top of the Docker API call
+// which will create a Docker network using a specified configuration.
+func DockerNetworkCreate(name string, config types.NetworkCreate) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = cli.NetworkCreate(ctx, name, types.NetworkCreate{})
+	_, err = cli.NetworkCreate(ctx, name, config)
 	if err != nil {
 		fmt.Println(err)
 	}
 	return nil
+}
+
+// DockerNetworkGet will use the Docker API to retrieve a Docker network
+// which has a given name.
+func DockerNetworkGet(name string) (types.NetworkResource, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return types.NetworkResource{}, err
+	}
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	if err != nil {
+		return types.NetworkResource{}, err
+	}
+	for _, network := range networks {
+		if network.Name == name {
+			return network, nil
+		}
+	}
+	return types.NetworkResource{}, nil
 }
 
 func DockerNetworkConnect(network string, containerName string) error {

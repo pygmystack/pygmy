@@ -1,12 +1,11 @@
 package library
 
 import (
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/network"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
@@ -50,21 +49,21 @@ func Up(c Config) {
 		}
 	}
 
-	for Network, Containers := range c.Networks {
-		netStat, _ := network.Status(Network)
+	for _, Network := range c.Networks {
+		netStat, _ := NetworkStatus(Network.Name)
 		if !netStat {
-			network.Create(Network)
+			NetworkCreate(c, Network.Name)
 		}
-		for _, Container := range Containers {
-			if s, _ := haproxy_connector.Connected(Container, Network); !s {
-				haproxy_connector.Connect(Container, Network)
-				if s, _ := haproxy_connector.Connected(Container, Network); s {
-					fmt.Printf("Successfully connected %v to %v\n", Container, Network)
+		for _, Container := range Network.Containers {
+			if s, _ := haproxy_connector.Connected(Container, Network.Name); !s {
+				haproxy_connector.Connect(Container, Network.Name)
+				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
+					fmt.Printf("Successfully connected %v to %v\n", Container, Network.Name)
 				} else {
-					fmt.Printf("Could not connect %v to %v\n", Container, Network)
+					fmt.Printf("Could not connect %v to %v\n", Container, Network.Name)
 				}
 			} else {
-				fmt.Printf("Already connected %v to %v\n", Container, Network)
+				fmt.Printf("Already connected %v to %v\n", Container, Network.Name)
 			}
 		}
 	}
