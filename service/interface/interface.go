@@ -26,7 +26,6 @@ type DockerService interface {
 
 type Service struct {
 	Name     string
-	Group    string
 	Disabled bool
 	Discrete bool
 	Output   bool
@@ -93,7 +92,9 @@ func (Service *Service) Start() ([]byte, error) {
 		return []byte{}, nil
 	}
 
-	if Service.Group == "addkeys" || Service.Group == "showkeys" {
+	vOne, _ := Service.TagGet("addkeys")
+	vTwo, _ := Service.TagGet("showkeys")
+	if vOne == "pygmy.addkeys" || vTwo == "pygmy.showkeys" {
 		DockerKill(Service.Name)
 		DockerRemove(Service.Name)
 	}
@@ -150,6 +151,35 @@ func (Service *Service) Status() (bool, error) {
 
 	return false, nil
 
+}
+
+// TagGet will return the value and error of obtaining a tag with a given name
+// from a container. Pygmy uses tags of a dot notation following the prefix of
+// "pygmy", so this will search for "pygmy" when the name parameter is empty,
+// or when a value is provided it will look for the tag "pygmy.name" which is
+// said to exist on the current container configuration, returning an error if
+// the specified tag is not found, otherwise it will also return the value of
+// the given tag.
+func (Service *Service) TagGet(name string) (string, error) {
+	c, _ := DockerContainerList()
+	var searchString string
+	if name == "" {
+		searchString = "pygmy"
+	} else {
+		searchString = fmt.Sprintf("pygmy.%v", name)
+	}
+	for _, x := range c {
+		for _, n := range x.Names {
+			if n == Service.Name {
+				for label, value := range x.Labels {
+					if label == searchString {
+						return value, nil
+					}
+				}
+			}
+		}
+	}
+	return "", errors.New(fmt.Sprintf("container %v does not have the tag %v", Service.Name, name))
 }
 
 func GetDetails(Service *Service) (types.Container, error) {

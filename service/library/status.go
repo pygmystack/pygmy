@@ -90,7 +90,8 @@ func Status(c Config) {
 	}
 
 	for _, Container := range c.Services {
-		if Container.Group == "showkeys" {
+		vOne, _ := Container.TagGet("showkeys")
+		if vOne == "pygmy.showkeys" {
 			Container.Output = true
 			Container.Start()
 		}
