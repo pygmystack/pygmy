@@ -42,5 +42,17 @@ matrix:
 
         - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
 
+deploy:
+  provider: releases
+  api_key:
+    secure: LOdLYTgibvv9PWpYO6ksIXeYW8EQjNmtiSZ3Hx2pBRoqs9dzvKxH4Ne+1oITIyXyCS9W99MTMmwtO8CxsSHqUqAhRBSEtxUfBFhhl4DFfVWbroAJ8x05uwYpqEWPr3RjZz1Abn/tqDVQ9fd4/ihTUvZcE+2ocaTs58W+mtrU0jRwAlv364EbmfpXRhWdA6STC+eJhMxHmFfrijIzmtGqIiT/w3W2eeA49uCmYfwrsU5Vy82nlTlDbkIRFj0sT2CGeoYSV7trNWcGsslJDUHyw7WZs2OpwXD4wiqqpfaz7P8+CsY7MOEWdWb1nc9Wa8mrj+HbwIPo9Di00EkQLEzndBP7nPgU/36suRB3NNvyS33Jg+VzpXPU/2w20a2R+eJYZQr/B06L9sKeeCtKQFPcwYCG7uwahhYiJFQPfPS5mCZjnbzQvNGw3ExEGrT8jCu/Dy/+dG8mSaddYciGpfiaNswnGFAyt7yIeYQVwG28qvkhaom54TNj1Ssuyx2QIqHqGqR1x2KGMUNbH4gaiRLSom48dnLxuzGPplND8ur+UcKIWyLQHlnm3nBIbURgVndfLn5brQD9jpXHNhUKArT/4f9s/OiDnLtzp+55+xFUddliVwEnJO56m+9ZO5HbUveIilko2/afIajEOoDKhj5rHpEhSYvHIMzEpFQ8CGvbQtY=
+  skip_cleanup: true
+  file: builds/pygmy*
+  file_glob: true
+  on:
+    repo: fubarhouse/pygmy-go
+    branch: master
+    tags: true
+
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
