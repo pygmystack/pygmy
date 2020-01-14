@@ -9,13 +9,13 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name: "mailhog.docker.amazee.io",
-		URL: "http://mailhog.docker.amazee.io",
+		Name:   "mailhog.docker.amazee.io",
+		URL:    "http://mailhog.docker.amazee.io",
 		Weight: 15,
-		Config:        container.Config{
-			User:       "0",
+		Config: container.Config{
+			User: "0",
 			ExposedPorts: nat.PortSet{
-				"80/tcp": struct{}{},
+				"80/tcp":   struct{}{},
 				"1025/tcp": struct{}{},
 				"8025/tcp": struct{}{},
 			},
@@ -25,11 +25,11 @@ func New() model.Service {
 				"AMAZEEIO=AMAZEEIO",
 			},
 			Image: "mailhog/mailhog",
-			Labels:		map[string]string{
+			Labels: map[string]string{
 				"pygmy": "pygmy",
 			},
 		},
-		HostConfig:    container.HostConfig{
+		HostConfig: container.HostConfig{
 			AutoRemove: false,
 			RestartPolicy: struct {
 				Name              string
@@ -47,7 +47,7 @@ func NewDefaultPorts() model.Service {
 			PortBindings: nat.PortMap{
 				"1025/tcp": []nat.PortBinding{
 					{
-						HostIP: "",
+						HostIP:   "",
 						HostPort: "1025",
 					},
 				},

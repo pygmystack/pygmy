@@ -11,16 +11,16 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name: "amazeeio-ssh-agent",
+		Name:   "amazeeio-ssh-agent",
 		Weight: 30,
-		Config:        container.Config{
-			Image:    "amazeeio/ssh-agent",
-			Labels:		map[string]string{
+		Config: container.Config{
+			Image: "amazeeio/ssh-agent",
+			Labels: map[string]string{
 				"pygmy": "pygmy",
 			},
 		},
-		HostConfig:    container.HostConfig{
-			AutoRemove:  false,
+		HostConfig: container.HostConfig{
+			AutoRemove: false,
 			RestartPolicy: struct {
 				Name              string
 				MaximumRetryCount int

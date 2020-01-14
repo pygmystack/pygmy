@@ -10,8 +10,8 @@ matrix:
       services: docker
       before_install:
         - go mod download
-        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
-        - GO111MODULE=on go vet $(go list ./...) || true;
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+        - GO111MODULE=on go vet $(go list ./...);
 
         - make build
       script:
@@ -27,8 +27,8 @@ matrix:
       services: docker
       before_install:
         - go mod download
-        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go")) || true;
-        - GO111MODULE=on go vet $(go list ./...) || true;
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+        - GO111MODULE=on go vet $(go list ./...);
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;

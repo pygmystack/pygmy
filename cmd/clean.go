@@ -27,9 +27,9 @@ import (
 
 // stopCmd represents the stop command
 var cleanCmd = &cobra.Command{
-	Use:   "clean",
+	Use:     "clean",
 	Example: "pygmy clean",
-	Short: "Stop and remove all pygmy services regardless of state",
+	Short:   "Stop and remove all pygmy services regardless of state",
 	Long: `Useful for debugging or system cleaning, this command will
 remove all pygmy containers but leave the images in-tact.
 

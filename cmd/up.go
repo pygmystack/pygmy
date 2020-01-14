@@ -31,9 +31,9 @@ import (
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
-	Use:   "up",
+	Use:     "up",
 	Example: "pygmy up",
-	Short: "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
+	Short:   "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
 	Long: `Launch Pygmy - a set of containers and a resolver with very specific
 configurations designed for use with Amazee.io local development.
 
