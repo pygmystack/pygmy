@@ -31,10 +31,10 @@ import (
 
 // addkeyCmd is the SSH key add command.
 var addkeyCmd = &cobra.Command{
-	Use:   "addkey",
+	Use:     "addkey",
 	Example: "pygmy addkey ~/.ssh/id_rsa",
-	Short: "Add/re-add an SSH key to the agent",
-	Long: `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
+	Short:   "Add/re-add an SSH key to the agent",
+	Long:    `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")

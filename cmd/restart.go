@@ -31,10 +31,10 @@ import (
 
 // restartCmd represents the restart command
 var restartCmd = &cobra.Command{
-	Use:   "restart",
+	Use:     "restart",
 	Example: "pygmy restart",
-	Short: "Restart all pygmy containers.",
-	Long: `This command will trigger the Down and Up commands`,
+	Short:   "Restart all pygmy containers.",
+	Long:    `This command will trigger the Down and Up commands`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")

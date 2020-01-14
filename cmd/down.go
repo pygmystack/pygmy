@@ -27,9 +27,9 @@ import (
 
 // downCmd represents the down command
 var downCmd = &cobra.Command{
-	Use:   "down",
+	Use:     "down",
 	Example: "pygmy down",
-	Short: "Stop and remove all pygmy services",
+	Short:   "Stop and remove all pygmy services",
 	Long: `Check if any pygmy containers are running and removes
 then if they are, it will not attempt to remove any
 services which are not running.`,
