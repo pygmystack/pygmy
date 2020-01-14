@@ -33,7 +33,6 @@ func NewAdder() model.Service {
 func NewShower() model.Service {
 	return model.Service{
 		Name:     "amazeeio-ssh-agent-show-keys",
-		Group:    "showkeys",
 		Weight:   32,
 		Discrete: true,
 		Output:   false,
