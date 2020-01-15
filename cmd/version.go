@@ -27,10 +27,10 @@ import (
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
-	Use:   "version",
+	Use:     "version",
 	Example: "pygmy version",
-	Short: "# Check current installed version of pygmy",
-	Long: ``,
+	Short:   "# Check current installed version of pygmy",
+	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		library.Version(c)
