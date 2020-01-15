@@ -110,11 +110,11 @@ func (Service *Service) Start() ([]byte, error) {
 			fmt.Println(strings.Trim(string(output), "\n"))
 		}
 
-		if c, _ := GetDetails(Service); c.ID != "" {
+		if c, _ := GetRunning(Service); c.ID != "" {
 			if !Service.HostConfig.AutoRemove || !Service.Discrete {
 				fmt.Printf("Successfully started %v\n", Service.Name)
 			}
-			return output, nil
+			return output, errors.New(fmt.Sprintf("Failed to run %v.\n", Service.Name))
 		}
 		if err != nil {
 			return []byte{}, err
@@ -152,7 +152,9 @@ func (Service *Service) Status() (bool, error) {
 
 }
 
-func GetDetails(Service *Service) (types.Container, error) {
+// GetRunning will get a types.Container variable for a given running container
+// and it will not retrieve any information on containers that are not running.
+func GetRunning(Service *Service) (types.Container, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -210,7 +212,7 @@ func (Service *Service) Stop() error {
 	if Service.Name == "" {
 		return nil
 	}
-	container, err := GetDetails(Service)
+	container, err := GetRunning(Service)
 	if err != nil {
 		if !Service.Discrete {
 			fmt.Printf("Not running %v\n", Service.Name)
