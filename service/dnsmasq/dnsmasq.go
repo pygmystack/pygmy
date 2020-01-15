@@ -9,8 +9,6 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name:   "amazeeio-dnsmasq",
-		Weight: 13,
 		Config: container.Config{
 			Image: "andyshinn/dnsmasq:2.78",
 			Cmd: []string{

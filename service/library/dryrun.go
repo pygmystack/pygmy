@@ -16,7 +16,9 @@ func DryRun(c *Config) []CompatibilityCheck {
 	messages := []CompatibilityCheck{}
 
 	for _, Service := range c.Services {
-		if !Service.Disabled {
+		name, _ := Service.GetFieldString("name")
+		disabled, _ := Service.GetFieldBool("disabled")
+		if !disabled {
 			if s, _ := Service.Status(); !s {
 				for PortBinding, Ports := range Service.HostConfig.PortBindings {
 					if strings.Contains(string(PortBinding), "tcp") {
@@ -31,7 +33,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 							if err != nil {
 								messages = append(messages, CompatibilityCheck{
 									State:   true,
-									Message: fmt.Sprintf("[*] %v is able to start on port %v", Service.Name, p),
+									Message: fmt.Sprintf("[*] %v is able to start on port %v", name, p),
 								})
 							} else {
 								conn, err := net.Listen("tcp", ":"+p)
@@ -40,7 +42,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 								}
 								messages = append(messages, CompatibilityCheck{
 									State:   false,
-									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", Service.Name, p, err),
+									Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", name, p, err),
 								})
 							}
 						}

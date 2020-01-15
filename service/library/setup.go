@@ -92,29 +92,15 @@ func Setup(c *Config) {
 		}
 	}
 
-	// It is because of interdependent containers we introduce a weighting system.
-	// Containers are sorted alphabetically, and then sorted based on their weight.
-	// Note that for now, the sorting is handled as a string. So weight identifiers
-	// Should have an identical length.
-	{
-		length := 0
-		c.SortedServices = make([]string, 0, len(c.Services))
-		for key, value := range c.Services {
-			c.SortedServices = append(c.SortedServices, fmt.Sprintf("%v|%v", value.Weight, key))
-			// If the length is changed mid-flight, we should at least warn against unexpected container ordering.
-			if len(string(value.Weight)) > length && length != 0 {
-				fmt.Printf("Warning: please check the Weight attribute of the %v container configuration, ordering may not work correctly.\n", value.Name)
-			}
-			// Increment the length check as needed.
-			if len(string(value.Weight)) > length {
-				length = len(string(value.Weight))
-			}
-		}
-		sort.Strings(c.SortedServices)
+	c.SortedServices = make([]string, 0, len(c.Services))
+	for key, service := range c.Services {
+		weight, _ := service.GetFieldInt("weight")
+		c.SortedServices = append(c.SortedServices, fmt.Sprintf("%v|%v", weight, key))
+	}
+	sort.Strings(c.SortedServices)
 
-		for n, v := range c.SortedServices {
-			c.SortedServices[n] = strings.Split(v, "|")[1]
-		}
+	for n, v := range c.SortedServices {
+		c.SortedServices[n] = strings.Split(v, "|")[1]
 	}
 
 }

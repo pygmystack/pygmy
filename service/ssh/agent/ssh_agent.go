@@ -11,8 +11,6 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name:   "amazeeio-ssh-agent",
-		Weight: 30,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{

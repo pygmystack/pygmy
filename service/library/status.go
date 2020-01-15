@@ -2,12 +2,11 @@ package library
 
 import (
 	"fmt"
-	"strings"
-
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/test_url"
+	"strings"
 )
 
 func Status(c Config) {
@@ -22,35 +21,31 @@ func Status(c Config) {
 		fmt.Println()
 	}
 
-	// Logic for containers when containers are running.
 	Containers, _ := model.DockerContainerList()
 	for _, Container := range Containers {
 		if Container.Labels["pygmy"] == "pygmy" {
-			name := strings.TrimLeft(Container.Names[0], "/")
-			for x, Service := range c.Services {
-				if Service.Name == name {
-					name = x
-				}
-			}
-			Service := c.Services[name]
-			if Service.Name != "" {
-				if !Service.Disabled && !Service.Discrete && Service.Name != "" {
-					if s, _ := Service.Status(); s {
-						fmt.Printf("[*] %v: Running as container %v\n", name, Service.Name)
-					} else {
-						fmt.Printf("[ ] %v is not running\n", Service.Name)
+			Service := c.Services[strings.Trim(Container.Names[0], "/")]
+			if s, _ := Service.Status(); s {
+				name, _ := Service.GetFieldString("name")
+				disabled, _ := Service.GetFieldBool("disabled")
+				discrete, _ := Service.GetFieldBool("discrete")
+				if name != "" {
+					if !disabled && !discrete && name != "" {
+						if s, _ := Service.Status(); s {
+							fmt.Printf("[*] %v: Running as container %v\n", name, name)
+						} else {
+							fmt.Printf("[ ] %v is not running\n", name)
+						}
 					}
 				}
-			} else {
-				fmt.Printf("[!] %v: Still running (not described in current config)\n", name)
 			}
 		}
 	}
 
-	// Logic for containers when they're not running.
-	for _, Container := range c.Services {
-		if s, _ := Container.Status(); !s {
-			fmt.Printf("[ ] %v is not running\n", Container.Name)
+	for _, Service := range c.Services {
+		if s, _ := Service.Status(); !s {
+			name, _ := Service.GetFieldString("name")
+			fmt.Printf("[ ] %v is not running\n", name)
 		}
 	}
 
@@ -90,20 +85,25 @@ func Status(c Config) {
 	}
 
 	for _, Container := range c.Services {
-		if Container.Group == "showkeys" {
-			Container.Output = true
+		purpose, _ := Container.GetFieldString("purpose")
+		//output, _ := Container.GetFieldBool("output")
+		if purpose == "showkeys" {
+			// TODO re-fix
+			//Container.Output = true
 			Container.Start()
 		}
 	}
 
 	for _, Container := range c.Services {
 		Status, _ := Container.Status()
-		if Container.URL != "" && Status {
-			test_url.Validate(Container.URL)
-			if r := test_url.Validate(Container.URL); r {
-				fmt.Printf(" - %v (%v)\n", Container.URL, Container.Name)
+		name, _ := Container.GetFieldString("name")
+		url, _ := Container.GetFieldString("url")
+		if url != "" && Status {
+			test_url.Validate(url)
+			if r := test_url.Validate(url); r {
+				fmt.Printf(" - %v (%v)\n", url, name)
 			} else {
-				fmt.Printf(" ! %v (%v)\n", Container.URL, Container.Name)
+				fmt.Printf(" ! %v (%v)\n", url, name)
 			}
 		}
 	}

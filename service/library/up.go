@@ -42,10 +42,12 @@ func Up(c Config) {
 	// Look over the sorted slice and start them in
 	// alphabetical order - so that one can configure
 	// an ssh-agent like amazeeio-ssh-agent.
-	for _, service := range c.SortedServices {
-		s := c.Services[service]
-		if !s.Disabled && s.Group != "addkeys" && s.Group != "showkeys" {
-			s.Start()
+	for _, s := range c.SortedServices {
+		service := c.Services[s]
+		disabled, _ := service.GetFieldBool("disabled")
+		purpose, _ := service.GetFieldString("purpose")
+		if !disabled && purpose != "addkeys" && purpose != "showkeys" {
+			service.Start()
 		}
 	}
 
@@ -84,12 +86,14 @@ func Up(c Config) {
 	}
 
 	for _, service := range c.Services {
-		if s, _ := service.Status(); s && service.URL != "" {
-			test_url.Validate(service.URL)
-			if r := test_url.Validate(service.URL); r {
-				fmt.Printf(" - %v (%v)\n", service.URL, service.Name)
+		name, _ := service.GetFieldString("name")
+		url, _ := service.GetFieldString("url")
+		if s, _ := service.Status(); s && url != "" {
+			test_url.Validate(url)
+			if r := test_url.Validate(url); r {
+				fmt.Printf(" - %v (%v)\n", url, name)
 			} else {
-				fmt.Printf(" ! %v (%v)\n", service.URL, service.Name)
+				fmt.Printf(" ! %v (%v)\n", url, name)
 			}
 		}
 	}
