@@ -10,8 +10,6 @@ import (
 
 func NewAdder() model.Service {
 	return model.Service{
-		Discrete: true,
-		Output:   true,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{
