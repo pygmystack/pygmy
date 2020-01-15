@@ -18,8 +18,12 @@ func NewAdder() model.Service {
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{
-				"pygmy":         "pygmy",
-				"pygmy.addkeys": "pygmy.addkeys",
+				"pygmy":          "pygmy",
+				"pygmy.name":     "amazeeio-ssh-agent-add-key",
+				"pygmy.discrete": "true",
+				"pygmy.output":   "true",
+				"pygmy.purpose":  "addkeys",
+				"pygmy.weight":   "31",
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -46,7 +50,11 @@ func NewShower() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy":          "pygmy",
-				"pygmy.showkeys": "pygmy.showkeys",
+				"pygmy.name":     "amazeeio-ssh-agent-show-keys",
+				"pygmy.discrete": "true",
+				"pygmy.output":   "false",
+				"pygmy.purpose":  "showkeys",
+				"pygmy.weight":   "32",
 			},
 		},
 		HostConfig: container.HostConfig{
