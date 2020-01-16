@@ -2,11 +2,12 @@ package library
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/fubarhouse/pygmy-go/service/test_url"
-	"strings"
 )
 
 func Status(c Config) {
@@ -78,9 +79,9 @@ func Status(c Config) {
 
 	for _, volume := range c.Volumes {
 		if s, _ := model.DockerVolumeExists(volume); s {
-			fmt.Printf("[*] Volume %v has been created\n", volume)
+			fmt.Printf("[*] Volume %v has been created\n", volume.Name)
 		} else {
-			fmt.Printf("[ ] Volume %v has not been created\n", volume)
+			fmt.Printf("[ ] Volume %v has not been created\n", volume.Name)
 		}
 	}
 

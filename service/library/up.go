@@ -30,7 +30,9 @@ func Up(c Config) {
 	for _, volume := range c.Volumes {
 		if s, _ := model.DockerVolumeExists(volume); !s {
 			_, err := model.DockerVolumeCreate(volume)
-			if err != nil {
+			if err == nil {
+				fmt.Printf("Created volume %v\n", volume.Name)
+			} else {
 				fmt.Println(err)
 			}
 		} else {
