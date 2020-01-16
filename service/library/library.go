@@ -27,7 +27,7 @@ type Config struct {
 	SortedServices []string
 
 	// Networks is for network configuration
-	Networks map[string]types.NetworkResource `yaml:"networks"`
+	Networks map[string]types.NetworkResource`yaml:"networks"`
 
 	// NoDefaults will prevent default configuration items.
 	Defaults bool
