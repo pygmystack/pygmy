@@ -14,7 +14,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/api/types/volume"
+	volume2 "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 )
 
@@ -551,13 +551,13 @@ func DockerNetworkConnect(network string, containerName string) error {
 	return nil
 }
 
-func DockerVolumeExists(name string) (bool, error) {
+func DockerVolumeExists(volume types.Volume) (bool, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return false, err
 	}
-	_, _, err = cli.VolumeInspectWithRaw(ctx, name)
+	_, _, err = cli.VolumeInspectWithRaw(ctx, volume.Name)
 	if err != nil {
 		return false, err
 	}
@@ -565,13 +565,16 @@ func DockerVolumeExists(name string) (bool, error) {
 	return true, nil
 }
 
-func DockerVolumeCreate(name string) (types.Volume, error) {
+func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return types.Volume{}, err
 	}
-	return cli.VolumeCreate(ctx, volume.VolumesCreateBody{
-		Name: name,
+	return cli.VolumeCreate(ctx, volume2.VolumesCreateBody{
+		Driver:     volume.Driver,
+		DriverOpts: volume.Options,
+		Labels:     volume.Labels,
+		Name:       volume.Name,
 	})
 }
