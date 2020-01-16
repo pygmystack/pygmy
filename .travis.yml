@@ -12,16 +12,24 @@ matrix:
         - go mod download
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
-
-        - make build
       script:
-        - export PYGMY_PATH=pygmy-go-linux-x86;
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - go build -o pygmy-go-linux-x86
+        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml up;
+        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml status;
         - curl --HEAD http://docker.amazee.io/stats
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml down;
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml clean;
-        - docker image rm pygmy-go --force || true;
+        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml down;
+        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml clean;
+
+    - os: linux
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+        - GO111MODULE=on go vet $(go list ./...);
+
+      script:
+        - make build
+        - docker image rm pygmy-go --force || true
 
     - os: windows
       services: docker
