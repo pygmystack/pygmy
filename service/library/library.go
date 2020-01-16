@@ -4,6 +4,7 @@ package library
 import (
 	"fmt"
 
+	"github.com/docker/docker/api/types"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
@@ -25,7 +26,7 @@ type Config struct {
 	SortedServices []string
 
 	// Networks is for network configuration
-	Networks map[string]model.Network `yaml:"networks"`
+	Networks map[string]types.NetworkResource`yaml:"networks"`
 
 	// NoDefaults will prevent default configuration items.
 	Defaults bool

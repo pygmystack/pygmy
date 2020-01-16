@@ -54,18 +54,23 @@ func Up(c Config) {
 	for _, Network := range c.Networks {
 		netStat, _ := NetworkStatus(Network.Name)
 		if !netStat {
-			NetworkCreate(c, Network.Name)
+			if err := NetworkCreate(Network); err == nil {
+				fmt.Printf("Successfully created network %v\n", Network.Name)
+			} else {
+				fmt.Printf("Could not create network %v\n", Network.Name)
+			}
+
 		}
 		for _, Container := range Network.Containers {
-			if s, _ := haproxy_connector.Connected(Container, Network.Name); !s {
-				haproxy_connector.Connect(Container, Network.Name)
-				if s, _ := haproxy_connector.Connected(Container, Network.Name); s {
-					fmt.Printf("Successfully connected %v to %v\n", Container, Network.Name)
+			if s, _ := haproxy_connector.Connected(Container.Name, Network.Name); !s {
+				haproxy_connector.Connect(Container.Name, Network.Name)
+				if s, _ := haproxy_connector.Connected(Container.Name, Network.Name); s {
+					fmt.Printf("Successfully connected %v to %v\n", Container.Name, Network.Name)
 				} else {
-					fmt.Printf("Could not connect %v to %v\n", Container, Network.Name)
+					fmt.Printf("Could not connect %v to %v\n", Container.Name, Network.Name)
 				}
 			} else {
-				fmt.Printf("Already connected %v to %v\n", Container, Network.Name)
+				fmt.Printf("Already connected %v to %v\n", Container.Name, Network.Name)
 			}
 		}
 	}

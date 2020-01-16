@@ -12,8 +12,8 @@ import (
 
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
-func NetworkCreate(c Config, name string) error {
-	return model.DockerNetworkCreate(name, c.Networks[name].Config)
+func NetworkCreate(network types.NetworkResource) error {
+	return model.DockerNetworkCreate(&network)
 }
 
 // NetworkConnect is part of a centralised abstraction of the Docker API

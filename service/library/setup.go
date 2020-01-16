@@ -6,6 +6,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/docker/docker/api/types"
 	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
 	"github.com/fubarhouse/pygmy-go/service/haproxy"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
@@ -86,7 +87,7 @@ func Setup(c *Config) {
 		// (is completely absent).
 		// TODO: Make this mergable like container configurations are.
 		if c.Networks == nil {
-			c.Networks = map[string]model.Network{
+			c.Networks = map[string]types.NetworkResource{
 				"amazeeio-network": network.New(),
 			}
 		}

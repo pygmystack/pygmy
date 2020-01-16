@@ -494,13 +494,24 @@ func DockerRemove(id string) error {
 
 // DockerNetworkCreate is an abstraction layer on top of the Docker API call
 // which will create a Docker network using a specified configuration.
-func DockerNetworkCreate(name string, config types.NetworkCreate) error {
+func DockerNetworkCreate(network *types.NetworkResource) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		fmt.Println(err)
 	}
-	_, err = cli.NetworkCreate(ctx, name, config)
+
+	config := types.NetworkCreate{
+		Driver:         network.Driver,
+		EnableIPv6:     network.EnableIPv6,
+		IPAM:           &network.IPAM,
+		Internal:       network.Internal,
+		Attachable:     network.Attachable,
+		Options:        network.Options,
+		Labels:         network.Labels,
+	}
+
+	_, err = cli.NetworkCreate(ctx, network.Name, config)
 	if err != nil {
 		fmt.Println(err)
 	}
