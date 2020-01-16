@@ -10,6 +10,11 @@ import (
 func New() types.NetworkResource {
 	return types.NetworkResource{
 		Name: "amazeeio-network",
+		Containers: map[string]types.EndpointResource{
+			"amazeeio-haproxy": types.EndpointResource{
+				Name: "amazeeio-haproxy",
+			},
+		},
 		IPAM: network.IPAM{
 			Driver:  "",
 			Options: nil,
