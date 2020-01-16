@@ -26,7 +26,8 @@ func SshKeyAdd(c Config, key string) {
 	if !agent.Search(key) {
 
 		for _, Container := range c.Services {
-			if Container.Group == "addkeys" {
+			purpose, _ := Container.GetFieldString("purpose")
+			if purpose == "addkeys" {
 				if runtime.GOOS == "windows" {
 					Container.Config.Cmd = []string{"ssh-add", "/key"}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
@@ -39,7 +40,8 @@ func SshKeyAdd(c Config, key string) {
 		}
 
 		for _, Container := range c.Services {
-			if Container.Group == "addkey" {
+			purpose, _ := Container.GetFieldString("purpose")
+			if purpose == "addkey" {
 				Container.Start()
 			}
 		}

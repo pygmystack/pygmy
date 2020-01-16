@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 	"time"
 
@@ -25,16 +26,6 @@ type DockerService interface {
 }
 
 type Service struct {
-	Name     string
-	Group    string
-	Disabled bool
-	Discrete bool
-	Output   bool
-	Weight   int
-	// URL is a variable defined by the service definition for the general knowledge
-	// provided to Pygmy users. Optional, it should be a URL with a port and a path
-	// where appropriate.
-	URL           string
 	Config        container.Config
 	HostConfig    container.HostConfig
 	NetworkConfig network.NetworkingConfig
@@ -78,7 +69,12 @@ func (Service *Service) Setup() error {
 
 func (Service *Service) Start() ([]byte, error) {
 
-	if Service.Name == "" {
+	name, err := Service.GetFieldString("name")
+	discrete, _ := Service.GetFieldBool("discrete")
+	logs, _ := Service.GetFieldBool("output")
+	purpose, _ := Service.GetFieldString("purpose")
+
+	if err != nil {
 		return []byte{}, nil
 	}
 
@@ -88,14 +84,14 @@ func (Service *Service) Start() ([]byte, error) {
 		return []byte{}, e
 	}
 
-	if s && !Service.HostConfig.AutoRemove && !Service.Discrete {
-		fmt.Printf("Already running %v\n", Service.Name)
+	if s && !Service.HostConfig.AutoRemove && !discrete {
+		fmt.Printf("Already running %v\n", name)
 		return []byte{}, nil
 	}
 
-	if Service.Group == "addkeys" || Service.Group == "showkeys" {
-		DockerKill(Service.Name)
-		DockerRemove(Service.Name)
+	if purpose == "addkeys" || purpose == "showkeys" {
+		DockerKill(name)
+		DockerRemove(name)
 	}
 
 	if !s || Service.HostConfig.AutoRemove {
@@ -106,27 +102,29 @@ func (Service *Service) Start() ([]byte, error) {
 			return []byte{}, err
 		}
 
-		if Service.Output {
+		if logs {
 			fmt.Println(strings.Trim(string(output), "\n"))
 		}
 
-		if c, _ := GetDetails(Service); c.ID != "" {
-			if !Service.HostConfig.AutoRemove || !Service.Discrete {
-				fmt.Printf("Successfully started %v\n", Service.Name)
+		if c, _ := GetRunning(Service); c.ID != "" {
+			if !Service.HostConfig.AutoRemove || !discrete {
+				fmt.Printf("Successfully started %v\n", name)
 			}
-			return output, nil
+			return output, errors.New(fmt.Sprintf("Failed to run %v.\n", name))
 		}
 		if err != nil {
 			return []byte{}, err
 		}
 	} else {
-		fmt.Printf("Failed to run %v.\n", Service.Name)
+		fmt.Printf("Failed to run %v.\n", name)
 	}
 
 	return []byte{}, nil
 }
 
 func (Service *Service) Status() (bool, error) {
+
+	name, _ := Service.GetFieldString("name")
 
 	// If the container doesn't persist we should invalidate the status check.
 	if Service.HostConfig.AutoRemove {
@@ -141,8 +139,8 @@ func (Service *Service) Status() (bool, error) {
 		Quiet: true,
 	})
 	for _, container := range containers {
-		for _, name := range container.Names {
-			if strings.Contains(name, Service.Name) {
+		for _, n := range container.Names {
+			if strings.Contains(n, name) {
 				return true, nil
 			}
 		}
@@ -152,7 +150,77 @@ func (Service *Service) Status() (bool, error) {
 
 }
 
-func GetDetails(Service *Service) (types.Container, error) {
+//
+func (Service *Service) GetFieldString(field string) (string, error) {
+
+	f := fmt.Sprintf("pygmy.%v", field)
+
+	if container, running := GetRunning(Service); running == nil {
+		if val, ok := container.Labels[f]; ok {
+			return val, nil
+		}
+	}
+
+	if val, ok := Service.Config.Labels[f]; ok {
+		return val, nil
+	}
+
+	return "", errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+}
+
+func (Service *Service) GetFieldInt(field string) (int, error) {
+
+	f := fmt.Sprintf("pygmy.%v", field)
+
+	if container, running := GetRunning(Service); running == nil {
+		if val, ok := container.Labels[f]; ok {
+			i, e := strconv.ParseInt(val, 10, 10)
+			if e != nil {
+				return 0, e
+			}
+			return int(i), nil
+		}
+	}
+
+	if val, ok := Service.Config.Labels[f]; ok {
+		i, e := strconv.ParseInt(val, 10, 10)
+		if e != nil {
+			return 0, e
+		}
+		return int(i), nil
+	}
+
+	return 0, errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+}
+
+func (Service *Service) GetFieldBool(field string) (bool, error) {
+
+	f := fmt.Sprintf("pygmy.%v", field)
+
+	if container, running := GetRunning(Service); running == nil {
+		if val, ok := container.Labels[f]; ok {
+			if val == "true" {
+				return true, nil
+			} else if val == "false" {
+				return false, nil
+			}
+		}
+	}
+
+	if val, ok := Service.Config.Labels[f]; ok {
+		if val == "true" {
+			return true, nil
+		} else if val == "false" {
+			return false, nil
+		}
+	}
+
+	return false, errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+}
+
+// GetRunning will get a types.Container variable for a given running container
+// and it will not retrieve any information on containers that are not running.
+func GetRunning(Service *Service) (types.Container, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -163,25 +231,27 @@ func GetDetails(Service *Service) (types.Container, error) {
 	})
 
 	for _, container := range containers {
-		for _, name := range container.Names {
-			if strings.Contains(name, Service.Name) {
+		if _, ok := container.Labels["pygmy.name"]; ok {
+			if strings.Contains(container.Names[0], Service.Config.Labels["pygmy.name"]) {
 				return container, nil
 			}
 		}
 	}
-	return types.Container{}, errors.New(fmt.Sprintf("container %v was not found\n", Service.Name))
+	return types.Container{}, errors.New(fmt.Sprintf("container using image '%v' was not found\n", Service.Config.Image))
 }
 
 func (Service *Service) Clean() error {
 
-	if Service.Name == "" {
+	pygmy, e := Service.GetFieldString("pygmy")
+	name, e := Service.GetFieldString("name")
+	if e != nil {
 		return nil
 	}
 
 	Containers, _ := DockerContainerList()
 	for _, container := range Containers {
-		if container.Names[0] == Service.Name {
-			if container.Labels["pygmy"] == "pygmy" {
+		if container.Names[0] == name {
+			if pygmy == "pygmy" {
 				name := strings.TrimLeft(container.Names[0], "/")
 				if e := DockerKill(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
@@ -207,13 +277,16 @@ func (Service *Service) Clean() error {
 
 func (Service *Service) Stop() error {
 
-	if Service.Name == "" {
+	name, e := Service.GetFieldString("name")
+	discrete, _ := Service.GetFieldBool("discrete")
+	if e != nil {
 		return nil
 	}
-	container, err := GetDetails(Service)
+
+	container, err := GetRunning(Service)
 	if err != nil {
-		if !Service.Discrete {
-			fmt.Printf("Not running %v\n", Service.Name)
+		if !discrete {
+			fmt.Printf("Not running %v\n", name)
 		}
 		return nil
 	}
@@ -221,8 +294,8 @@ func (Service *Service) Stop() error {
 	for _, name := range container.Names {
 		if e := DockerStop(container.ID); e == nil {
 			if e := DockerRemove(container.ID); e == nil {
-				if !Service.Discrete {
-					containerName := strings.TrimLeft(name, "/")
+				if !discrete {
+					containerName := strings.Trim(name, "/")
 					fmt.Printf("Successfully removed %v\n", containerName)
 				}
 			}
@@ -353,7 +426,13 @@ func DockerRun(Service *Service) ([]byte, error) {
 		Service.Config.Labels["pygmy"] = "pygmy"
 	}
 
-	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, Service.Name)
+	// We need the container name.
+	name, e := Service.GetFieldString("name")
+	if e != nil {
+		return []byte{}, errors.New("container config is missing label for name")
+	}
+
+	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, name)
 	if err != nil {
 		return []byte{}, err
 	}

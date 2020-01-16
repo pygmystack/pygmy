@@ -9,13 +9,13 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name:   "amazeeio-haproxy",
-		URL:    "http://docker.amazee.io/stats",
-		Weight: 14,
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
 			Labels: map[string]string{
-				"pygmy": "pygmy",
+				"pygmy":        "pygmy",
+				"pygmy.name":   "amazeeio-haproxy",
+				"pygmy.url":    "http://docker.amazee.io/stats",
+				"pygmy.weight": "14",
 			},
 		},
 		HostConfig: container.HostConfig{

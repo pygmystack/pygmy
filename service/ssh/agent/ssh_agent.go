@@ -11,12 +11,13 @@ import (
 
 func New() model.Service {
 	return model.Service{
-		Name:   "amazeeio-ssh-agent",
-		Weight: 30,
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{
-				"pygmy": "pygmy",
+				"pygmy":         "pygmy",
+				"pygmy.name":    "amazeeio-ssh-agent",
+				"pygmy.purpose": "sshagent",
+				"pygmy.weight":  "30",
 			},
 		},
 		HostConfig: container.HostConfig{

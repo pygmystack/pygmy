@@ -1,13 +1,16 @@
 package library
 
-import "github.com/fubarhouse/pygmy-go/service/resolv"
+import (
+	"github.com/fubarhouse/pygmy-go/service/resolv"
+)
 
 func Down(c Config) {
 
 	Setup(&c)
 
 	for _, Service := range c.Services {
-		if !Service.Disabled {
+		disabled, _ := Service.GetFieldBool("disabled")
+		if !disabled {
 			Service.Stop()
 		}
 	}
