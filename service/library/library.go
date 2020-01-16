@@ -3,6 +3,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/docker/docker/api/types"
 
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
@@ -34,7 +35,7 @@ type Config struct {
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
 
 	// Volumes will ensure names volumes are created
-	Volumes []string
+	Volumes map[string]types.Volume
 }
 
 func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
