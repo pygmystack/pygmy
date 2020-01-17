@@ -1,5 +1,9 @@
 package resolv
 
+// Resolv is a struct of properties which are translates to a local resolv for
+// dnsmasq to redirect a given domain suffix to the local docker daemon.
+// Windows has a custom solution, however this will be used on both Mac
+// and Linux.
 type Resolv struct {
 	Data     string `yaml:"contents"`
 	Disabled bool   `yaml:"disabled"`

@@ -7,6 +7,8 @@ import (
 	"github.com/ghodss/yaml"
 )
 
+// Export will export validated configuration to a given path, or it will
+// export by default to $HOME/.pygmy.yml
 func Export(c Config, output string) {
 
 	// Set up the configuration.

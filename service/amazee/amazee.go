@@ -12,7 +12,7 @@ import (
 // It will trigger the image pull after identifying all
 // the images which match the criteria.
 func AmazeeImagePull() {
-	pull_all()
+	pullAll()
 }
 
 // pull will perform an image update for a single image
@@ -29,9 +29,9 @@ func list() ([]types.ImageSummary, error) {
 	return images, err
 }
 
-// pull_all is a loop which will trigger a `docker pull` command
+// pullAll is a loop which will trigger a `docker pull` command
 // for all images matching the criteria - using the Docker API.
-func pull_all() {
+func pullAll() {
 	list, _ := list()
 	for _, image := range list {
 		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio/") || strings.Contains(fmt.Sprint(image.RepoTags), "mailhog/mailhog") || strings.Contains(fmt.Sprint(image.RepoTags), "andyshinn/dnsmasq") {
