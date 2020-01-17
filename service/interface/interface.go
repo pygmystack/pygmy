@@ -29,7 +29,7 @@ type DockerService interface {
 }
 
 // Service is a collection of requirements for starting a container and
-// provides a way for config of any container to be overriden and start
+// provides a way for config of any container to be overridden and start
 // fully compatible with Docker's API.
 type Service struct {
 	Config        container.Config
