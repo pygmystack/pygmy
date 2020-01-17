@@ -10,6 +10,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 )
 
+// Up will bring Pygmy up.
 func Up(c Config) {
 
 	Setup(&c)

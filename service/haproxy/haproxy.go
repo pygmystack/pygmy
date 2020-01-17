@@ -7,6 +7,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// New will provide the standard object for the haproxy container.
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
@@ -31,6 +32,7 @@ func New() model.Service {
 	}
 }
 
+// New will provide the standard ports used for merging into the haproxy config
 func NewDefaultPorts() model.Service {
 	return model.Service{
 		HostConfig: container.HostConfig{

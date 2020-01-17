@@ -7,6 +7,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
+// Clean will forcibly kill and remove all of pygmy's containers in the daemon
 func Clean(c Config) {
 
 	Setup(&c)
