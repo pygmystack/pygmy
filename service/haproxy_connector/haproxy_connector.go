@@ -7,6 +7,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// Connect will connect a specified container to a specified network.
 func Connect(containerName string, network string) error {
 	if s, _ := Connected(containerName, network); !s {
 		return model.DockerNetworkConnect(network, containerName)
@@ -14,6 +15,8 @@ func Connect(containerName string, network string) error {
 	return nil
 }
 
+// Connected will check if a container is already connected to a network
+// with a given name provided as input.
 func Connected(containerName string, network string) (bool, error) {
 
 	ctx := context.Background()

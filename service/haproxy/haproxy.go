@@ -32,7 +32,8 @@ func New() model.Service {
 	}
 }
 
-// New will provide the standard ports used for merging into the haproxy config
+// NewDefaultPorts will provide the standard ports used for merging into the
+// haproxy config.
 func NewDefaultPorts() model.Service {
 	return model.Service{
 		HostConfig: container.HostConfig{

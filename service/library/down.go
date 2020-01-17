@@ -1,9 +1,6 @@
 package library
 
-import (
-	"github.com/fubarhouse/pygmy-go/service/resolv"
-)
-
+// Down will bring pygmy down safely
 func Down(c Config) {
 
 	Setup(&c)
@@ -16,6 +13,6 @@ func Down(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		resolv.New(resolver).Clean()
+		resolver.Clean()
 	}
 }

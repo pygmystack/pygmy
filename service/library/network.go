@@ -2,7 +2,6 @@ package library
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/docker/docker/api/types"
@@ -37,5 +36,5 @@ func NetworkStatus(network string) (bool, error) {
 			return true, nil
 		}
 	}
-	return false, errors.New(fmt.Sprintf("network %v not found\n", network))
+	return false, fmt.Errorf("network %v not found\n", network)
 }

@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Setuo holds the core of configuration management with Pygmy.
+// Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
 func Setup(c *Config) {
 

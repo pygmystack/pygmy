@@ -1,4 +1,4 @@
-// Library is a package which exposes the commands externally to the compiled binaries.
+// Package library is a package which exposes the commands externally to the compiled binaries.
 package library
 
 import (

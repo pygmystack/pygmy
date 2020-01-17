@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
@@ -29,6 +28,6 @@ func Clean(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		resolv.New(resolver).Clean()
+		resolver.Clean()
 	}
 }
