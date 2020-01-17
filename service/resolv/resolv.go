@@ -84,6 +84,9 @@ func (resolv Resolv) Configure() {
 						fmt.Println(error)
 					}
 					_, error = tmpFile.WriteString(string(cmdOut))
+					if error != nil {
+						fmt.Println(error)
+					}
 					_, error = tmpFile.WriteString(resolv.Data)
 					if error != nil {
 						fmt.Println(error)
