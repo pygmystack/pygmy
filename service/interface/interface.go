@@ -418,6 +418,14 @@ func DockerRun(Service *Service) ([]byte, error) {
 		Service.Config.Labels["pygmy"] = "pygmy"
 	}
 
+	// Sanity check to ensure we don't get name conflicts.
+	c, _ := DockerContainerList()
+	for _, cn := range c {
+		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"])  {
+			return []byte{}, nil
+		}
+	}
+
 	// We need the container name.
 	name, e := Service.GetFieldString("name")
 	if e != nil {
