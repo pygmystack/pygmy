@@ -421,7 +421,7 @@ func DockerRun(Service *Service) ([]byte, error) {
 	// Sanity check to ensure we don't get name conflicts.
 	c, _ := DockerContainerList()
 	for _, cn := range c {
-		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"])  {
+		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
 			return []byte{}, nil
 		}
 	}
