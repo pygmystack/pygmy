@@ -49,12 +49,12 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 				keyExistsInConfig = true
 			}
 		}
+
 		if !keyExistsInConfig {
 			c.Keys = append(c.Keys, Key)
 		}
 
 		library.Up(c)
-		library.SshKeyAdd(c, Key)
 
 	},
 }

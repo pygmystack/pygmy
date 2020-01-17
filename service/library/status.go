@@ -14,6 +14,7 @@ func Status(c Config) {
 
 	Setup(&c)
 	checks := DryRun(&c)
+	agentPresent := false
 
 	if len(checks) > 0 {
 		for _, check := range checks {
@@ -30,7 +31,11 @@ func Status(c Config) {
 				name, _ := Service.GetFieldString("name")
 				disabled, _ := Service.GetFieldBool("disabled")
 				discrete, _ := Service.GetFieldBool("discrete")
+				purpose, _ := Service.GetFieldString("purpose")
 				if name != "" {
+					if purpose == "sshagent" {
+						agentPresent = true
+					}
 					if !disabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
 							fmt.Printf("[*] %v: Running as container %v\n", name, name)
@@ -92,6 +97,21 @@ func Status(c Config) {
 			// TODO re-fix
 			//Container.Output = true
 			Container.Start()
+		}
+	}
+
+	// Show ssh-keys in the agent
+	if agentPresent {
+		for _, v := range c.Services {
+			purpose, _ := v.GetFieldString("purpose")
+			if purpose == "showkeys" {
+				//v.Start()
+				out, _ := v.Start()
+				if len(string(out)) > 0 {
+					output := strings.Trim(string(out), "\n")
+					fmt.Println(output)
+				}
+			}
 		}
 	}
 

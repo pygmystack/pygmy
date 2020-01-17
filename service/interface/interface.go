@@ -71,17 +71,20 @@ func (Service *Service) Start() ([]byte, error) {
 
 	name, err := Service.GetFieldString("name")
 	discrete, _ := Service.GetFieldBool("discrete")
-	logs, _ := Service.GetFieldBool("output")
 	purpose, _ := Service.GetFieldString("purpose")
 
 	if err != nil {
 		return []byte{}, nil
 	}
 
-	s, e := Service.Status()
-	if e != nil {
-		fmt.Println(e)
-		return []byte{}, e
+	s := false
+
+	if !Service.HostConfig.AutoRemove {
+		var e error
+		s, e = Service.Status()
+		if e != nil {
+			return []byte{}, e
+		}
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
@@ -94,32 +97,21 @@ func (Service *Service) Start() ([]byte, error) {
 		DockerRemove(name)
 	}
 
-	if !s || Service.HostConfig.AutoRemove {
-
-		output, err := DockerRun(Service)
-		if err != nil {
-			fmt.Println(err)
-			return []byte{}, err
-		}
-
-		if logs {
-			fmt.Println(strings.Trim(string(output), "\n"))
-		}
-
-		if c, _ := GetRunning(Service); c.ID != "" {
-			if !Service.HostConfig.AutoRemove || !discrete {
-				fmt.Printf("Successfully started %v\n", name)
-			}
-			return output, errors.New(fmt.Sprintf("Failed to run %v.\n", name))
-		}
-		if err != nil {
-			return []byte{}, err
-		}
-	} else {
-		fmt.Printf("Failed to run %v.\n", name)
+	output, err := DockerRun(Service)
+	if err != nil {
+		return []byte{}, err
 	}
 
-	return []byte{}, nil
+	if c, err := GetRunning(Service); c.ID != "" {
+		if !Service.HostConfig.AutoRemove && !discrete {
+			fmt.Printf("Successfully started %v\n", name)
+		} else if !Service.HostConfig.AutoRemove {
+			// We cannot guarantee this container is running at this point if it is to be removed.
+			return output, errors.New(fmt.Sprintf("Failed to run %v: %v\n", name, err))
+		}
+	}
+
+	return output, nil
 }
 
 func (Service *Service) Status() (bool, error) {
@@ -426,6 +418,14 @@ func DockerRun(Service *Service) ([]byte, error) {
 		Service.Config.Labels["pygmy"] = "pygmy"
 	}
 
+	// Sanity check to ensure we don't get name conflicts.
+	c, _ := DockerContainerList()
+	for _, cn := range c {
+		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
+			return []byte{}, nil
+		}
+	}
+
 	// We need the container name.
 	name, e := Service.GetFieldString("name")
 	if e != nil {
@@ -448,6 +448,8 @@ func DockerRun(Service *Service) ([]byte, error) {
 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(b)
+
+	b.Close()
 
 	return buf.Bytes(), nil
 }
