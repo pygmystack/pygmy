@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
 )
 
 // Up will bring Pygmy up.
