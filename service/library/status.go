@@ -10,6 +10,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
+// Status will show the state of all the things Pygmy manages.
 func Status(c Config) {
 
 	Setup(&c)

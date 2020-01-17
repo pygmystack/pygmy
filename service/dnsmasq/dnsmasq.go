@@ -7,6 +7,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// New will provide the standard object for the dnsmasq container.
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
