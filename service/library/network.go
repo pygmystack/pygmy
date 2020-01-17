@@ -31,7 +31,7 @@ func NetworkStatus(network string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	networkResources, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networkResources, _ := cli.NetworkList(ctx, types.NetworkListOptions{})
 	for _, Network := range networkResources {
 		if Network.Name == network {
 			return true, nil

@@ -9,6 +9,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 )
 
+// New will provide the standard object for the SSH agent container.
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
@@ -32,12 +33,14 @@ func New() model.Service {
 	}
 }
 
+// List will start the active 'Shower', and return its stdout.
 func List() []byte {
 	i := key.NewShower()
 	r, _ := i.Start()
 	return r
 }
 
+// Search will determine if an SSH key has been added to the agent.
 func Search(key string) bool {
 	items := List()
 	for _, item := range strings.Split(string(items), "\n") {

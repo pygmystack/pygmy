@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
-	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
 
 func Status(c Config) {
@@ -120,8 +120,8 @@ func Status(c Config) {
 		name, _ := Container.GetFieldString("name")
 		url, _ := Container.GetFieldString("url")
 		if url != "" && Status {
-			test_url.Validate(url)
-			if r := test_url.Validate(url); r {
+			endpoint.Validate(url)
+			if r := endpoint.Validate(url); r {
 				fmt.Printf(" - %v (%v)\n", url, name)
 			} else {
 				fmt.Printf(" ! %v (%v)\n", url, name)

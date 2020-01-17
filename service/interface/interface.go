@@ -127,7 +127,7 @@ func (Service *Service) Status() (bool, error) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+	containers, _ := cli.ContainerList(ctx, types.ContainerListOptions{
 		Quiet: true,
 	})
 	for _, container := range containers {
@@ -218,7 +218,7 @@ func GetRunning(Service *Service) (types.Container, error) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+	containers, _ := cli.ContainerList(ctx, types.ContainerListOptions{
 		Quiet: true,
 	})
 
@@ -234,7 +234,7 @@ func GetRunning(Service *Service) (types.Container, error) {
 
 func (Service *Service) Clean() error {
 
-	pygmy, e := Service.GetFieldString("pygmy")
+	pygmy, _ := Service.GetFieldString("pygmy")
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return nil

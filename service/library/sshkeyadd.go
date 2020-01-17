@@ -1,7 +1,6 @@
 package library
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -9,6 +8,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
+// SshKeyAdd will add a given key to the ssh agent.
 func SshKeyAdd(c Config, key string) ([]byte, error) {
 
 	if c.SkipKey {
@@ -45,7 +45,7 @@ func SshKeyAdd(c Config, key string) ([]byte, error) {
 		}
 
 	} else {
-		e = errors.New(fmt.Sprintf("Already added key file %v.\n", key))
+		e = fmt.Errorf("Already added key file %v.\n", key)
 		return b, e
 	}
 	return b, e

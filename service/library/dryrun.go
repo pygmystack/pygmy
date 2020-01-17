@@ -6,11 +6,15 @@ import (
 	"strings"
 )
 
+// CompatibilityCheck is a struct of fields associated to reporting of
+// a result state.
 type CompatibilityCheck struct {
 	State   bool   `yaml:"value"`
 	Message string `yaml:"string"`
 }
 
+// DryRun will check for. It is here to check for port compatibility before
+//Pygmy attempts to start any containers and provide the user with a report.
 func DryRun(c *Config) []CompatibilityCheck {
 
 	messages := []CompatibilityCheck{}

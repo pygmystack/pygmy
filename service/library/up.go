@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
-	"github.com/fubarhouse/pygmy-go/service/test_url"
 )
 
+// Up will bring Pygmy up.
 func Up(c Config) {
 
 	Setup(&c)
@@ -108,8 +109,8 @@ func Up(c Config) {
 		name, _ := service.GetFieldString("name")
 		url, _ := service.GetFieldString("url")
 		if s, _ := service.Status(); s && url != "" {
-			test_url.Validate(url)
-			if r := test_url.Validate(url); r {
+			endpoint.Validate(url)
+			if r := endpoint.Validate(url); r {
 				fmt.Printf(" - %v (%v)\n", url, name)
 			} else {
 				fmt.Printf(" ! %v (%v)\n", url, name)
