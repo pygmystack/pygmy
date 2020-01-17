@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
@@ -72,9 +71,8 @@ func Up(c Config) {
 
 		}
 		for _, Container := range Network.Containers {
-			if s, _ := haproxy_connector.Connected(Container.Name, Network.Name); !s {
-				haproxy_connector.Connect(Container.Name, Network.Name)
-				if s, _ := haproxy_connector.Connected(Container.Name, Network.Name); s {
+			if s, _ := model.DockerNetworkConnected(Network, Container.Name); !s {
+				if s := model.DockerNetworkConnect(Network, Container.Name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", Container.Name, Network.Name)
 				} else {
 					fmt.Printf("Could not connect %v to %v\n", Container.Name, Network.Name)
