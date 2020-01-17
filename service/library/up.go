@@ -95,7 +95,7 @@ func Up(c Config) {
 	// Add ssh-keys to the agent
 	if agentPresent {
 		for _, v := range c.Keys {
-            out, err := SshKeyAdd(c, v)
+			out, err := SshKeyAdd(c, v)
 			if err != nil {
 				fmt.Println(err)
 			} else {
