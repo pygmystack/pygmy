@@ -23,7 +23,7 @@ func pull(image string) error {
 }
 
 // list will return all running containers,
-// equivelant to a `docker ps` command.
+// equivalent to a `docker ps` command.
 func list() ([]types.ImageSummary, error) {
 	images, err := model.DockerImageList()
 	return images, err
