@@ -11,16 +11,24 @@ import (
 	"strings"
 )
 
-func New(resolv Resolv) Resolv {
-	return resolv
-}
-
+// run will run a shell command and is not exported.
+// Shell functionality is exclsuive to this package.
 func run(args []string) error {
 	commandArgs := strings.Join(args, " ")
 	command := exec.Command("sh", "-c", commandArgs)
 	return command.Run()
 }
 
+// Configure will ensure the given Resolv type a method that can setup a file
+// with the contents of Data at File in Folder. This file will route traffic
+// on a configured namespace to the localhost and dnsmasq will accept this
+// traffic and route it to the docker container. It will remove the file and/or
+// rewrite the contents for both MacOS and Linux - Linux will however result in
+// removing the string from the file, where MacOS will contain a file with only
+// the contents of Data. MacOS will also run the following upon completion of
+// this function:
+// * sudo ifconfig lo0 alias 172.16.172.16
+// * sudo killall mDNSResponder
 func (resolv Resolv) Configure() {
 
 	if resolv.Disabled {
@@ -118,6 +126,8 @@ func (resolv Resolv) Configure() {
 	}
 }
 
+// Clean will cleanup the resolv file configured to the system and run some
+// cleanup commands which were ran at the end of resolv.Configure on MacOS.
 func (resolv Resolv) Clean() {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
@@ -192,6 +202,9 @@ func (resolv Resolv) Clean() {
 
 }
 
+// Status is an exported state function which will check the file contents
+// matches Data on Linux, or return the result of three independent checks
+// on MacOS including the file, network and data checks.
 func (resolv Resolv) Status() bool {
 
 	if runtime.GOOS == "darwin" {
@@ -213,6 +226,7 @@ func (resolv Resolv) Status() bool {
 	return false
 }
 
+// statusFileData will check the resolv file contents matches what is expected
 func (resolv Resolv) statusFileData() bool {
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	cmd := exec.Command("/bin/sh", "-c", "cat "+fullPath)
@@ -223,6 +237,7 @@ func (resolv Resolv) statusFileData() bool {
 	return strings.Contains(string(cmdOut), resolv.Data)
 }
 
+// statusFile will check the expected file exists
 func (resolv Resolv) statusFile() bool {
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if _, err := os.Stat(fullPath); !os.IsExist(err) {
@@ -231,6 +246,11 @@ func (resolv Resolv) statusFile() bool {
 	return false
 }
 
+// statusNet will check the network has the required config.
+// One of the original Pygmy's more regular issues was that the network had  no
+// checks, so the command to make that change was ran as much as logic provided
+// and as a result there were some very unusual and unfixable issues.
+// This has completely ruled that situation out.
 func (resolv Resolv) statusNet() bool {
 	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig lo0")
 	out, ifConfigErr := ifConfigCmd.Output()

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -18,6 +17,10 @@ import (
 	"github.com/docker/docker/client"
 )
 
+// DockerService is the requirements for a Docker container to be compatible.
+// The Service struct is used to implement this interface, and individual
+// variables of type Service can/have overwritten them when logic deems
+// it necessary.
 type DockerService interface {
 	Setup() error
 	Status() (bool, error)
@@ -25,6 +28,9 @@ type DockerService interface {
 	Stop() error
 }
 
+// Service is a collection of requirements for starting a container and
+// provides a way for config of any container to be overriden and start
+// fully compatible with Docker's API.
 type Service struct {
 	Config        container.Config
 	HostConfig    container.HostConfig
@@ -46,6 +52,9 @@ type Network struct {
 	Config types.NetworkCreate `yaml:"config"`
 }
 
+// Setup will detect if the Service's image reference exists and will
+// attempt to run `docker pull` on the non-canonical image if it is
+// not found in the daemon.
 func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
 		return nil
@@ -67,6 +76,9 @@ func (Service *Service) Setup() error {
 	return nil
 }
 
+// Start will perform a series of checks to see if the container starting
+// is supposed be removed before-hand and will check to see if the
+// container is running before it is actually started.
 func (Service *Service) Start() ([]byte, error) {
 
 	name, err := Service.GetFieldString("name")
@@ -107,18 +119,21 @@ func (Service *Service) Start() ([]byte, error) {
 			fmt.Printf("Successfully started %v\n", name)
 		} else if !Service.HostConfig.AutoRemove {
 			// We cannot guarantee this container is running at this point if it is to be removed.
-			return output, errors.New(fmt.Sprintf("Failed to run %v: %v\n", name, err))
+			return output, fmt.Errorf("Failed to run %v: %v\n", name, err)
 		}
 	}
 
 	return output, nil
 }
 
+// Status will check if the container is running.
 func (Service *Service) Status() (bool, error) {
 
 	name, _ := Service.GetFieldString("name")
 
 	// If the container doesn't persist we should invalidate the status check.
+	// This assumes state of any containr with status checks to pass if they
+	// are configured with HostConfig.AutoRemove
 	if Service.HostConfig.AutoRemove {
 		return true, nil
 	}
@@ -142,7 +157,8 @@ func (Service *Service) Status() (bool, error) {
 
 }
 
-//
+// GetFieldString will get and return a tag on the service using the pygmy
+// convention ("pygmy.*") and return it as a string.
 func (Service *Service) GetFieldString(field string) (string, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
@@ -157,9 +173,11 @@ func (Service *Service) GetFieldString(field string) (string, error) {
 		return val, nil
 	}
 
-	return "", errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+	return "", fmt.Errorf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image)
 }
 
+// GetFieldInt will get and return a tag on the service using the pygmy
+// convention ("pygmy.*") and return it as an int.
 func (Service *Service) GetFieldInt(field string) (int, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
@@ -182,9 +200,11 @@ func (Service *Service) GetFieldInt(field string) (int, error) {
 		return int(i), nil
 	}
 
-	return 0, errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+	return 0, fmt.Errorf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image)
 }
 
+// GetFieldBool will get and return a tag on the service using the pygmy
+// convention ("pygmy.*") and return it as a bool.
 func (Service *Service) GetFieldBool(field string) (bool, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
@@ -207,7 +227,7 @@ func (Service *Service) GetFieldBool(field string) (bool, error) {
 		}
 	}
 
-	return false, errors.New(fmt.Sprintf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image))
+	return false, fmt.Errorf("could not find field 'pygmy.%v' on service using image %v?", field, Service.Config.Image)
 }
 
 // GetRunning will get a types.Container variable for a given running container
@@ -229,9 +249,10 @@ func GetRunning(Service *Service) (types.Container, error) {
 			}
 		}
 	}
-	return types.Container{}, errors.New(fmt.Sprintf("container using image '%v' was not found\n", Service.Config.Image))
+	return types.Container{}, fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
 }
 
+// Clean will cleanup and remove the container.
 func (Service *Service) Clean() error {
 
 	pygmy, _ := Service.GetFieldString("pygmy")
@@ -267,6 +288,7 @@ func (Service *Service) Clean() error {
 	return nil
 }
 
+// Stop will stop the container.
 func (Service *Service) Stop() error {
 
 	name, e := Service.GetFieldString("name")
@@ -297,8 +319,10 @@ func (Service *Service) Stop() error {
 	return nil
 }
 
+// _ will ensure DockerService is implemented by Service.
 var _ DockerService = (*Service)(nil)
 
+// DockerContainerList will return a slice of containers
 func DockerContainerList() ([]types.Container, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -315,6 +339,7 @@ func DockerContainerList() ([]types.Container, error) {
 
 }
 
+// DockerImageList will return a slice of Docker images.
 func DockerImageList() ([]types.ImageSummary, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -331,6 +356,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 
 }
 
+// DockerPull will pull a Docker image into the daemon.
 func DockerPull(image string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -378,6 +404,7 @@ func DockerPull(image string) error {
 	return nil
 }
 
+// DockerRun will setup and run a given container.
 func DockerRun(Service *Service) ([]byte, error) {
 
 	ctx := context.Background()
@@ -429,7 +456,7 @@ func DockerRun(Service *Service) ([]byte, error) {
 	// We need the container name.
 	name, e := Service.GetFieldString("name")
 	if e != nil {
-		return []byte{}, errors.New("container config is missing label for name")
+		return []byte{}, fmt.Errorf("container config is missing label for name")
 	}
 
 	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, name)
@@ -454,6 +481,7 @@ func DockerRun(Service *Service) ([]byte, error) {
 	return buf.Bytes(), nil
 }
 
+// DockerStop will stop the container.
 func DockerStop(name string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -468,6 +496,7 @@ func DockerStop(name string) error {
 	return nil
 }
 
+// DockerKill will kill the container.
 func DockerKill(name string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -481,6 +510,8 @@ func DockerKill(name string) error {
 	return nil
 }
 
+// DockerRemove will remove the container.
+// It will not remove the image.
 func DockerRemove(id string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -540,6 +571,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	return types.NetworkResource{}, nil
 }
 
+// DockerNetworkConnect will connect a container to a network.
 func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -553,6 +585,7 @@ func DockerNetworkConnect(network string, containerName string) error {
 	return nil
 }
 
+// DockerVolumeExists will check if a Docker volume has been created.
 func DockerVolumeExists(volume types.Volume) (bool, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -567,6 +600,7 @@ func DockerVolumeExists(volume types.Volume) (bool, error) {
 	return true, nil
 }
 
+// DockerVolumeCreate will create a Docker Volume as configured.
 func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()

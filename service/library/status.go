@@ -75,7 +75,7 @@ func Status(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		r := resolv.New(resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File})
+		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
 		if s := r.Status(); s {
 			fmt.Printf("[*] Resolv %v is properly connected\n", resolver.Name)
 		} else {

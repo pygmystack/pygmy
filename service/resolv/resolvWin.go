@@ -10,11 +10,9 @@ import (
 	"sync"
 )
 
-func New(resolv Resolv) Resolv {
-	return resolv
-}
-
-func runCommand(args []string) ([]byte, error) {
+// run will run a shell command and is not exported.
+// Shell functionality is exclsuive to this package.
+func run(args []string) ([]byte, error) {
 
 	powershell, err := exec.LookPath("powershell")
 	if err != nil {
@@ -49,14 +47,14 @@ func runCommand(args []string) ([]byte, error) {
 }
 
 func (resolv Resolv) Clean() {
-	_, error := runCommand([]string{"Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain"})
+	_, error := run([]string{"Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain"})
 	if error != nil {
 		fmt.Println(error.Error())
 	}
 }
 func (resolv Resolv) Configure() {
 	if !resolv.Disabled {
-		_, error := runCommand([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
+		_, error := run([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
 		if error != nil {
 			fmt.Println(error.Error())
 		}
@@ -64,7 +62,7 @@ func (resolv Resolv) Configure() {
 }
 
 func (resolv Resolv) Status() bool {
-	data, error := runCommand([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
+	data, error := run([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
 	if error != nil {
 		return false
 	}

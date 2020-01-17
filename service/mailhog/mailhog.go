@@ -7,6 +7,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// New will provide the standard object for the mailhog container.
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
@@ -41,6 +42,8 @@ func New() model.Service {
 
 }
 
+// NewDefaultPorts will provide the standard ports used for merging into the
+// mailhog config.
 func NewDefaultPorts() model.Service {
 	return model.Service{
 		HostConfig: container.HostConfig{

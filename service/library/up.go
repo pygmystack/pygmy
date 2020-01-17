@@ -7,7 +7,6 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
 // Up will bring Pygmy up.
@@ -87,9 +86,8 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		this := resolv.New(resolver)
-		if !this.Disabled {
-			this.Configure()
+		if !resolver.Disabled {
+			resolver.Configure()
 		}
 	}
 
