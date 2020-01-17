@@ -1,6 +1,7 @@
 package library
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -8,10 +9,10 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
-func SshKeyAdd(c Config, key string) {
+func SshKeyAdd(c Config, key string) ([]byte, error) {
 
 	if c.SkipKey {
-		return
+		return []byte{}, nil
 	}
 
 	Setup(&c)
@@ -19,9 +20,12 @@ func SshKeyAdd(c Config, key string) {
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {
 			fmt.Printf("%v\n", err)
-			return
+			return []byte{}, err
 		}
 	}
+
+	var b []byte
+	var e error
 
 	if !agent.Search(key) {
 
@@ -35,18 +39,14 @@ func SshKeyAdd(c Config, key string) {
 					Container.Config.Cmd = []string{"ssh-add", key}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
-				Container.Start()
-			}
-		}
 
-		for _, Container := range c.Services {
-			purpose, _ := Container.GetFieldString("purpose")
-			if purpose == "addkey" {
-				Container.Start()
+				b, e = Container.Start()
 			}
 		}
 
 	} else {
-		fmt.Printf("Already added key file %v.\n", key)
+		e = errors.New(fmt.Sprintf("Already added key file %v.\n", key))
+		return b, e
 	}
+	return b, e
 }

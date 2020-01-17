@@ -16,6 +16,7 @@ func New() model.Service {
 			Labels: map[string]string{
 				"pygmy":         "pygmy",
 				"pygmy.name":    "amazeeio-ssh-agent",
+				"pygmy.output":  "false",
 				"pygmy.purpose": "sshagent",
 				"pygmy.weight":  "30",
 			},

@@ -14,6 +14,7 @@ func Up(c Config) {
 
 	Setup(&c)
 	checks := DryRun(&c)
+	agentPresent := false
 
 	foundIssues := 0
 	for _, check := range checks {
@@ -48,8 +49,15 @@ func Up(c Config) {
 		service := c.Services[s]
 		disabled, _ := service.GetFieldBool("disabled")
 		purpose, _ := service.GetFieldString("purpose")
+
+		// Do not show or add keys:
 		if !disabled && purpose != "addkeys" && purpose != "showkeys" {
 			service.Start()
+		}
+
+		// If one or more agent was found:
+		if purpose == "sshagent" {
+			agentPresent = true
 		}
 	}
 
@@ -84,12 +92,16 @@ func Up(c Config) {
 		}
 	}
 
-	if !c.SkipKey {
-
-		for _, key := range c.Keys {
-			SshKeyAdd(c, key)
+	// Add ssh-keys to the agent
+	if agentPresent {
+		for _, v := range c.Keys {
+            out, err := SshKeyAdd(c, v)
+			if err != nil {
+				fmt.Println(err)
+			} else {
+				fmt.Println(string(out))
+			}
 		}
-
 	}
 
 	for _, service := range c.Services {

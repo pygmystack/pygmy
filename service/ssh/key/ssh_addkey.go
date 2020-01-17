@@ -16,7 +16,7 @@ func NewAdder() model.Service {
 				"pygmy":          "pygmy",
 				"pygmy.name":     "amazeeio-ssh-agent-add-key",
 				"pygmy.discrete": "true",
-				"pygmy.output":   "true",
+				"pygmy.output":   "false",
 				"pygmy.purpose":  "addkeys",
 				"pygmy.weight":   "31",
 			},
