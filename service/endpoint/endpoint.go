@@ -1,6 +1,6 @@
-// package test_url provides a way to test a HTTP/HTTPS endpoint for a 200 response code.
+// Package endpoint provides a way to test a HTTP/HTTPS endpoint for a 200 response code.
 // note that this package does not support insecure HTTPS at this time.
-package test_url
+package endpoint
 
 import (
 	"net/http"

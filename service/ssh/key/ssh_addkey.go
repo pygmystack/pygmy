@@ -8,6 +8,7 @@ import (
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
+// NewAdder will provide the standard object for the SSH key adder container.
 func NewAdder() model.Service {
 	return model.Service{
 		Config: container.Config{
@@ -30,6 +31,7 @@ func NewAdder() model.Service {
 	}
 }
 
+// NewShower will provide the standard object for the SSH key shower container.
 func NewShower() model.Service {
 	return model.Service{
 		Config: container.Config{
