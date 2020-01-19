@@ -161,7 +161,7 @@ func (Service *Service) Status() (bool, error) {
 // an interface{}, even if it already exists. It should not matter if
 // this container is running or not.
 func (Service *Service) SetField(name string, value interface{}) error {
-	if _, ok := Service.Config.Labels["pygmy."+ fmt.Sprint(name)]; !ok {
+	if _, ok := Service.Config.Labels["pygmy."+fmt.Sprint(name)]; !ok {
 		//
 	} else {
 		old := Service.Config.Labels["pygmy."+fmt.Sprint(name)]
