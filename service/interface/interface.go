@@ -164,11 +164,9 @@ func (Service *Service) SetField(name string, value interface{}) error {
 	if _, ok := Service.Config.Labels["pygmy."+fmt.Sprint(name)]; !ok {
 		//
 	} else {
-		old := Service.Config.Labels["pygmy."+fmt.Sprint(name)]
-		fmt.Println(old)
+		old, _ := Service.GetFieldString(name)
 		Service.Config.Labels["pygmy."+name] = fmt.Sprint(value)
-		new, _ := Service.GetFieldString("name")
-		fmt.Println(new)
+		new, _ := Service.GetFieldString(name)
 
 		if old == new {
 			return fmt.Errorf("tag was not set")
