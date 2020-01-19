@@ -1,15 +1,18 @@
 package library
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"runtime"
+	"strings"
 
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string) ([]byte, error) {
+func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 
 	if c.SkipKey {
 		return []byte{}, nil
@@ -40,7 +43,31 @@ func SshKeyAdd(c Config, key string) ([]byte, error) {
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
 
-				b, e = Container.Start()
+				if index != 0 {
+
+					// We need a brand new copy of the existing container config.
+					var newService model.Service
+					b, _ := json.Marshal(Container)
+					json.Unmarshal(b, &newService)
+
+					name, _ := newService.GetFieldString("name")
+					name = strings.SplitAfter(name, "_")[0]
+
+					// For some reason Container works well here but it should be newService - needs investigation.
+					e := Container.SetField("name", fmt.Sprintf("%v_%v", name, index))
+
+					if e != nil {
+						fmt.Println(e)
+					}
+
+					fmt.Println(newService.Config.Labels["pygmy.name"])
+					return newService.Start()
+
+				} else {
+					fmt.Println(Container.Config.Labels["pygmy.name"])
+					return Container.Start()
+				}
+
 			}
 		}
 
