@@ -11,7 +11,7 @@ import (
 )
 
 // run will run a shell command and is not exported.
-// Shell functionality is exclsuive to this package.
+// Shell functionality is exclusive to this package.
 func run(args []string) ([]byte, error) {
 
 	powershell, err := exec.LookPath("powershell")

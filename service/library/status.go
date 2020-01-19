@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/haproxy_connector"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
@@ -57,20 +56,12 @@ func Status(c Config) {
 	}
 
 	for _, Network := range c.Networks {
-		netStat, _ := NetworkStatus(Network.Name)
-		if netStat {
-			for _, Container := range Network.Containers {
-				if s, _ := haproxy_connector.Connected(Container.Name, Network.Name); s {
-					fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)
-				} else {
-					fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
-				}
+		for _, Container := range Network.Containers {
+			if x, _ := model.DockerNetworkConnected(Network, Container.Name); !x {
+				fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
+			} else {
+				fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)
 			}
-		}
-		if _, e := NetworkStatus(Network.Name); e == nil {
-			fmt.Printf("[*] %v network has been created\n", Network.Name)
-		} else {
-			fmt.Printf("[ ] %v network has not been created\n", Network.Name)
 		}
 	}
 
@@ -91,22 +82,11 @@ func Status(c Config) {
 		}
 	}
 
-	for _, Container := range c.Services {
-		purpose, _ := Container.GetFieldString("purpose")
-		//output, _ := Container.GetFieldBool("output")
-		if purpose == "showkeys" {
-			// TODO re-fix
-			//Container.Output = true
-			Container.Start()
-		}
-	}
-
 	// Show ssh-keys in the agent
 	if agentPresent {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
 			if purpose == "showkeys" {
-				//v.Start()
 				out, _ := v.Start()
 				if len(string(out)) > 0 {
 					output := strings.Trim(string(out), "\n")

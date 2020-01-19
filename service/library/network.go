@@ -18,8 +18,8 @@ func NetworkCreate(network types.NetworkResource) error {
 // NetworkConnect is part of a centralised abstraction of the Docker API
 // and will connect a created container to a docker network with a
 // specified name.
-func NetworkConnect(c Config, name string, containerName string) error {
-	return model.DockerNetworkConnect(name, containerName)
+func NetworkConnect(network types.NetworkResource, containerName string) error {
+	return model.DockerNetworkConnect(network, containerName)
 }
 
 // NetworkStatus will check the state of a Docker network to test if it has

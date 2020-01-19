@@ -29,7 +29,7 @@ type DockerService interface {
 }
 
 // Service is a collection of requirements for starting a container and
-// provides a way for config of any container to be overriden and start
+// provides a way for config of any container to be overridden and start
 // fully compatible with Docker's API.
 type Service struct {
 	Config        container.Config
@@ -117,7 +117,7 @@ func (Service *Service) Start() ([]byte, error) {
 	if c, err := GetRunning(Service); c.ID != "" {
 		if !Service.HostConfig.AutoRemove && !discrete {
 			fmt.Printf("Successfully started %v\n", name)
-		} else if !Service.HostConfig.AutoRemove {
+		} else if Service.HostConfig.AutoRemove && err != nil {
 			// We cannot guarantee this container is running at this point if it is to be removed.
 			return output, fmt.Errorf("Failed to run %v: %v\n", name, err)
 		}
@@ -155,6 +155,25 @@ func (Service *Service) Status() (bool, error) {
 
 	return false, nil
 
+}
+
+// SetField will set a pygmy label to be equal to the string equal of
+// an interface{}, even if it already exists. It should not matter if
+// this container is running or not.
+func (Service *Service) SetField(name string, value interface{}) error {
+	if _, ok := Service.Config.Labels["pygmy."+fmt.Sprint(name)]; !ok {
+		//
+	} else {
+		old, _ := Service.GetFieldString(name)
+		Service.Config.Labels["pygmy."+name] = fmt.Sprint(value)
+		new, _ := Service.GetFieldString(name)
+
+		if old == new {
+			return fmt.Errorf("tag was not set")
+		}
+	}
+
+	return nil
 }
 
 // GetFieldString will get and return a tag on the service using the pygmy
@@ -572,17 +591,27 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 }
 
 // DockerNetworkConnect will connect a container to a network.
-func DockerNetworkConnect(network string, containerName string) error {
+func DockerNetworkConnect(network types.NetworkResource, containerName string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	err = cli.NetworkConnect(ctx, network, containerName, nil)
+	err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+// DockerNetworkConnect will check if a container is connected to a network.
+func DockerNetworkConnected(network types.NetworkResource, containerName string) (bool, error) {
+	for _, container := range network.Containers {
+		if container.Name == containerName {
+			return true, nil
+		}
+	}
+	return false, fmt.Errorf("network was found without the container connected")
 }
 
 // DockerVolumeExists will check if a Docker volume has been created.
