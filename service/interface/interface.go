@@ -117,7 +117,7 @@ func (Service *Service) Start() ([]byte, error) {
 	if c, err := GetRunning(Service); c.ID != "" {
 		if !Service.HostConfig.AutoRemove && !discrete {
 			fmt.Printf("Successfully started %v\n", name)
-		} else if !Service.HostConfig.AutoRemove {
+		} else if Service.HostConfig.AutoRemove && err != nil {
 			// We cannot guarantee this container is running at this point if it is to be removed.
 			return output, fmt.Errorf("Failed to run %v: %v\n", name, err)
 		}
