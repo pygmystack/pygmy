@@ -157,6 +157,27 @@ func (Service *Service) Status() (bool, error) {
 
 }
 
+// SetField will set a pygmy label to be equal to the string equal of
+// an interface{}, even if it already exists. It should not matter if
+// this container is running or not.
+func (Service *Service) SetField(name string, value interface{}) error {
+	if _, ok := Service.Config.Labels["pygmy."+ fmt.Sprint(name)]; !ok {
+		//
+	} else {
+		old := Service.Config.Labels["pygmy."+fmt.Sprint(name)]
+		fmt.Println(old)
+		Service.Config.Labels["pygmy."+name] = fmt.Sprint(value)
+		new, _ := Service.GetFieldString("name")
+		fmt.Println(new)
+
+		if old == new {
+			return fmt.Errorf("tag was not set")
+		}
+	}
+
+	return nil
+}
+
 // GetFieldString will get and return a tag on the service using the pygmy
 // convention ("pygmy.*") and return it as a string.
 func (Service *Service) GetFieldString(field string) (string, error) {
