@@ -606,6 +606,9 @@ func DockerNetworkConnect(network types.NetworkResource, containerName string) e
 
 // DockerNetworkConnect will check if a container is connected to a network.
 func DockerNetworkConnected(network types.NetworkResource, containerName string) (bool, error) {
+	// Reset network state:
+	network, _ = DockerNetworkGet(network.Name)
+
 	for _, container := range network.Containers {
 		if container.Name == containerName && container.EndpointID != "" {
 			return true, nil
