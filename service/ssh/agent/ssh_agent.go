@@ -24,7 +24,7 @@ func New() model.Service {
 		},
 		HostConfig: container.HostConfig{
 			AutoRemove: false,
-			IpcMode: "private",
+			IpcMode:    "private",
 			RestartPolicy: struct {
 				Name              string
 				MaximumRetryCount int
