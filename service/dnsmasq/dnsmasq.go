@@ -25,6 +25,7 @@ func New() model.Service {
 		HostConfig: container.HostConfig{
 			AutoRemove: false,
 			CapAdd:     []string{"NET_ADMIN"},
+			IpcMode:    "private",
 			PortBindings: nat.PortMap{
 				"53/tcp": []nat.PortBinding{
 					{
