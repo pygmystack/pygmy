@@ -1,6 +1,9 @@
 # Pygmy
 
-[![unstable](http://badges.github.io/stability-badges/dist/unstable.svg)]()
+[![Stability](https://img.shields.io/badge/stability-stable-green.svg)]()
+[![Travis CI](https://travis-ci.org/fubarhouse/pygmy-go.svg?branch=master)]()
+[![Go Report Card](https://goreportcard.com/badge/github.com/fubarhouse/pygmy-go)](https://goreportcard.com/report/github.com/fubarhouse/pygmy-go)
+[![GoDoc](https://godoc.org/github.com/fubarhouse/pygmy-go?status.svg)](https://godoc.org/github.com/fubarhouse/pygmy-go)
 
 This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy.readthedocs.io/en/master/)
 currently written in Ruby. The goal is to provide a better cross-platform experience
