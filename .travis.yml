@@ -6,7 +6,8 @@ go:
 matrix:
   include:
 
-    - os: linux
+    - name: Linux build w/ tests
+      os: linux
       services: docker
       before_install:
         - go mod download
@@ -32,7 +33,8 @@ matrix:
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml down;
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml clean;
 
-    - os: linux
+    - name: Multiplatform build (for release)
+      os: linux
       services: docker
       before_install:
         - go mod download
@@ -43,7 +45,8 @@ matrix:
         - make build
         - docker image rm pygmy-go --force || true
 
-    - os: windows
+    - name: Windows build
+      os: windows
       services: docker
       before_install:
         - go mod download
