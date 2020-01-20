@@ -27,6 +27,7 @@ matrix:
         - curl --HEAD http://drupal-example.docker.amazee.io
         # Cleanup example
         - docker-compose down
+        - cd ../
         # Cleanup pygmy
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml down;
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml clean;
