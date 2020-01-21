@@ -60,6 +60,6 @@ func mergeNetwork(destination types.NetworkResource, src *types.NetworkResource)
 }
 
 func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkResource {
-	Service, _ := mergeNetwork(s, &c)
-	return *Service
+	Network, _ := mergeNetwork(s, &c)
+	return *Network
 }

@@ -12,6 +12,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	volume2 "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
@@ -630,6 +631,35 @@ func DockerVolumeExists(volume types.Volume) (bool, error) {
 	}
 
 	return true, nil
+}
+
+// DockerVolumeGet will return the full contents of a types.Volume from the API.
+func DockerVolumeGet(name string) (types.Volume, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+
+	if err != nil {
+		return types.Volume{
+			Name: name,
+		}, err
+	}
+
+	volumes, err := cli.VolumeList(ctx, filters.Args{})
+	if err != nil {
+		return types.Volume{
+			Name: name,
+		}, err
+	}
+
+	for _, volume := range volumes.Volumes {
+		if volume.Name == name {
+			return *volume, nil
+		}
+	}
+
+	return types.Volume{
+		Name: name,
+	}, nil
 }
 
 // DockerVolumeCreate will create a Docker Volume as configured.
