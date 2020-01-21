@@ -53,10 +53,7 @@ matrix:
         - GO111MODULE=on go vet $(go list ./...);
 
       script:
-        # Build on Windows.
         - export PYGMY_PATH=pygmy-go.exe;
-        # Switch Daemon mode.
-        - /c/Program\ Files/Docker/docker.exe -SwitchDaemon
 
         - go mod vendor
         - rm -f go.mod
@@ -64,8 +61,8 @@ matrix:
         - go build -o pygmy-go.exe .
         - cp pygmy-go.exe builds/pygmy-go.exe
 
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml up;
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - powershell.exe -NoLogo -ExecutionPolicy Bypass -Command "builds/pygmy-go.exe --config .travis.pygmy.yml up"
+        - powershell.exe -NoLogo -ExecutionPolicy Bypass -Command "builds/pygmy-go.exe --config .travis.pygmy.yml status"
 
 deploy:
   provider: releases
