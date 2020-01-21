@@ -91,6 +91,15 @@ func Setup(c *Config) {
 
 		// We should provide mergable defaults for the default network.
 		c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
+
+		// Ensure Volumes has a at least a zero value.
+		if c.Volumes == nil {
+			c.Volumes = make(map[string]types.Volume, 0)
+		}
+
+		for _, v := range c.Volumes {
+			c.Volumes[v.Name], _ = model.DockerVolumeGet(v.Name)
+		}
 	}
 
 	c.SortedServices = make([]string, 0, len(c.Services))
