@@ -63,3 +63,16 @@ func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkR
 	Network, _ := mergeNetwork(s, &c)
 	return *Network
 }
+
+func mergeVolume(destination types.Volume, src *types.Volume) (*types.Volume, error) {
+	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
+		fmt.Println(err)
+		return src, err
+	}
+	return &destination, nil
+}
+
+func getVolume(s types.Volume, c types.Volume) types.Volume {
+	Volume, _ := mergeVolume(s, &c)
+	return *Volume
+}
