@@ -50,3 +50,16 @@ func getService(s model.Service, c model.Service) model.Service {
 	Service, _ := mergeService(s, &c)
 	return *Service
 }
+
+func mergeNetwork(destination types.NetworkResource, src *types.NetworkResource) (*types.NetworkResource, error) {
+	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
+		fmt.Println(err)
+		return src, err
+	}
+	return &destination, nil
+}
+
+func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkResource {
+	Service, _ := mergeNetwork(s, &c)
+	return *Service
+}
