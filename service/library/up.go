@@ -36,7 +36,7 @@ func Up(c Config) {
 				fmt.Println(err)
 			}
 		} else {
-			fmt.Printf("Already created volume %v\n", volume)
+			fmt.Printf("Already created volume %v\n", volume.Name)
 		}
 	}
 
