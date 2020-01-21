@@ -56,6 +56,8 @@ matrix:
         # Build on Windows.
         - export PYGMY_PATH=pygmy-go.exe;
         # Switch Daemon mode.
+        - ls /c/Program\ Files/Docker
+        - ls /c/Program\ Files/Docker/Docker
         - /c/Program\ Files/Docker/Docker/DockerCli.exe -SwitchDaemon
 
         - go mod vendor
