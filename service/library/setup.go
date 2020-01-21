@@ -84,15 +84,13 @@ func Setup(c *Config) {
 			c.Services["mailhog.docker.amazee.io"] = getService(mailhog.NewDefaultPorts(), c.Services["mailhog.docker.amazee.io"])
 		}
 
-		// If networks are not provided, we should provide defaults.
-		// Defaults will be provided if nothing is found in configuration
-		// (is completely absent).
-		// TODO: Make this mergable like container configurations are.
+		// Ensure Networks has a at least a zero value.
 		if c.Networks == nil {
-			c.Networks = map[string]types.NetworkResource{
-				"amazeeio-network": network.New(),
-			}
+			c.Networks = make(map[string]types.NetworkResource, 0)
 		}
+
+		// We should provide mergable defaults for the default network.
+		c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
 	}
 
 	c.SortedServices = make([]string, 0, len(c.Services))
