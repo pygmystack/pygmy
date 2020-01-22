@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
@@ -91,13 +92,15 @@ func Up(c Config) {
 
 	// Add ssh-keys to the agent
 	if agentPresent {
+		i := 1
 		for _, v := range c.Keys {
-			out, err := SshKeyAdd(c, v)
+			out, err := SshKeyAdd(c, v, i)
 			if err != nil {
 				fmt.Println(err)
-			} else {
-				fmt.Println(string(out))
+			} else if string(out) != "" {
+				fmt.Println(strings.Trim(string(out), "\n"))
 			}
+			i++
 		}
 	}
 
