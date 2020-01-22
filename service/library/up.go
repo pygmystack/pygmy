@@ -49,10 +49,14 @@ func Up(c Config) {
 		service := c.Services[s]
 		disabled, _ := service.GetFieldBool("disabled")
 		purpose, _ := service.GetFieldString("purpose")
+		output, _ := service.GetFieldBool("output")
 
 		// Do not show or add keys:
 		if !disabled && purpose != "addkeys" && purpose != "showkeys" {
-			service.Start()
+			o, _ := service.Start()
+			if output && string(o) != "" {
+				fmt.Println(string(o))
+			}
 		}
 
 		// If one or more agent was found:
