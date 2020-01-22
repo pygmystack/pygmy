@@ -60,11 +60,9 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 						fmt.Println(e)
 					}
 
-					fmt.Println(newService.Config.Labels["pygmy.name"])
 					return newService.Start()
 
 				} else {
-					fmt.Println(Container.Config.Labels["pygmy.name"])
 					return Container.Start()
 				}
 
