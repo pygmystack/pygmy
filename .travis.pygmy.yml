@@ -3,17 +3,17 @@ services:
   amazeeio-ssh-agent:
     Config:
       Labels:
-        - "pygmy.disabled": true
+        - "pygmy.disabled": "false"
 
   amazeeio-ssh-agent-show-keys:
     Config:
       Labels:
-        - "pygmy.disabled": true
+        - "pygmy.disabled": "true"
 
   amazeeio-ssh-agent-add-key:
     Config:
       Labels:
-        - "pygmy.disabled": true
+        - "pygmy.disabled": "true"
 
   amazeeio-portainer:
     Config:
