@@ -30,7 +30,7 @@ var pullCmd = &cobra.Command{
 	Use:     "pull",
 	Example: "pygmy pull",
 	Short:   "Pull all pygmy services",
-	Long: `Pull all pygmy services`,
+	Long:    `Pull all pygmy services`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		library.Pull(c)
