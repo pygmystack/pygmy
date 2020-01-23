@@ -38,7 +38,7 @@ func NewShower() model.Service {
 			Image: "amazeeio/ssh-agent",
 			Cmd: []string{
 				"ssh-add",
-				"-l",
+				"-L",
 			},
 			Labels: map[string]string{
 				"pygmy":          "pygmy",

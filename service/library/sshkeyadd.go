@@ -70,7 +70,7 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 		}
 
 	} else {
-		e = fmt.Errorf("Already added key file %v.\n", key)
+		e = fmt.Errorf("Already added key file %v.", key)
 		return b, e
 	}
 	return b, e
