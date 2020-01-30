@@ -154,46 +154,45 @@ func (resolv Resolv) Clean() {
 				}
 			}
 		}
+	}
 
-		if runtime.GOOS == "darwin" {
+	if runtime.GOOS == "darwin" {
 
-			if strings.HasPrefix(fullPath, "/etc/resolver/") {
-				if _, err := os.Stat(fullPath); err == nil {
-					err := run([]string{"sudo", "rm", fullPath})
-					if err != nil {
-						fmt.Println(err)
-					}
-					if !resolv.statusFile() {
-						fmt.Println("Successfully removed resolver file")
-					}
-				}
-			}
-		}
-
-		if runtime.GOOS == "darwin" {
-
-			if resolv.statusNet() {
-				fmt.Println("Removing loopback alias IP (may require sudo)")
-				ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
-				err := ifConfig.Run()
+		if strings.HasPrefix(fullPath, "/etc/resolver/") {
+			if _, err := os.Stat(fullPath); err == nil {
+				err := run([]string{"sudo", "rm", fullPath})
 				if err != nil {
-					fmt.Println("error removing loopback UP alias", err)
-				} else {
-					if !resolv.statusNet() {
-						fmt.Println("Successfully removed loopback alias IP.")
-					}
+					fmt.Println(err)
+				}
+				if !resolv.statusFile() {
+					fmt.Println("Successfully removed resolver file")
 				}
 			}
+		}
+	}
 
-			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
-			err := killAll.Run()
+	if runtime.GOOS == "darwin" {
+
+		if resolv.statusNet() {
+			fmt.Println("Removing loopback alias IP (may require sudo)")
+			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
+			err := ifConfig.Run()
 			if err != nil {
-				fmt.Println("error restarting mDNSResponder")
+				fmt.Println("error removing loopback UP alias", err)
 			} else {
-				fmt.Println("Successfully restarted mDNSResponder")
+				if !resolv.statusNet() {
+					fmt.Println("Successfully removed loopback alias IP.")
+				}
 			}
 		}
 
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		err := killAll.Run()
+		if err != nil {
+			fmt.Println("error restarting mDNSResponder")
+		} else {
+			fmt.Println("Successfully restarted mDNSResponder")
+		}
 	}
 }
 
