@@ -39,7 +39,7 @@ type Config struct {
 }
 
 func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
+	if err := mergo.Merge(&destination, src, mergo.WithAppendSlice); err != nil {
 		fmt.Println(err)
 		return src, err
 	}
@@ -52,7 +52,7 @@ func getService(s model.Service, c model.Service) model.Service {
 }
 
 func mergeNetwork(destination types.NetworkResource, src *types.NetworkResource) (*types.NetworkResource, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
+	if err := mergo.Merge(&destination, src, mergo.WithAppendSlice); err != nil {
 		fmt.Println(err)
 		return src, err
 	}
@@ -65,7 +65,7 @@ func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkR
 }
 
 func mergeVolume(destination types.Volume, src *types.Volume) (*types.Volume, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
+	if err := mergo.Merge(&destination, src, mergo.WithAppendSlice); err != nil {
 		fmt.Println(err)
 		return src, err
 	}
