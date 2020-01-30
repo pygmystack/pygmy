@@ -21,6 +21,7 @@ func New() model.Service {
 				"MH_UI_BIND_ADDR=0.0.0.0:80",
 				"MH_API_BIND_ADDR=0.0.0.0:80",
 				"AMAZEEIO=AMAZEEIO",
+				"AMAZEEIO_URL=mailhog.docker.amazee.io",
 			},
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
