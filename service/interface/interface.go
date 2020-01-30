@@ -230,19 +230,21 @@ func (Service *Service) GetFieldBool(field string) (bool, error) {
 	f := fmt.Sprintf("pygmy.%v", field)
 
 	if container, running := GetRunning(Service); running == nil {
-		if val, ok := container.Labels[f]; ok {
-			if val == "true" {
-				return true, nil
-			} else if val == "false" {
-				return false, nil
+		if Service.Config.Labels[f] == container.Labels[f] {
+			if val, ok := container.Labels[f]; ok {
+				if val == "true" {
+					return true, nil
+				} else if val == "false" {
+					return false, nil
+				}
 			}
 		}
 	}
 
 	if val, ok := Service.Config.Labels[f]; ok {
-		if val == "true" {
+		if val == "true" || val == "1" {
 			return true, nil
-		} else if val == "false" {
+		} else if val == "false" || val == "0" {
 			return false, nil
 		}
 	}
