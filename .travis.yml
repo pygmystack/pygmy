@@ -22,23 +22,23 @@ matrix:
         # Test for configured container tags.
         - >
           docker inspect amazeeio-dnsmasq         | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-dnsmasq         | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "true";
+          docker inspect amazeeio-dnsmasq         | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-dnsmasq         | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
         - >
           docker inspect amazeeio-haproxy         | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-haproxy         | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "true";
+          docker inspect amazeeio-haproxy         | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-haproxy         | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
         - >
           docker inspect amazeeio-portainer       | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-portainer       | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "true";
+          docker inspect amazeeio-portainer       | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-portainer       | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
         - >
           docker inspect amazeeio-ssh-agent       | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-ssh-agent       | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "true";
+          docker inspect amazeeio-ssh-agent       | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-ssh-agent       | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
         - >
           docker inspect mailhog.docker.amazee.io | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect mailhog.docker.amazee.io | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "true";
+          docker inspect mailhog.docker.amazee.io | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect mailhog.docker.amazee.io | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
         # Real-world Drupal test.
