@@ -16,6 +16,14 @@ services:
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
 
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.disabled: false
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
+
   amazeeio-ssh-agent:
     Config:
       Labels:
@@ -60,14 +68,6 @@ services:
           - HostPort: 8200
         9000/tcp:
           - HostPort: 8100
-
-  mailhog.docker.amazee.io:
-    Config:
-      Labels:
-        - pygmy.disabled: false
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
 
 volumes:
   portainer_data:
