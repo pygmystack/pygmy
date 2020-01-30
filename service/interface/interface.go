@@ -352,7 +352,9 @@ func DockerContainerList() ([]types.Container, error) {
 		fmt.Println(err)
 	}
 
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		All: true,
+	})
 	if err != nil {
 		return []types.Container{}, err
 	}
