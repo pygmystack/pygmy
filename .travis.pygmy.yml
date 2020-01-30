@@ -1,19 +1,38 @@
 services:
 
+  amazeeio-dnsmasq:
+    Config:
+      Labels:
+        - pygmy.disabled: false
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
+
+  amazeeio-haproxy:
+    Config:
+      Labels:
+        - pygmy.disabled: false
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
+
   amazeeio-ssh-agent:
     Config:
       Labels:
-        - "pygmy.disabled": "false"
-
-  amazeeio-ssh-agent-show-keys:
-    Config:
-      Labels:
-        - "pygmy.disabled": "true"
+        - pygmy.disabled: false
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
 
   amazeeio-ssh-agent-add-key:
     Config:
       Labels:
-        - "pygmy.disabled": "true"
+        - pygmy.disabled: true
+
+  amazeeio-ssh-agent-show-keys:
+    Config:
+      Labels:
+        - pygmy.disabled: true
 
   amazeeio-portainer:
     Config:
@@ -23,10 +42,13 @@ services:
         - "AMAZEEIO_URL=portainer.docker.amazee.io"
         - "AMAZEEIO_HTTP_PORT=9000"
       Labels:
-        - "pygmy": "pygmy"
-        - "pygmy.name": "amazeeio-portainer"
-        - "pygmy.weight": "23"
-        - "pygmy.url": "http://portainer.docker.amazee.io"
+        - pygmy: pygmy
+        - pygmy.name: amazeeio-portainer
+        - pygmy.weight: 23
+        - pygmy.url: http://portainer.docker.amazee.io
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
       ExposedPorts:
         9000/tcp: {}
     HostConfig:
@@ -35,11 +57,17 @@ services:
         - portainer_data:/data
       PortBindings:
         8000/tcp:
-          -
-            HostPort: 8200
+          - HostPort: 8200
         9000/tcp:
-          -
-            HostPort: 8100
+          - HostPort: 8100
+
+  mailhog.docker.amazee.io:
+    Config:
+      Labels:
+        - pygmy.disabled: false
+        - pygmy.hocuspocus: 42
+        - pygmy.abracadabra: true
+        - pygmy.opensesame: correct
 
 volumes:
   portainer_data:

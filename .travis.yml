@@ -19,8 +19,28 @@ matrix:
         # Run pygmy
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml up;
         - ./pygmy-go-linux-x86 --config .travis.pygmy.yml status;
-        # Test stats page
-        - curl --HEAD http://docker.amazee.io/stats
+        # Test for configured container tags.
+        - >
+          docker inspect amazeeio-dnsmasq         | jq .[].Config.Labels.pygmy.hocuspocus  | grep "42";
+          docker inspect amazeeio-dnsmasq         | jq .[].Config.Labels.pygmy.abracadabra | grep "true";
+          docker inspect amazeeio-dnsmasq         | jq .[].Config.Labels.pygmy.opensesame  | grep "correct";
+        - >
+          docker inspect amazeeio-haproxy         | jq .[].Config.Labels.pygmy.hocuspocus  | grep "42";
+          docker inspect amazeeio-haproxy         | jq .[].Config.Labels.pygmy.abracadabra | grep "true";
+          docker inspect amazeeio-haproxy         | jq .[].Config.Labels.pygmy.opensesame  | grep "correct";
+        - >
+          docker inspect amazeeio-portainer       | jq .[].Config.Labels.pygmy.hocuspocus  | grep "42";
+          docker inspect amazeeio-portainer       | jq .[].Config.Labels.pygmy.abracadabra | grep "true";
+          docker inspect amazeeio-portainer       | jq .[].Config.Labels.pygmy.opensesame  | grep "correct";
+        - >
+          docker inspect amazeeio-ssh-agent       | jq .[].Config.Labels.pygmy.hocuspocus  | grep "42";
+          docker inspect amazeeio-ssh-agent       | jq .[].Config.Labels.pygmy.abracadabra | grep "true";
+          docker inspect amazeeio-ssh-agent       | jq .[].Config.Labels.pygmy.opensesame  | grep "correct";
+        - >
+          docker inspect mailhog.docker.amazee.io | jq .[].Config.Labels.pygmy.hocuspocus  | grep "42";
+          docker inspect mailhog.docker.amazee.io | jq .[].Config.Labels.pygmy.abracadabra | grep "true";
+          docker inspect mailhog.docker.amazee.io | jq .[].Config.Labels.pygmy.opensesame  | grep "correct";
+
         # Real-world Drupal test.
         - git clone https://github.com/amazeeio/drupal-example.git drupal8-lagoon && cd drupal8-lagoon
         - docker-compose up -d
