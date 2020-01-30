@@ -25,7 +25,7 @@ func New() model.Service {
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
 				"pygmy":        "pygmy",
-				"pygmy.name":   "mailhog.docker.amazee.io",
+				"pygmy.name":   "amazeeio-mailhog",
 				"pygmy.url":    "http://mailhog.docker.amazee.io",
 				"pygmy.weight": "15",
 			},

@@ -67,7 +67,7 @@ func Setup(c *Config) {
 		c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
 		c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
 		c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
-		c.Services["mailhog.docker.amazee.io"] = getService(mailhog.New(), c.Services["mailhog.docker.amazee.io"])
+		c.Services["amazeeio-mailhog"] = getService(mailhog.New(), c.Services["amazeeio-mailhog"])
 		c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
 
 		// We need Port 80 to be configured by default.
@@ -80,8 +80,8 @@ func Setup(c *Config) {
 
 		// It's sensible to use the same logic for port 1025.
 		// If a user needs to configure it, the default value should not be set also.
-		if c.Services["mailhog.docker.amazee.io"].HostConfig.PortBindings == nil {
-			c.Services["mailhog.docker.amazee.io"] = getService(mailhog.NewDefaultPorts(), c.Services["mailhog.docker.amazee.io"])
+		if c.Services["amazeeio-mailhog"].HostConfig.PortBindings == nil {
+			c.Services["amazeeio-mailhog"] = getService(mailhog.NewDefaultPorts(), c.Services["amazeeio-mailhog"])
 		}
 
 		// Ensure Networks has a at least a zero value.
