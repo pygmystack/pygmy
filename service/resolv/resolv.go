@@ -255,5 +255,4 @@ func (resolv Resolv) statusNet() bool {
 	} else {
 		return strings.Contains(string(out), "172.16.172.16")
 	}
-	return false
 }
