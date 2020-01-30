@@ -38,18 +38,22 @@ var restartCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		FoundKey := false
-		for _, v := range c.Keys {
-			if v == Key {
-				FoundKey = true
+		NoKey, _ := cmd.Flags().GetBool("no-addkey")
+
+		if NoKey {
+			c.Keys = []string{}
+		} else {
+			FoundKey := false
+			for _, v := range c.Keys {
+				if v == Key {
+					FoundKey = true
+				}
+			}
+
+			if !FoundKey {
+				c.Keys = append(c.Keys, Key)
 			}
 		}
-
-		if !FoundKey {
-			c.Keys = append(c.Keys, Key)
-		}
-
-		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
 
 		library.Restart(c)
 

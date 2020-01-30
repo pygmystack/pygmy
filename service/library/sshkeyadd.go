@@ -14,10 +14,6 @@ import (
 // SshKeyAdd will add a given key to the ssh agent.
 func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 
-	if c.SkipKey {
-		return []byte{}, nil
-	}
-
 	Setup(&c)
 
 	if key != "" {

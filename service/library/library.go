@@ -17,9 +17,6 @@ type Config struct {
 	// Keys are the paths to the Keys which should be added.
 	Keys []string `yaml:"Keys"`
 
-	// SkipKey indicates key adding should be skipped.
-	SkipKey bool
-
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]model.Service `yaml:"services"`
 
