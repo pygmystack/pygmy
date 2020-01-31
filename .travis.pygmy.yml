@@ -3,7 +3,7 @@ services:
   amazeeio-dnsmasq:
     Config:
       Labels:
-        - pygmy.disabled: false
+        - pygmy.enable: true
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
@@ -11,7 +11,7 @@ services:
   amazeeio-haproxy:
     Config:
       Labels:
-        - pygmy.disabled: false
+        - pygmy.enable: true
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
@@ -19,7 +19,7 @@ services:
   amazeeio-mailhog:
     Config:
       Labels:
-        - pygmy.disabled: false
+        - pygmy.enable: false
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
@@ -27,7 +27,7 @@ services:
   amazeeio-ssh-agent:
     Config:
       Labels:
-        - pygmy.disabled: false
+        - pygmy.enable: true
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
@@ -35,12 +35,12 @@ services:
   amazeeio-ssh-agent-add-key:
     Config:
       Labels:
-        - pygmy.disabled: true
+        - pygmy.enable: false
 
   amazeeio-ssh-agent-show-keys:
     Config:
       Labels:
-        - pygmy.disabled: true
+        - pygmy.enable: false
 
   amazeeio-portainer:
     Config:
@@ -51,6 +51,7 @@ services:
         - "AMAZEEIO_HTTP_PORT=9000"
       Labels:
         - pygmy: pygmy
+        - pygmy.enable: true
         - pygmy.name: amazeeio-portainer
         - pygmy.weight: 23
         - pygmy.url: http://portainer.docker.amazee.io

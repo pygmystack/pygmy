@@ -53,7 +53,7 @@ func (resolv Resolv) Clean() {
 	}
 }
 func (resolv Resolv) Configure() {
-	if !resolv.Disabled {
+	if resolv.Enabled {
 		_, error := run([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
 		if error != nil {
 			fmt.Println(error.Error())
