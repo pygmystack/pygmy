@@ -34,7 +34,7 @@ func (resolv Resolv) Configure() {
 	var cmdOut []byte
 	var tmpFile *os.File
 
-	if resolv.Disabled {
+	if !resolv.Enabled {
 		return
 	}
 	if resolv.Status() {

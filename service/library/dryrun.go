@@ -21,8 +21,8 @@ func DryRun(c *Config) []CompatibilityCheck {
 
 	for _, Service := range c.Services {
 		name, _ := Service.GetFieldString("name")
-		disabled, _ := Service.GetFieldBool("disabled")
-		if !disabled {
+		enabled, _ := Service.GetFieldBool("enable")
+		if enabled {
 			if s, _ := Service.Status(); !s {
 				for PortBinding, Ports := range Service.HostConfig.PortBindings {
 					if strings.Contains(string(PortBinding), "tcp") {

@@ -18,6 +18,7 @@ func New() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy":        "pygmy",
+				"pygmy.enable": "true",
 				"pygmy.name":   "amazeeio-dnsmasq",
 				"pygmy.weight": "13",
 			},

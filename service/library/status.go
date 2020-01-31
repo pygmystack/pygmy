@@ -29,14 +29,14 @@ func Status(c Config) {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
 			if s, _ := Service.Status(); s {
 				name, _ := Service.GetFieldString("name")
-				disabled, _ := Service.GetFieldBool("disabled")
+				enabled, _ := Service.GetFieldBool("enable")
 				discrete, _ := Service.GetFieldBool("discrete")
 				purpose, _ := Service.GetFieldString("purpose")
 				if name != "" {
 					if purpose == "sshagent" {
 						agentPresent = true
 					}
-					if !disabled && !discrete && name != "" {
+					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
 							fmt.Printf("[*] %v: Running as container %v\n", name, name)
 						} else {

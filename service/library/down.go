@@ -6,8 +6,8 @@ func Down(c Config) {
 	Setup(&c)
 
 	for _, Service := range c.Services {
-		disabled, _ := Service.GetFieldBool("disabled")
-		if !disabled {
+		enabled, _ := Service.GetFieldBool("enable")
+		if enabled {
 			Service.Stop()
 		}
 	}

@@ -6,7 +6,7 @@ package resolv
 // and Linux.
 type Resolv struct {
 	Data     string `yaml:"contents"`
-	Disabled bool   `yaml:"disabled"`
+	Enabled  bool   `yaml:"enable"`
 	File     string `yaml:"file"`
 	Folder   string `yaml:"folder"`
 	Name     string `yaml:"name"`
