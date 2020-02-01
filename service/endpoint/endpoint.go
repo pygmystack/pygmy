@@ -31,7 +31,7 @@ func Validate(url string) bool {
 	defer resp.Body.Close()
 
 	// Check for the desired result
-	if resp.StatusCode == 200 {
+	if resp.StatusCode == 200 || resp.StatusCode == 401 {
 		// Test passed!
 		return true
 	}

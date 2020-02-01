@@ -9,6 +9,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
+	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/haproxy"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/mailhog"
@@ -63,6 +64,15 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 // Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
 func Setup(c *Config) {
+
+	// DockerHub Registry causes a stack trace fatal error when unavailable.
+	// We can check for this and report back, handling it gracefully and
+	// tell the user the service is down momentarily, and to try again shortly.
+	dockerHub := endpoint.Validate("https://registry-1.docker.io/v2")
+	if !dockerHub {
+		fmt.Println("Docker Hub registry is not reachable, please try again shortly...")
+		os.Exit(1)
+	}
 
 	viper.SetDefault("defaults", true)
 
