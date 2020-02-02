@@ -19,7 +19,7 @@ services:
   amazeeio-mailhog:
     Config:
       Labels:
-        - pygmy.enable: false
+        - pygmy.enable: true
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
