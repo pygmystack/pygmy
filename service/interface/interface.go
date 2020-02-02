@@ -277,7 +277,7 @@ func GetRunning(Service *Service) (types.Container, error) {
 // Clean will cleanup and remove the container.
 func (Service *Service) Clean() error {
 
-	pygmy, _ := Service.GetFieldString("pygmy")
+	pygmy, _ := Service.GetFieldBool("pygmy.enable")
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return nil
@@ -286,7 +286,7 @@ func (Service *Service) Clean() error {
 	Containers, _ := DockerContainerList()
 	for _, container := range Containers {
 		if container.Names[0] == name {
-			if pygmy == "pygmy" {
+			if pygmy {
 				name := strings.TrimLeft(container.Names[0], "/")
 				if e := DockerKill(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
@@ -459,14 +459,6 @@ func DockerRun(Service *Service) ([]byte, error) {
 	// If we don't have the image available in the registry, pull it in!
 	if !imageFound {
 		Service.Setup()
-	}
-
-	// All pygmy services need some sort of reference for pygmy to consume:
-	if Service.Config.Labels["pygmy"] != "pygmy" {
-		if Service.Config.Labels == nil {
-			Service.Config.Labels = make(map[string]string)
-		}
-		Service.Config.Labels["pygmy"] = "pygmy"
 	}
 
 	// Sanity check to ensure we don't get name conflicts.

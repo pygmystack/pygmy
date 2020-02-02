@@ -25,7 +25,7 @@ func Status(c Config) {
 
 	Containers, _ := model.DockerContainerList()
 	for _, Container := range Containers {
-		if Container.Labels["pygmy"] == "pygmy" {
+		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
 			if s, _ := Service.Status(); s {
 				name, _ := Service.GetFieldString("name")

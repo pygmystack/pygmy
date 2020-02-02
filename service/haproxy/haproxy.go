@@ -13,7 +13,6 @@ func New() model.Service {
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
 			Labels: map[string]string{
-				"pygmy":        "pygmy",
 				"pygmy.enable": "true",
 				"pygmy.name":   "amazeeio-haproxy",
 				"pygmy.url":    "http://docker.amazee.io/stats",
