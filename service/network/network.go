@@ -26,7 +26,7 @@ func New() types.NetworkResource {
 			},
 		},
 		Labels: map[string]string{
-			"pygmy.network": "true",
+			"pygmy": "pygmy",
 		},
 	}
 }
