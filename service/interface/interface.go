@@ -277,7 +277,7 @@ func GetRunning(Service *Service) (types.Container, error) {
 // Clean will cleanup and remove the container.
 func (Service *Service) Clean() error {
 
-	pygmy, _ := Service.GetFieldBool("enable")
+	pygmy, _ := Service.GetFieldBool("pygmy.enable")
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return nil
