@@ -17,6 +17,7 @@ func New() model.Service {
 		Config: container.Config{
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{
+				"pygmy":         "pygmy",
 				"pygmy.enable":  "true",
 				"pygmy.name":    "amazeeio-ssh-agent",
 				"pygmy.output":  "false",
