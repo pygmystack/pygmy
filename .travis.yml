@@ -30,8 +30,8 @@ matrix:
         # Build
         - go build -o pygmy-go-linux-x86
         # Run pygmy
-        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml up;
-        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml status;
+        - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up;
+        - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml status;
         # Test for configured container tags.
         - >
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
@@ -63,8 +63,8 @@ matrix:
         - docker-compose down
         - cd ../
         # Cleanup pygmy
-        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml down;
-        - ./pygmy-go-linux-x86 --config .travis.pygmy.yml clean;
+        - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
+        - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
     - name: Multiplatform build (for release)
       os: linux
@@ -94,7 +94,7 @@ matrix:
         - go build -o pygmy-go.exe .
         - cp pygmy-go.exe builds/pygmy-go.exe
 
-        - builds/${PYGMY_PATH} --config .travis.pygmy.yml status;
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
 
 deploy:
   provider: releases
