@@ -6,6 +6,18 @@ go:
 matrix:
   include:
 
+    - name: Testing Framework
+      os: linux
+      services: docker
+      before_install:
+        - go mod download
+        - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+        - GO111MODULE=on go vet $(go list ./...);
+      script:
+        # Build
+        - go build -o builds/pygmy-go-linux-x86
+        - go test -i
+
     - name: Linux build w/ tests
       os: linux
       services: docker
