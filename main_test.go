@@ -132,17 +132,6 @@ func setup(t *testing.T, config *config) {
 			// While it's safe, we should clean the environment.
 			model.DockerExec(dindContainerName, cleanCmd)
 
-			Convey("Copy configuration file", func() {
-				_, e := model.DockerExec(dindContainerName, "cp "+config.configpath+" /root/.pygmy.yml")
-				So(e, ShouldBeNil)
-				d, _ := model.DockerExec(dindContainerName, "stat /root/.pygmy.yml")
-				if config.configpath == "" {
-					SkipSo(string(d), ShouldContainSubstring, "/root/.pygmy.yml")
-				} else {
-					So(string(d), ShouldContainSubstring, "/root/.pygmy.yml")
-				}
-			})
-
 			Convey("Default ports are not allocated", func() {
 				g, _ := model.DockerExec(dindContainerName, statusCmd)
 				for _, service := range config.servicewithports {
