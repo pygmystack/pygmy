@@ -688,7 +688,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 	if rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
 		AttachStdout: true,
 		AttachStderr: true,
-		Cmd: strings.Split(command, " ")}); err != nil {
+		Cmd:          strings.Split(command, " ")}); err != nil {
 		return []byte{}, err
 	} else {
 		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecConfig{}); err != nil {
