@@ -34,7 +34,21 @@ type config struct {
 	skipendpointchecks bool
 }
 
+// setup is a configurable pipeline which allows different configurations to
+// run to keep the consistency for as many tests as are required.
 func setup(t *testing.T, config *config) {
+
+	var cleanCmd = "/builds/pygmy-go-linux-x86 clean"
+	var statusCmd = "/builds/pygmy-go-linux-x86 status"
+	var upCmd = "/builds/pygmy-go-linux-x86 up"
+	var downCmd = "/builds/pygmy-go-linux-x86 down"
+
+	if config.configpath != "" {
+		cleanCmd = fmt.Sprintf("/builds/pygmy-go-linux-x86 clean --config %v", config.configpath)
+		statusCmd = fmt.Sprintf("/builds/pygmy-go-linux-x86 status --config %v", config.configpath)
+		upCmd = fmt.Sprintf("/builds/pygmy-go-linux-x86 up --config %v", config.configpath)
+		downCmd = fmt.Sprintf("/builds/pygmy-go-linux-x86 dow --config %v", config.configpath)
+	}
 
 	Convey("Pygmy Application Test: "+config.name, t, func() {
 
@@ -96,8 +110,6 @@ func setup(t *testing.T, config *config) {
 
 		Convey("Application Tests", func() {
 
-			configString := fmt.Sprintf("--config='%v'", config.configpath)
-
 			Convey("Container has configuration file ("+config.configpath+")", func() {
 				d, _ := model.DockerExec(dindContainerName, "stat "+config.configpath)
 				if config.configpath == "" {
@@ -118,7 +130,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			// While it's safe, we should clean the environment.
-			model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 clean")
+			model.DockerExec(dindContainerName, cleanCmd)
 
 			Convey("Copy configuration file", func() {
 				_, e := model.DockerExec(dindContainerName, "cp "+config.configpath+" /root/.pygmy.yml")
@@ -132,14 +144,14 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Default ports are not allocated", func() {
-				g, _ := model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 status "+configString)
+				g, _ := model.DockerExec(dindContainerName, statusCmd)
 				for _, service := range config.servicewithports {
 					So(string(g), ShouldContainSubstring, service+" is able to start")
 				}
 			})
 
 			Convey("Pygmy started", func() {
-				d, _ = model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 up --no-addkey "+configString)
+				d, _ = model.DockerExec(dindContainerName, upCmd)
 				if config.configpath != "" {
 					So(string(d), ShouldContainSubstring, "Using config file: "+config.configpath)
 				}
@@ -149,7 +161,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Endpoints are serving", func() {
-				d, _ = model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 status "+configString)
+				d, _ = model.DockerExec(dindContainerName, statusCmd)
 				for _, endpoint := range config.endpoints {
 					if config.skipendpointchecks {
 						SkipSo(string(d), ShouldNotContainSubstring, "! "+endpoint)
@@ -163,11 +175,11 @@ func setup(t *testing.T, config *config) {
 		Convey("Environment Cleanup", func() {
 			Convey("Pygmy has cleaned the environment", func() {
 
-				_, e := model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 down")
+				_, e := model.DockerExec(dindContainerName, downCmd)
 				So(e, ShouldBeNil)
-				_, e = model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 clean")
+				_, e = model.DockerExec(dindContainerName, cleanCmd)
 				So(e, ShouldBeNil)
-				d, _ := model.DockerExec(dindContainerName, "/builds/pygmy-go-linux-x86 status")
+				d, _ := model.DockerExec(dindContainerName, statusCmd)
 				for _, service := range config.services {
 					So(string(d), ShouldContainSubstring, service+" is not running")
 				}
@@ -187,6 +199,7 @@ func setup(t *testing.T, config *config) {
 	})
 }
 
+// TestDefault will test an environment with no additional configuration.
 func TestDefault(t *testing.T) {
 	configuration := &config{
 		name:               "default",
