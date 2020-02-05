@@ -3,14 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
+	"testing"
+	"time"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
-	"testing"
-	"time"
 )
 
 const (
@@ -50,13 +52,15 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container created", func() {
+				currentWorkingDirectory, err := os.Getwd()
+				So(err, ShouldBeNil)
 				x, _ := cli.ContainerCreate(ctx, &container.Config{
 					Image: "docker:dind",
 				}, &container.HostConfig{
 					AutoRemove: false,
 					Binds: []string{
-						"/Users/karl/Projects/pygmy-go/builds/:/builds",
-						"/Users/karl/Projects/pygmy-go/examples/:/examples",
+						fmt.Sprintf("%v%vbuilds%v:/builds", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
+						fmt.Sprintf("%v%vexamples%v:/examples", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
 					},
 					Privileged: true,
 				}, &network.NetworkingConfig{}, dindContainerName)
