@@ -16,7 +16,7 @@ matrix:
       script:
         # Build
         - go build -o builds/pygmy-go-linux-x86
-        - go test -i
+        - go test -v
 
     - name: Linux build w/ tests
       os: linux
