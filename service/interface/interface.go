@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
@@ -68,7 +69,10 @@ func (Service *Service) Setup() error {
 		}
 	}
 
-	err := DockerPull(Service.Config.Image)
+	msg, err := DockerPull(Service.Config.Image)
+	if msg != "" {
+		fmt.Println(msg)
+	}
 
 	if err != nil {
 		fmt.Println(err)
@@ -381,7 +385,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 }
 
 // DockerPull will pull a Docker image into the daemon.
-func DockerPull(image string) error {
+func DockerPull(image string) (string, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -418,14 +422,14 @@ func DockerPull(image string) error {
 
 	if event != nil {
 		if strings.Contains(event.Status, fmt.Sprintf("Downloaded newer image for %s", image)) {
-			fmt.Printf("Successfully pulled %v\n", image)
+			return fmt.Sprintf("Successfully pulled %v\n", image), nil
 		}
 
 		if strings.Contains(event.Status, fmt.Sprintf("Image is up to date for %s", image)) {
-			fmt.Printf("Image %v is up to date\n", image)
+			return fmt.Sprintf("Image %v is up to date\n", image), nil
 		}
 	}
-	return nil
+	return "", nil
 }
 
 // DockerRun will setup and run a given container.
@@ -671,4 +675,28 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 		Labels:     volume.Labels,
 		Name:       volume.Name,
 	})
+}
+
+// DockerExec will run a command in a Docker container and return the output.
+func DockerExec(container string, command string) ([]byte, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return []byte{}, err
+	}
+
+	if rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+		AttachStdout: true,
+		AttachStderr: true,
+		Cmd:          strings.Split(command, " ")}); err != nil {
+		return []byte{}, err
+	} else {
+		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecConfig{}); err != nil {
+			return []byte{}, err
+		} else {
+			data, _ := ioutil.ReadAll(response.Reader)
+			defer response.Close()
+			return data, nil
+		}
+	}
 }
