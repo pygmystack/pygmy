@@ -87,12 +87,11 @@ func Setup(c *Config) {
 		}
 
 		// Ensure Networks has a at least a zero value.
+		// We should provide defaults for amazeeio-network when no value is provided.
 		if c.Networks == nil {
 			c.Networks = make(map[string]types.NetworkResource, 0)
+			c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
 		}
-
-		// We should provide mergable defaults for the default network.
-		c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
 
 		// Ensure Volumes has a at least a zero value.
 		if c.Volumes == nil {
