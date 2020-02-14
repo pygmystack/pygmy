@@ -92,7 +92,7 @@ func Setup(c *Config) {
 			c.Networks = make(map[string]types.NetworkResource, 0)
 			c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
 		}
-		
+
 		// Ensure Volumes has a at least a zero value.
 		if c.Volumes == nil {
 			c.Volumes = make(map[string]types.Volume, 0)
