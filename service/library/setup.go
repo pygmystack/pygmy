@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"os"
 	"runtime"
 	"sort"
 	"strings"
@@ -104,6 +105,18 @@ func Setup(c *Config) {
 			c.Volumes[v.Name], _ = model.DockerVolumeGet(v.Name)
 			// Merge the volume with the provided configuration:
 			c.Volumes[v.Name] = getVolume(c.Volumes[v.Name], c.Volumes[v.Name])
+		}
+	}
+
+	// Mandatory validation check.
+	for id, service := range c.Services {
+		if name, err := service.GetFieldString("name"); err != nil && name != "" {
+			fmt.Printf("service '%v' does not have have a value for label 'pygmy.name'\n", id)
+			os.Exit(2)
+		}
+		if service.Config.Image == "" {
+			fmt.Printf("service '%v' does not have have a value for {{.Config.Image}}\n", id)
+			os.Exit(2)
 		}
 	}
 
