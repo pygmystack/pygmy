@@ -551,7 +551,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
 	config := types.NetworkCreate{
@@ -564,11 +564,62 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		Labels:     network.Labels,
 	}
 
-	_, err = cli.NetworkCreate(ctx, network.Name, config)
-	if err != nil {
-		fmt.Println(err)
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			_, err = cli.NetworkCreate(ctx, network.Name, config)
+			if err != nil {
+				return err
+			}
+		}
 	}
+
 	return nil
+}
+
+// DockerNetworkRemove will attempt to remove a Docker network
+// and will not apply force to removal.
+func DockerNetworkRemove(network *types.NetworkResource) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			err = cli.NetworkRemove(ctx, network.Name)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// DockerNetworkStatus will identify if a network with a
+// specified name has been created and return a boolean.
+func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return false, err
+	}
+
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	for _, n := range networks {
+		if val, ok := network.Labels["pygmy.network"]; ok {
+			if n.Name != "" && (val == "true" || val == "1") {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }
 
 // DockerNetworkGet will use the Docker API to retrieve a Docker network
@@ -584,8 +635,10 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 		return types.NetworkResource{}, err
 	}
 	for _, network := range networks {
-		if network.Name == name {
-			return network, nil
+		if val, ok := network.Labels["pygmy.network"]; ok {
+			if network.Name != "" && (val == "true" || val == "1") {
+				return network, nil
+			}
 		}
 	}
 	return types.NetworkResource{}, nil
@@ -598,9 +651,10 @@ func DockerNetworkConnect(network types.NetworkResource, containerName string) e
 	if err != nil {
 		return err
 	}
-	err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
-	if err != nil {
-		return err
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
+		}
 	}
 	return nil
 }
