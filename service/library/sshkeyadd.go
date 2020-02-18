@@ -26,11 +26,10 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 	var b []byte
 	var e error
 
-	if !agent.Search(key) {
-
-		for _, Container := range c.Services {
-			purpose, _ := Container.GetFieldString("purpose")
-			if purpose == "addkeys" {
+	for _, Container := range c.Services {
+		purpose, _ := Container.GetFieldString("purpose")
+		if purpose == "addkeys" {
+			if !agent.Search(Container, key) {
 				if runtime.GOOS == "windows" {
 					Container.Config.Cmd = []string{"ssh-add", "/key"}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
@@ -59,15 +58,14 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 					return newService.Start()
 
 				} else {
+
 					return Container.Start()
+
 				}
 
 			}
 		}
 
-	} else {
-		e = fmt.Errorf("Already added key file %v.", key)
-		return b, e
 	}
 	return b, e
 }

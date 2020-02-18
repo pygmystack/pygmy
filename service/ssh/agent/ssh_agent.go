@@ -1,14 +1,12 @@
 package agent
 
 import (
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 )
 
 // New will provide the standard object for the SSH agent container.
@@ -36,30 +34,35 @@ func New() model.Service {
 	}
 }
 
-// List will start the active 'Shower', and return its stdout.
-func List() []byte {
-	i := key.NewShower()
-	r, _ := i.Start()
-	return r
+// SshKeyLister will grab the output of all running containers with the proper
+// config after starting them, and return it.
+// which is indicated by the purpose tag.
+func List(service model.Service) []string {
+	var r []byte
+	purpose, _ := service.GetFieldString("purpose")
+	if purpose == "showkeys" {
+		r, _ = service.Start()
+	}
+	return strings.Split(string(r), "\n")
 }
 
 // Search will determine if an SSH key has been added to the agent.
-func Search(key string) bool {
+func Search(service model.Service, key string) bool {
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
-		b, err := ioutil.ReadFile(key)
-		if err != nil {
+
+		items := List(service)
+
+		if len(items) == 0 {
 			return false
 		}
 
-		items := List()
-		for _, item := range strings.Split(string(items), "\n") {
+		for _, item := range items {
 			if strings.Contains(item, "The agent has no identities") {
 				return false
 			}
-			if strings.Contains(string(b), item) {
+			if strings.Contains(item, key) {
 				return true
 			}
-
 		}
 	}
 	return false
