@@ -51,7 +51,10 @@ func Status(c Config) {
 	for _, Service := range c.Services {
 		if s, _ := Service.Status(); !s {
 			name, _ := Service.GetFieldString("name")
-			fmt.Printf("[ ] %v is not running\n", name)
+			discrete, _ := Service.GetFieldBool("discrete")
+			if !discrete {
+				fmt.Printf("[ ] %v is not running\n", name)
+			}
 		}
 	}
 
