@@ -108,6 +108,51 @@ func Setup(c *Config) {
 		}
 	}
 
+	if !c.Defaults {
+		// Handle `pygmy.defaults` label for finite defaults inheritance.
+
+		if _, ok := c.Services["amazeeio-ssh-agent"]; ok {
+			service := c.Services["amazeeio-ssh-agent"]
+			if sshAgentDefaults, _ := service.GetFieldBool("defaults"); sshAgentDefaults {
+				c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
+			}
+		}
+
+		if _, ok := c.Services["amazeeio-ssh-agent-add-key"]; ok {
+			service := c.Services["amazeeio-ssh-agent-add-key"]
+			if sshAgentAddKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentAddKeyDefaults {
+				c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
+			}
+		}
+
+		if _, ok := c.Services["amazeeio-ssh-agent-show-keys"]; ok {
+			service := c.Services["amazeeio-ssh-agent-show-keys"]
+			if sshAgentListKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentListKeyDefaults {
+				c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
+			}
+		}
+
+		if _, ok := c.Services["amazeeio-dnsmasq"]; ok {
+			service := c.Services["amazeeio-dnsmasq"]
+			if dnsMasqDefaults, _ := service.GetFieldBool("defaults"); dnsMasqDefaults {
+				c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
+			}
+		}
+
+		if _, ok := c.Services["amazeeio-haproxy"]; ok {
+			service := c.Services["amazeeio-haproxy"]
+			if haproxyDefaults, _ := service.GetFieldBool("defaults"); haproxyDefaults {
+				c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
+			}
+		}
+
+		if _, ok := c.Services["amazeeio-mailhog"]; ok {
+			service := c.Services["amazeeio-mailhog"]
+			if mailhogDefaults, _ := service.GetFieldBool("defaults"); mailhogDefaults {
+				c.Services["amazeeio-mailhog"] = getService(mailhog.New(), c.Services["amazeeio-mailhog"])
+			}
+		}
+	}
 	// Mandatory validation check.
 	for id, service := range c.Services {
 		if name, err := service.GetFieldString("name"); err != nil && name != "" {
