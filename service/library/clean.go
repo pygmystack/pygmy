@@ -13,8 +13,15 @@ func Clean(c Config) {
 	Containers, _ := model.DockerContainerList()
 
 	for _, Container := range Containers {
+		target := false
 		if l := Container.Labels["pygmy.enable"]; l == "true" || l == "1" {
+			target = true
+		}
+		if l := Container.Labels["pygmy"]; l == "pygmy" {
+			target = true
+		}
 
+		if target {
 			err := model.DockerKill(Container.ID)
 			if err == nil {
 				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
