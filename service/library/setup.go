@@ -19,14 +19,25 @@ import (
 	"github.com/spf13/viper"
 )
 
-func importDefaults(c *Config, service string, importer model.Service) bool {
+// ImportDefaults is an exported function which allows third-party applications
+// to provide their own *Service and integrate it with their application so
+// that Pygmy is more extendable via API. It's here so that we have one common
+// import functionality that respects the users' decision to import config
+// defaults in a centralized way.
+func ImportDefaults(c *Config, service string, importer model.Service) bool {
 	if _, ok := c.Services[service]; ok {
 		container := c.Services[service]
 		if defaultsNeeded, _ := container.GetFieldBool("defaults"); defaultsNeeded {
+			// The user has specifically requested the defaults to be imported in configuration.
+			c.Services[service] = getService(importer, c.Services[service])
+			return true
+		} else if importer.Config.Labels["pygmy.defaults"] == "true" || importer.Config.Labels["pygmy.defaults"] == "1" {
+			// The user has not excluded the defaults to be imported via configuration.
 			c.Services[service] = getService(importer, c.Services[service])
 			return true
 		}
 	} else {
+		// The user hasn't made any attempt to configure the service.
 		c.Services[service] = getService(importer, c.Services[service])
 		return true
 	}
@@ -55,12 +66,12 @@ func Setup(c *Config) {
 	{
 		// Handle `pygmy.defaults` label for finite defaults inheritance.
 
-		importDefaults(c, "amazeeio-ssh-agent", agent.New())
-		importDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
-		importDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
-		importDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
-		importDefaults(c, "amazeeio-haproxy", haproxy.New())
-		importDefaults(c, "amazeeio-mailhog", mailhog.New())
+		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
+		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
+		ImportDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
+		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
+		ImportDefaults(c, "amazeeio-haproxy", haproxy.New())
+		ImportDefaults(c, "amazeeio-mailhog", mailhog.New())
 
 	}
 
