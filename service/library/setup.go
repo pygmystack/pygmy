@@ -19,6 +19,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+func importDefaults(c *Config, service string, importer model.Service) bool {
+	if _, ok := c.Services[service]; ok {
+		container := c.Services[service]
+		if defaultsNeeded, _ := container.GetFieldBool("defaults"); defaultsNeeded {
+			c.Services[service] = getService(importer, c.Services[service])
+			return true
+		}
+	} else {
+		c.Services[service] = getService(importer, c.Services[service])
+		return true
+	}
+	return false
+}
+
 // Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
 func Setup(c *Config) {
@@ -41,47 +55,13 @@ func Setup(c *Config) {
 	{
 		// Handle `pygmy.defaults` label for finite defaults inheritance.
 
-		if _, ok := c.Services["amazeeio-ssh-agent"]; ok {
-			service := c.Services["amazeeio-ssh-agent"]
-			if sshAgentDefaults, _ := service.GetFieldBool("defaults"); sshAgentDefaults {
-				c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
-			}
-		}
+		importDefaults(c, "amazeeio-ssh-agent", agent.New())
+		importDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
+		importDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
+		importDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
+		importDefaults(c, "amazeeio-haproxy", haproxy.New())
+		importDefaults(c, "amazeeio-mailhog", mailhog.New())
 
-		if _, ok := c.Services["amazeeio-ssh-agent-add-key"]; ok {
-			service := c.Services["amazeeio-ssh-agent-add-key"]
-			if sshAgentAddKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentAddKeyDefaults {
-				c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-ssh-agent-show-keys"]; ok {
-			service := c.Services["amazeeio-ssh-agent-show-keys"]
-			if sshAgentListKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentListKeyDefaults {
-				c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-dnsmasq"]; ok {
-			service := c.Services["amazeeio-dnsmasq"]
-			if dnsMasqDefaults, _ := service.GetFieldBool("defaults"); dnsMasqDefaults {
-				c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-haproxy"]; ok {
-			service := c.Services["amazeeio-haproxy"]
-			if haproxyDefaults, _ := service.GetFieldBool("defaults"); haproxyDefaults {
-				c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-mailhog"]; ok {
-			service := c.Services["amazeeio-mailhog"]
-			if mailhogDefaults, _ := service.GetFieldBool("defaults"); mailhogDefaults {
-				c.Services["amazeeio-mailhog"] = getService(mailhog.New(), c.Services["amazeeio-mailhog"])
-			}
-		}
 	}
 
 	if c.Defaults {
