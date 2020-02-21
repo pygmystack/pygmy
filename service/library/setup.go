@@ -108,7 +108,7 @@ func Setup(c *Config) {
 		}
 	}
 
-	if !c.Defaults {
+	{
 		// Handle `pygmy.defaults` label for finite defaults inheritance.
 
 		if _, ok := c.Services["amazeeio-ssh-agent"]; ok {
@@ -153,6 +153,7 @@ func Setup(c *Config) {
 			}
 		}
 	}
+
 	// Mandatory validation check.
 	for id, service := range c.Services {
 		if name, err := service.GetFieldString("name"); err != nil && name != "" {
