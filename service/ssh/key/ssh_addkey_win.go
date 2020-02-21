@@ -41,6 +41,7 @@ func NewShower() model.Service {
 				"-L",
 			},
 			Labels: map[string]string{
+				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-ssh-agent-show-keys",
 				"pygmy.discrete": "true",

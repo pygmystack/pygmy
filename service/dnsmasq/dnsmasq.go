@@ -17,6 +17,7 @@ func New() model.Service {
 				"/docker.amazee.io/127.0.0.1",
 			},
 			Labels: map[string]string{
+				"pygmy.defaults": "true",
 				"pygmy.enable": "true",
 				"pygmy.name":   "amazeeio-dnsmasq",
 				"pygmy.weight": "13",
