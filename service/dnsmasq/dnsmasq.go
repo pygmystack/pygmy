@@ -18,9 +18,9 @@ func New() model.Service {
 			},
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
-				"pygmy.enable": "true",
-				"pygmy.name":   "amazeeio-dnsmasq",
-				"pygmy.weight": "13",
+				"pygmy.enable":   "true",
+				"pygmy.name":     "amazeeio-dnsmasq",
+				"pygmy.weight":   "13",
 			},
 		},
 		HostConfig: container.HostConfig{

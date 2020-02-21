@@ -16,11 +16,11 @@ func New() model.Service {
 			Image: "amazeeio/ssh-agent",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
-				"pygmy.enable":  "true",
-				"pygmy.name":    "amazeeio-ssh-agent",
-				"pygmy.output":  "false",
-				"pygmy.purpose": "sshagent",
-				"pygmy.weight":  "30",
+				"pygmy.enable":   "true",
+				"pygmy.name":     "amazeeio-ssh-agent",
+				"pygmy.output":   "false",
+				"pygmy.purpose":  "sshagent",
+				"pygmy.weight":   "30",
 			},
 		},
 		HostConfig: container.HostConfig{
