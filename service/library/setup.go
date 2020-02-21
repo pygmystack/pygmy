@@ -31,6 +31,9 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 			// The user has specifically requested the defaults to be imported in configuration.
 			c.Services[service] = getService(importer, c.Services[service])
 			return true
+		} else if !defaultsNeeded {
+			// Do not import settings for this service.
+			return false
 		} else if importer.Config.Labels["pygmy.defaults"] == "true" || importer.Config.Labels["pygmy.defaults"] == "1" {
 			// The user has not excluded the defaults to be imported via configuration.
 			c.Services[service] = getService(importer, c.Services[service])
