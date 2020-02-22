@@ -26,24 +26,33 @@ import (
 // defaults in a centralized way.
 func ImportDefaults(c *Config, service string, importer model.Service) bool {
 	if _, ok := c.Services[service]; ok {
+
 		container := c.Services[service]
+
+		// If configuration has a value for the defaults label
+		if val, ok := container.Config.Labels["pygmy.defaults"]; ok {
+			if val == "1" || val == "true" {
+				c.Services[service] = getService(importer, c.Services[service])
+				return true
+			}
+		}
+
+		// If container has a value for the defaults label
 		if defaultsNeeded, _ := container.GetFieldBool("defaults"); defaultsNeeded {
-			// The user has specifically requested the defaults to be imported in configuration.
-			c.Services[service] = getService(importer, c.Services[service])
-			return true
-		} else if !defaultsNeeded {
-			// Do not import settings for this service.
-			return false
-		} else if importer.Config.Labels["pygmy.defaults"] == "true" || importer.Config.Labels["pygmy.defaults"] == "1" {
-			// The user has not excluded the defaults to be imported via configuration.
 			c.Services[service] = getService(importer, c.Services[service])
 			return true
 		}
-	} else {
-		// The user hasn't made any attempt to configure the service.
-		c.Services[service] = getService(importer, c.Services[service])
-		return true
+
+		// If default configuration has a value for the defaults label
+		if val, ok := importer.Config.Labels["pygmy.defaults"]; ok {
+			fmt.Println(service, val, ok)
+			if val == "1" || val == "true" {
+				c.Services[service] = getService(importer, c.Services[service])
+				return true
+			}
+		}
 	}
+
 	return false
 }
 
