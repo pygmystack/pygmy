@@ -11,7 +11,6 @@ services:
     Config:
       Labels:
         - pygmy.enable: false
-        - pygmy.enablessssss: false
 
   amazeeio-mailhog:
     Config:
@@ -112,6 +111,7 @@ services:
 
 networks:
   amazeeio-network:
+    Name: amazeeio-network
     Containers:
       amazeeio-haproxy: {}
       unofficial-traefik-2:
@@ -122,6 +122,8 @@ networks:
         Name: unofficial-portainer
       unofficial-phpmyadmin:
         Name: unofficial-phpmyadmin
+    Labels:
+      - pygmy.network: true
 
 resolvers: []
 
