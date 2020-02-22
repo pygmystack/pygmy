@@ -45,7 +45,6 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 
 		// If default configuration has a value for the defaults label
 		if val, ok := importer.Config.Labels["pygmy.defaults"]; ok {
-			fmt.Println(service, val, ok)
 			if val == "1" || val == "true" {
 				c.Services[service] = getService(importer, c.Services[service])
 				return true
