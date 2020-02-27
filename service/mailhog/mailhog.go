@@ -25,10 +25,11 @@ func New() model.Service {
 			},
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
-				"pygmy.enable": "true",
-				"pygmy.name":   "amazeeio-mailhog",
-				"pygmy.url":    "http://mailhog.docker.amazee.io",
-				"pygmy.weight": "15",
+				"pygmy.defaults": "true",
+				"pygmy.enable":   "true",
+				"pygmy.name":     "amazeeio-mailhog",
+				"pygmy.url":      "http://mailhog.docker.amazee.io",
+				"pygmy.weight":   "15",
 			},
 		},
 		HostConfig: container.HostConfig{

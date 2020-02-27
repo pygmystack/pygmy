@@ -19,6 +19,42 @@ import (
 	"github.com/spf13/viper"
 )
 
+// ImportDefaults is an exported function which allows third-party applications
+// to provide their own *Service and integrate it with their application so
+// that Pygmy is more extendable via API. It's here so that we have one common
+// import functionality that respects the users' decision to import config
+// defaults in a centralized way.
+func ImportDefaults(c *Config, service string, importer model.Service) bool {
+	if _, ok := c.Services[service]; ok {
+
+		container := c.Services[service]
+
+		// If configuration has a value for the defaults label
+		if val, ok := container.Config.Labels["pygmy.defaults"]; ok {
+			if val == "1" || val == "true" {
+				c.Services[service] = getService(importer, c.Services[service])
+				return true
+			}
+		}
+
+		// If container has a value for the defaults label
+		if defaultsNeeded, _ := container.GetFieldBool("defaults"); defaultsNeeded {
+			c.Services[service] = getService(importer, c.Services[service])
+			return true
+		}
+
+		// If default configuration has a value for the defaults label
+		if val, ok := importer.Config.Labels["pygmy.defaults"]; ok {
+			if val == "1" || val == "true" {
+				c.Services[service] = getService(importer, c.Services[service])
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 // Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
 func Setup(c *Config) {
@@ -29,6 +65,25 @@ func Setup(c *Config) {
 
 	if e != nil {
 		fmt.Println(e)
+	}
+
+	// If Services have been provided in complete or partially,
+	// this will override the defaults allowing any value to
+	// be changed by the user in the configuration file ~/.pygmy.yml
+	if c.Services == nil && c.Defaults == true {
+		c.Services = make(map[string]model.Service, 6)
+	}
+
+	{
+		// Handle `pygmy.defaults` label for finite defaults inheritance.
+
+		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
+		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
+		ImportDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
+		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
+		ImportDefaults(c, "amazeeio-haproxy", haproxy.New())
+		ImportDefaults(c, "amazeeio-mailhog", mailhog.New())
+
 	}
 
 	if c.Defaults {
@@ -60,19 +115,6 @@ func Setup(c *Config) {
 		} else if runtime.GOOS == "windows" {
 			viper.SetDefault("resolvers", []resolv.Resolv{})
 		}
-
-		// If Services have been provided in complete or partially,
-		// this will override the defaults allowing any value to
-		// be changed by the user in the configuration file ~/.pygmy.yml
-		if c.Services == nil {
-			c.Services = make(map[string]model.Service, 6)
-		}
-		c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
-		c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
-		c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
-		c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
-		c.Services["amazeeio-mailhog"] = getService(mailhog.New(), c.Services["amazeeio-mailhog"])
-		c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
 
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,
@@ -108,51 +150,6 @@ func Setup(c *Config) {
 		}
 	}
 
-	if !c.Defaults {
-		// Handle `pygmy.defaults` label for finite defaults inheritance.
-
-		if _, ok := c.Services["amazeeio-ssh-agent"]; ok {
-			service := c.Services["amazeeio-ssh-agent"]
-			if sshAgentDefaults, _ := service.GetFieldBool("defaults"); sshAgentDefaults {
-				c.Services["amazeeio-ssh-agent"] = getService(agent.New(), c.Services["amazeeio-ssh-agent"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-ssh-agent-add-key"]; ok {
-			service := c.Services["amazeeio-ssh-agent-add-key"]
-			if sshAgentAddKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentAddKeyDefaults {
-				c.Services["amazeeio-ssh-agent-add-key"] = getService(key.NewAdder(), c.Services["amazeeio-ssh-agent-add-key"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-ssh-agent-show-keys"]; ok {
-			service := c.Services["amazeeio-ssh-agent-show-keys"]
-			if sshAgentListKeyDefaults, _ := service.GetFieldBool("defaults"); sshAgentListKeyDefaults {
-				c.Services["amazeeio-ssh-agent-show-keys"] = getService(key.NewShower(), c.Services["amazeeio-ssh-agent-show-keys"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-dnsmasq"]; ok {
-			service := c.Services["amazeeio-dnsmasq"]
-			if dnsMasqDefaults, _ := service.GetFieldBool("defaults"); dnsMasqDefaults {
-				c.Services["amazeeio-dnsmasq"] = getService(dnsmasq.New(), c.Services["amazeeio-dnsmasq"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-haproxy"]; ok {
-			service := c.Services["amazeeio-haproxy"]
-			if haproxyDefaults, _ := service.GetFieldBool("defaults"); haproxyDefaults {
-				c.Services["amazeeio-haproxy"] = getService(haproxy.New(), c.Services["amazeeio-haproxy"])
-			}
-		}
-
-		if _, ok := c.Services["amazeeio-mailhog"]; ok {
-			service := c.Services["amazeeio-mailhog"]
-			if mailhogDefaults, _ := service.GetFieldBool("defaults"); mailhogDefaults {
-				c.Services["amazeeio-mailhog"] = getService(mailhog.New(), c.Services["amazeeio-mailhog"])
-			}
-		}
-	}
 	// Mandatory validation check.
 	for id, service := range c.Services {
 		if name, err := service.GetFieldString("name"); err != nil && name != "" {

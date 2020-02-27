@@ -192,10 +192,10 @@ func setup(t *testing.T, config *config) {
 func TestDefault(t *testing.T) {
 	configuration := &config{
 		name:               "default",
-		configpath:         "",
+		configpath:         "/examples/pygmy.travis.yml",
 		endpoints:          []string{"http://docker.amazee.io/stats", "http://mailhog.docker.amazee.io"},
-		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "amazeeio/ssh-agent", "mailhog/mailhog"},
-		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-ssh-agent", "amazeeio-mailhog"},
+		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "mailhog/mailhog"},
+		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
 		skipendpointchecks: true,
 	}
@@ -209,7 +209,7 @@ func TestCustom(t *testing.T) {
 		configpath:         "/examples/pygmy.complex.yml",
 		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://portainer.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
 		images:             []string{"amazeeio/ssh-agent", "mailhog/mailhog", "phpmyadmin/phpmyadmin", "portainer/portainer", "library/traefik:v2.1.3"},
-		services:           []string{"unofficial-portainer", "unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-ssh-agent", "amazeeio-mailhog"},
+		services:           []string{"unofficial-portainer", "unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-mailhog", "unofficial-portainer", "unofficial-phpmyadmin", "unofficial-traefik-2"},
 		skipendpointchecks: false,
 	}
