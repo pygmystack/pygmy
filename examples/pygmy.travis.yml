@@ -24,7 +24,6 @@ services:
   amazeeio-ssh-agent:
     Config:
       Labels:
-        - pygmy.enable: false
         - pygmy.hocuspocus: 42
         - pygmy.abracadabra: true
         - pygmy.opensesame: correct
