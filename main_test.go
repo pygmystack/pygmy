@@ -192,10 +192,10 @@ func setup(t *testing.T, config *config) {
 func TestDefault(t *testing.T) {
 	configuration := &config{
 		name:               "default",
-		configpath:         "",
+		configpath:         "/examples/pygmy.travis.yml",
 		endpoints:          []string{"http://docker.amazee.io/stats", "http://mailhog.docker.amazee.io"},
-		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "amazeeio/ssh-agent", "mailhog/mailhog"},
-		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-ssh-agent", "amazeeio-mailhog"},
+		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "mailhog/mailhog"},
+		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
 		skipendpointchecks: true,
 	}
