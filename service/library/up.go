@@ -52,7 +52,7 @@ func Up(c Config) {
 		output, _ := service.GetFieldBool("output")
 
 		// Do not show or add keys:
-		if !disabled && purpose != "addkeys" && purpose != "showkeys" {
+		if enabled && purpose != "addkeys" && purpose != "showkeys" {
 
 			// Here we will immitate the docker command by
 			// pulling the image if it's not in the daemon.
@@ -71,7 +71,7 @@ func Up(c Config) {
 			// When running 'docker run', it will pull the image.
 			// For UX it makes sense we do this here.
 			if !imageFound {
-				if err := model.DockerPull(service.Config.Image); err != nil {
+				if _, err := model.DockerPull(service.Config.Image); err != nil {
 					continue
 				}
 			}
