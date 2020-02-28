@@ -13,10 +13,11 @@ func New() model.Service {
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
 			Labels: map[string]string{
-				"pygmy":        "pygmy",
-				"pygmy.name":   "amazeeio-haproxy",
-				"pygmy.url":    "http://docker.amazee.io/stats",
-				"pygmy.weight": "14",
+				"pygmy.defaults": "true",
+				"pygmy.enable":   "true",
+				"pygmy.name":     "amazeeio-haproxy",
+				"pygmy.url":      "http://docker.amazee.io/stats",
+				"pygmy.weight":   "14",
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -26,7 +27,7 @@ func New() model.Service {
 			RestartPolicy: struct {
 				Name              string
 				MaximumRetryCount int
-			}{Name: "always", MaximumRetryCount: 0},
+			}{Name: "on-failure", MaximumRetryCount: 0},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

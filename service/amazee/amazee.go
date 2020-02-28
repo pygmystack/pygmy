@@ -18,7 +18,7 @@ func AmazeeImagePull() {
 // pull will perform an image update for a single image
 // which is provided as a container provided by the
 // Docker API.
-func pull(image string) error {
+func pull(image string) (string, error) {
 	return model.DockerPull(image)
 }
 
@@ -36,7 +36,10 @@ func pullAll() {
 	for _, image := range list {
 		if strings.Contains(fmt.Sprint(image.RepoTags), "amazeeio/") || strings.Contains(fmt.Sprint(image.RepoTags), "mailhog/mailhog") || strings.Contains(fmt.Sprint(image.RepoTags), "andyshinn/dnsmasq") {
 			for _, tag := range image.RepoTags {
-				err := pull(tag)
+				msg, err := pull(tag)
+				if msg != "" {
+					fmt.Println(msg)
+				}
 				if err != nil {
 					fmt.Println(err)
 				}

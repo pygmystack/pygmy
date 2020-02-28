@@ -1,0 +1,22 @@
+site_name: Pygmy Documentation
+theme: readthedocs
+
+nav:
+  - Pygmy: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - Update: update.md
+  - Troubleshooting: troubleshooting.md
+  - SSH Agent: ssh_agent.md
+  - Local Docker Development: local_docker_development.md
+  - Drupal Site Containers: drupal_site_containers.md
+  - Connecting to MySQL externally: connect_to_mysql_from_external.md
+  - Mapping additional ports: map_addtitional_ports.md
+  - Customisation:
+      - Introduction: customisation/introduction.md
+
+markdown_extensions:
+  - toc:
+      permalink: true
+      baselevel: 1
+  - admonition

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"strconv"
 	"strings"
 	"time"
@@ -68,7 +69,10 @@ func (Service *Service) Setup() error {
 		}
 	}
 
-	err := DockerPull(Service.Config.Image)
+	msg, err := DockerPull(Service.Config.Image)
+	if msg != "" {
+		fmt.Println(msg)
+	}
 
 	if err != nil {
 		fmt.Println(err)
@@ -230,19 +234,21 @@ func (Service *Service) GetFieldBool(field string) (bool, error) {
 	f := fmt.Sprintf("pygmy.%v", field)
 
 	if container, running := GetRunning(Service); running == nil {
-		if val, ok := container.Labels[f]; ok {
-			if val == "true" {
-				return true, nil
-			} else if val == "false" {
-				return false, nil
+		if Service.Config.Labels[f] == container.Labels[f] {
+			if val, ok := container.Labels[f]; ok {
+				if val == "true" {
+					return true, nil
+				} else if val == "false" {
+					return false, nil
+				}
 			}
 		}
 	}
 
 	if val, ok := Service.Config.Labels[f]; ok {
-		if val == "true" {
+		if val == "true" || val == "1" {
 			return true, nil
-		} else if val == "false" {
+		} else if val == "false" || val == "0" {
 			return false, nil
 		}
 	}
@@ -275,7 +281,7 @@ func GetRunning(Service *Service) (types.Container, error) {
 // Clean will cleanup and remove the container.
 func (Service *Service) Clean() error {
 
-	pygmy, _ := Service.GetFieldString("pygmy")
+	pygmy, _ := Service.GetFieldBool("pygmy.enable")
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return nil
@@ -284,7 +290,7 @@ func (Service *Service) Clean() error {
 	Containers, _ := DockerContainerList()
 	for _, container := range Containers {
 		if container.Names[0] == name {
-			if pygmy == "pygmy" {
+			if pygmy {
 				name := strings.TrimLeft(container.Names[0], "/")
 				if e := DockerKill(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
@@ -350,7 +356,9 @@ func DockerContainerList() ([]types.Container, error) {
 		fmt.Println(err)
 	}
 
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+		All: true,
+	})
 	if err != nil {
 		return []types.Container{}, err
 	}
@@ -377,7 +385,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 }
 
 // DockerPull will pull a Docker image into the daemon.
-func DockerPull(image string) error {
+func DockerPull(image string) (string, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -414,14 +422,14 @@ func DockerPull(image string) error {
 
 	if event != nil {
 		if strings.Contains(event.Status, fmt.Sprintf("Downloaded newer image for %s", image)) {
-			fmt.Printf("Successfully pulled %v\n", image)
+			return fmt.Sprintf("Successfully pulled %v\n", image), nil
 		}
 
 		if strings.Contains(event.Status, fmt.Sprintf("Image is up to date for %s", image)) {
-			fmt.Printf("Image %v is up to date\n", image)
+			return fmt.Sprintf("Image %v is up to date\n", image), nil
 		}
 	}
-	return nil
+	return "", nil
 }
 
 // DockerRun will setup and run a given container.
@@ -455,14 +463,6 @@ func DockerRun(Service *Service) ([]byte, error) {
 	// If we don't have the image available in the registry, pull it in!
 	if !imageFound {
 		Service.Setup()
-	}
-
-	// All pygmy services need some sort of reference for pygmy to consume:
-	if Service.Config.Labels["pygmy"] != "pygmy" {
-		if Service.Config.Labels == nil {
-			Service.Config.Labels = make(map[string]string)
-		}
-		Service.Config.Labels["pygmy"] = "pygmy"
 	}
 
 	// Sanity check to ensure we don't get name conflicts.
@@ -551,7 +551,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 
 	config := types.NetworkCreate{
@@ -564,11 +564,62 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		Labels:     network.Labels,
 	}
 
-	_, err = cli.NetworkCreate(ctx, network.Name, config)
-	if err != nil {
-		fmt.Println(err)
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			_, err = cli.NetworkCreate(ctx, network.Name, config)
+			if err != nil {
+				return err
+			}
+		}
 	}
+
 	return nil
+}
+
+// DockerNetworkRemove will attempt to remove a Docker network
+// and will not apply force to removal.
+func DockerNetworkRemove(network *types.NetworkResource) error {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return err
+	}
+
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			err = cli.NetworkRemove(ctx, network.Name)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+// DockerNetworkStatus will identify if a network with a
+// specified name has been created and return a boolean.
+func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return false, err
+	}
+
+	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	if err != nil {
+		return false, err
+	}
+
+	for _, n := range networks {
+		if val, ok := network.Labels["pygmy.network"]; ok {
+			if n.Name != "" && (val == "true" || val == "1") {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
 }
 
 // DockerNetworkGet will use the Docker API to retrieve a Docker network
@@ -584,8 +635,10 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 		return types.NetworkResource{}, err
 	}
 	for _, network := range networks {
-		if network.Name == name {
-			return network, nil
+		if val, ok := network.Labels["pygmy.network"]; ok {
+			if network.Name != "" && (val == "true" || val == "1") {
+				return network, nil
+			}
 		}
 	}
 	return types.NetworkResource{}, nil
@@ -598,9 +651,10 @@ func DockerNetworkConnect(network types.NetworkResource, containerName string) e
 	if err != nil {
 		return err
 	}
-	err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
-	if err != nil {
-		return err
+	if val, ok := network.Labels["pygmy.network"]; ok {
+		if network.Name != "" && (val == "true" || val == "1") {
+			err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
+		}
 	}
 	return nil
 }
@@ -675,4 +729,28 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 		Labels:     volume.Labels,
 		Name:       volume.Name,
 	})
+}
+
+// DockerExec will run a command in a Docker container and return the output.
+func DockerExec(container string, command string) ([]byte, error) {
+	ctx := context.Background()
+	cli, err := client.NewEnvClient()
+	if err != nil {
+		return []byte{}, err
+	}
+
+	if rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+		AttachStdout: true,
+		AttachStderr: true,
+		Cmd:          strings.Split(command, " ")}); err != nil {
+		return []byte{}, err
+	} else {
+		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecConfig{}); err != nil {
+			return []byte{}, err
+		} else {
+			data, _ := ioutil.ReadAll(response.Reader)
+			defer response.Close()
+			return data, nil
+		}
+	}
 }

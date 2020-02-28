@@ -25,18 +25,18 @@ func Status(c Config) {
 
 	Containers, _ := model.DockerContainerList()
 	for _, Container := range Containers {
-		if Container.Labels["pygmy"] == "pygmy" {
+		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
 			if s, _ := Service.Status(); s {
 				name, _ := Service.GetFieldString("name")
-				disabled, _ := Service.GetFieldBool("disabled")
+				enabled, _ := Service.GetFieldBool("enable")
 				discrete, _ := Service.GetFieldBool("discrete")
 				purpose, _ := Service.GetFieldString("purpose")
 				if name != "" {
 					if purpose == "sshagent" {
 						agentPresent = true
 					}
-					if !disabled && !discrete && name != "" {
+					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
 							fmt.Printf("[*] %v: Running as container %v\n", name, name)
 						} else {
@@ -51,7 +51,10 @@ func Status(c Config) {
 	for _, Service := range c.Services {
 		if s, _ := Service.Status(); !s {
 			name, _ := Service.GetFieldString("name")
-			fmt.Printf("[ ] %v is not running\n", name)
+			discrete, _ := Service.GetFieldBool("discrete")
+			if !discrete {
+				fmt.Printf("[ ] %v is not running\n", name)
+			}
 		}
 	}
 

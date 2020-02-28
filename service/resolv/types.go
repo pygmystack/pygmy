@@ -5,9 +5,9 @@ package resolv
 // Windows has a custom solution, however this will be used on both Mac
 // and Linux.
 type Resolv struct {
-	Data     string `yaml:"contents"`
-	Disabled bool   `yaml:"disabled"`
-	File     string `yaml:"file"`
-	Folder   string `yaml:"folder"`
-	Name     string `yaml:"name"`
+	Data    string `yaml:"contents"`
+	Enabled bool   `yaml:"enable"`
+	File    string `yaml:"file"`
+	Folder  string `yaml:"folder"`
+	Name    string `yaml:"name"`
 }

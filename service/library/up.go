@@ -47,7 +47,7 @@ func Up(c Config) {
 	// an ssh-agent like amazeeio-ssh-agent.
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
-		disabled, _ := service.GetFieldBool("disabled")
+		enabled, _ := service.GetFieldBool("enable")
 		purpose, _ := service.GetFieldString("purpose")
 		output, _ := service.GetFieldBool("output")
 
@@ -112,7 +112,7 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Disabled {
+		if resolver.Enabled {
 			resolver.Configure()
 		}
 	}

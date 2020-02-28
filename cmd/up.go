@@ -41,17 +41,22 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		c.SkipKey, _ = cmd.Flags().GetBool("no-addkey")
+		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
-		keyExistsInConfig := false
-		for _, key := range c.Keys {
-			if key == Key {
-				keyExistsInConfig = true
+		if NoKey {
+			c.Keys = []string{}
+		} else {
+
+			keyExistsInConfig := false
+			for _, key := range c.Keys {
+				if key == Key {
+					keyExistsInConfig = true
+				}
 			}
-		}
 
-		if !keyExistsInConfig {
-			c.Keys = append(c.Keys, Key)
+			if !keyExistsInConfig {
+				c.Keys = append(c.Keys, Key)
+			}
 		}
 
 		library.Up(c)
