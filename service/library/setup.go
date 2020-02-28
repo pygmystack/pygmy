@@ -50,6 +50,11 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 				return true
 			}
 		}
+	} else {
+		if defaultsNeeded, _ := importer.GetFieldBool("defaults"); defaultsNeeded {
+			c.Services[service] = getService(importer, c.Services[service])
+			return true
+		}
 	}
 
 	return false
