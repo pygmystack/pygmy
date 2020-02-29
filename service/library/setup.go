@@ -69,7 +69,8 @@ func Setup(c *Config) {
 	e := viper.Unmarshal(&c)
 
 	if e != nil {
-		fmt.Println(e)
+		fmt.Println(e.Error())
+		os.Exit(1)
 	}
 
 	// If Services have been provided in complete or partially,
