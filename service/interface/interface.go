@@ -399,26 +399,26 @@ func DockerPull(image string) (string, error) {
 		// To support image references from external sources to docker.io we need to check
 		// and validate the image reference for all known cases of validity.
 
-		if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:]+)$", image); m {
+		if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
 			// URL was not provided (in full).
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - amazeeio/pygmy
 			//  - amazeeio/pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:]+)$", image); m {
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
 			// URL was provided (in full).
 			// For this, we do not alter the value provided.
 			// Examples:
 			//  - quay.io/amazeeio/pygmy
 			//  - quay.io/amazeeio/pygmy:latest
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[:][a-zA-Z0-9.]+)$", image); m {
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[:][a-zA-Z0-9.-_]+)$", image); m {
 			// Library image was provided with tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+)$", image); m {
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9-_]+)$", image); m {
 			// Library image was provided without tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
