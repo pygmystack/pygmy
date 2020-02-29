@@ -400,11 +400,16 @@ func DockerPull(image string) (string, error) {
 		// and validate the image reference for all known cases of validity.
 
 		if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
-			// URL was not provided (in full).
+			// URL was not provided (in full), but the tag was provided.
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - amazeeio/pygmy:latest
+			image = fmt.Sprintf("docker.io/%v", image)
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:-]+[a-zA-Z0-9:-_.]+)$", image); m {
+			// URL was not provided (in full), but the tag was not provided.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - amazeeio/pygmy
-			//  - amazeeio/pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
 		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
 			// URL was provided (in full).
