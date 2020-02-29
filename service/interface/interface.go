@@ -412,11 +412,15 @@ func DockerPull(image string) (string, error) {
 			//  - amazeeio/pygmy
 			image = fmt.Sprintf("docker.io/%v", image)
 		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
-			// URL was provided (in full).
+			// URL was provided (in full), but the tag was provided.
+			// For this, we do not alter the value provided.
+			// Examples:
+			//  - quay.io/amazeeio/pygmy:latest
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+)$", image); m {
+			// URL was provided (in full), but the tag was not provided.
 			// For this, we do not alter the value provided.
 			// Examples:
 			//  - quay.io/amazeeio/pygmy
-			//  - quay.io/amazeeio/pygmy:latest
 		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[:][a-zA-Z0-9.-_]+)$", image); m {
 			// Library image was provided with tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
