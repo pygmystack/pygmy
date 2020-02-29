@@ -4,9 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -392,7 +394,43 @@ func DockerPull(image string) (string, error) {
 		fmt.Println(err)
 	}
 
-	data, err := cli.ImagePull(ctx, "docker.io/"+image, types.ImagePullOptions{})
+	{
+
+		// To support image references from external sources to docker.io we need to check
+		// and validate the image reference for all known cases of validity.
+
+		if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:]+)$", image); m {
+			// URL was not provided (in full).
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - amazeeio/pygmy
+			//  - amazeeio/pygmy:latest
+			image = fmt.Sprintf("docker.io/%v", image)
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:]+)$", image); m {
+			// URL was provided (in full).
+			// For this, we do not alter the value provided.
+			// Examples:
+			//  - quay.io/amazeeio/pygmy
+			//  - quay.io/amazeeio/pygmy:latest
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[:][a-zA-Z0-9.]+)$", image); m {
+			// Library image was provided with tag identifier.
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - pygmy:latest
+			image = fmt.Sprintf("docker.io/%v", image)
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+)$", image); m {
+			// Library image was provided without tag identifier.
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - pygmy
+			image = fmt.Sprintf("docker.io/%v", image)
+		} else {
+			// Validation not successful
+			return "", errors.New(fmt.Sprintf("error: regexp validation for %v failed", image))
+		}
+	}
+
+	data, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
 	if err != nil {
 		fmt.Println(err)
 	}
