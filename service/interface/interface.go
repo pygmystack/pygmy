@@ -19,6 +19,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	volume2 "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	"github.com/fubarhouse/pygmy-go/service/endpoint"
 )
 
 // DockerService is the requirements for a Docker container to be compatible.
@@ -436,6 +437,14 @@ func DockerPull(image string) (string, error) {
 		} else {
 			// Validation not successful
 			return "", errors.New(fmt.Sprintf("error: regexp validation for %v failed", image))
+		}
+	}
+
+	// For image references starting with docker.io, we should check the endpoint before pulling.
+	if strings.HasPrefix(image, "docker.io") {
+		if s := endpoint.Validate("https://registry-1.docker.io/v2"); !s {
+			fmt.Println("cannot reach the Docker Hub Registry, please try again in a few minutes.")
+			return "", fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes.")
 		}
 	}
 
