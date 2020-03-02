@@ -440,10 +440,11 @@ func DockerPull(image string) (string, error) {
 		}
 	}
 
-	// For image references starting with docker.io, we should check the endpoint before pulling.
+	// DockerHub Registry causes a stack trace fatal error when unavailable.
+	// We can check for this and report back, handling it gracefully and
+	// tell the user the service is down momentarily, and to try again shortly.
 	if strings.HasPrefix(image, "docker.io") {
-		if s := endpoint.Validate("https://registry-1.docker.io/v2"); !s {
-			fmt.Println("cannot reach the Docker Hub Registry, please try again in a few minutes.")
+		if s := endpoint.Validate("https://registry-1.docker.io"); !s {
 			return "", fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes.")
 		}
 	}
