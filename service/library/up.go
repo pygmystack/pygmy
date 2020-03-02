@@ -53,6 +53,29 @@ func Up(c Config) {
 
 		// Do not show or add keys:
 		if enabled && purpose != "addkeys" && purpose != "showkeys" {
+
+			// Here we will immitate the docker command by
+			// pulling the image if it's not in the daemon.
+			images, _ := model.DockerImageList()
+			imageFound := false
+			for _, image := range images {
+				for _, digest := range image.RepoDigests {
+					d := strings.Trim(strings.SplitAfter(digest, "@")[0], "@")
+					if strings.Contains(service.Config.Image, d) {
+						imageFound = true
+					}
+				}
+			}
+
+			// The image wasn't found.
+			// When running 'docker run', it will pull the image.
+			// For UX it makes sense we do this here.
+			if !imageFound {
+				if _, err := model.DockerPull(service.Config.Image); err != nil {
+					continue
+				}
+			}
+
 			o, _ := service.Start()
 			if output && string(o) != "" {
 				fmt.Println(string(o))
