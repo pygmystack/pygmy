@@ -92,12 +92,12 @@ func findConfig() string {
 		// by Viper and to be included in the strings
 		// declared below.
 		searchFor := []string{
-			home+"/.config/pygmy/config.yaml",
-			home+"/.config/pygmy/config.yml",
-			home+"/.config/pygmy/pygmy.yaml",
-			home+"/.config/pygmy/pygmy.yml",
-			home+"/.pygmy.yaml",
-			home+"/.pygmy.yml",
+			home + "/.config/pygmy/config.yaml",
+			home + "/.config/pygmy/config.yml",
+			home + "/.config/pygmy/pygmy.yaml",
+			home + "/.config/pygmy/pygmy.yml",
+			home + "/.pygmy.yaml",
+			home + "/.pygmy.yml",
 			"/etc/pygmy/.config/config.yaml",
 			"/etc/pygmy/.config/config.yml",
 			"/etc/pygmy/.config/pygmy.yaml",
