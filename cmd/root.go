@@ -125,7 +125,11 @@ func findConfig() string {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 
-	viper.SetConfigFile(findConfig())
+	if cfgFile == "" {
+		viper.SetConfigFile(findConfig())
+	} else {
+		viper.SetConfigFile(cfgFile)
+	}
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
