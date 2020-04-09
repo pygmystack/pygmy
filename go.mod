@@ -1,6 +1,6 @@
 module github.com/fubarhouse/pygmy-go
 
-go 1.12
+go 1.14
 
 require (
 	github.com/Microsoft/go-winio v0.4.14 // indirect

@@ -23,9 +23,11 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"runtime"
+	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/library"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -62,32 +64,68 @@ func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.pygmy.yml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", findConfig(), "")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" {
-		// Use config file from the flag.
-		viper.SetConfigFile(cfgFile)
-	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+// findConfig will find the first available configuration and return a
+// sensible default any of the expected paths are not found. The default
+// is assigned to the default flag. If the result which is returned does
+// not exist, it will not be loaded into memory and it will not be reported.
+func findConfig() string {
 
-		// Search config in home directory with name ".pygmy" (without extension).
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".pygmy")
+	// Find home directory.
+	home, err := homedir.Dir()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 
-	viper.AutomaticEnv() // read in environment variables that match
+	// Find a config for non-windows.
+	if runtime.GOOS != "windows" {
+
+		// Define a list of files we need to search for.
+		// The file needs to have an extension supported
+		// by Viper and to be included in the strings
+		// declared below.
+		searchFor := []string{
+			home+"/.config/pygmy/config.yaml",
+			home+"/.config/pygmy/config.yml",
+			home+"/.config/pygmy/pygmy.yaml",
+			home+"/.config/pygmy/pygmy.yml",
+			home+"/.pygmy.yaml",
+			home+"/.pygmy.yml",
+			"/etc/pygmy/.config/config.yaml",
+			"/etc/pygmy/.config/config.yml",
+			"/etc/pygmy/.config/pygmy.yaml",
+			"/etc/pygmy/.config/pygmy.yml",
+		}
+
+		// Look for each of the files listed above.
+		for n := range searchFor {
+			if _, err := os.Stat(searchFor[n]); err == nil {
+				if !os.IsNotExist(err) {
+					return searchFor[n]
+				}
+			}
+		}
+	}
+
+	// Provide a default.
+	if runtime.GOOS == "linux" {
+		return strings.Join([]string{"etc", "pygmy", "config.yml"}, string(os.PathSeparator))
+	} else {
+		return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
+	}
+}
+
+// initConfig reads in config file and ENV variables if set.
+func initConfig() {
+
+	viper.SetConfigFile(findConfig())
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
