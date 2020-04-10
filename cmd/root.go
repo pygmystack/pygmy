@@ -98,10 +98,10 @@ func findConfig() string {
 			home + "/.config/pygmy/pygmy.yml",
 			home + "/.pygmy.yaml",
 			home + "/.pygmy.yml",
-			"/etc/pygmy/.config/config.yaml",
-			"/etc/pygmy/.config/config.yml",
-			"/etc/pygmy/.config/pygmy.yaml",
-			"/etc/pygmy/.config/pygmy.yml",
+			"/etc/pygmy/config.yaml",
+			"/etc/pygmy/config.yml",
+			"/etc/pygmy/pygmy.yaml",
+			"/etc/pygmy/pygmy.yml",
 		}
 
 		// Look for each of the files listed above.
