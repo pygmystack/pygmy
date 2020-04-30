@@ -1,4 +1,5 @@
 FROM golang:alpine as builder
+LABEL stage=builder
 COPY main.go /go/src/github.com/fubarhouse/pygmy-go/
 COPY go.sum /go/src/github.com/fubarhouse/pygmy-go/
 COPY go.mod /go/src/github.com/fubarhouse/pygmy-go/
