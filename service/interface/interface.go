@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -113,8 +112,13 @@ func (Service *Service) Start() ([]byte, error) {
 	}
 
 	if purpose == "addkeys" || purpose == "showkeys" {
-		DockerKill(name)
-		DockerRemove(name)
+		if e := DockerKill(name); e != nil {
+			fmt.Println(e)
+		}
+		if e := DockerRemove(name); e != nil {
+			fmt.Println(e)
+		}
+
 	}
 
 	output, err := DockerRun(Service)
@@ -436,7 +440,7 @@ func DockerPull(image string) (string, error) {
 			image = fmt.Sprintf("docker.io/%v", image)
 		} else {
 			// Validation not successful
-			return "", errors.New(fmt.Sprintf("error: regexp validation for %v failed", image))
+			return "", fmt.Errorf("error: regexp validation for %v failed", image)
 		}
 	}
 
@@ -519,7 +523,9 @@ func DockerRun(Service *Service) ([]byte, error) {
 
 	// If we don't have the image available in the registry, pull it in!
 	if !imageFound {
-		Service.Setup()
+		if e := Service.Setup(); e != nil {
+			fmt.Println(e)
+		}
 	}
 
 	// Sanity check to ensure we don't get name conflicts.
@@ -551,7 +557,9 @@ func DockerRun(Service *Service) ([]byte, error) {
 	})
 
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(b)
+	if _, f := buf.ReadFrom(b); f != nil {
+		fmt.Println(f)
+	}
 
 	b.Close()
 
@@ -710,7 +718,10 @@ func DockerNetworkConnect(network types.NetworkResource, containerName string) e
 	}
 	if val, ok := network.Labels["pygmy.network"]; ok {
 		if network.Name != "" && (val == "true" || val == "1") {
-			err = cli.NetworkConnect(ctx, network.Name, containerName, nil)
+			e := cli.NetworkConnect(ctx, network.Name, containerName, nil)
+			if e != nil {
+				fmt.Println(e)
+			}
 		}
 	}
 	return nil

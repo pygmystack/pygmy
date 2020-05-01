@@ -21,7 +21,6 @@ const (
 
 var (
 	dindID  string
-	dindErr string
 )
 
 type config struct {
@@ -97,7 +96,10 @@ func setup(t *testing.T, config *config) {
 				time.Sleep(time.Second * 2)
 			})
 
-			cli.ContainerStart(ctx, dindContainerName, types.ContainerStartOptions{})
+			e := cli.ContainerStart(ctx, dindContainerName, types.ContainerStartOptions{})
+			if e != nil {
+				fmt.Println(e)
+			}
 
 			for _, image := range config.images {
 				Convey("Pulling "+image, func() {
@@ -130,7 +132,10 @@ func setup(t *testing.T, config *config) {
 			})
 
 			// While it's safe, we should clean the environment.
-			model.DockerExec(dindContainerName, cleanCmd)
+			_, e := model.DockerExec(dindContainerName, cleanCmd)
+			if e != nil {
+				fmt.Println(e)
+			}
 
 			Convey("Default ports are not allocated", func() {
 				g, _ := model.DockerExec(dindContainerName, statusCmd)
