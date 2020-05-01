@@ -14,12 +14,18 @@ func Down(c Config) {
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool("enable")
 		if enabled {
-			Service.Stop()
+			e := Service.Stop()
+			if e != nil {
+				fmt.Println(e)
+			}
 		}
 	}
 
 	for _, network := range c.Networks {
-		model.DockerNetworkRemove(&network)
+		e := model.DockerNetworkRemove(&network)
+		if e != nil {
+			fmt.Println(e)
+		}
 		if s, _ := model.DockerNetworkStatus(&network); s {
 			fmt.Printf("Successfully removed network %v\n", network.Name)
 		} else {

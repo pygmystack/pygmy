@@ -76,7 +76,7 @@ func Setup(c *Config) {
 	// If Services have been provided in complete or partially,
 	// this will override the defaults allowing any value to
 	// be changed by the user in the configuration file ~/.pygmy.yml
-	if c.Services == nil && c.Defaults == true {
+	if c.Services == nil && c.Defaults {
 		c.Services = make(map[string]model.Service, 6)
 	}
 
@@ -139,13 +139,13 @@ func Setup(c *Config) {
 		// Ensure Networks has a at least a zero value.
 		// We should provide defaults for amazeeio-network when no value is provided.
 		if c.Networks == nil {
-			c.Networks = make(map[string]types.NetworkResource, 0)
+			c.Networks = make(map[string]types.NetworkResource)
 			c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
 		}
 
 		// Ensure Volumes has a at least a zero value.
 		if c.Volumes == nil {
-			c.Volumes = make(map[string]types.Volume, 0)
+			c.Volumes = make(map[string]types.Volume)
 		}
 
 		for _, v := range c.Volumes {

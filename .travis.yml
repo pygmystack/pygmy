@@ -13,6 +13,7 @@ matrix:
         - go mod download
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
+        - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
       script:
         # Build
         - make build
@@ -26,6 +27,7 @@ matrix:
         - go mod download
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
+        - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
       script:
         # Build
         - go build -o pygmy-go-linux-x86

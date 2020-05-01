@@ -39,7 +39,10 @@ var addkeyCmd = &cobra.Command{
 
 		Key, _ := cmd.Flags().GetString("key")
 
-		library.SshKeyAdd(c, Key, 0)
+		_, e := library.SshKeyAdd(c, Key, 0)
+		if e != nil {
+			fmt.Println(e)
+		}
 
 	},
 }
