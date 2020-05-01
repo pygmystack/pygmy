@@ -36,7 +36,6 @@ func Clean(c Config) {
 
 	for _, network := range c.Networks {
 		if s, _ := model.DockerNetworkStatus(&network); s {
-			fmt.Println(s)
 			e := model.DockerNetworkRemove(&network)
 			if e != nil {
 				fmt.Println(e)
