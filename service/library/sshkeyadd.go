@@ -43,13 +43,16 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 					// We need a brand new copy of the existing container config.
 					var newService model.Service
 					b, _ := json.Marshal(Container)
-					json.Unmarshal(b, &newService)
+					e := json.Unmarshal(b, &newService)
+					if e != nil {
+						fmt.Println(e)
+					}
 
 					name, _ := newService.GetFieldString("name")
 					name = strings.SplitAfter(name, "_")[0]
 
 					// For some reason Container works well here but it should be newService - needs investigation.
-					e := Container.SetField("name", fmt.Sprintf("%v_%v", name, index))
+					e = Container.SetField("name", fmt.Sprintf("%v_%v", name, index))
 
 					if e != nil {
 						fmt.Println(e)
