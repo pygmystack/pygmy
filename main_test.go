@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	dindID  string
+	dindID string
 )
 
 type config struct {
