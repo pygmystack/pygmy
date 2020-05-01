@@ -13,6 +13,7 @@ matrix:
         - go mod download
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
+        - go get github.com/golangci/golangci-lint
         - golangci-lint run
       script:
         # Build
@@ -28,6 +29,7 @@ matrix:
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
         - go get github.com/golangci/golangci-lint
+        - golangci-lint run
       script:
         # Build
         - go build -o pygmy-go-linux-x86
