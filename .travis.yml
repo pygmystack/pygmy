@@ -14,6 +14,7 @@ matrix:
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
         - go get github.com/golangci/golangci-lint
+        - find / | grep golangci-lint
         - golangci-lint run
       script:
         # Build
@@ -29,6 +30,7 @@ matrix:
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
         - go get github.com/golangci/golangci-lint
+        - find / | grep golangci-lint
         - golangci-lint run
       script:
         # Build
