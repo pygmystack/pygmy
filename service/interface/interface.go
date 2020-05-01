@@ -113,10 +113,10 @@ func (Service *Service) Start() ([]byte, error) {
 
 	if purpose == "addkeys" || purpose == "showkeys" {
 		if e := DockerKill(name); e != nil {
-			fmt.Println(e)
+			fmt.Sprintln(e)
 		}
 		if e := DockerRemove(name); e != nil {
-			fmt.Println(e)
+			fmt.Sprintln(e)
 		}
 
 	}
