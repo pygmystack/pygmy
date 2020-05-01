@@ -665,6 +665,7 @@ func DockerNetworkRemove(network *types.NetworkResource) error {
 // DockerNetworkStatus will identify if a network with a
 // specified name has been created and return a boolean.
 func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
+	var returnValue = false
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -678,12 +679,15 @@ func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
 
 	for _, n := range networks {
 		if val, ok := network.Labels["pygmy.network"]; ok {
-			if n.Name != "" && (val == "true" || val == "1") {
-				return true, nil
+			if n.Name != "" && n.Name == network.Name && (val == "true" || val == "1") {
+				returnValue = true
 			}
 		}
 	}
 
+	if returnValue {
+		return true, nil
+	}
 	return false, nil
 }
 

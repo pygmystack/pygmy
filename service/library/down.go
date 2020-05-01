@@ -26,7 +26,7 @@ func Down(c Config) {
 		if e != nil {
 			fmt.Println(e)
 		}
-		if s, _ := model.DockerNetworkStatus(&network); s {
+		if s, _ := model.DockerNetworkStatus(&network); !s {
 			fmt.Printf("Successfully removed network %v\n", network.Name)
 		} else {
 			fmt.Printf("Network %v was not removed", network.Name)
