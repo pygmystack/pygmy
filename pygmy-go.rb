@@ -1,4 +1,4 @@
-class Pygmy < Formula
+class PygmyGo < Formula
   desc "Amazee.io's local development helper tool"
   homepage "https://github.com/fubarhouse/pygmy-go"
   url "https://github.com/fubarhouse/pygmy-go/releases/download/v0.2.0/pygmy-go-darwin"
