@@ -171,7 +171,7 @@ func Setup(c *Config) {
 	c.SortedServices = make([]string, 0, len(c.Services))
 	for key, service := range c.Services {
 		weight, _ := service.GetFieldInt("weight")
-		c.SortedServices = append(c.SortedServices, fmt.Sprintf("%v|%v", weight, key))
+		c.SortedServices = append(c.SortedServices, fmt.Sprintf("%06d|%v", weight, key))
 	}
 	sort.Strings(c.SortedServices)
 
