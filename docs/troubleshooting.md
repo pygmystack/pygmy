@@ -7,9 +7,9 @@ For most problems with the Docker Development environment, it's the best to rest
 
 ### Restart shared Docker containers
 
-This is done either in `pygmy`
+This is done either in `pygmy-go`
 
-    pygmy restart -d
+    pygmy-go restart -d
 
 now you should also restart the Drupal specific Containers:
 
@@ -58,7 +58,7 @@ Stuck here? Join our Slack at [slack.amazee.io](https://slack.amazee.io) and we 
 
 ### Shared container logs
 
-To see the logs of the shared container started via `pygmy`, first display all docker containers:
+To see the logs of the shared container started via `pygmy-go`, first display all docker containers:
 
     docker ps
 
@@ -87,7 +87,7 @@ docker-compose up --force -d
 If that does not resolve the issue, restart pygmy
 
 ```
-pygmy restart -d
+pygmy-go restart -d
 ```
 
 ### I get an error like `Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container`
@@ -135,7 +135,7 @@ If you also want to get rid of all the docker images you can run:
     docker rmi $(docker images -q)
 
 
-Now you have a completely empty Docker, now it's time to start again with `pygmy`.
+Now you have a completely empty Docker, now it's time to start again with `pygmy-go`.
 
 ### No space left on device
 
@@ -169,7 +169,7 @@ This can happen when you start a Drupal Container via `docker-compose up -d` and
 
 The Drupal Containers are depending on the `ssh-agent` shared Docker container (this is in order to have shared ssh-keys) and somehow this container is missing.
 
-Try to restart `pygmy` , this will create the `ssh-agent` container with the name `amazeeio-ssh-agent` and then try again.
+Try to restart `pygmy-go` , this will create the `ssh-agent` container with the name `amazeeio-ssh-agent` and then try again.
 
 ### Working Offline
 
@@ -204,12 +204,12 @@ Example `hosts` file contents:
 
 ## pygmy
 
-Most issues with `pygmy` can be resolved with:
+Most issues with `pygmy-go` can be resolved with:
 
 ![Have you tried turning it off and on again?](/assets/itsupport.gif)
 
 
-    pygmy restart -d
+    pygmy-go restart -d
 
 If that does not help, try and restart other services, in this order:
 
@@ -218,13 +218,13 @@ If that does not help, try and restart other services, in this order:
 
 ### I get an error like `listen tcp 0.0.0.0:53: bind: address already in use` during `pygmy up`
 
-If during starting of `pygmy` you see an error like that:
+If during starting of `pygmy-go` you see an error like that:
 
         Error response from daemon: driver failed programming external connectivity on endpoint amazeeio-dnsmasq:
         Error starting userland proxy: listen tcp 0.0.0.0:53: bind: address already in use
         Error: failed to start containers: amazeeio-dnsmasq
 
-You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with `pygmy`. The resolution depends on Ubuntu version.  
+You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with `pygmy-go`. The resolution depends on Ubuntu version.  
 
 #### Ubuntu before 18.04
 You should disable it, see here: http://askubuntu.com/a/233223 (no worries, the default started DNS server is actually not used, so it's safe to disable it).

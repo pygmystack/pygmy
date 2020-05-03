@@ -28,7 +28,7 @@ import (
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:     "status",
-	Example: "pygmy status",
+	Example: "pygmy-go status",
 	Short:   "Report status of the pygmy services",
 	Long: `Loop through all of pygmy's services and identify the present state.
 This includes the docker services, the resolver and SSH key status`,

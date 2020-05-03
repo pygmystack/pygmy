@@ -28,7 +28,7 @@ import (
 // pullCmd represents the down command
 var pullCmd = &cobra.Command{
 	Use:     "pull",
-	Example: "pygmy pull",
+	Example: "pygmy-go pull",
 	Short:   "Pull all pygmy services",
 	Long:    `Pull all pygmy services`,
 	Run: func(cmd *cobra.Command, args []string) {

@@ -28,7 +28,7 @@ import (
 // updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:     "update",
-	Example: "pygmy update",
+	Example: "pygmy-go update",
 	Short:   "Pulls Docker Images and recreates the Containers",
 	Long: `Pull all images Pygmy uses, as well as any images containing
 the string 'amazeeio', which encompasses all lagoon images.`,

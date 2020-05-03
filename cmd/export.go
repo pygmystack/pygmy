@@ -33,7 +33,7 @@ var exportPath string
 // exportCmd represents the status command
 var exportCmd = &cobra.Command{
 	Use:     "export",
-	Example: "pygmy export --config /path/to/input --output /path/to/output",
+	Example: "pygmy-go export --config /path/to/input --output /path/to/output",
 	Short:   "Export validated configuration to a given path",
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {

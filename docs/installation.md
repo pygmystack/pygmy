@@ -53,7 +53,7 @@ Pygmy comes with a Make file, which you can simply run `make build && make clean
 From here you can follow the guidance to install the relevant executable in the `builds/` folder using the instructions above.
 
 ### From source
-The installation of `pygmy` is fairly simple and can be accomplished via the go toolchain
+The installation of `pygmy-go` is fairly simple and can be accomplished via the go toolchain
 
 ```console
 $ go get github.com/fubarhouse/pygmy-go

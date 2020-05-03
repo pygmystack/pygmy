@@ -40,7 +40,7 @@ and then test the OSX version.
 3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod +x /usr/local/bin/pygmy-go`
 
 Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
-as `pygmy`. Now start Pygmy and use the new `status` command.
+as `pygmy-go`. Now start Pygmy and use the new `status` command.
 
 4. `pygmy-go up`
 5. `pygmy-go status`

@@ -1,12 +1,12 @@
 
 ## Start
-To start `pygmy` run following command
+To start `pygmy-go` run following command
 
-    pygmy up
+    pygmy-go up
 
-`pygmy` will now start all the required Docker containers and add the ssh key.
+`pygmy-go` will now start all the required Docker containers and add the ssh key.
 
-If you are on Ubuntu you might need to run pygmy with `pygmy up --no-resolver`
+If you are on Ubuntu you might need to run pygmy with `pygmy-go up --no-resolver`
 
 **All done?** Head over to [Drupal Docker Containers](./drupal_site_containers.md) to learn how to work with docker containers.
 
@@ -18,7 +18,7 @@ Amazeeio's local development tool,
 Runs DNSMasq, HAProxy, MailHog and an SSH Agent in local containers for local development.
 
 Usage:
-  pygmy [command]
+  pygmy-go [command]
 
 Available Commands:
   addkey      Add/re-add an SSH key to the agent
@@ -37,7 +37,7 @@ Flags:
   -h, --help            help for pygmy
   -t, --toggle          Help message for toggle
 
-Use "pygmy [command] --help" for more information about a command.
+Use "pygmy-go [command] --help" for more information about a command.
 ```
 
 
@@ -46,16 +46,16 @@ Use "pygmy [command] --help" for more information about a command.
 
 Call the `addkey` command with the **absolute** path to the key you would like to add. In case this they is passphrase protected, it will ask for your passphrase.
 
-    pygmy addkey /Users/amazeeio/.ssh/my_other_key
+    pygmy-go addkey /Users/amazeeio/.ssh/my_other_key
 
     Enter passphrase for /Users/amazeeio/.ssh/my_other_key:
     Identity added: /Users/amazeeio/.ssh/my_other_key (/Users/amazeeio/.ssh/my_other_key)
 
 ## Checking the status
 
-Run `pygmy status` and `pygmy` will tell you how it feels right now and which ssh-keys it currently has in it's stomach:
+Run `pygmy-go status` and `pygmy-go` will tell you how it feels right now and which ssh-keys it currently has in it's stomach:
 
-    pygmy status
+    pygmy-go status
 
     [*] amazeeio-ssh-agent: Running as container amazeeio-ssh-agent
     [*] mailhog.docker.amazee.io: Running as container mailhog.docker.amazee.io
@@ -67,13 +67,13 @@ Run `pygmy status` and `pygmy` will tell you how it feels right now and which ss
      - http://mailhog.docker.amazee.io (mailhog.docker.amazee.io)
      - http://docker.amazee.io/stats (amazeeio-haproxy)
 
-## `pygmy down` vs `pygmy clean`
+## `pygmy-go down` vs `pygmy-go clean`
 
-`pygmy` behaves like Docker, it's a whale in the end!
+`pygmy-go` behaves like Docker, it's a whale in the end!
 
-During regular development `pygmy stop` is perfectly fine, it will remove the Docker containers still alive.
+During regular development `pygmy-go stop` is perfectly fine, it will remove the Docker containers still alive.
 
-If you like to cleanup though, use `pygmy clean` to kill and remove all of the Docker containers, even if they're not alive.
+If you like to cleanup though, use `pygmy-go clean` to kill and remove all of the Docker containers, even if they're not alive.
 
 ## Access HAProxy statistic page and logs  
 
