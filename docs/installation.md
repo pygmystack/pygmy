@@ -1,4 +1,4 @@
-#Installation of Pygmy
+# Installation of Pygmy
 
 ## Prerequisites
 Make sure you have the following dependencies installed:

@@ -1,16 +1,6 @@
+# Usage
 
-## Start
-To start `pygmy-go` run following command
-
-    pygmy-go up
-
-`pygmy-go` will now start all the required Docker containers and add the ssh key.
-
-If you are on Ubuntu you might need to run pygmy with `pygmy-go up --no-resolver`
-
-**All done?** Head over to [Drupal Docker Containers](./drupal_site_containers.md) to learn how to work with docker containers.
-
-# Command line usage
+## Command line usage
 
 ```
 Amazeeio's local development tool,
@@ -26,6 +16,7 @@ Available Commands:
   down        Stop and remove all pygmy services
   export      Export validated configuration to a given path
   help        Help about any command
+  pull        Pull all pygmy services
   restart     Restart all pygmy containers.
   status      Report status of the pygmy services
   up          Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)
@@ -33,16 +24,26 @@ Available Commands:
   version     # Check current installed version of pygmy
 
 Flags:
-      --config string   config file (default is $HOME/.pygmy.yml)
+      --config string    (default "$HOME/.pygmy.yml")
   -h, --help            help for pygmy
   -t, --toggle          Help message for toggle
 
 Use "pygmy-go [command] --help" for more information about a command.
 ```
 
+### Starting pygmy
+To start `pygmy-go` run following command
+
+    pygmy-go up
+
+`pygmy-go` will now start all the required Docker containers and add the ssh key, it will pull the Docker images as required.
+
+If you are on Ubuntu you might need to run pygmy with `pygmy-go up --no-resolver`
+
+**All done?** Head over to [Drupal Docker Containers](./drupal_site_containers.md) to learn how to work with docker containers.
 
 
-## Adding ssh keys
+### Adding ssh keys
 
 Call the `addkey` command with the **absolute** path to the key you would like to add. In case this they is passphrase protected, it will ask for your passphrase.
 
@@ -51,7 +52,7 @@ Call the `addkey` command with the **absolute** path to the key you would like t
     Enter passphrase for /Users/amazeeio/.ssh/my_other_key:
     Identity added: /Users/amazeeio/.ssh/my_other_key (/Users/amazeeio/.ssh/my_other_key)
 
-## Checking the status
+### Checking the status
 
 Run `pygmy-go status` and `pygmy-go` will tell you how it feels right now and which ssh-keys it currently has in it's stomach:
 
@@ -67,16 +68,62 @@ Run `pygmy-go status` and `pygmy-go` will tell you how it feels right now and wh
      - http://mailhog.docker.amazee.io (mailhog.docker.amazee.io)
      - http://docker.amazee.io/stats (amazeeio-haproxy)
 
-## `pygmy-go down` vs `pygmy-go clean`
+The last thing the status command will do before exiting is check if the endpoint can be reached with a curl command. Success is indicated by a `-` prefixed to the URl, and a failure indicated with a `!`. An example showing this is below: 
+
+     - http://mailhog.docker.amazee.io (mailhog.docker.amazee.io)
+     ! http://docker.amazee.io/stats (amazeeio-haproxy)
+
+### `pygmy-go down` vs `pygmy-go clean`
 
 `pygmy-go` behaves like Docker, it's a whale in the end!
 
-During regular development `pygmy-go stop` is perfectly fine, it will remove the Docker containers still alive.
+During regular development `pygmy-go stop` is perfectly fine, it will remove only the Docker containers that are alive.
 
-If you like to cleanup though, use `pygmy-go clean` to kill and remove all of the Docker containers, even if they're not alive.
+If you like to completely cleanup though, use `pygmy-go clean` to kill and remove all Pygmy's Docker containers, even if they're not alive. The network will also be removed if it's safe to do so.
 
-## Access HAProxy statistic page and logs  
+## Diagnosing issues
+
+### Access HAProxy statistic page and logs  
 
 HAProxy service has statistics web page already enabled. To access the page, just point the browser to [http://docker.amazee.io/stats](http://docker.amazee.io/stats).  
 
 To watch at haproxy container logs, use the `docker logs amazeeio-haproxy` command with standard `docker logs` options like `-f` to follow.
+
+### Pygmy not running
+With no Pygmy running, you should get "connection refused" when attempting to connect to the local amazee network.
+```
+curl --HEAD http://drupal.docker.amazee.io
+curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection refused
+```
+
+### Project not running.
+If your project is not running you should expect a 503 response:
+```
+$ curl --HEAD http://drupal.docker.amazee.io
+HTTP/1.0 503 Service Unavailable
+Cache-Control: no-cache
+Connection: close
+Content-Type: text/html
+```
+
+### Project running
+If you have an Amazee Lagoon project running, you can test the web address and
+expect a `HTTP/1.1 200 OK` response.
+
+```
+$ curl --HEAD http://drupal.docker.amazee.io
+HTTP/1.1 200 OK
+Server: openresty
+Content-Type: text/html; charset=UTF-8
+Cache-Control: must-revalidate, no-cache, private
+Date: Mon, 11 Nov 2019 11:19:29 GMT
+X-UA-Compatible: IE=edge
+Content-language: en
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+X-Drupal-Cache-Tags: config:honeypot.settings config:system.site config:user.role.anonymous http_response rendered
+X-Drupal-Cache-Contexts: languages:language_interface theme url.path url.query_args user.permissions user.roles:authenticated
+Expires: Sun, 19 Nov 1978 05:00:00 GMT
+Vary:
+X-Frame-Options: SameOrigin
+```

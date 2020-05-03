@@ -39,7 +39,7 @@ var (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "pygmy",
+	Use:   "pygmy-go",
 	Short: "Amazeeio's local development tool",
 	Long: `Amazeeio's local development tool,
 	
