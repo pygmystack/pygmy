@@ -15,7 +15,9 @@ nav:
   - Customisation:
       - Introduction: customisation/introduction.md
       - Configuration: customisation/configuration.md
-      - Examples: customisation/examples.md
+      - Examples:
+          - Simple: customisation/examples_simple.md
+          - Advanced: customisation/examples_advanced.md
 
 markdown_extensions:
   - toc:
