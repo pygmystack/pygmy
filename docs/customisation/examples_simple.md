@@ -35,3 +35,42 @@ networks:
       pygmy-phpmyadmin: 
         Name: pygmy-phpmyadmin
 ```
+
+## Portainer
+```yaml
+services:
+  pygmy-portainer:
+    Config:
+      Image: portainer/portainer
+      Env:
+        - "AMAZEEIO=AMAZEEIO"
+        - "AMAZEEIO_URL=portainer.docker.amazee.io"
+        - "AMAZEEIO_HTTP_PORT=9000"
+      Labels:
+        - pygmy: pygmy
+        - pygmy.enable: true
+        - pygmy.name: pygmy-portainer
+        - pygmy.weight: 23
+        - pygmy.url: http://portainer.docker.amazee.io
+      ExposedPorts:
+        9000/tcp: {}
+    HostConfig:
+      Binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - portainer_data:/data
+      PortBindings:
+        8000/tcp:
+          - HostPort: 8200
+        9000/tcp:
+          - HostPort: 8100
+
+networks:
+  amazeeio-network:
+    Containers:
+      pygmy-portainer: 
+        Name: pygmy-portainer
+
+volumes:
+  portainer_data:
+    Name: portainer_data
+```
