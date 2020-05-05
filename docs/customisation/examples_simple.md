@@ -8,7 +8,20 @@ date: 2020-05-05
 
 # Simple Examples
 
-## Cowsay
+## Modifications to services
+
+### HTTPS on Pygmy
+```yaml
+services:
+  amazeeio-haproxy:
+    Config:
+      PortBindings:
+        443/tcp:
+        - HostPort: 443
+```
+
+## New services
+### Cowsay
 ```yaml
 services:
   pygmy-cowsay:
@@ -28,7 +41,7 @@ services:
       AutoRemove: true
 ```
 
-## PHPMyAdmin
+### PHPMyAdmin
 ```yaml
 services:
   pygmy-phpmyadmin:
@@ -56,7 +69,7 @@ networks:
         Name: pygmy-phpmyadmin
 ```
 
-## Portainer
+### Portainer
 ```yaml
 services:
   pygmy-portainer:
