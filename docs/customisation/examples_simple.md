@@ -9,7 +9,6 @@ date: 2020-05-05
 # Simple Examples
 
 ## Modifications to services
-
 ### HTTPS on Pygmy
 ```yaml
 services:
@@ -18,6 +17,19 @@ services:
       PortBindings:
         443/tcp:
         - HostPort: 443
+```
+
+### Image replacement
+```yaml
+services:
+  amazeeio-haproxy:
+    Config:
+      Image: fubarhouse/amazeeio-haproxy-8080
+    HostConfig:
+      PortBindings:
+        8080/tcp:
+          -
+            HostPort: 8080
 ```
 
 ## New services
