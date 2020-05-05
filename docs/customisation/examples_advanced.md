@@ -66,8 +66,79 @@ services:
         - unofficial-ssh-agent
 ```
 
+### Traefik 1.x
+```yaml
+services:
+
+  amazeeio-haproxy:
+    Config:
+      Labels:
+        - pygmy.enable: false
+
+  pygmy-traefik-1:
+    Config:
+      Image: library/traefik:v1.7.19
+      Cmd:
+        - --api
+        - --docker
+        - --docker.network=amazeeio-network
+        - --docker.domain=docker.amazee.io
+        - --docker.exposedbydefault=false
+      ExposedPorts:
+        80/tcp:
+          HostPort: 80
+        443/tcp:
+          HostPort: 443
+        8080/tcp:
+          HostPort: 8080
+      Labels:
+        - pygmy: pygmy
+        - pygmy.name: pygmy-traefik-1
+        - pygmy.enable: true
+        - pygmy.url: http://traefik.docker.amazee.io
+        - traefik.enable: true
+        - traefik.port: 8080
+        - traefik.protocol: http
+        - traefik.docker.domain: docker.amazee.io
+        - traefik.docker.exposedByDefault: false
+        - traefik.docker.network: amazeeio-network
+        - traefik.frontend.rule: Host:traefik.docker.amazee.io
+    HostConfig:
+      Binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+      PortBindings:
+        443/tcp:
+          - HostPort: 443
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+      RestartPolicy:
+        Name: always
+        MaximumRetryCount: 0
+    NetworkConfig:
+      Ports:
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+
+networks:
+  amazeeio-network:
+    Containers:
+      pygmy-traefik-1:
+        Name: pygmy-traefik-1
+
+resolvers: []
+```
+
 ### Traefik 2.x
 ```yaml
+  amazeeio-haproxy:
+    Config:
+      Labels:
+        - pygmy.enable: false
+
   pygmy-traefik-2:
     Config:
       Image: library/traefik:v2.1.3
@@ -119,6 +190,8 @@ services:
 networks:
   amazeeio-network:
     Containers:
-      amazeeio-traefik-2:
-        Name: amazeeio-traefik-2
+      pygmy-traefik-2:
+        Name: pygmy-traefik-2
+
+resolvers: []
 ```
