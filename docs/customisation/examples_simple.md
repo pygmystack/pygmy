@@ -8,6 +8,26 @@ date: 2020-05-05
 
 # Simple Examples
 
+## Cowsay
+```yaml
+services:
+  pygmy-cowsay:
+    name: pygmy-cowsay
+    Config:
+      Image: mbentley/cowsay
+      Cmd:
+        - holy
+        - ship
+      Labels:
+        - pygmy.enable: true
+        - pygmy.discrete: true
+        - pygmy.name: pygmy-cowsay
+        - pygmy.output: true
+        - pygmy.weight: 99
+    HostConfig:
+      AutoRemove: true
+```
+
 ## PHPMyAdmin
 ```yaml
 services:
