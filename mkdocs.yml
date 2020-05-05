@@ -14,6 +14,8 @@ nav:
   - Mapping additional ports: map_addtitional_ports.md
   - Customisation:
       - Introduction: customisation/introduction.md
+      - Configuration: customisation/configuration.md
+      - Examples: customisation/examples.md
 
 markdown_extensions:
   - toc:
