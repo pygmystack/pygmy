@@ -65,3 +65,60 @@ services:
       VolumesFrom:
         - unofficial-ssh-agent
 ```
+
+### Traefik 2.x
+```yaml
+  pygmy-traefik-2:
+    Config:
+      Image: library/traefik:v2.1.3
+      Cmd:
+        - --api
+        - --api.insecure=true
+        - --providers.docker
+        - --providers.docker.exposedbydefault=false
+        - --providers.docker.defaultrule=Host(`{{ index .Labels "com.docker.compose.project" }}.docker.amazee.io`)
+        - --entrypoints.web.address=:80
+        - --entrypoints.websecure.address=:443
+      ExposedPorts:
+        80/tcp:
+          HostPort: 80
+        443/tcp:
+          HostPort: 443
+        8080/tcp:
+          HostPort: 3080
+      Labels:
+        - pygmy.enable: true
+        - pygmy.name: pygmy-traefik-2
+        - pygmy.url: http://traefik.docker.amazee.io
+        - traefik.docker.network: amazeeio-network
+        - traefik.enable: true
+        - traefik.port: 80
+        - traefik.http.routers.traefik.rule: Host(`traefik.docker.amazee.io`)
+        - traefik.http.routers.traefik.service: api@internal
+        - traefik.providers.docker.defaultport: 8080
+    HostConfig:
+      Binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+      PortBindings:
+        443/tcp:
+          - HostPort: 443
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+      RestartPolicy:
+        Name: always
+        MaximumRetryCount: 0
+    NetworkConfig:
+      Ports:
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+
+networks:
+  amazeeio-network:
+    Containers:
+      amazeeio-traefik-2:
+        Name: amazeeio-traefik-2
+```
