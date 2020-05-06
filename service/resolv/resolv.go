@@ -104,15 +104,13 @@ func (resolv Resolv) Configure() {
 			}
 		}
 
-		if runtime.GOOS == "darwin" {
-			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
-			if err := ifConfig.Run(); err != nil {
-				fmt.Println("error creating loopback UP alias")
-			}
-			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
-			if err := killAll.Run(); err != nil {
-				fmt.Println("error restarting mDNSResponder")
-			}
+		ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
+		if err := ifConfig.Run(); err != nil {
+			fmt.Println("error creating loopback UP alias")
+		}
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		if err := killAll.Run(); err != nil {
+			fmt.Println("error restarting mDNSResponder")
 		}
 
 		if resolv.Status() {
