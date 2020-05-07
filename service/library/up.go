@@ -112,7 +112,7 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if resolver.Enabled {
+		if !resolver.Status() {
 			resolver.Configure()
 		}
 	}
