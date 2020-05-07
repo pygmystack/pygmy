@@ -113,7 +113,7 @@ func Setup(c *Config) {
 	// If Services have been provided in complete or partially,
 	// this will override the defaults allowing any value to
 	// be changed by the user in the configuration file ~/.pygmy.yml
-	if c.Services == nil && c.Defaults == true {
+	if c.Services == nil && c.Defaults {
 		c.Services = make(map[string]model.Service, 6)
 	}
 
