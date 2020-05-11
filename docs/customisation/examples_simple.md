@@ -7,19 +7,26 @@ date: 2020-05-05
 ---
 
 # Simple Examples
+!!! warning
+    All of these examples have been tested in isolation. These are intended to be examples to show what is possible, and any example may not be compatible with each other.
+
+    Using a custom configuration would mean upstream support would be either limited or refused depending on the situation. Usage is considered advanced and an advanced knowledge of Docker would be expected to resolve any issues you may have.
 
 ## Modifications to services
-### HTTPS on Pygmy
+### HTTPS on `haproxy`
+This example will open up the `haproxy` service to run on `443` so that you can use `pygmy` on HTTPS. It does not currently use a valid certificate so the traffic is considered insecure, but at least this will allow that insecure traffic which can sometimes be absolutely important for local development workflow.
 ```yaml
 services:
   amazeeio-haproxy:
     Config:
       PortBindings:
         443/tcp:
-        - HostPort: 443
+        -
+          HostPort: 443
 ```
 
 ### Image replacement
+This example shows how an image on one of the default services can be replaced with another. In this example, the `haproxy` is replaced with a custom image which exposes the `haproxy` to port `8080` and not `80`.
 ```yaml
 services:
   amazeeio-haproxy:
@@ -34,6 +41,7 @@ services:
 
 ## New services
 ### Cowsay
+This useless example will add a single `cowsay` process in a Docker image to `pygmy up` and will output the stdout to the terminal. This is a fun, useless example of how something independent of `pygmy` can be integrated directly with `pygmy. 
 ```yaml
 services:
   pygmy-cowsay:
@@ -54,6 +62,7 @@ services:
 ```
 
 ### PHPMyAdmin
+Adding phpmyadmin is reasonably simple, and provides some local development value. You'll be able to manually connect to any database after retrieving the port information for the service you're wanting to connect to. This can be useful to visualise and to manage databases, though ultimately there are better ways of achieving this. 
 ```yaml
 services:
   pygmy-phpmyadmin:
@@ -72,7 +81,7 @@ services:
     HostConfig:
       PortBindings:
         80/tcp:
-          - HostPort: 8080
+          - HostPort: 8555
 
 networks:
   amazeeio-network:
@@ -82,6 +91,7 @@ networks:
 ```
 
 ### Portainer
+Portainer provides fantastic management and insight to the local Docker daemon/registry and can be very useful if you're not familiar or eager on the command line interface. Adding it is quite simple and at times can really benefit the developer.
 ```yaml
 services:
   pygmy-portainer:
@@ -92,7 +102,6 @@ services:
         - "AMAZEEIO_URL=portainer.docker.amazee.io"
         - "AMAZEEIO_HTTP_PORT=9000"
       Labels:
-        - pygmy: pygmy
         - pygmy.enable: true
         - pygmy.name: pygmy-portainer
         - pygmy.weight: 23
