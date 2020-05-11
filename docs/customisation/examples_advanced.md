@@ -290,10 +290,12 @@ services:
       VolumesFrom:
         - pygmy-ssh-agent
 
-  amazeeio-mailhog:
+  pygmy-mailhog:
     Config:
+      Image: mailhog/mailhog
       Labels:
         - pygmy.enable: true
+        - pygmy.name: pygmy-mailhog
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
@@ -391,11 +393,10 @@ networks:
   pygmy-network:
     Name: pygmy-network
     Containers:
-      amazeeio-haproxy: {}
       unofficial-traefik-2:
         Name: pygmy-traefik
-      amazeeio-mailhog:
-        Name: amazeeio-mailhog
+      pygmy-mailhog:
+        Name: pygmy-mailhog
       unofficial-portainer:
         Name: pygmy-portainer
       unofficial-phpmyadmin:
