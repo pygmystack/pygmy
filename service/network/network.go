@@ -20,13 +20,8 @@ func New() types.NetworkResource {
 				},
 			},
 		},
-		Containers: map[string]types.EndpointResource{
-			"amazeeio-haproxy": types.EndpointResource{
-				Name: "amazeeio-haproxy",
-			},
-		},
 		Labels: map[string]string{
-			"pygmy.network": "true",
+			"pygmy.name": "amazeeio-network",
 		},
 	}
 }

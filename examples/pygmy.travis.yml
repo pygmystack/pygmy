@@ -49,6 +49,7 @@ services:
         - pygmy: pygmy
         - pygmy.enable: true
         - pygmy.name: amazeeio-portainer
+        - pygmy.network: amazeeio-network
         - pygmy.weight: 23
         - pygmy.url: http://portainer.docker.amazee.io
         - pygmy.hocuspocus: 42

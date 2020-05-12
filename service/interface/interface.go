@@ -630,7 +630,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 	}
 
 	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
+		if network.Name != "" && val == network.Name {
 			_, err = cli.NetworkCreate(ctx, network.Name, config)
 			if err != nil {
 				return err
@@ -651,7 +651,7 @@ func DockerNetworkRemove(network *types.NetworkResource) error {
 	}
 
 	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
+		if network.Name != "" && val == network.Name {
 			err = cli.NetworkRemove(ctx, network.Name)
 			if err != nil {
 				return err
@@ -679,7 +679,7 @@ func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
 
 	for _, n := range networks {
 		if val, ok := network.Labels["pygmy.network"]; ok {
-			if n.Name != "" && n.Name == network.Name && (val == "true" || val == "1") {
+			if val == n.Name {
 				returnValue = true
 			}
 		}
@@ -705,7 +705,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	}
 	for _, network := range networks {
 		if val, ok := network.Labels["pygmy.network"]; ok {
-			if network.Name != "" && (val == "true" || val == "1") {
+			if network.Name != "" && val == network.Name {
 				return network, nil
 			}
 		}
@@ -721,7 +721,7 @@ func DockerNetworkConnect(network types.NetworkResource, containerName string) e
 		return err
 	}
 	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
+		if network.Name != "" && val == network.Name {
 			e := cli.NetworkConnect(ctx, network.Name, containerName, nil)
 			if e != nil {
 				fmt.Println(e)
