@@ -36,9 +36,11 @@ matrix:
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml status;
         # Test the amazeeio-network for expected results
         - >
-          docker network inspect amazeeio-network | jq '.[].Name'
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name'
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address'
+          docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-haproxy";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-mailhog";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-portainer";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "172.19.0." || true
         # Test for configured container tags.
         - >
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
