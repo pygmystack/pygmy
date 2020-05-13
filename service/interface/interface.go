@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -616,7 +615,7 @@ func DockerRemove(id string) error {
 func DockerNetworkCreate(network *types.NetworkResource) error {
 	netVal, _ := DockerNetworkStatus(network.Name)
 	if netVal {
-		return errors.New(fmt.Sprintf("docker network %v already exists", network.Name))
+		return fmt.Errorf("docker network %v already exists", network.Name)
 	}
 
 	ctx := context.Background()
