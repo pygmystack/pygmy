@@ -98,15 +98,6 @@ func Up(c Config) {
 				} else {
 					fmt.Printf("Could not create network %v\n", Network.Name)
 				}
-				// If container connections are present in the Network declaration,
-				// handle those here. Connections managed by labels are done after this.
-				for _, Container := range Network.Containers {
-					if s, _ := model.DockerNetworkConnected(Network.Name, Container.Name); !s {
-						if s := NetworkConnect(Network.Name, Container.Name); s == nil {
-							fmt.Printf("Successfully connected %v to %v\n", Container.Name, Network.Name)
-						}
-					}
-				}
 			}
 		}
 	}
@@ -117,14 +108,6 @@ func Up(c Config) {
 		name, nameErr := service.GetFieldString("name")
 		// If the network is configured at the container level, connect it.
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
-			n, netErr := model.DockerNetworkGet(Network)
-			if netErr != nil {
-				if err := NetworkCreate(n); err == nil {
-					fmt.Printf("Successfully created network %v\n", Network)
-				} else {
-					fmt.Printf("Could not create network %v\n", Network)
-				}
-			}
 			if s, _ := model.DockerNetworkConnected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", name, Network)
