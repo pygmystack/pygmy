@@ -86,7 +86,7 @@ func unique(stringSlice []string) []string {
 	}
 
 	var result []string
-	for item, _ := range m {
+	for item := range m {
 		result = append(result, item)
 	}
 	return result
