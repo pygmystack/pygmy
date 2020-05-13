@@ -704,20 +704,16 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 
 // DockerNetworkConnect will connect a container to a network.
 func DockerNetworkConnect(network string, containerName string) error {
-	//fmt.Printf("NETWORK: %v; CONTAINER: %v;\n", network, containerName)
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	n, _ := DockerNetworkGet(network)
-	e := cli.NetworkConnect(ctx, n.Name, containerName, nil)
+	e := cli.NetworkConnect(ctx, network, containerName, nil)
 	if e != nil {
-		fmt.Println(e)
-	} else {
-		return nil
+		return e
 	}
-	return errors.New("fail")
+	return nil
 }
 
 // DockerNetworkConnect will check if a container is connected to a network.

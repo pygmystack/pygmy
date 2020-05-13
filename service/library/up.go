@@ -125,8 +125,8 @@ func Up(c Config) {
 					fmt.Printf("Could not create network %v\n", Network)
 				}
 			}
-			if s, _ := model.DockerNetworkConnected(n.Name, name); !s {
-				if s := NetworkConnect(n.Name, name); s == nil {
+			if s, _ := model.DockerNetworkConnected(Network, name); !s {
+				if s := NetworkConnect(Network, name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", name, Network)
 				} else {
 					fmt.Printf("Could not connect %v to %v\n", name, Network)
