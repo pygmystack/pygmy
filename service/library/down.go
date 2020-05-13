@@ -10,6 +10,7 @@ import (
 func Down(c Config) {
 
 	Setup(&c)
+	NetworksToClean := []string{}
 
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool("enable")
@@ -18,18 +19,25 @@ func Down(c Config) {
 			if e != nil {
 				fmt.Println(e)
 			}
+			if s, _ := Service.GetFieldString("network"); s != "" {
+				NetworksToClean = append(NetworksToClean, s)
+			}
 		}
 	}
 
 	for _, network := range c.Networks {
-		e := model.DockerNetworkRemove(&network)
+		NetworksToClean = append(NetworksToClean, network.Name)
+	}
+
+	for _, network := range unique(NetworksToClean) {
+		e := model.DockerNetworkRemove(network)
 		if e != nil {
 			fmt.Println(e)
 		}
-		if s, _ := model.DockerNetworkStatus(&network); !s {
-			fmt.Printf("Successfully removed network %v\n", network.Name)
+		if s, _ := model.DockerNetworkStatus(network); !s {
+			fmt.Printf("Successfully removed network %v\n", network)
 		} else {
-			fmt.Printf("Network %v was not removed", network.Name)
+			fmt.Printf("Network %v was not removed", network)
 		}
 	}
 

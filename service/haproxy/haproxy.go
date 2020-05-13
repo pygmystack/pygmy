@@ -16,6 +16,7 @@ func New() model.Service {
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-haproxy",
+				"pygmy.network":  "amazeeio-network",
 				"pygmy.url":      "http://docker.amazee.io/stats",
 				"pygmy.weight":   "14",
 			},

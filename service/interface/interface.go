@@ -613,6 +613,11 @@ func DockerRemove(id string) error {
 // DockerNetworkCreate is an abstraction layer on top of the Docker API call
 // which will create a Docker network using a specified configuration.
 func DockerNetworkCreate(network *types.NetworkResource) error {
+	netVal, _ := DockerNetworkStatus(network.Name)
+	if netVal {
+		return fmt.Errorf("docker network %v already exists", network.Name)
+	}
+
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -628,14 +633,9 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		Options:    network.Options,
 		Labels:     network.Labels,
 	}
-
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			_, err = cli.NetworkCreate(ctx, network.Name, config)
-			if err != nil {
-				return err
-			}
-		}
+	_, err = cli.NetworkCreate(ctx, network.Name, config)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -643,29 +643,22 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 
 // DockerNetworkRemove will attempt to remove a Docker network
 // and will not apply force to removal.
-func DockerNetworkRemove(network *types.NetworkResource) error {
+func DockerNetworkRemove(network string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			err = cli.NetworkRemove(ctx, network.Name)
-			if err != nil {
-				return err
-			}
-		}
+	err = cli.NetworkRemove(ctx, network)
+	if err != nil {
+		return err
 	}
-
 	return nil
 }
 
 // DockerNetworkStatus will identify if a network with a
-// specified name has been created and return a boolean.
-func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
-	var returnValue = false
+// specified name is present been created and return a boolean.
+func DockerNetworkStatus(network string) (bool, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
@@ -678,16 +671,11 @@ func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
 	}
 
 	for _, n := range networks {
-		if val, ok := network.Labels["pygmy.network"]; ok {
-			if n.Name != "" && n.Name == network.Name && (val == "true" || val == "1") {
-				returnValue = true
-			}
+		if n.Name == network {
+			return true, nil
 		}
 	}
 
-	if returnValue {
-		return true, nil
-	}
 	return false, nil
 }
 
@@ -705,7 +693,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	}
 	for _, network := range networks {
 		if val, ok := network.Labels["pygmy.network"]; ok {
-			if network.Name != "" && (val == "true" || val == "1") {
+			if val == name {
 				return network, nil
 			}
 		}
@@ -714,30 +702,25 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 }
 
 // DockerNetworkConnect will connect a container to a network.
-func DockerNetworkConnect(network types.NetworkResource, containerName string) error {
+func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		return err
 	}
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			e := cli.NetworkConnect(ctx, network.Name, containerName, nil)
-			if e != nil {
-				fmt.Println(e)
-			}
-		}
+	e := cli.NetworkConnect(ctx, network, containerName, nil)
+	if e != nil {
+		return e
 	}
 	return nil
 }
 
 // DockerNetworkConnect will check if a container is connected to a network.
-func DockerNetworkConnected(network types.NetworkResource, containerName string) (bool, error) {
+func DockerNetworkConnected(network string, containerName string) (bool, error) {
 	// Reset network state:
-	network, _ = DockerNetworkGet(network.Name)
-
-	for _, container := range network.Containers {
-		if container.Name == containerName && container.EndpointID != "" {
+	n, _ := DockerNetworkGet(network)
+	for _, container := range n.Containers {
+		if container.EndpointID != "" {
 			return true, nil
 		}
 	}

@@ -16,6 +16,8 @@ services:
     Config:
       Labels:
         - pygmy.enable: true
+        - pygmy.name: amazeeio-mailhog
+        - pygmy.network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
@@ -28,8 +30,9 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: unofficial-phpmyadmin
-        - pygmy.weight: 20
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://phpmyadmin.docker.amazee.io
+        - pygmy.weight: 20
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.phpmyadmin.rule: Host(`phpmyadmin.docker.amazee.io`)
@@ -44,6 +47,7 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: unofficial-portainer
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://portainer.docker.amazee.io
         - traefik.enable: true
         - traefik.port: 80
@@ -79,8 +83,9 @@ services:
         8080/tcp:
           HostPort: 3080
       Labels:
-        - pygmy.name: unofficial-traefik-2
         - pygmy.enable: true
+        - pygmy.name: unofficial-traefik-2
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.docker.network: amazeeio-network
         - traefik.enable: true
@@ -114,16 +119,8 @@ networks:
     Name: amazeeio-network
     Containers:
       amazeeio-haproxy: {}
-      unofficial-traefik-2:
-        Name: unofficial-traefik-2
-      amazeeio-mailhog:
-        Name: amazeeio-mailhog
-      unofficial-portainer:
-        Name: unofficial-portainer
-      unofficial-phpmyadmin:
-        Name: unofficial-phpmyadmin
     Labels:
-      - pygmy.network: true
+      - pygmy.network: amazeeio-network
 
 resolvers: []
 
