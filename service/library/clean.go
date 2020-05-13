@@ -35,12 +35,12 @@ func Clean(c Config) {
 	}
 
 	for _, network := range c.Networks {
-		if s, _ := model.DockerNetworkStatus(&network); s {
-			e := model.DockerNetworkRemove(&network)
+		if s, _ := model.DockerNetworkStatus(network.Name); s {
+			e := model.DockerNetworkRemove(network.Name)
 			if e != nil {
 				fmt.Println(e)
 			}
-			if s, _ := model.DockerNetworkStatus(&network); !s {
+			if s, _ := model.DockerNetworkStatus(network.Name); !s {
 				fmt.Printf("Successfully removed network %v\n", network.Name)
 			} else {
 				fmt.Printf("Network %v was not removed\n", network.Name)

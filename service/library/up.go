@@ -90,19 +90,21 @@ func Up(c Config) {
 
 	// Docker network(s) creation
 	for _, Network := range c.Networks {
-		netVal, _ := model.DockerNetworkStatus(&Network)
-		if !netVal {
-			if err := NetworkCreate(Network); err == nil {
-				fmt.Printf("Successfully created network %v\n", Network.Name)
-			} else {
-				fmt.Printf("Could not create network %v\n", Network.Name)
-			}
-			// If container connections are present in the Network declaration,
-			// handle those here. Connections managed by labels are done after this.
-			for _, Container := range Network.Containers {
-				if s, _ := model.DockerNetworkConnected(Network, Container.Name); !s {
-					if s := model.DockerNetworkConnect(Network, Container.Name); s == nil {
-						fmt.Printf("Successfully connected %v to %v\n", Container.Name, Network.Name)
+		if Network.Name != "" {
+			netVal, _ := model.DockerNetworkStatus(Network.Name)
+			if !netVal {
+				if err := NetworkCreate(Network); err == nil {
+					fmt.Printf("Successfully created network %v\n", Network.Name)
+				} else {
+					fmt.Printf("Could not create network %v\n", Network.Name)
+				}
+				// If container connections are present in the Network declaration,
+				// handle those here. Connections managed by labels are done after this.
+				for _, Container := range Network.Containers {
+					if s, _ := model.DockerNetworkConnected(Network.Name, Container.Name); !s {
+						if s := NetworkConnect(Network.Name, Container.Name); s == nil {
+							fmt.Printf("Successfully connected %v to %v\n", Container.Name, Network.Name)
+						}
 					}
 				}
 			}
@@ -112,9 +114,9 @@ func Up(c Config) {
 	// Container network connection(s)
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
-		name, _ := service.GetFieldString("name")
+		name, nameErr := service.GetFieldString("name")
 		// If the network is configured at the container level, connect it.
-		if Network, _ := service.GetFieldString("network"); Network != "" {
+		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
 			n, netErr := model.DockerNetworkGet(Network)
 			if netErr != nil {
 				if err := NetworkCreate(n); err == nil {
@@ -123,8 +125,8 @@ func Up(c Config) {
 					fmt.Printf("Could not create network %v\n", Network)
 				}
 			}
-			if s, _ := model.DockerNetworkConnected(n, name); !s {
-				if s := model.DockerNetworkConnect(n, name); s == nil {
+			if s, _ := model.DockerNetworkConnected(n.Name, name); !s {
+				if s := NetworkConnect(n.Name, name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", name, Network)
 				} else {
 					fmt.Printf("Could not connect %v to %v\n", name, Network)
