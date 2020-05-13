@@ -42,7 +42,7 @@ func Clean(c Config) {
 		NetworksToClean = append(NetworksToClean, network.Name)
 	}
 
-	for n := range NetworksToClean {
+	for n := range unique(NetworksToClean) {
 		if s, _ := model.DockerNetworkStatus(NetworksToClean[n]); s {
 			e := model.DockerNetworkRemove(NetworksToClean[n])
 			if e != nil {

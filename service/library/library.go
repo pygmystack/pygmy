@@ -73,3 +73,21 @@ func getVolume(s types.Volume, c types.Volume) types.Volume {
 	Volume, _ := mergeVolume(s, &c)
 	return *Volume
 }
+
+// unique will return a slice with duplicates
+// removed. It performs a similar function to
+// the linux program `uniq`
+func unique(stringSlice []string) []string {
+	m := make(map[string]bool)
+	for _, item := range stringSlice {
+		if _, ok := m[item]; !ok {
+			m[item] = true
+		}
+	}
+
+	var result []string
+	for item, _ := range m {
+		result = append(result, item)
+	}
+	return result
+}
