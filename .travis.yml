@@ -40,7 +40,8 @@ matrix:
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-haproxy";
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-mailhog";
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-portainer";
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "172.19.0." || true;
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address';
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
         # Test for configured container tags.
         - >
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
