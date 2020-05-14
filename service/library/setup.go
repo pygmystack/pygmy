@@ -120,26 +120,6 @@ func Setup(c *Config) {
 			c.Services = make(map[string]model.Service, 6)
 		}
 
-		// Handle `pygmy.defaults` label for finite defaults inheritance.
-		if _, x := c.Services["amazeeio-ssh-agent"]; !x {
-			c.Services["amazeeio-ssh-agent"] = agent.New()
-		}
-		if _, x := c.Services["amazeeio-ssh-agent-add-key"]; !x {
-			c.Services["amazeeio-ssh-agent-add-key"] = key.NewAdder()
-		}
-		if _, x := c.Services["amazeeio-ssh-agent-show-keys"]; !x {
-			c.Services["amazeeio-ssh-agent-show-keys"] = key.NewShower()
-		}
-		if _, x := c.Services["amazeeio-dnsmasq"]; !x {
-			c.Services["amazeeio-dnsmasq"] = dnsmasq.New()
-		}
-		if _, x := c.Services["amazeeio-haproxy"]; !x {
-			c.Services["amazeeio-haproxy"] = haproxy.New()
-		}
-		if _, x := c.Services["amazeeio-mailhog"]; !x {
-			c.Services["amazeeio-mailhog"] = mailhog.New()
-		}
-
 		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
 		ImportDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
