@@ -112,23 +112,40 @@ func Setup(c *Config) {
 	}
 
 	if c.Defaults {
+
+		// If Services have been provided in complete or partially,
+		// this will override the defaults allowing any value to
+		// be changed by the user in the configuration file ~/.pygmy.yml
+		if c.Services == nil || len(c.Services) == 0 {
+			c.Services = make(map[string]model.Service, 6)
+		}
+
 		// Handle `pygmy.defaults` label for finite defaults inheritance.
+		if _, x := c.Services["amazeeio-ssh-agent"]; !x {
+			c.Services["amazeeio-ssh-agent"] = agent.New()
+		}
+		if _, x := c.Services["amazeeio-ssh-agent-add-key"]; !x {
+			c.Services["amazeeio-ssh-agent-add-key"] = key.NewAdder()
+		}
+		if _, x := c.Services["amazeeio-ssh-agent-show-keys"]; !x {
+			c.Services["amazeeio-ssh-agent-show-keys"] = key.NewShower()
+		}
+		if _, x := c.Services["amazeeio-dnsmasq"]; !x {
+			c.Services["amazeeio-dnsmasq"] = dnsmasq.New()
+		}
+		if _, x := c.Services["amazeeio-haproxy"]; !x {
+			c.Services["amazeeio-haproxy"] = haproxy.New()
+		}
+		if _, x := c.Services["amazeeio-mailhog"]; !x {
+			c.Services["amazeeio-mailhog"] = mailhog.New()
+		}
+
 		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
 		ImportDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
 		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
 		ImportDefaults(c, "amazeeio-haproxy", haproxy.New())
 		ImportDefaults(c, "amazeeio-mailhog", mailhog.New())
-	}
-
-	// If Services have been provided in complete or partially,
-	// this will override the defaults allowing any value to
-	// be changed by the user in the configuration file ~/.pygmy.yml
-	if c.Services == nil && c.Defaults {
-		c.Services = make(map[string]model.Service, 6)
-	}
-
-	if c.Defaults {
 
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,
