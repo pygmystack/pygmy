@@ -107,12 +107,6 @@ matrix:
 
         - builds/${PYGMY_PATH} status;
 
-        - docker pull --platform=linux amazeeio/dnsmasq
-        - docker pull --platform=linux amazeeio/haproxy
-        - docker pull --platform=linux amazeeio/ssh-agent
-        - docker pull --platform=linux mailhog/mailhog
-        - docker pull --platform=linux amazeeio/haproxy
-
         - builds/${PYGMY_PATH} up;
         - builds/${PYGMY_PATH} down;
 
