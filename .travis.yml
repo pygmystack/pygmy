@@ -93,6 +93,11 @@ matrix:
       os: windows
       services: docker
       before_install:
+        - Powershell -Command "[Environment]::GetEnvironmentVariable('LCOW_SUPPORTED', 'Machine')"
+        - Powershell -Command "[Environment]::SetEnvironmentVariable('LCOW_SUPPORTED', '1', 'Machine')"
+        - Powershell -Command "[Environment]::GetEnvironmentVariable('LCOW_SUPPORTED', 'Machine')"
+        - Powershell -Command Restart-Service Docker
+        - Powershell -Command Docker version
         - go mod download
         - GO111MODULE=on go vet $(go list ./...);
 
@@ -106,7 +111,6 @@ matrix:
         - cp pygmy-go.exe builds/pygmy-go.exe
 
         - builds/${PYGMY_PATH} status;
-
         - builds/${PYGMY_PATH} up;
         - builds/${PYGMY_PATH} down;
 
