@@ -98,7 +98,6 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
-        - /c/Program\ Files/Docker/DockerCli.exe -SwitchLinuxEngine
 
         - go mod vendor
         - rm -f go.mod
@@ -106,9 +105,16 @@ matrix:
         - go build -o pygmy-go.exe .
         - cp pygmy-go.exe builds/pygmy-go.exe
 
-        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
-        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml up;
-        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml down;
+        - builds/${PYGMY_PATH} status;
+
+        - docker pull --platform=linux amazeeio/dnsmasq
+        - docker pull --platform=linux amazeeio/haproxy
+        - docker pull --platform=linux amazeeio/ssh-agent
+        - docker pull --platform=linux mailhog/mailhog
+        - docker pull --platform=linux amazeeio/haproxy
+
+        - builds/${PYGMY_PATH} up;
+        - builds/${PYGMY_PATH} down;
 
 deploy:
   provider: releases
