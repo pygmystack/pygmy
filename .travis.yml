@@ -98,7 +98,7 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
-        - /c/Program\ Files/Docker/Docker/DockerCli.exe -SwitchLinuxEngine
+        - /c/Program\ Files/Docker/DockerCli.exe -SwitchLinuxEngine
 
         - go mod vendor
         - rm -f go.mod
