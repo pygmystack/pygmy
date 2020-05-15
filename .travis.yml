@@ -98,6 +98,7 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
+        - Dockercli.exe -SwitchLinuxEngine
 
         - go mod vendor
         - rm -f go.mod
@@ -106,6 +107,8 @@ matrix:
         - cp pygmy-go.exe builds/pygmy-go.exe
 
         - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml up;
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml down;
 
 deploy:
   provider: releases
