@@ -76,6 +76,8 @@ func (Service *Service) Setup() error {
 		fmt.Println(msg)
 	}
 
+	fmt.Println(err)
+
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -550,10 +552,12 @@ func DockerRun(Service *Service) ([]byte, error) {
 
 	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, name)
 	if err != nil {
+		fmt.Println(err)
 		return []byte{}, err
 	}
 
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
+		fmt.Println(err)
 		return []byte{}, err
 	}
 
