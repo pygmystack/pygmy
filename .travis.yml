@@ -99,6 +99,7 @@ matrix:
       script:
         - export PYGMY_PATH=pygmy-go.exe;
         - export DOCKER_CLI_EXPERIMENTAL=enabled
+        - cat ~/.docker/config.json
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
         - docker pull --platform linux andyshinn/dnsmasq:2.78
         - docker pull --platform linux amazeeio/haproxy:latest
@@ -110,7 +111,6 @@ matrix:
         - rm -f go.sum
         - go build -o pygmy-go.exe .
         - cp pygmy-go.exe builds/pygmy-go.exe
-
         - builds/${PYGMY_PATH} status;
         - builds/${PYGMY_PATH} up;
         - builds/${PYGMY_PATH} down;
