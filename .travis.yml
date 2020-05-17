@@ -97,12 +97,11 @@ matrix:
         - GO111MODULE=on go vet $(go list ./...);
 
       script:
-        - powershell -Command "[Environment]::GetEnvironmentVariable('LCOW_SUPPORTED', 'Machine')"
-        - powershell -Command "[Environment]::SetEnvironmentVariable('LCOW_SUPPORTED', '1', 'Machine')"
-        - powershell -Command "[Environment]::GetEnvironmentVariable('LCOW_SUPPORTED', 'Machine')"
-        - powershell -Command Restart-Service Docker
-        - powershell -Command Docker version
         - export PYGMY_PATH=pygmy-go.exe;
+        - docker pull andyshinn/dnsmasq:2.78
+        - docker pull amazeeio/haproxy:latest
+        - docker pull mailhog/mailhog:latest
+        - docker pull amazeeio/ssh-agent:latest
 
         - go mod vendor
         - rm -f go.mod
