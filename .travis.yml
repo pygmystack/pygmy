@@ -100,7 +100,7 @@ matrix:
         - export PYGMY_PATH=pygmy-go.exe;
         - export DOCKER_CLI_EXPERIMENTAL=enabled
         - |
-          powershell Add-Content -Path ~/.docker/config.json -Exclude help* -Value "{\"experimental\"\: \"true\"}";
+          powershell Add-Content -Path ~/.docker/config.json -Exclude help* -Value '{"experimental"\: "true"}';
           powershell Restart-Service docker
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
         - docker pull --platform linux andyshinn/dnsmasq:2.78
