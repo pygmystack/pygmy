@@ -16,7 +16,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
-	volume2 "github.com/docker/docker/api/types/volume"
+	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 )
@@ -795,7 +795,7 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	if err != nil {
 		return types.Volume{}, err
 	}
-	return cli.VolumeCreate(ctx, volume2.VolumesCreateBody{
+	return cli.VolumeCreate(ctx, volumetypes.VolumeCreateBody{
 		Driver:     volume.Driver,
 		DriverOpts: volume.Options,
 		Labels:     volume.Labels,
@@ -818,7 +818,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		Cmd:          strings.Split(command, " ")}); err != nil {
 		return []byte{}, err
 	} else {
-		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecConfig{}); err != nil {
+		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{}); err != nil {
 			return []byte{}, err
 		} else {
 			data, _ := ioutil.ReadAll(response.Reader)
