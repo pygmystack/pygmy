@@ -99,12 +99,14 @@ matrix:
       script:
         - export PYGMY_PATH=pygmy-go.exe;
         - export DOCKER_CLI_EXPERIMENTAL=enabled
+        - echo '{"experimental":true}' > /c/ProgramData/Docker/config
+        - Restart-Service docker
         - cat ~/.docker/config.json
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
-        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux andyshinn/dnsmasq:2.78
-        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux amazeeio/haproxy:latest
-        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux mailhog/mailhog:latest
-        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux amazeeio/ssh-agent:latest
+        - docker pull --platform linux andyshinn/dnsmasq:2.78
+        - docker pull --platform linux amazeeio/haproxy:latest
+        - docker pull --platform linux mailhog/mailhog:latest
+        - docker pull --platform linux amazeeio/ssh-agent:latest
 
         - go mod vendor
         - rm -f go.mod
