@@ -98,6 +98,7 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
+        - export DOCKER_CLI_EXPERIMENTAL=enabled
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
         - docker pull --platform linux andyshinn/dnsmasq:2.78
         - docker pull --platform linux amazeeio/haproxy:latest
