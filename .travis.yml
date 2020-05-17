@@ -98,10 +98,11 @@ matrix:
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
-        - docker pull andyshinn/dnsmasq:2.78
-        - docker pull amazeeio/haproxy:latest
-        - docker pull mailhog/mailhog:latest
-        - docker pull amazeeio/ssh-agent:latest
+#        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
+        - docker pull --platform linux andyshinn/dnsmasq:2.78
+        - docker pull --platform linux amazeeio/haproxy:latest
+        - docker pull --platform linux mailhog/mailhog:latest
+        - docker pull --platform linux amazeeio/ssh-agent:latest
 
         - go mod vendor
         - rm -f go.mod
