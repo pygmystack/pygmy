@@ -99,7 +99,7 @@ matrix:
       script:
         - export PYGMY_PATH=pygmy-go.exe;
         - export DOCKER_CLI_EXPERIMENTAL=enabled
-        - echo '{"experimental":true}' > /c/ProgramData/Docker/config
+        - echo '{"experimental":true}' > ~/.docker/config.json
         - Restart-Service docker
         - cat ~/.docker/config.json
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
