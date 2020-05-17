@@ -101,10 +101,10 @@ matrix:
         - export DOCKER_CLI_EXPERIMENTAL=enabled
         - cat ~/.docker/config.json
 #        - & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchDaemon .
-        - docker pull --platform linux andyshinn/dnsmasq:2.78
-        - docker pull --platform linux amazeeio/haproxy:latest
-        - docker pull --platform linux mailhog/mailhog:latest
-        - docker pull --platform linux amazeeio/ssh-agent:latest
+        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux andyshinn/dnsmasq:2.78
+        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux amazeeio/haproxy:latest
+        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux mailhog/mailhog:latest
+        - DOCKER_CLI_EXPERIMENTAL=enabled docker pull --platform linux amazeeio/ssh-agent:latest
 
         - go mod vendor
         - rm -f go.mod
