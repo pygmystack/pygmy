@@ -64,11 +64,15 @@ func (Service *Service) Setup() error {
 		return nil
 	}
 
-	images, _ := DockerImageList()
+	images, e := DockerImageList()
 	for _, image := range images {
 		if strings.Contains(fmt.Sprint(image.RepoTags), Service.Config.Image) {
 			return nil
 		}
+	}
+
+	if e != nil {
+		fmt.Println("DockerImageList", e)
 	}
 
 	msg, err := DockerPull(Service.Config.Image)
@@ -76,7 +80,7 @@ func (Service *Service) Setup() error {
 		fmt.Println(msg)
 	}
 
-	fmt.Println(err)
+	fmt.Println("DockerImagePull", err)
 
 	if err != nil {
 		fmt.Println(err)
@@ -537,11 +541,15 @@ func DockerRun(Service *Service) ([]byte, error) {
 	}
 
 	// Sanity check to ensure we don't get name conflicts.
-	c, _ := DockerContainerList()
+	c, e := DockerContainerList()
 	for _, cn := range c {
 		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
 			return []byte{}, nil
 		}
+	}
+
+	if e != nil {
+		fmt.Println("DockerContainerList", e)
 	}
 
 	// We need the container name.
@@ -552,12 +560,12 @@ func DockerRun(Service *Service) ([]byte, error) {
 
 	resp, err := cli.ContainerCreate(ctx, &Service.Config, &Service.HostConfig, &Service.NetworkConfig, name)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("ContainerCreate", err)
 		return []byte{}, err
 	}
 
 	if err := cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
-		fmt.Println(err)
+		fmt.Println("ContainerStart", err)
 		return []byte{}, err
 	}
 
