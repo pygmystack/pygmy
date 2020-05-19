@@ -52,7 +52,8 @@ func setup(t *testing.T, config *config) {
 	Convey("Pygmy Application Test: "+config.name, t, func() {
 
 		ctx := context.Background()
-		cli, err := client.NewEnvClient()
+		cli, err := client.NewClientWithOpts()
+		cli.NegotiateAPIVersion(ctx)
 
 		Convey("Provision environment", func() {
 			Convey("Connection to Docker Client", func() {
@@ -182,7 +183,8 @@ func setup(t *testing.T, config *config) {
 			// System prune container...
 			Convey("Removing DinD Container", func() {
 				ctx := context.Background()
-				cli, err := client.NewEnvClient()
+				cli, err := client.NewClientWithOpts()
+				cli.NegotiateAPIVersion(ctx)
 				So(err, ShouldBeNil)
 				err = cli.ContainerKill(ctx, "exampleTestContainer", "")
 				So(err, ShouldBeNil)
