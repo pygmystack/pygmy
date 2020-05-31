@@ -386,6 +386,16 @@ services:
         8080/tcp:
           - HostPort: 8080
 
+networks:
+  pygmy-network:
+    IPAM:
+      Config:
+      - Gateway: 10.99.99.1
+        Subnet: 10.99.99.0/24
+    Labels:
+      pygmy.name: pygmy-network
+    Name: pygmy-network
+
 volumes:
   portainer_data:
     Name: portainer_data
