@@ -46,9 +46,9 @@ services:
         - "AMAZEEIO_URL=portainer.docker.amazee.io"
         - "AMAZEEIO_HTTP_PORT=9000"
       Labels:
-        - pygmy: pygmy
         - pygmy.enable: true
         - pygmy.name: amazeeio-portainer
+        - pygmy.network: amazeeio-network
         - pygmy.weight: 23
         - pygmy.url: http://portainer.docker.amazee.io
         - pygmy.hocuspocus: 42

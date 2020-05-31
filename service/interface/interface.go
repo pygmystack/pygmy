@@ -16,7 +16,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
-	volume2 "github.com/docker/docker/api/types/volume"
+	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 )
@@ -150,7 +150,8 @@ func (Service *Service) Status() (bool, error) {
 		return true, nil
 	}
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -267,7 +268,8 @@ func (Service *Service) GetFieldBool(field string) (bool, error) {
 // and it will not retrieve any information on containers that are not running.
 func GetRunning(Service *Service) (types.Container, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -358,7 +360,8 @@ var _ DockerService = (*Service)(nil)
 // DockerContainerList will return a slice of containers
 func DockerContainerList() ([]types.Container, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -377,7 +380,8 @@ func DockerContainerList() ([]types.Container, error) {
 // DockerImageList will return a slice of Docker images.
 func DockerImageList() ([]types.ImageSummary, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -394,7 +398,8 @@ func DockerImageList() ([]types.ImageSummary, error) {
 // DockerPull will pull a Docker image into the daemon.
 func DockerPull(image string) (string, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -497,7 +502,8 @@ func DockerPull(image string) (string, error) {
 func DockerRun(Service *Service) ([]byte, error) {
 
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -569,7 +575,8 @@ func DockerRun(Service *Service) ([]byte, error) {
 // DockerStop will stop the container.
 func DockerStop(name string) error {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
@@ -584,7 +591,8 @@ func DockerStop(name string) error {
 // DockerKill will kill the container.
 func DockerKill(name string) error {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
@@ -599,7 +607,8 @@ func DockerKill(name string) error {
 // It will not remove the image.
 func DockerRemove(id string) error {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
@@ -613,8 +622,14 @@ func DockerRemove(id string) error {
 // DockerNetworkCreate is an abstraction layer on top of the Docker API call
 // which will create a Docker network using a specified configuration.
 func DockerNetworkCreate(network *types.NetworkResource) error {
+	netVal, _ := DockerNetworkStatus(network.Name)
+	if netVal {
+		return fmt.Errorf("docker network %v already exists", network.Name)
+	}
+
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
@@ -628,14 +643,9 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		Options:    network.Options,
 		Labels:     network.Labels,
 	}
-
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			_, err = cli.NetworkCreate(ctx, network.Name, config)
-			if err != nil {
-				return err
-			}
-		}
+	_, err = cli.NetworkCreate(ctx, network.Name, config)
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -643,31 +653,26 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 
 // DockerNetworkRemove will attempt to remove a Docker network
 // and will not apply force to removal.
-func DockerNetworkRemove(network *types.NetworkResource) error {
+func DockerNetworkRemove(network string) error {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
-
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			err = cli.NetworkRemove(ctx, network.Name)
-			if err != nil {
-				return err
-			}
-		}
+	err = cli.NetworkRemove(ctx, network)
+	if err != nil {
+		return err
 	}
-
 	return nil
 }
 
 // DockerNetworkStatus will identify if a network with a
-// specified name has been created and return a boolean.
-func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
-	var returnValue = false
+// specified name is present been created and return a boolean.
+func DockerNetworkStatus(network string) (bool, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -678,16 +683,11 @@ func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
 	}
 
 	for _, n := range networks {
-		if val, ok := network.Labels["pygmy.network"]; ok {
-			if n.Name != "" && n.Name == network.Name && (val == "true" || val == "1") {
-				returnValue = true
-			}
+		if n.Name == network {
+			return true, nil
 		}
 	}
 
-	if returnValue {
-		return true, nil
-	}
 	return false, nil
 }
 
@@ -695,7 +695,8 @@ func DockerNetworkStatus(network *types.NetworkResource) (bool, error) {
 // which has a given name.
 func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return types.NetworkResource{}, err
 	}
@@ -705,7 +706,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	}
 	for _, network := range networks {
 		if val, ok := network.Labels["pygmy.network"]; ok {
-			if network.Name != "" && (val == "true" || val == "1") {
+			if val == name {
 				return network, nil
 			}
 		}
@@ -714,30 +715,26 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 }
 
 // DockerNetworkConnect will connect a container to a network.
-func DockerNetworkConnect(network types.NetworkResource, containerName string) error {
+func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return err
 	}
-	if val, ok := network.Labels["pygmy.network"]; ok {
-		if network.Name != "" && (val == "true" || val == "1") {
-			e := cli.NetworkConnect(ctx, network.Name, containerName, nil)
-			if e != nil {
-				fmt.Println(e)
-			}
-		}
+	e := cli.NetworkConnect(ctx, network, containerName, nil)
+	if e != nil {
+		return e
 	}
 	return nil
 }
 
 // DockerNetworkConnect will check if a container is connected to a network.
-func DockerNetworkConnected(network types.NetworkResource, containerName string) (bool, error) {
+func DockerNetworkConnected(network string, containerName string) (bool, error) {
 	// Reset network state:
-	network, _ = DockerNetworkGet(network.Name)
-
-	for _, container := range network.Containers {
-		if container.Name == containerName && container.EndpointID != "" {
+	n, _ := DockerNetworkGet(network)
+	for _, container := range n.Containers {
+		if container.EndpointID != "" {
 			return true, nil
 		}
 	}
@@ -747,7 +744,8 @@ func DockerNetworkConnected(network types.NetworkResource, containerName string)
 // DockerVolumeExists will check if a Docker volume has been created.
 func DockerVolumeExists(volume types.Volume) (bool, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return false, err
 	}
@@ -762,7 +760,8 @@ func DockerVolumeExists(volume types.Volume) (bool, error) {
 // DockerVolumeGet will return the full contents of a types.Volume from the API.
 func DockerVolumeGet(name string) (types.Volume, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 
 	if err != nil {
 		return types.Volume{
@@ -791,11 +790,12 @@ func DockerVolumeGet(name string) (types.Volume, error) {
 // DockerVolumeCreate will create a Docker Volume as configured.
 func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return types.Volume{}, err
 	}
-	return cli.VolumeCreate(ctx, volume2.VolumesCreateBody{
+	return cli.VolumeCreate(ctx, volumetypes.VolumeCreateBody{
 		Driver:     volume.Driver,
 		DriverOpts: volume.Options,
 		Labels:     volume.Labels,
@@ -806,7 +806,8 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 // DockerExec will run a command in a Docker container and return the output.
 func DockerExec(container string, command string) ([]byte, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return []byte{}, err
 	}
@@ -817,7 +818,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		Cmd:          strings.Split(command, " ")}); err != nil {
 		return []byte{}, err
 	} else {
-		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecConfig{}); err != nil {
+		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{}); err != nil {
 			return []byte{}, err
 		} else {
 			data, _ := ioutil.ReadAll(response.Reader)

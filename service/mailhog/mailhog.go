@@ -28,6 +28,7 @@ func New() model.Service {
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-mailhog",
+				"pygmy.network":  "amazeeio-network",
 				"pygmy.url":      "http://mailhog.docker.amazee.io",
 				"pygmy.weight":   "15",
 			},

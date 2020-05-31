@@ -60,7 +60,7 @@ func Status(c Config) {
 
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
-			if x, _ := model.DockerNetworkConnected(Network, Container.Name); !x {
+			if x, _ := model.DockerNetworkConnected(Network.Name, Container.Name); !x {
 				fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
 			} else {
 				fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)

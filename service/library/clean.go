@@ -11,6 +11,7 @@ func Clean(c Config) {
 
 	Setup(&c)
 	Containers, _ := model.DockerContainerList()
+	NetworksToClean := []string{}
 
 	for _, Container := range Containers {
 		target := false
@@ -19,6 +20,9 @@ func Clean(c Config) {
 		}
 		if l := Container.Labels["pygmy"]; l == "pygmy" {
 			target = true
+		}
+		if l := Container.Labels["pygmy.network"]; l != "" {
+			NetworksToClean = append(NetworksToClean, l)
 		}
 
 		if target {
@@ -35,15 +39,19 @@ func Clean(c Config) {
 	}
 
 	for _, network := range c.Networks {
-		if s, _ := model.DockerNetworkStatus(&network); s {
-			e := model.DockerNetworkRemove(&network)
+		NetworksToClean = append(NetworksToClean, network.Name)
+	}
+
+	for n := range unique(NetworksToClean) {
+		if s, _ := model.DockerNetworkStatus(NetworksToClean[n]); s {
+			e := model.DockerNetworkRemove(NetworksToClean[n])
 			if e != nil {
 				fmt.Println(e)
 			}
-			if s, _ := model.DockerNetworkStatus(&network); !s {
-				fmt.Printf("Successfully removed network %v\n", network.Name)
+			if s, _ := model.DockerNetworkStatus(NetworksToClean[n]); !s {
+				fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
 			} else {
-				fmt.Printf("Network %v was not removed\n", network.Name)
+				fmt.Printf("Network %v was not removed\n", NetworksToClean[n])
 			}
 		}
 	}
