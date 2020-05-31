@@ -128,6 +128,7 @@ services:
       Labels:
         - pygmy: pygmy
         - pygmy.name: pygmy-traefik-1
+        - pygmy.network: amazeeio-network
         - pygmy.enable: true
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.enable: true
@@ -156,12 +157,6 @@ services:
           - HostPort: 80
         8080/tcp:
           - HostPort: 8080
-
-networks:
-  amazeeio-network:
-    Containers:
-      pygmy-traefik-1:
-        Name: pygmy-traefik-1
 
 resolvers: []
 ```
@@ -195,6 +190,7 @@ Traefik 2.0 is made for Kubernernetes, so with it comes a lot of difference in c
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-traefik-2
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.docker.network: amazeeio-network
         - traefik.enable: true
@@ -222,12 +218,6 @@ Traefik 2.0 is made for Kubernernetes, so with it comes a lot of difference in c
         8080/tcp:
           - HostPort: 8080
 
-networks:
-  amazeeio-network:
-    Containers:
-      pygmy-traefik-2:
-        Name: pygmy-traefik-2
-
 resolvers: []
 ```
 
@@ -245,6 +235,7 @@ services:
       Image: nardeas/ssh-agent
       Labels:
         - pygmy.name: pygmy-ssh-agent
+        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.output: false
         - pygmy.purpose: sshagent
@@ -261,6 +252,7 @@ services:
       Image: nardeas/ssh-agent
       Labels:
         - pygmy.name: pygmy-ssh-agent-add-key
+        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.discrete: true
         - pygmy.output:  true
@@ -280,6 +272,7 @@ services:
       Image: nardeas/ssh-agent
       Labels:
         - pygmy.name: pygmy-ssh-agent-show-keys
+        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.discrete: true
         - pygmy.output: true
@@ -296,6 +289,7 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-mailhog
+        - pygmy.network: pygmy-network
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
@@ -308,6 +302,7 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-phpmyadmin
+        - pygmy.network: pygmy-network
         - pygmy.weight: 20
         - pygmy.url: http://phpmyadmin.docker.amazee.io
         - traefik.enable: true
@@ -324,6 +319,7 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-portainer
+        - pygmy.network: pygmy-network
         - pygmy.url: http://portainer.docker.amazee.io
         - traefik.enable: true
         - traefik.port: 80
@@ -360,6 +356,7 @@ services:
           HostPort: 3080
       Labels:
         - pygmy.name: pygmy-traefik
+        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.docker.network: pygmy-network
@@ -388,21 +385,6 @@ services:
           - HostPort: 80
         8080/tcp:
           - HostPort: 8080
-
-networks:
-  pygmy-network:
-    Name: pygmy-network
-    Containers:
-      unofficial-traefik-2:
-        Name: pygmy-traefik
-      pygmy-mailhog:
-        Name: pygmy-mailhog
-      unofficial-portainer:
-        Name: pygmy-portainer
-      unofficial-phpmyadmin:
-        Name: pygmy-phpmyadmin
-    Labels:
-      - pygmy.network: true
 
 volumes:
   portainer_data:

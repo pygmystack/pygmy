@@ -76,18 +76,13 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-phpmyadmin
+        - pygmy.network: amazeeio-network
         - pygmy.weight: 20
         - pygmy.url: http://phpmyadmin.docker.amazee.io
     HostConfig:
       PortBindings:
         80/tcp:
           - HostPort: 8555
-
-networks:
-  amazeeio-network:
-    Containers:
-      pygmy-phpmyadmin: 
-        Name: pygmy-phpmyadmin
 ```
 
 ### Portainer
@@ -104,6 +99,7 @@ services:
       Labels:
         - pygmy.enable: true
         - pygmy.name: pygmy-portainer
+        - pygmy.network: amazeeio-network
         - pygmy.weight: 23
         - pygmy.url: http://portainer.docker.amazee.io
       ExposedPorts:
@@ -117,12 +113,6 @@ services:
           - HostPort: 8200
         9000/tcp:
           - HostPort: 8100
-
-networks:
-  amazeeio-network:
-    Containers:
-      pygmy-portainer: 
-        Name: pygmy-portainer
 
 volumes:
   portainer_data:
