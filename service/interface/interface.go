@@ -705,7 +705,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 		return types.NetworkResource{}, err
 	}
 	for _, network := range networks {
-		if val, ok := network.Labels["pygmy.network"]; ok {
+		if val, ok := network.Labels["pygmy.name"]; ok {
 			if val == name {
 				return network, nil
 			}
@@ -732,10 +732,14 @@ func DockerNetworkConnect(network string, containerName string) error {
 // DockerNetworkConnect will check if a container is connected to a network.
 func DockerNetworkConnected(network string, containerName string) (bool, error) {
 	// Reset network state:
-	n, _ := DockerNetworkGet(network)
-	for _, container := range n.Containers {
-		if container.EndpointID != "" {
-			return true, nil
+	c, _ := DockerContainerList()
+	for d := range c {
+		if c[d].Labels["pygmy.name"] == containerName {
+			for net := range c[d].NetworkSettings.Networks {
+				if net == network {
+					return true, nil
+				}
+			}
 		}
 	}
 	return false, fmt.Errorf("network was found without the container connected")
