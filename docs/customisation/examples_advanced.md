@@ -252,7 +252,6 @@ services:
       Image: nardeas/ssh-agent
       Labels:
         - pygmy.name: pygmy-ssh-agent-add-key
-        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.discrete: true
         - pygmy.output:  true
@@ -272,7 +271,6 @@ services:
       Image: nardeas/ssh-agent
       Labels:
         - pygmy.name: pygmy-ssh-agent-show-keys
-        - pygmy.network: pygmy-network
         - pygmy.enable: true
         - pygmy.discrete: true
         - pygmy.output: true
@@ -390,10 +388,10 @@ networks:
   pygmy-network:
     IPAM:
       Config:
-      - Gateway: 10.99.99.1
-        Subnet: 10.99.99.0/24
+        - Gateway: 10.99.99.1
+          Subnet: 10.99.99.0/24
     Labels:
-      pygmy.name: pygmy-network
+      - pygmy.name: pygmy-network
     Name: pygmy-network
 
 volumes:

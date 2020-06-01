@@ -27,16 +27,25 @@ services:
 
 ### Image replacement
 This example shows how an image on one of the default services can be replaced with another. In this example, the `haproxy` is replaced with a custom image which exposes the `haproxy` to port `8080` and not `80`.
+
+Because `haproxy` is being run on port `8080` in this example, we can also note that other services will also be delivered from the new port.
 ```yaml
 services:
   amazeeio-haproxy:
     Config:
       Image: fubarhouse/amazeeio-haproxy-8080
+      Labels:
+        - pygmy.url: http://docker.amazee.io:8080/stats
     HostConfig:
       PortBindings:
         8080/tcp:
           -
             HostPort: 8080
+  
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.url: http://mailhog.docker.amazee.io:8080/stats
 ```
 
 ## New services
