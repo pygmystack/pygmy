@@ -66,6 +66,21 @@ services:
         9000/tcp:
           - HostPort: 8100
 
+  pygmy-cowsay:
+    Config:
+      Image: mbentley/cowsay
+      Cmd:
+        - holy
+        - ship
+      Labels:
+        - pygmy.enable: true
+        - pygmy.discrete: true
+        - pygmy.name: pygmy-cowsay
+        - pygmy.output: true
+        - pygmy.weight: 99
+    HostConfig:
+      AutoRemove: true
+
 volumes:
   portainer_data:
     Name: portainer_data
