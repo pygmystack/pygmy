@@ -560,6 +560,7 @@ func DockerRun(Service *Service) ([]byte, error) {
 	b, _ := cli.ContainerLogs(ctx, resp.ID, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
+		Follow:     true,
 	})
 
 	buf := new(bytes.Buffer)
