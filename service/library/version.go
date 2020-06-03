@@ -12,6 +12,7 @@ var (
 	// Version tag used on local builds in Travis.
 	VERSIONTAG = os.Getenv("TRAVIS_COMMIT")
 )
+
 const (
 	// Fixed version which is modified via travis for the
 	// release builds. Should match version with v prepended.
