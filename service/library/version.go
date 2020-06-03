@@ -16,7 +16,7 @@ var (
 const (
 	// Fixed version which is modified via travis for the
 	// release builds. Should match version with v prepended.
-	RELEASETAG = ""
+	RELEASETAG = "625d30c517145f8e67da8354f66fe27c363ddea9"
 )
 
 // Version describes which version of Pygmy is running. This will be kept
@@ -27,10 +27,12 @@ func Version(c Config) {
 
 	// RELEASETAG will be provided via `sed` in the build pipeline.
 	if RELEASETAG != "" {
-		if match, _ := regexp.MatchString(RELEASETAG, "^v[0-9]+.[0-9]+.[0-9]+$"); match {
-			fmt.Printf("Pygmy %v", RELEASETAG)
-		} else if match, _ := regexp.MatchString(RELEASETAG, "^[0-9a-zA-Z]+$"); match {
-			fmt.Printf("Pygmy version dev-%v", RELEASETAG)
+		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(RELEASETAG)); match {
+			fmt.Printf("Pygmy %v\n", RELEASETAG)
+			return
+		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(RELEASETAG)); match {
+			fmt.Printf("Pygmy version dev-%v\n", RELEASETAG[0:7])
+			return
 		}
 	}
 
