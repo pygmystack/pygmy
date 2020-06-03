@@ -16,7 +16,7 @@ var (
 const (
 	// Fixed version which is modified via travis for the
 	// release builds. Should match version with v prepended.
-	RELEASETAG = "625d30c517145f8e67da8354f66fe27c363ddea9"
+	RELEASETAG = ""
 )
 
 // Version describes which version of Pygmy is running. This will be kept
