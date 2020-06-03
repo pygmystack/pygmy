@@ -58,7 +58,7 @@ func Version(c Config) {
 
 	if VERSIONTAG != "" {
 		// If the version tag isn't empty:
-		fmt.Printf("Pygmy %v%v", VERSIONTAG, CUSTOMTAG)
+		fmt.Printf("Pygmy %v%v\n", VERSIONTAG, CUSTOMTAG)
 	} else {
 		// If we don't have a version tag, use a reference.
 		fmt.Printf("Pygmy version dev-%v%v\n", string(ref[0:7]), CUSTOMTAG)
