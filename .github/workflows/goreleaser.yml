@@ -3,9 +3,8 @@ on:
   push:
     branches:
       - master
-      - actions # development testing for actions.
-#    tags:
-#      - v*
+    tags:
+      - v*
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
