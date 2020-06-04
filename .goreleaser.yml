@@ -28,3 +28,10 @@ brews:
     install: bin.install "pygmy-go"
     dependencies:
       - name: go
+release:
+  github:
+    owner: fubarhouse
+    name: pygmy-go
+  draft: true
+  prerelease: auto
+  name_template: "{{.ProjectName}}-v{{.Version}} {{.Env.USER}}"
