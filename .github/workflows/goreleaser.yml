@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - master
+      - actions # development testing for actions.
     tags:
       - v*
 jobs:
