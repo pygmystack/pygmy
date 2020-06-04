@@ -34,5 +34,6 @@ brews:
     description: "Amazee.io's local development helper tool"
     skip_upload: false
     test: system "#{bin}/pygmy-go version"
+    install: bin.install "pygmy-go"
     dependencies:
       - name: go
