@@ -29,10 +29,10 @@ brews:
   - github:
       owner: fubarhouse
       name: homebrew-pygmy-go
-    folder: Formula
+    folder: dist
     homepage: "https://github.com/fubarhouse/pygmy-go"
     description: "Amazee.io's local development helper tool"
-    skip_upload: true
+    skip_upload: false
     test: system "#{bin}/pygmy-go version"
     dependencies:
       - name: go
