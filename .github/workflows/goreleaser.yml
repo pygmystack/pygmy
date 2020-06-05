@@ -1,7 +1,11 @@
 name: goreleaser
 on:
-  release:
-    types: [published, created, edited, prereleased]
+  push:
+    branches:
+      - master
+      - actions
+    tags:
+      - v*
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
