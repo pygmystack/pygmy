@@ -10,7 +10,7 @@ brews:
       name: homebrew-pygmy-go
     folder: Formula
     homepage: "https://github.com/fubarhouse/pygmy-go"
-    description: "Amazee.io's local development helper tool"
+    description: "amazee.io's local development helper tool"
     skip_upload: false
     test: system "#{bin}/pygmy-go version"
     install: bin.install "pygmy-go"
