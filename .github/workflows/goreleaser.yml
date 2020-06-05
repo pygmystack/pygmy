@@ -31,6 +31,6 @@ jobs:
         uses: goreleaser/goreleaser-action@v2
         with:
           version: latest
-          args: release --debug --skip-validation
+          args: release --debug --skip-validate
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
