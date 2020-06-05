@@ -28,7 +28,7 @@ var (
 func Version(c Config) {
 
 	// RELEASETAG will be provided via `sed` in the build pipeline.
-	if RELEASETAG != "" && len(RELEASETAG) >= 7 {
+	if RELEASETAG != "" && len(VERSIONTAG) >= 7 {
 		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(RELEASETAG)); match {
 			fmt.Printf("Pygmy %v\n", RELEASETAG)
 			return
