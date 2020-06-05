@@ -44,7 +44,7 @@ func Version(c Config) {
 			fmt.Printf("Pygmy %v\n", reference)
 			return
 		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(reference)); match {
-			fmt.Printf("Pygmy version dev-%v\n", COMMITSHA[0:7])
+			fmt.Printf("Pygmy version dev-%v\n", reference[0:7])
 			return
 		}
 	}

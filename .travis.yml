@@ -92,8 +92,8 @@ matrix:
       before_install:
         - go mod download
         - GO111MODULE=on go vet $(go list ./...);
-        - sed -i -e "s|RELEASETAG = \"\"|RELEASETAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
-        - cat service/library/version.go | grep 'RELEASETAG = "'
+        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
+        - cat service/library/version.go | grep 'COMMITTAG = "'
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
