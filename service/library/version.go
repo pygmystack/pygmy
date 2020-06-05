@@ -14,7 +14,7 @@ var (
 
 	// Fixed version which is modified via travis for the
 	// release builds. Should match version with v prepended.
-	COMMITTAG = os.Getenv("GITHUB_REF")
+	COMMITTAG = ""
 
 	// Custom indicator will be added if changes are detected
 	// to pygmy, so it would read dev-xxxxxxx-custom
