@@ -23,7 +23,7 @@ brews:
   - github:
       owner: fubarhouse
       name: homebrew-pygmy-go
-    folder: dist
+    folder: Formula
     homepage: "https://github.com/fubarhouse/pygmy-go"
     description: "amazee.io's local development helper tool"
     skip_upload: false

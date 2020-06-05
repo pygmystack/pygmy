@@ -3,7 +3,7 @@ name: goreleaser
 on:
   push:
     branches:
-      - 'actions'
+      - 'master'
     tags:
       - 'v*'
   pull_request:
