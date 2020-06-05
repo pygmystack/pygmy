@@ -85,5 +85,27 @@ matrix:
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
+
+    - name: Windows build
+      os: windows
+      services: docker
+      before_install:
+        - go mod download
+        - GO111MODULE=on go vet $(go list ./...);
+        - sed -i -e "s|RELEASETAG = \"\"|RELEASETAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
+        - cat service/library/version.go | grep 'RELEASETAG = "'
+
+      script:
+        - export PYGMY_PATH=pygmy-go.exe;
+
+        - go mod vendor
+        - rm -f go.mod
+        - rm -f go.sum
+        - go build -o pygmy-go.exe .
+        - cp pygmy-go.exe builds/pygmy-go.exe
+
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
