@@ -9,12 +9,12 @@ import (
 )
 
 var (
-	// Version tag used on local builds in Travis.
-	VERSIONTAG = os.Getenv("GITHUB_SHA")
+	// Version tag used on local builds in Actions.
+	COMMITSHA = os.Getenv("GITHUB_SHA")
 
 	// Fixed version which is modified via travis for the
 	// release builds. Should match version with v prepended.
-	RELEASETAG = ""
+	COMMITTAG = os.Getenv("GITHUB_REF")
 
 	// Custom indicator will be added if changes are detected
 	// to pygmy, so it would read dev-xxxxxxx-custom
@@ -27,13 +27,13 @@ var (
 // after the release is published.
 func Version(c Config) {
 
-	// RELEASETAG will be provided via `sed` in the build pipeline.
-	if RELEASETAG != "" && len(VERSIONTAG) >= 7 {
-		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(RELEASETAG)); match {
-			fmt.Printf("Pygmy %v\n", RELEASETAG)
+	// RELEASETAG and VERSIONTAG should be set when running Actions.
+	if COMMITTAG != "" && COMMITSHA != "" {
+		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(COMMITTAG)); match {
+			fmt.Printf("Pygmy %v\n", COMMITTAG)
 			return
-		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(RELEASETAG)); match {
-			fmt.Printf("Pygmy version dev-%v\n", RELEASETAG[0:7])
+		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(COMMITTAG)); match {
+			fmt.Printf("Pygmy version dev-%v\n", COMMITTAG[0:7])
 			return
 		}
 	}
@@ -56,9 +56,9 @@ func Version(c Config) {
 		}
 	}
 
-	if VERSIONTAG != "" {
+	if COMMITTAG != "" {
 		// If the version tag isn't empty:
-		fmt.Printf("Pygmy %v%v\n", VERSIONTAG, CUSTOMTAG)
+		fmt.Printf("Pygmy %v%v\n", COMMITTAG, CUSTOMTAG)
 	} else {
 		// If we don't have a version tag, use a reference.
 		fmt.Printf("Pygmy version dev-%v%v\n", string(ref[0:7]), CUSTOMTAG)
