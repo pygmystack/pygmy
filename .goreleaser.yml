@@ -1,9 +1,24 @@
 env:
   - GO111MODULE=on
   - GOPROXY=https://gocenter.io
+
 before:
   hooks:
     - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+
 brews:
   - github:
       owner: fubarhouse
@@ -14,10 +29,3 @@ brews:
     skip_upload: false
     test: system "#{bin}/pygmy-go version"
     install: bin.install "pygmy-go"
-release:
-  github:
-    owner: fubarhouse
-    name: pygmy-go
-  draft: true
-  prerelease: auto
-  name_template: "{{.ProjectName}}-v{{.Version}} {{.Env.USER}}"

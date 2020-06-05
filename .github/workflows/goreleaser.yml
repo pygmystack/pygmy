@@ -1,11 +1,14 @@
 name: goreleaser
+
 on:
   push:
     branches:
-      - master
-      - actions
+      - 'master'
+      - 'actions'
     tags:
-      - v*
+      - 'v*'
+  pull_request:
+
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
