@@ -31,7 +31,7 @@ func Version(c Config) {
 	if COMMITTAG != "" {
 		reference := strings.Split(COMMITTAG, "/")[2]
 		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(reference)); match {
-			fmt.Printf("Pygmy %v\n", COMMITTAG)
+			fmt.Printf("Pygmy %v\n", reference)
 			return
 		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(reference)); match {
 			fmt.Printf("Pygmy version dev-%v\n", COMMITSHA[0:7])
