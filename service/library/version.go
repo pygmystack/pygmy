@@ -28,12 +28,13 @@ var (
 func Version(c Config) {
 
 	// RELEASETAG and VERSIONTAG should be set when running Actions.
-	if COMMITTAG != "" && COMMITSHA != "" {
-		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(COMMITTAG)); match {
+	if COMMITTAG != "" {
+		reference := strings.Split(COMMITTAG, "/")[2]
+		if match, _ := regexp.Match("^v[0-9]+.[0-9]+.[0-9]+$", []byte(reference)); match {
 			fmt.Printf("Pygmy %v\n", COMMITTAG)
 			return
-		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(COMMITTAG)); match {
-			fmt.Printf("Pygmy version dev-%v\n", COMMITTAG[0:7])
+		} else if match, _ := regexp.Match("^[0-9|a-z|A-Z]+$", []byte(reference)); match {
+			fmt.Printf("Pygmy version dev-%v\n", COMMITSHA[0:7])
 			return
 		}
 	}
