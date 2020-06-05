@@ -14,8 +14,6 @@ brews:
     skip_upload: false
     test: system "#{bin}/pygmy-go version"
     install: bin.install "pygmy-go"
-    dependencies:
-      - name: go
 release:
   github:
     owner: fubarhouse
