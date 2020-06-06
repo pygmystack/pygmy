@@ -2,6 +2,7 @@
 
 [![Stability](https://img.shields.io/badge/stability-stable-green.svg)]()
 [![Travis CI](https://travis-ci.org/fubarhouse/pygmy-go.svg?branch=master)](https://travis-ci.org/fubarhouse/pygmy-go)
+![goreleaser](https://github.com/fubarhouse/pygmy-go/workflows/goreleaser/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/fubarhouse/pygmy-go)](https://goreportcard.com/report/github.com/fubarhouse/pygmy-go)
 [![GoDoc](https://godoc.org/github.com/fubarhouse/pygmy-go?status.svg)](https://godoc.org/github.com/fubarhouse/pygmy-go)
 

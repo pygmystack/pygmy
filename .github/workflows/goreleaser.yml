@@ -1,0 +1,36 @@
+name: goreleaser
+
+on:
+  push:
+    branches:
+      - 'master'
+    tags:
+      - 'v*'
+  pull_request:
+
+jobs:
+  goreleaser:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Unshallow
+        run: git fetch --prune --unshallow
+      -
+        name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.14
+      -
+        name: Establish version for compiled files
+        run: sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"$GITHUB_REF\"|g" service/library/version.go
+      -
+        name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
+        with:
+          version: latest
+          args: release --debug --skip-validate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
