@@ -1,0 +1,31 @@
+env:
+  - GO111MODULE=on
+  - GOPROXY=https://gocenter.io
+
+before:
+  hooks:
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+
+brews:
+  - github:
+      owner: fubarhouse
+      name: homebrew-pygmy-go
+    folder: Formula
+    homepage: "https://github.com/fubarhouse/pygmy-go"
+    description: "amazee.io's local development helper tool"
+    skip_upload: false
+    test: system "#{bin}/pygmy-go version"
+    install: bin.install "pygmy-go"
