@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  creationTimestamp: null
+  labels:
+    service: amazeeio-dnsmasq
+  name: amazeeio-dnsmasq
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    service: amazeeio-dnsmasq
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: amazeeio-dnsmasq
+    spec:
+      containers:
+      - command: -A /docker.amazee.io/127.0.0.1
+        image: andyshinn/dnsmasq:2.78
+        imagePullPolicy: ""
+        name: amazeeio-dnsmasq
+        ports:
+        - containerPort: 53
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status:
+  replicas: 0

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  creationTimestamp: null
+  labels:
+    service: amazeeio-ssh-agent
+  name: amazeeio-ssh-agent
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    service: amazeeio-ssh-agent
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: amazeeio-ssh-agent
+    spec:
+      containers:
+      - image: amazeeio/ssh-agent
+        imagePullPolicy: ""
+        name: amazeeio-ssh-agent
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status:
+  replicas: 0

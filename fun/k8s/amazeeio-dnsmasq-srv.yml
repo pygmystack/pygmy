@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  name: amazeeio-dnsmasq
+  namespace: default
+spec:
+  ports:
+  - name: ""
+    nodePort: 0
+    port: 53
+    protocol: ""
+    targetPort: 0
+  selector:
+    service: amazeeio-dnsmasq
+status:
+  loadBalancer: {}

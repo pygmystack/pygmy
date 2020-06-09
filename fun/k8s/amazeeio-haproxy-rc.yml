@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  creationTimestamp: null
+  labels:
+    service: amazeeio-haproxy
+  name: amazeeio-haproxy
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    service: amazeeio-haproxy
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: amazeeio-haproxy
+    spec:
+      containers:
+      - image: amazeeio/haproxy
+        imagePullPolicy: ""
+        name: amazeeio-haproxy
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - mountPath: /tmp/docker.sock
+          name: varrundocker.sock
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - hostPath:
+          path: /var/run/docker.sock
+        name: varrundocker.sock
+status:
+  replicas: 0

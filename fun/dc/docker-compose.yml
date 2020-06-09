@@ -1,0 +1,49 @@
+version: '2'
+services:
+  amazeeio-ssh-agent:
+    image: amazeeio/ssh-agent
+    container_name: amazeeio-ssh-agent
+    restart: always
+    networks:
+      - default
+      - amazeeio-network
+  amazeeio-haproxy:
+    image: amazeeio/haproxy
+    container_name: amazeeio-haproxy
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - default
+      - amazeeio-network
+  amazeeio-dnsmasq:
+    image: andyshinn/dnsmasq:2.78
+    container_name: amazeeio-dnsmasq
+    command: "-A /docker.amazee.io/127.0.0.1"
+    restart: always
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - default
+      - amazeeio-network
+    ports:
+      - "6053:53"
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog.docker.amazee.io
+    user: "0"
+    restart: always
+    expose:
+      - "80"
+    ports:
+      - "1025:1025"
+    environment:
+      - "MH_UI_BIND_ADDR=0.0.0.0:80"
+      - "MH_API_BIND_ADDR=0.0.0.0:80"
+      - "AMAZEEIO=AMAZEEIO"
+networks:
+  amazeeio-network:
+    external: true

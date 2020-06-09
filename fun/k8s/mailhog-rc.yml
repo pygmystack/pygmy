@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  creationTimestamp: null
+  labels:
+    service: mailhog
+  name: mailhog
+  namespace: ${NAMESPACE}
+spec:
+  replicas: 1
+  selector:
+    service: mailhog
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: mailhog
+    spec:
+      containers:
+      - env:
+        - name: MH_UI_BIND_ADDR
+          value: 0.0.0.0:80
+        - name: MH_API_BIND_ADDR
+          value: 0.0.0.0:80
+        - name: AMAZEEIO
+          value: AMAZEEIO
+        image: mailhog/mailhog
+        imagePullPolicy: ""
+        name: mailhog
+        ports:
+        - containerPort: 1025
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status:
+  replicas: 0
