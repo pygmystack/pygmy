@@ -31,6 +31,7 @@ func Version(c Config) {
 	// RELEASETAG and VERSIONTAG should be set when running Actions.
 	// Travis will add a commit has which should not print in this section.
 	if COMMITTAG != "" {
+		COMMITTAG = strings.TrimLeft(COMMITTAG, "refs/tags/")
 		reference := ""
 		if strings.Contains(COMMITTAG, "/") {
 			reference = strings.Split(COMMITTAG, "/")[2]
