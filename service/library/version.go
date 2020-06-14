@@ -12,7 +12,7 @@ var (
 	// Version tag used on local builds in Actions.
 	COMMITSHA = os.Getenv("GITHUB_SHA")
 
-	// Fixed version which is modified via travis for the
+	// Fixed version which is modified via github actions for the
 	// release builds. Should match version with v prepended.
 	COMMITTAG = ""
 
@@ -28,8 +28,7 @@ var (
 func Version(c Config) {
 
 
-	// RELEASETAG and VERSIONTAG should be set when running Actions.
-	// Travis will add a commit has which should not print in this section.
+	// VERSIONTAG should be set when running Actions.
 	if COMMITTAG != "" {
 		COMMITTAG = strings.TrimLeft(COMMITTAG, "refs/tags/")
 		reference := ""
