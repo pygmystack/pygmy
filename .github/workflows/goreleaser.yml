@@ -10,14 +10,13 @@ on:
 
 jobs:
   goreleaser:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       -
         name: Checkout
         uses: actions/checkout@v2
       -
-        name: Unshallow
-        run: git fetch --prune --unshallow
+        run: apt update && apt install git -y
       -
         name: Set up Go
         uses: actions/setup-go@v2
@@ -26,6 +25,8 @@ jobs:
       -
         name: Establish version for compiled files
         run: sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"$GITHUB_REF\"|g" service/library/version.go
+      -
+        run: cat service/library/version.go | grep "COMMITTAG =" | grep -v Getenv
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
