@@ -27,9 +27,6 @@ var (
 // after the release is published.
 func Version(c Config) {
 
-	if COMMITSHA == "" {
-		COMMITTAG = os.Getenv("TRAVIS_COMMIT")
-	}
 
 	// RELEASETAG and VERSIONTAG should be set when running Actions.
 	// Travis will add a commit has which should not print in this section.
@@ -47,6 +44,11 @@ func Version(c Config) {
 			fmt.Printf("Pygmy version dev-%v\n", reference[0:7])
 			return
 		}
+	}
+
+	if COMMITSHA == "" {
+		// Fallback to TRAVIS_COMMIT if GITHUB_SHA is absent.
+		COMMITTAG = os.Getenv("TRAVIS_COMMIT")
 	}
 
 	// Get tags and reference information.
