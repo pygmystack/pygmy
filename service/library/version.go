@@ -38,7 +38,7 @@ func Version(c Config) {
 	if COMMITSHA == "" {
 		r, _ := exec.Command("git", "remote", "-v").Output()
 		remotes := strings.Split(string(r), "\n")
-		for remote, _ := range remotes {
+		for remote := range remotes {
 			if strings.Contains(remotes[remote], "pygmy-go") {
 				isPygmy = true
 			}
