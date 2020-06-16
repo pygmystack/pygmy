@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
-        run: apt update && apt install git -y
+        run: apt update && apt install git golang -y
       -
         name: Set up Go
         uses: actions/setup-go@v2

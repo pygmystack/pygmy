@@ -89,17 +89,16 @@ matrix:
       os: linux
       services: docker
       before_install:
-        - sudo apt-get install golang-go -y
         - curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 
       script:
         - act -l
         - act push --verbose || true
-        - stat ./dist/pygmy-go_darwin_amd64/pygmy-go
-        - stat ./dist/pygmy-go_linux_amd64/pygmy-go
-        - stat ./dist/pygmy-go_windows_amd64/pygmy-go.exe
-        - ./dist/pygmy-go_linux_amd64/pygmy-go version
-        - ./dist/pygmy-go_linux_amd64/pygmy-go status
+        - stat /github/workspace/dist/pygmy-go_darwin_amd64/pygmy-go
+        - stat /github/workspace/dist/pygmy-go_linux_amd64/pygmy-go
+        - stat /github/workspace/dist/pygmy-go_windows_amd64/pygmy-go.exe
+        - /github/workspace//dist/pygmy-go_linux_amd64/pygmy-go version
+        - /github/workspace//dist/pygmy-go_linux_amd64/pygmy-go status
 
     - name: Windows build
       os: windows
