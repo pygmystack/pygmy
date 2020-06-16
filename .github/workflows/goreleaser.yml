@@ -28,6 +28,9 @@ jobs:
       -
         run: cat service/library/version.go | grep "COMMITTAG =" | grep -v Getenv
       -
+        name: Fetch Dependencies
+        run: go mod download
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
         with:
