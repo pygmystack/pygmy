@@ -23,10 +23,17 @@ jobs:
         with:
           go-version: 1.14
       -
+        name: Establish commit ref for compiled files
+        run: sed -i -e "s|COMMITSHA = \"\"|COMMITSHA = \"$GITHUB_SHA\"|g" service/library/version.go
+      -
         name: Establish version for compiled files
         run: sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"$GITHUB_REF\"|g" service/library/version.go
       -
-        run: cat service/library/version.go | grep "COMMITTAG =" | grep -v Getenv
+        name: Echo the version reference
+        run: cat service/library/version.go | grep "COMMITTAG =" | grep "refs" | head -n1 | xargs
+      -
+        name: Echo the commit reference
+        run: cat service/library/version.go | grep "COMMITSHA =" | head -n1 | xargs
       -
         name: Fetch Dependencies
         run: go mod download
