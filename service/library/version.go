@@ -55,7 +55,6 @@ func Version(c Config) {
 
 	// Detect a tagged version:
 	if !isPygmy && COMMITTAG != "" {
-		COMMITTAG = strings.TrimLeft(COMMITTAG, "refs/tags/")
 		b := strings.Split(COMMITTAG, "/")
 		reference := b[len(b)-1]
 
