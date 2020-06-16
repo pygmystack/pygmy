@@ -89,6 +89,7 @@ matrix:
       os: linux
       services: docker
       before_install:
+        - go mod vendor
         - curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
 
       script:
