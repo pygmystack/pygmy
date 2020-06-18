@@ -79,15 +79,14 @@ matrix:
         - docker-compose up -d
         - docker-compose exec cli composer install
         - curl --HEAD http://drupal-example.docker.amazee.io
-        # Cleanup example
-        - docker-compose down
-        - cd ../
+        - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
 
         # Drupal 9:
         - git clone https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon && cd drupal9-lagoon
         - docker-compose up -d
         - docker-compose exec cli composer install
         - curl --HEAD http://drupal-example.docker.amazee.io
+        - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
 
         # Cleanup example
         - docker-compose down
