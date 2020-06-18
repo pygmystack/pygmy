@@ -82,27 +82,27 @@ matrix:
         - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
         - docker-compose down
         - docker-compose rm
-        - cd ../ && rm -rf drupal8-lagoon
+        - cd ../
 
         # Drupal 8 (Drupal Example Simple):
-        - git clone -b 8.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon && cd drupal8-lagoon
+        - git clone -b 8.x https://github.com/amazeeio/drupal-example-simple.git drupal8-lagoon-simple && cd drupal8-lagoon-simple
         - docker-compose up -d
         - docker-compose exec cli composer install
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose down
         - docker-compose rm
-        - cd ../ && rm -rf drupal8-lagoon
+        - cd ../
 
         # Drupal 9 (Drupal Example Simple):
-        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon && cd drupal9-lagoon
+        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple && cd drupal9-lagoon-simple
         - docker-compose up -d
         - docker-compose exec cli composer install
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose down
         - docker-compose rm
-        - cd ../ && drupal9-lagoon
+        - cd ../
 
         # Cowsay test
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
