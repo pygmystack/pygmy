@@ -104,6 +104,26 @@ matrix:
         - docker-compose -p drupal9 rm
         - cd ../
 
+        # Wordpress:
+        - git clone https://github.com/amazeeio/wordpress-example.git wordpress && cd wordpress
+        - docker-compose -p wordpress up -d
+        - docker-compose -p wordpress exec cli composer install
+        - curl --HEAD http://wordpress-nginx.docker.amazee.io
+        - curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p wordpress down
+        - docker-compose -p wordpress rm
+        - cd ../
+
+        # Node:
+        - git clone https://github.com/amazeeio/node-example.git node && cd node
+        - docker-compose -p node up -d
+        - docker-compose -p node exec cli composer install
+        - curl --HEAD http://node.docker.amazee.io
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p node down
+        - docker-compose -p node rm
+        - cd ../
+
         # Cowsay test
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up | grep '< holy ship >';
@@ -143,6 +163,9 @@ matrix:
 
         - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
         - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
-
+http://wordpress-nginx:
+  docker:
+    amazee:
+      io:
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
