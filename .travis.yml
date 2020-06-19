@@ -119,7 +119,8 @@ matrix:
         - npm install
         - docker-compose -p node up -d
         - curl --HEAD http://node.docker.amazee.io
-        - curl --HEAD http://node.docker.amazee.io | LAGOON=node
+        - curl http://node.docker.amazee.io | LAGOON=node
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON" || true
         - docker-compose -p node down
         - docker-compose -p node rm
         - cd ../
