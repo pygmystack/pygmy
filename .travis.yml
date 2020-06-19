@@ -155,9 +155,6 @@ matrix:
 
         - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
         - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
-http://wordpress-nginx:
-  docker:
-    amazee:
-      io:
+
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
