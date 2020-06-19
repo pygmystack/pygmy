@@ -125,6 +125,7 @@ matrix:
         - cd ../
 
         # Cowsay test
+        - sleep 5;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up | grep '< holy ship >';
 
