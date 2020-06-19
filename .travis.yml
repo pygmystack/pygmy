@@ -76,32 +76,32 @@ matrix:
 
         # Drupal 8 (Drupal Example):
         - git clone https://github.com/amazeeio/drupal-example.git drupal8-lagoon && cd drupal8-lagoon
-        - docker-compose up -d
-        - docker-compose exec cli composer install
+        - docker-compose -p drupal8-example up -d
+        - docker-compose -p drupal8-example exec cli composer install
         - curl --HEAD http://drupal-example.docker.amazee.io
         - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose down
-        - docker-compose rm
+        - docker-compose -p drupal8-example down
+        - docker-compose -p drupal8-example rm
         - cd ../
 
         # Drupal 8 (Drupal Example Simple):
         - git clone -b 8.x https://github.com/amazeeio/drupal-example-simple.git drupal8-lagoon-simple && cd drupal8-lagoon-simple
-        - docker-compose up -d
-        - docker-compose exec cli composer install
+        - docker-compose -p drupal8 up -d
+        - docker-compose -p drupal8 exec cli composer install
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose down
-        - docker-compose rm
+        - docker-compose -p drupal8 down
+        - docker-compose -p drupal8 rm
         - cd ../
 
         # Drupal 9 (Drupal Example Simple):
         - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple && cd drupal9-lagoon-simple
-        - docker-compose up -d
-        - docker-compose exec cli composer install
+        - docker-compose -p drupal9 up -d
+        - docker-compose -p drupal9 exec cli composer install
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose down
-        - docker-compose rm
+        - docker-compose -p drupal9 down
+        - docker-compose -p drupal9 rm
         - cd ../
 
         # Cowsay test
