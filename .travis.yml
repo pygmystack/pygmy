@@ -116,10 +116,10 @@ matrix:
 
         # Node:
         - git clone https://github.com/amazeeio/node-example.git node && cd node
+        - npm install
         - docker-compose -p node up -d
-        - docker-compose -p node exec cli composer install
         - curl --HEAD http://node.docker.amazee.io
-        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
+        - curl --HEAD http://node.docker.amazee.io | LAGOON=node
         - docker-compose -p node down
         - docker-compose -p node rm
         - cd ../
