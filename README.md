@@ -79,3 +79,8 @@ Content-Type: text/html
 
 Thanks for testing, please post issues and successes in the queue.
  
+## Releasing
+ 
+We use GitHub Actions for simulating the automated release tagging locally. Using [Act](https://github.com/nektos/act) locally, you can simulate this process and have the same build artifacts in your `dist` folder.
+ 
+This process will inject the appropriate values into the version logic. To start the process, just run `act`!

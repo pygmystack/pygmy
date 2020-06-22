@@ -85,7 +85,6 @@ matrix:
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
-
     - name: Windows build
       os: windows
       services: docker
