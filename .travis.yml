@@ -85,21 +85,6 @@ matrix:
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
-    - name: GitHub Actions simulation
-      os: linux
-      services: docker
-      before_install:
-        - curl https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
-
-      script:
-        - act -l
-        - act push --verbose -P ubuntu-latest=nektos/act-environments-ubuntu:18.04 || true
-        - stat /github/workspace/dist/pygmy-go_darwin_amd64/pygmy-go
-        - stat /github/workspace/dist/pygmy-go_linux_amd64/pygmy-go
-        - stat /github/workspace/dist/pygmy-go_windows_amd64/pygmy-go.exe
-        - /github/workspace/dist/pygmy-go_linux_amd64/pygmy-go version
-        - /github/workspace/dist/pygmy-go_linux_amd64/pygmy-go status
-
     - name: Windows build
       os: windows
       services: docker
