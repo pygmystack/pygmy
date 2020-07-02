@@ -120,7 +120,7 @@ matrix:
         - docker-compose -p node up -d
         - curl --HEAD http://node.docker.amazee.io
         - curl http://node.docker.amazee.io | LAGOON=node
-        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON" || true
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p node down
         - docker-compose -p node rm
         - cd ../
