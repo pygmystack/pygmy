@@ -33,13 +33,16 @@ matrix:
         - GO111MODULE=on go vet $(go list ./...);
         - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
       script:
+
         # Build
         - go build -o pygmy-go-linux-x86
+
         # Run pygmy
         - ./pygmy-go-linux-x86 status;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml status;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml version;
+
         # Test the amazeeio-network for expected results
         - >
           docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
@@ -48,6 +51,7 @@ matrix:
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-portainer";
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address';
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
+
         # Test for configured container tags.
         - >
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
@@ -70,17 +74,67 @@ matrix:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
-        # Real-world Drupal test.
+        # Drupal 8 (Drupal Example):
         - git clone https://github.com/amazeeio/drupal-example.git drupal8-lagoon && cd drupal8-lagoon
-        - docker-compose up -d
-        - docker-compose exec cli composer install
+        - docker-compose -p drupal8-example up -d
+        - docker-compose -p drupal8-example exec cli composer install
+        - sleep 5
         - curl --HEAD http://drupal-example.docker.amazee.io
-        # Cleanup example
-        - docker-compose down
+        - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p drupal8-example down
+        - docker-compose -p drupal8-example rm
         - cd ../
+
+        # Drupal 8 (Drupal Example Simple):
+        - git clone -b 8.x https://github.com/amazeeio/drupal-example-simple.git drupal8-lagoon-simple && cd drupal8-lagoon-simple
+        - docker-compose -p drupal8 up -d
+        - docker-compose -p drupal8 exec cli composer install
+        - sleep 5
+        - curl --HEAD http://drupal8-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p drupal8 down
+        - docker-compose -p drupal8 rm
+        - cd ../
+
+        # Drupal 9 (Drupal Example Simple):
+        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple && cd drupal9-lagoon-simple
+        - docker-compose -p drupal9 up -d
+        - docker-compose -p drupal9 exec cli composer install
+        - sleep 5
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p drupal9 down
+        - docker-compose -p drupal9 rm
+        - cd ../
+
+        # Wordpress:
+        - git clone https://github.com/amazeeio/wordpress-example.git wordpress && cd wordpress
+        - docker-compose -p wordpress up -d
+        - docker-compose -p wordpress exec cli composer install
+        - sleep 5
+        - curl --HEAD http://wordpress-nginx.docker.amazee.io
+        - curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p wordpress down
+        - docker-compose -p wordpress rm
+        - cd ../
+
+        # Node:
+        - git clone https://github.com/amazeeio/node-example.git node && cd node
+        - npm install
+        - docker-compose -p node up -d
+        - curl --HEAD http://node.docker.amazee.io
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p node down
+        - docker-compose -p node rm
+        - cd ../
+
+        # Cleanup after tests.
+        - docker system prune --all --force
+
         # Cowsay test
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up | grep '< holy ship >';
+
         # Cleanup pygmy
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
