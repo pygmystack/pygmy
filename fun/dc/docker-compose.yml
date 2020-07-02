@@ -16,6 +16,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    expose:
+      - "80"
     networks:
       - default
       - amazeeio-network
@@ -31,6 +33,8 @@ services:
       - amazeeio-network
     ports:
       - "6053:53"
+    expose:
+      - "6053"
   mailhog:
     image: mailhog/mailhog
     container_name: mailhog.docker.amazee.io
