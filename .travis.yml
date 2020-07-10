@@ -38,6 +38,8 @@ matrix:
         - go build -o pygmy-go-linux-x86
 
         # Run pygmy
+        - ./pygmy-go-linux-x86 pull;
+        - ./pygmy-go-linux-x86 pull;
         - ./pygmy-go-linux-x86 status;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up;
         - ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml status;
