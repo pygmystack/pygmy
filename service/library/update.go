@@ -1,8 +1,47 @@
 package library
 
-import "github.com/fubarhouse/pygmy-go/service/amazee"
+import (
+	"fmt"
+	"strings"
 
-// Update will update the Amazee images
+	model "github.com/fubarhouse/pygmy-go/service/interface"
+)
+
+// Update will update the the images for all configured services.
 func Update(c Config) {
-	amazee.AmazeeImagePull()
+
+	// Import the configuration.
+	Setup(&c)
+
+	// Loop over services.
+	for s := range c.Services {
+
+		// Pull the image.
+		service := c.Services[s]
+		purpose, _ := service.GetFieldString("purpose")
+		var result string
+		var err error
+		if purpose == "" || purpose == "sshagent" {
+			result, err = model.DockerPull(service.Config.Image)
+			if err == nil {
+				fmt.Println(result)
+			}
+		}
+
+		// If the service is running, restart it.
+		if s, _ := service.Status(); s && !strings.Contains(result, "is up to date") {
+			var e error
+			e = service.Stop()
+			if e != nil {
+				fmt.Println(e)
+			}
+			if s, _ := service.Status(); !s {
+				_, e = service.Start()
+				if e != nil {
+					fmt.Println(e)
+				}
+			}
+		}
+	}
+
 }
