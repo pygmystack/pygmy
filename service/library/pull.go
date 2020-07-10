@@ -1,20 +1,9 @@
 package library
 
-import (
-	"fmt"
-	"github.com/fubarhouse/pygmy-go/service/interface"
-)
-
+// Pull is an alias function for Update.
+// It is here for the sake of user experience.
 func Pull(c Config) {
 
-	Setup(&c)
+	Update(c)
 
-	for _, Service := range c.Services {
-
-		_, e := model.DockerPull(Service.Config.Image)
-		if e != nil {
-			fmt.Print(e)
-		}
-
-	}
 }

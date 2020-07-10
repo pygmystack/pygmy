@@ -487,15 +487,15 @@ func DockerPull(image string) (string, error) {
 	}
 
 	if event != nil {
-		if strings.Contains(event.Status, fmt.Sprintf("Downloaded newer image for %s", image)) {
-			return fmt.Sprintf("Successfully pulled %v\n", image), nil
+		if strings.Contains(event.Status, fmt.Sprint("Downloaded newer image")) {
+			return fmt.Sprintf("Successfully pulled %v", image), nil
 		}
 
-		if strings.Contains(event.Status, fmt.Sprintf("Image is up to date for %s", image)) {
-			return fmt.Sprintf("Image %v is up to date\n", image), nil
+		if strings.Contains(event.Status, fmt.Sprint("Image is up to date")) {
+			return fmt.Sprintf("Image %v is up to date", image), nil
 		}
 	}
-	return "", nil
+	return event.Status, nil
 }
 
 // DockerRun will setup and run a given container.
