@@ -32,6 +32,9 @@ matrix:
         - cat service/library/version.go | grep 'COMMITTAG = "'
         - GO111MODULE=on go vet $(go list ./...);
         - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
+        - wget https://files.devwithlando.io/lando-stable.deb
+        - sudo dpkg -i lando-stable.deb
+        - lando --experimental
       script:
 
         # Build
@@ -107,6 +110,15 @@ matrix:
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p drupal9 down
         - docker-compose -p drupal9 rm
+        - cd ../
+
+        # Drupal 9 (Drupal Example Simple):
+        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple && cd drupal9-lagoon-simple-lando
+        - lando init --source remote --remote-url git://github.com/amazeeio/drupal-example-simple.git --remote-options="--branch 9.x" --recipe lagoon --yes
+        - lando start
+        - curl --HEAD https://drupal9-example-simple-lando.lndo.site
+        - curl --HEAD https://drupal9-example-simple-lando.lndo.site | grep "X-LAGOON"
+        - lando destroy -y
         - cd ../
 
         # Wordpress:
