@@ -44,7 +44,7 @@ func New() model.Service {
 			RestartPolicy: struct {
 				Name              string
 				MaximumRetryCount int
-			}{Name: "on-failure", MaximumRetryCount: 0},
+			}{Name: "unless-stopped", MaximumRetryCount: 0},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}
