@@ -116,7 +116,7 @@ matrix:
         - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple-lando && cd drupal9-lagoon-simple-lando
         - lando start
         - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000
-        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-LAGOON"
+        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-Lagoon"
         - lando destroy -y
         - cd ../
 
