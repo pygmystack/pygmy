@@ -8,9 +8,9 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func ExampleAdd() {
-	key.NewAdder()
-}
+//func ExampleAdd() {
+//	key.NewAdder()
+//}
 
 func TestAdd(t *testing.T) {
 	Convey("SSH Key Adder: Field equality tests...", t, func() {
