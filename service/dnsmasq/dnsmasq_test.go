@@ -26,7 +26,7 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.CapAdd), ShouldEqual, fmt.Sprint([]string{"NET_ADMIN"}))
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
-		So(fmt.Sprint(obj.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"53/tcp": []nat.PortBinding{{HostIP:   "", HostPort: "6053",},}, "53/udp": []nat.PortBinding{{HostIP:   "", HostPort: "6053"}}}))
+		So(fmt.Sprint(obj.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"53/tcp": []nat.PortBinding{{HostIP: "", HostPort: "6053"}}, "53/udp": []nat.PortBinding{{HostIP: "", HostPort: "6053"}}}))
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "on-failure")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldBeZeroValue)
 	})
