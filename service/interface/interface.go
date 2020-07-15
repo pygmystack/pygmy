@@ -255,6 +255,10 @@ func (Service *Service) DockerRun() ([]byte, error) {
 		return []byte{}, err
 	}
 
+	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+		return []byte{}, err
+	}
+
 	return docker.DockerContainerLogs(resp.ID)
 
 }
