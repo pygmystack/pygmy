@@ -10,8 +10,6 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 )
 
-
-
 // Setup will detect if the Service's image reference exists and will
 // attempt to run `docker pull` on the non-canonical image if it is
 // not found in the daemon.
@@ -260,4 +258,3 @@ func (Service *Service) DockerRun() ([]byte, error) {
 	return docker.DockerContainerLogs(resp.ID)
 
 }
-
