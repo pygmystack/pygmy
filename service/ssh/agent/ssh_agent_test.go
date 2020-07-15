@@ -8,14 +8,17 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// This example creates a Service with the default values for the ssh agent.
 func Example() {
 	agent.New()
 }
 
+// This example calls the function to list ssh keys in the ssh agent service.
 func ExampleList() {
 	agent.List(model.Service{})
 }
 
+// This example calls the function to search ssh keys in the ssh agent service.
 func ExampleSearch() {
 	agent.Search(model.Service{}, "id_rsa.pub")
 }

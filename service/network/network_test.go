@@ -2,13 +2,14 @@ package network_test
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types/network"
 	"testing"
 
+	"github.com/docker/docker/api/types/network"
 	n "github.com/fubarhouse/pygmy-go/service/network"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// This example creates a Network with the default values for amazeeio-network.
 func Example() {
 	n.New()
 }

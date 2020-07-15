@@ -9,6 +9,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// This example creates a Service with the default values for dnsmasq.
 func Example() {
 	dnsmasq.New()
 }

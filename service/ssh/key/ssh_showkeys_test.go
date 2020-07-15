@@ -8,6 +8,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+// This example creates a Service with the default values for the key shower.
 func ExampleShow() {
 	key.NewShower()
 }
