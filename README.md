@@ -78,9 +78,33 @@ Content-Type: text/html
 ```
 
 Thanks for testing, please post issues and successes in the queue.
+
+## Local development
+
+To run full regression tests locally, you can follow this process if you have `cmake`, `git` and `go` installed. This 
+will prevent a significant amount of build failures and problems after committing.
+
+It will use `dind` and your local daemon to walk through several tests which should pass.
+
+1. First clone the project:
+   ```
+   git clone https://github.com/fubarhouse/pygmy-go.git pygmy-go && cd pygmy-go
+   ```
+2. Perform any updates as required.
+3. Clean the environment.
+   ```
+   go run main.go clean
+   ```
+4. Build the project.
+   ```
+   make
+   ```
+5. Test the project prior to commiting.
+   ```
+   go test -v
+   ```
  
 ## Releasing
  
 We use GitHub Actions for simulating the automated release tagging locally. Using [Act](https://github.com/nektos/act) locally, you can simulate this process and have the same build artifacts in your `dist` folder.
- 
 This process will inject the appropriate values into the version logic. To start the process, just run `act`!
