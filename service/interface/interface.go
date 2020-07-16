@@ -106,7 +106,7 @@ func (Service *Service) Status() (bool, error) {
 	containers, _ := docker.DockerContainerList()
 	for _, container := range containers {
 		for _, n := range container.Names {
-			if strings.Contains(n, name) {
+			if strings.Contains(n, name) && strings.HasPrefix(container.Status, "Up") {
 				return true, nil
 			}
 		}
