@@ -1,7 +1,6 @@
-package main
+package main_test
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"testing"
@@ -10,7 +9,6 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/docker/docker/client"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -52,15 +50,7 @@ func setup(t *testing.T, config *config) {
 
 	Convey("Pygmy Application Test: "+config.name, t, func() {
 
-		ctx := context.Background()
-		cli, err := client.NewClientWithOpts()
-		cli.NegotiateAPIVersion(ctx)
-
 		Convey("Provision environment", func() {
-			Convey("Connection to Docker Client", func() {
-				So(err, ShouldEqual, nil)
-			})
-
 			Convey("Image pulled", func() {
 				_, e := docker.DockerPull("library/docker:dind")
 				So(e, ShouldBeNil)
@@ -69,23 +59,23 @@ func setup(t *testing.T, config *config) {
 			Convey("Container created", func() {
 				currentWorkingDirectory, err := os.Getwd()
 				So(err, ShouldBeNil)
-				x, _ := cli.ContainerCreate(ctx, &container.Config{
+				x, _ := docker.DockerContainerCreate(dindContainerName, container.Config{
 					Image: "docker:dind",
-				}, &container.HostConfig{
+				}, container.HostConfig{
 					AutoRemove: false,
 					Binds: []string{
 						fmt.Sprintf("%v%vbuilds%v:/builds", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
 						fmt.Sprintf("%v%vexamples%v:/examples", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
 					},
 					Privileged: true,
-				}, &network.NetworkingConfig{}, dindContainerName)
+				}, network.NetworkingConfig{})
 
 				dindID = x.ID
 				So(dindID, ShouldNotEqual, "")
 			})
 
 			Convey("Container started", func() {
-				err = cli.ContainerStart(ctx, dindContainerName, types.ContainerStartOptions{})
+				err := docker.DockerContainerStart(dindContainerName, types.ContainerStartOptions{})
 				So(err, ShouldEqual, nil)
 			})
 		})
@@ -98,7 +88,7 @@ func setup(t *testing.T, config *config) {
 				time.Sleep(time.Second * 2)
 			})
 
-			e := cli.ContainerStart(ctx, dindContainerName, types.ContainerStartOptions{})
+			e := docker.DockerContainerStart(dindContainerName, types.ContainerStartOptions{})
 			if e != nil {
 				fmt.Println(e)
 			}
@@ -183,13 +173,9 @@ func setup(t *testing.T, config *config) {
 			})
 			// System prune container...
 			Convey("Removing DinD Container", func() {
-				ctx := context.Background()
-				cli, err := client.NewClientWithOpts()
-				cli.NegotiateAPIVersion(ctx)
+				err := docker.DockerKill("exampleTestContainer")
 				So(err, ShouldBeNil)
-				err = cli.ContainerKill(ctx, "exampleTestContainer", "")
-				So(err, ShouldBeNil)
-				err = cli.ContainerRemove(ctx, "exampleTestContainer", types.ContainerRemoveOptions{Force: true})
+				err = docker.DockerRemove("exampleTestContainer")
 				So(err, ShouldBeNil)
 			})
 		})
@@ -205,7 +191,7 @@ func TestDefault(t *testing.T) {
 		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "mailhog/mailhog"},
 		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
-		skipendpointchecks: true,
+		skipendpointchecks: false,
 	}
 	setup(t, configuration)
 }
