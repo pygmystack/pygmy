@@ -120,6 +120,17 @@ matrix:
         - lando destroy -y
         - cd ../
 
+        # SilverStripe
+        - git clone https://github.com/amazeeio/silverstripe-example.git silverstripe && cd silverstripe
+        - docker-compose -p silverstripe up -d
+        - docker-compose -p silverstripe exec cli composer install
+        - sleep 5
+        - curl --HEAD http://ss.docker.amazee.io
+        - curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p silverstripe down
+        - docker-compose -p silverstripe rm
+        - cd ../
+
         # Wordpress:
         - git clone https://github.com/amazeeio/wordpress-example.git wordpress && cd wordpress
         - docker-compose -p wordpress up -d
