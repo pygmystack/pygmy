@@ -20,7 +20,7 @@ matrix:
         # Build
         - make build
         # Test
-        - go test -v
+        - go test -v ./...
 
     - name: Linux build w/ tests
       os: linux

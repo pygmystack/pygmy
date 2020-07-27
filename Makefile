@@ -12,7 +12,7 @@ build:
 	docker run -v $(DIR):/data pygmy-go cp pygmy-go-darwin /data/builds/.
 	docker run -v $(DIR):/data pygmy-go cp pygmy-go.exe /data/builds/.
 	@echo "Done"
-	@echo "Enjoy using pygmy-go binaries in $(DIR)/data/build directory."
+	@echo "Enjoy using pygmy-go binaries in $(DIR)/build directory."
 
 clean:
 	docker image rm -f pygmy-go
