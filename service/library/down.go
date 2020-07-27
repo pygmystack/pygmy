@@ -3,7 +3,7 @@ package library
 import (
 	"fmt"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 )
 
 // Down will bring pygmy down safely
@@ -30,11 +30,11 @@ func Down(c Config) {
 	}
 
 	for _, network := range unique(NetworksToClean) {
-		e := model.DockerNetworkRemove(network)
+		e := docker.DockerNetworkRemove(network)
 		if e != nil {
 			fmt.Println(e)
 		}
-		if s, _ := model.DockerNetworkStatus(network); !s {
+		if s, _ := docker.DockerNetworkStatus(network); !s {
 			fmt.Printf("Successfully removed network %v\n", network)
 		} else {
 			fmt.Printf("Network %v was not removed", network)
