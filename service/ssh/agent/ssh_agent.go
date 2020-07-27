@@ -18,6 +18,7 @@ func New() model.Service {
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-ssh-agent",
+				"pygmy.network":  "amazeeio-network",
 				"pygmy.output":   "false",
 				"pygmy.purpose":  "sshagent",
 				"pygmy.weight":   "30",

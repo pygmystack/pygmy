@@ -3,8 +3,8 @@ package library
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types"
 
+	"github.com/docker/docker/api/types"
 	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
