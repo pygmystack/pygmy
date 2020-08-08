@@ -33,7 +33,11 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 		// If configuration has a value for the defaults label
 		if val, ok := container.Config.Labels["pygmy.defaults"]; ok {
 			if val == "1" || val == "true" {
+				// Clear destination Service to a new nil value.
+				c.Services[service] = model.Service{}
+				// Import the provided Service to the map entry.
 				c.Services[service] = getService(importer, c.Services[service])
+				// This is now successful, so return true.
 				return true
 			}
 		}
