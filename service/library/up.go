@@ -112,7 +112,10 @@ func Up(c Config) {
 				if s := NetworkConnect(Network, name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", name, Network)
 				} else {
-					fmt.Printf("Could not connect %v to %v\n", name, Network)
+					discrete, _ := service.GetFieldBool("discrete")
+					if !discrete {
+						fmt.Printf("Could not connect %v to %v\n", name, Network)
+					}
 				}
 			} else {
 				fmt.Printf("Already connected %v to %v\n", name, Network)
