@@ -34,7 +34,7 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
-		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "on-failure")
+		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 	})
 }
