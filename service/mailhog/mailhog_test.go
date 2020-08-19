@@ -30,7 +30,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "15")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
-		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "on-failure")
+		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"1025/tcp": []nat.PortBinding{{HostIP: "", HostPort: "1025"}}}))
 	})
