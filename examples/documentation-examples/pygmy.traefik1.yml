@@ -1,0 +1,72 @@
+services:
+
+  amazeeio-haproxy:
+    Config:
+      Labels:
+        - pygmy.enable: false
+
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.enable: true
+        - traefik.enable: true
+        - traefik.port: 80
+        - traefik.frontend.rule: Host:mailhog.docker.amazee.io
+
+  amazeeio-traefik-1:
+    Config:
+      Image: library/traefik:v1.7.19
+      Cmd:
+        - --api
+        - --docker
+        - --docker.network=amazeeio-network
+        - --docker.domain=docker.amazee.io
+        - --docker.exposedbydefault=false
+      ExposedPorts:
+        80/tcp:
+          HostPort: 80
+        443/tcp:
+          HostPort: 443
+        8080/tcp:
+          HostPort: 8080
+      Labels:
+        - pygmy: pygmy
+        - pygmy.name: amazeeio-traefik-1
+        - pygmy.enable: true
+        - pygmy.url: http://traefik.docker.amazee.io
+        - traefik.enable: true
+        - traefik.port: 8080
+        - traefik.protocol: http
+        - traefik.docker.domain: docker.amazee.io
+        - traefik.docker.exposedByDefault: false
+        - traefik.docker.network: amazeeio-network
+        - traefik.frontend.rule: Host:traefik.docker.amazee.io
+    HostConfig:
+      Binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+      PortBindings:
+        443/tcp:
+          - HostPort: 443
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+      RestartPolicy:
+        Name: always
+        MaximumRetryCount: 0
+    NetworkConfig:
+      Ports:
+        80/tcp:
+          - HostPort: 80
+        8080/tcp:
+          - HostPort: 8080
+
+networks:
+  amazeeio-network:
+    Containers:
+      amazeeio-traefik-1:
+        Name: amazeeio-traefik-1
+      amazeeio-mailhog:
+        Name: amazeeio-mailhog
+
+resolvers: []

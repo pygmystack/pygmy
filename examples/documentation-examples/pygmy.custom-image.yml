@@ -1,0 +1,9 @@
+services:
+  amazeeio-haproxy:
+    Config:
+      Image: fubarhouse/amazeeio-haproxy-8080
+    HostConfig:
+      PortBindings:
+        8080/tcp:
+          -
+            HostPort: 8080

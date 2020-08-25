@@ -1,0 +1,6 @@
+services:
+  amazeeio-mailhog:
+    HostConfig:
+      PortBindings:
+        1025/tcp:
+          - HostPort: 2025

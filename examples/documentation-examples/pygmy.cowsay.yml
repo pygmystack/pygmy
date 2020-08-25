@@ -1,0 +1,17 @@
+services:
+  example-cowsay:
+    name: example-cowsay
+    Config:
+      Image: mbentley/cowsay
+      Cmd:
+        - holy
+        - ship
+      Labels:
+        - pygmy: pygmy
+        - pygmy.enable: true
+        - pygmy.discrete: true
+        - pygmy.name: example-cowsay
+        - pygmy.output: true
+        - pygmy.weight: 99
+    HostConfig:
+      AutoRemove: true
