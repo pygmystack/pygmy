@@ -9,7 +9,7 @@ services:
       Labels:
         - pygmy: pygmy
         - pygmy.enable: true
-        - pygmy.discrete: true
+        - pygmy.discrete: false
         - pygmy.name: example-cowsay
         - pygmy.output: true
         - pygmy.weight: 99

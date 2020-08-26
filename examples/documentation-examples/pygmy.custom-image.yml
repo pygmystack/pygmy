@@ -5,5 +5,4 @@ services:
     HostConfig:
       PortBindings:
         8080/tcp:
-          -
-            HostPort: 8080
+          - HostPort: 8080

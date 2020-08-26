@@ -1,6 +1,6 @@
 services:
   amazeeio-haproxy:
-    Config:
+    HostConfig:
       PortBindings:
         443/tcp:
           - HostPort: 443
