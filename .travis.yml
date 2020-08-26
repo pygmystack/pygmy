@@ -85,7 +85,7 @@ matrix:
         - >
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml up;
           docker container exec -it unofficial-ssh-agent ssh-add -l;
-          docker container inspect unofficial-ssh-agent --format '{{ json . }}' | jq '.Config.Image' | grep 'nareas/ssh-agent';
+          docker container inspect unofficial-ssh-agent --format '{{ json . }}' | jq '.Config.Image' | grep 'nardeas/ssh-agent';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml clean;
 
         # Tests for total conversion example
