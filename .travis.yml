@@ -38,68 +38,78 @@ matrix:
         - go build -o pygmy-go-linux-x86
 
         # Tests for cowsay integration example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml up | grep '< holy ship >' \
-          && curl -k -L http://docker.amazee.io/stats \
-          && curl -k -L http://mailhog.amazee.io;
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml up | grep '< holy ship >';
+          curl -k -L http://docker.amazee.io/stats;
+          curl -k -L http://mailhog.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml clean;
 
         # Tests for custom image example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml up \
-          && docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'fubarhouse/amazeeio-haproxy-8080' \
-          && curl -k -L http://docker.amazee.io/stats \
-          && curl -k -L http://mailhog.docker.amazee.io;
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml up;
+          docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'fubarhouse/amazeeio-haproxy-8080';
+          curl -k -L http://docker.amazee.io/stats;
+          curl -k -L http://mailhog.docker.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml clean;
 
         # Tests for https example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up \
-          && curl -k -L https://docker.amazee.io/stats \
-          && curl -k -L https://mailhog.docker.amazee.io;
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
+          curl -k -L https://docker.amazee.io/stats;
+          curl -k -L https://mailhog.docker.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
 
         # Tests for mailhog port example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.mailhog-port.yml up \
-          && docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings' | grep 1025 \
-          && docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings[]' | grep 2025;
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.mailhog-port.yml up;
+          docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings' | grep 1025;
+          docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings[]' | grep 2025;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.mailhog-port.yml clean;
 
         # Tests for phpmyadmin example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.phpmyadmin.yml up \
-          && curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK' \
-          && curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK' \
-          && curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.phpmyadmin.yml up;
+          curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK';
+          curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK';
+          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.phpmyadmin.yml clean;
 
         # Tests for portainer example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml up \
-          && curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK' \
-          && curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK' \
-          && curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+        - >
+         ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml up;
+          curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK';
+          curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK';
+          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml clean;
 
         # Tests for ssh agent example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml up | grep 'Identity added' \
-          && docker container exec -it amazeeio-ssh-agent ssh-add -l \
-          && docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'nareas/ssh-agent';
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml up | grep 'Identity added';
+          docker container exec -it amazeeio-ssh-agent ssh-add -l;
+          docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'nareas/ssh-agent';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml clean;
 
         # Tests for total conversion example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.total-conversion.yml up \
-          && curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found' \
-          && curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK' \
-          && curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed' \
-          && curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK';
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.total-conversion.yml up;
+          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+          curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK';
+          curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
+          curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.total-conversion.yml clean;
 
         # Tests for traefik v1 example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik1.yml up \
-          && curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found' \
-          && curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik1.yml up;
+          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+          curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik1.yml clean;
 
         # Tests for traefik v2 example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml up \
-          && curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found' \
-          && curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
+        - >
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml up;
+          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+          curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml clean;;
 
     - name: Linux build w/ tests
