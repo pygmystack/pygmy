@@ -40,23 +40,23 @@ matrix:
         # Tests for cowsay integration example
         - >
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml up | grep '< holy ship >';
-          curl -k -L http://docker.amazee.io/stats;
-          curl -k -L http://mailhog.amazee.io;
+          curl --HEAD -k -L http://docker.amazee.io/stats;
+          curl --HEAD -k -L http://mailhog.docker.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml clean;
 
         # Tests for custom image example
         - >
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml up;
           docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'fubarhouse/amazeeio-haproxy-8080';
-          curl -k -L http://docker.amazee.io/stats;
-          curl -k -L http://mailhog.docker.amazee.io;
+          curl --HEAD -k -L http://docker.amazee.io:8080/stats;
+          curl --HEAD -k -L http://mailhog.docker.amazee.io:8080;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml clean;
 
         # Tests for https example
         - >
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
-          curl -k -L https://docker.amazee.io/stats;
-          curl -k -L https://mailhog.docker.amazee.io;
+          curl --HEAD -k -L https://docker.amazee.io/stats;
+          curl --HEAD -k -L https://mailhog.docker.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
 
         # Tests for mailhog port example
@@ -84,7 +84,7 @@ matrix:
 
         # Tests for ssh agent example
         - >
-          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml up | grep 'Identity added';
+          ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml up;
           docker container exec -it amazeeio-ssh-agent ssh-add -l;
           docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'nareas/ssh-agent';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml clean;
@@ -110,7 +110,7 @@ matrix:
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml up;
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
           curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml clean;;
+        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml clean;
 
     - name: Linux build w/ tests
       os: linux
