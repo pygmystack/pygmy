@@ -36,6 +36,13 @@ matrix:
 
         # Build
         - go build -o pygmy-go-linux-x86
+        - docker network create amazeeio-network
+
+        # We need an example project to test against:
+        - git clone https://github.com/amazeeio/node-example.git node && cd node
+        - npm install
+        - docker-compose -p node up -d
+        - cd ../
 
         # Tests for cowsay integration example
         - >
@@ -48,14 +55,15 @@ matrix:
         - >
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml up;
           docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'fubarhouse/amazeeio-haproxy-8080';
-          curl --HEAD -k -L http://docker.amazee.io:8080/stats;
-          curl --HEAD -k -L http://mailhog.docker.amazee.io:8080;
+          curl --HEAD -k -L http://docker.amazee.io:8080/stats | grep 'HTTP/1.1 200 OK';
+          curl --HEAD -k -L http://mailhog.docker.amazee.io:8080 | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml clean;
 
         # Tests for https example
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
-#        - curl --HEAD -k -L https://docker.amazee.io/stats;
-#        - curl --HEAD -k -L https://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+        - curl --HEAD -k https://node.docker.amazee.io | grep 'HTTP/1.1 200 OK'
+        - curl --HEAD -k https://node.docker.amazee.io | grep "X-LAGOON"
+        - curl --HEAD -k -L https://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
 
         # Tests for mailhog port example
@@ -110,6 +118,12 @@ matrix:
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
           curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml clean;
+
+        # Kill example project.
+        - cd node
+        - docker-compose -p node down
+        - docker-compose -p node rm
+        - cd ../
 
     - name: Linux build w/ tests
       os: linux
