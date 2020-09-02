@@ -53,7 +53,7 @@ matrix:
           curl --HEAD -k -L http://docker.amazee.io/stats;
           curl --HEAD -k -L http://mailhog.docker.amazee.io;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.cowsay.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for custom image example
         - >
@@ -62,7 +62,7 @@ matrix:
           curl --HEAD -k -L http://docker.amazee.io:8080/stats | grep 'HTTP/1.1 200 OK';
           curl --HEAD -k -L http://mailhog.docker.amazee.io:8080 | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for https example
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
@@ -70,7 +70,7 @@ matrix:
         - curl --HEAD -k https://node.docker.amazee.io | grep "X-LAGOON"
         - curl --HEAD -k -L https://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for mailhog port example
         - >
@@ -78,7 +78,7 @@ matrix:
           docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings' | grep 1025;
           docker container inspect amazeeio-mailhog --format '{{ json . }}' | jq '.HostConfig.PortBindings[]' | grep 2025;
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.mailhog-port.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for phpmyadmin example
         - >
@@ -87,7 +87,7 @@ matrix:
           curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK';
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.phpmyadmin.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for portainer example
         - >
@@ -96,7 +96,7 @@ matrix:
           curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK';
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for ssh agent example
         - >
@@ -104,7 +104,7 @@ matrix:
           docker container exec -it unofficial-ssh-agent ssh-add -l;
           docker container inspect unofficial-ssh-agent --format '{{ json . }}' | jq '.Config.Image' | grep 'nardeas/ssh-agent';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.ssh-agent.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for total conversion example
         - >
@@ -114,7 +114,7 @@ matrix:
           curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
           curl --HEAD http://phpmyadmin.docker.amazee.io | grep 'HTTP/1.1 200 OK';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.total-conversion.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for traefik v1 example
         - >
@@ -122,7 +122,7 @@ matrix:
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
           curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik1.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Tests for traefik v2 example
         - >
@@ -130,7 +130,7 @@ matrix:
           curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
           curl --HEAD http://traefik.docker.amazee.io | grep 'HTTP/1.1 405 Method Not Allowed';
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.traefik2.yml clean;
-        - wait 5;
+        - sleep 5;
 
         # Kill example project.
         - cd node
