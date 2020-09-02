@@ -65,12 +65,12 @@ matrix:
         - docker system prune -a --force
 
         # Tests for https example
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
-        - curl --HEAD -k https://node.docker.amazee.io | grep 'HTTP/1.1 200 OK'
-        - curl --HEAD -k https://node.docker.amazee.io | grep "X-LAGOON"
-        - curl --HEAD -k -L https://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
-        - docker system prune -a --force
+#        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
+#        - curl --HEAD -k https://node.docker.amazee.io | grep 'HTTP/1.1 200 OK'
+#        - curl --HEAD -k https://node.docker.amazee.io | grep "X-LAGOON"
+#        - curl --HEAD -k -L https://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+#        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml clean;
+#        - docker system prune -a --force
 
         # Tests for mailhog port example
         - >
@@ -90,13 +90,13 @@ matrix:
         - docker system prune -a --force
 
         # Tests for portainer example
-        - >
-         ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml up;
-          curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK';
-          curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK';
-          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
-        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml clean;
-        - docker system prune -a --force
+#        - >
+#         ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml up;
+#          curl --HEAD http://docker.amazee.io/stats | grep 'HTTP/1.1 200 OK';
+#          curl --HEAD http://portainer.docker.amazee.io | grep 'HTTP/1.1 200 OK';
+#          curl --HEAD http://mailhog.docker.amazee.io | grep 'HTTP/1.1 404 Not Found';
+#        - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.portainer.yml clean;
+#        - docker system prune -a --force
 
         # Tests for ssh agent example
         - >
