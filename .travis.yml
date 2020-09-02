@@ -35,6 +35,7 @@ matrix:
       script:
 
         # Build
+        - ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
         - go build -o pygmy-go-linux-x86
 
         # We need an example project to test against:
