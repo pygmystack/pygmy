@@ -98,6 +98,11 @@ func Up(c Config) {
 				} else {
 					fmt.Printf("Could not create network %v\n", Network.Name)
 				}
+			} else {
+				n, _ := docker.DockerNetworkGet(Network.Name)
+				if fmt.Sprint(n.IPAM.Config) != fmt.Sprint(c.Networks[Network.Name].IPAM.Config) {
+					fmt.Printf("Warning: IP Address ranges for %v don't match configuration\n", Network.Name)
+				}
 			}
 		}
 	}
