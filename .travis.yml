@@ -89,8 +89,8 @@ matrix:
         - docker-compose -p drupal8-example-simple up -d
         - docker-compose -p drupal8-example-simple exec cli composer install
         - sleep 5
-        - curl --HEAD http://drupal-example-simple.docker.amazee.io
-        - curl --HEAD http://drupal-example-simple.docker.amazee.io | grep "X-LAGOON"
+        - curl --HEAD http://drupal8-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p drupal8-example-simple down
         - docker-compose -p drupal8-example-simple rm
         - cd ../../
@@ -100,8 +100,8 @@ matrix:
         - docker-compose -p drupal9-advanced up -d
         - docker-compose -p drupal9-advanced exec cli composer install
         - sleep 5
-        - curl --HEAD http://drupal-example.docker.amazee.io
-        - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p drupal9-advanced down
         - docker-compose -p drupal9-advanced rm
         - cd ../../
@@ -111,8 +111,8 @@ matrix:
         - docker-compose -p drupal-example-simple up -d
         - docker-compose -p drupal-example-simple exec cli composer install
         - sleep 5
-        - curl --HEAD http://drupal-example-simple.docker.amazee.io
-        - curl --HEAD http://drupal-example-simple.docker.amazee.io | grep "X-LAGOON"
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p drupal-example-simple down
         - docker-compose -p drupal-example-simple rm
         - cd ../../
