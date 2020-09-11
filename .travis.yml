@@ -196,78 +196,95 @@ matrix:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
-        # Drupal 8 (Drupal Example):
-        - git clone https://github.com/amazeeio/drupal-example.git drupal8-lagoon && cd drupal8-lagoon
-        - docker-compose -p drupal8-example up -d
-        - docker-compose -p drupal8-example exec cli composer install
-        - sleep 5
-        - curl --HEAD http://drupal-example.docker.amazee.io
-        - curl --HEAD http://drupal-example.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p drupal8-example down
-        - docker-compose -p drupal8-example rm
-        - cd ../
+        # Clone the official examples:
+        - git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
+        - git clone https://github.com/amazeeio/node-example.git lagoon-examples/node-example
+        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
-        # Drupal 8 (Drupal Example Simple):
-        - git clone -b 8.x https://github.com/amazeeio/drupal-example-simple.git drupal8-lagoon-simple && cd drupal8-lagoon-simple
-        - docker-compose -p drupal8 up -d
-        - docker-compose -p drupal8 exec cli composer install
+        # Drupal 8 Simple:
+        - cd lagoon-examples/drupal8-simple
+        - docker-compose -p drupal8-example-simple up -d
+        - docker-compose -p drupal8-example-simple exec cli composer install
         - sleep 5
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io
         - curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p drupal8 down
-        - docker-compose -p drupal8 rm
-        - cd ../
+        - docker-compose -p drupal8-example-simple down
+        - docker-compose -p drupal8-example-simple rm
+        - cd ../../
 
-        # Drupal 9 (Drupal Example Simple):
-        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple && cd drupal9-lagoon-simple
-        - docker-compose -p drupal9 up -d
-        - docker-compose -p drupal9 exec cli composer install
+        # Drupal 9 Advanced:
+        - cd lagoon-examples/drupal9-advanced
+        - docker-compose -p drupal9-advanced up -d
+        - docker-compose -p drupal9-advanced exec cli composer install
         - sleep 5
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io
         - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p drupal9 down
-        - docker-compose -p drupal9 rm
-        - cd ../
+        - docker-compose -p drupal9-advanced down
+        - docker-compose -p drupal9-advanced rm
+        - cd ../../
 
-        # Drupal 9 (Drupal Example Simple):
-        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git drupal9-lagoon-simple-lando && cd drupal9-lagoon-simple-lando
-        - sleep 5 && lando start || true
-        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000
-        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-Lagoon"
-        - lando destroy -y
-        - cd ../
+        # Drupal 9 Simple:
+        - cd lagoon-examples/drupal9-simple
+        - docker-compose -p drupal-example-simple up -d
+        - docker-compose -p drupal-example-simple exec cli composer install
+        - sleep 5
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io
+        - curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p drupal-example-simple down
+        - docker-compose -p drupal-example-simple rm
+        - cd ../../
 
-        # SilverStripe
-        - git clone https://github.com/amazeeio/silverstripe-example.git silverstripe && cd silverstripe
-        - docker-compose -p silverstripe up -d
-        - docker-compose -p silverstripe exec cli composer install
+        # Silverstripe Advanced
+        - cd lagoon-examples/silverstripe-advanced
+        - docker-compose -p silverstripe-advanced up -d
+        - docker-compose -p silverstripe-advanced exec cli composer install
         - sleep 5
         - curl --HEAD http://ss.docker.amazee.io
         - curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p silverstripe down
-        - docker-compose -p silverstripe rm
-        - cd ../
+        - docker-compose -p silverstripe-advanced down
+        - docker-compose -p silverstripe-advanced rm
+        - cd ../../
 
-        # Wordpress:
-        - git clone https://github.com/amazeeio/wordpress-example.git wordpress && cd wordpress
-        - docker-compose -p wordpress up -d
-        - docker-compose -p wordpress exec cli composer install
+        # Silverstripe Simple
+        - cd lagoon-examples/silverstripe-simple
+        - docker-compose -p silverstripe-simple up -d
+        - docker-compose -p silverstripe-simple exec cli composer install
+        - sleep 5
+        - curl --HEAD http://ss.docker.amazee.io
+        - curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p silverstripe-simple down
+        - docker-compose -p silverstripe-simple rm
+        - cd ../../
+
+        # Wordpress Simple:
+        - cd lagoon-examples/wordpress-simple
+        - docker-compose -p wordpress-simple up -d
+        - docker-compose -p wordpress-simple exec cli composer install
         - sleep 5
         - curl --HEAD http://wordpress-nginx.docker.amazee.io
         - curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p wordpress down
-        - docker-compose -p wordpress rm
-        - cd ../
+        - docker-compose -p wordpress-simple down
+        - docker-compose -p wordpress-simple rm
+        - cd ../../
 
         # Node:
-        - git clone https://github.com/amazeeio/node-example.git node && cd node
+        - cd lagoon-examples/node-example
         - npm install
         - docker-compose -p node up -d
         - curl --HEAD http://node.docker.amazee.io
         - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p node down
         - docker-compose -p node rm
-        - cd ../
+        - cd ../../
+
+        # Lando test - running Pygmy along-side Lando:
+        - cd lagoon-examples/drupal9-lagoon-simple-lando
+        - lando start || true
+        - sleep 5
+        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000
+        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-Lagoon"
+        - lando destroy -y
+        - cd ../../
 
         # Cleanup after tests.
         - docker system prune --all --force
