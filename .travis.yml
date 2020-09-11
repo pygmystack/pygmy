@@ -82,6 +82,7 @@ matrix:
         # Clone the official examples:
         - git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git && cd lagoon-examples
         - git clone https://github.com/amazeeio/node-example.git lagoon-examples/node-example
+        - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
         # Drupal 8 Simple:
         - cd lagoon-examples/drupal8-simple
@@ -157,6 +158,15 @@ matrix:
         - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p node down
         - docker-compose -p node rm
+        - cd ../../
+
+        # Lando test - running Pygmy along-side Lando:
+        - cd lagoon-examples/drupal9-lagoon-simple-lando
+        - lando start || true
+        - sleep 5
+        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000
+        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-Lagoon"
+        - lando destroy -y
         - cd ../../
 
         # Cleanup after tests.
