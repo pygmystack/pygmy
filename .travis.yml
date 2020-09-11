@@ -80,7 +80,7 @@ matrix:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
         # Clone the official examples:
-        - git clone --recurse-submodules git@github.com:uselagoon/lagoon-examples.git && cd lagoon-examples
+        - git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git && cd lagoon-examples
         - git clone https://github.com/amazeeio/node-example.git lagoon-examples/node-example
 
         # Drupal 8 Simple:
