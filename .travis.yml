@@ -143,15 +143,25 @@ matrix:
       os: linux
       services: docker
       before_install:
+        # Establish some SSH keys.
+        - eval $(ssh-agent)
+        - ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N ""
+        - ssh-add
+        - ssh-add -l
+        # Git config
+        - git config --global url."https://github.com/".insteadOf "git@github.com:"
+        # Build pygmy
         - go mod download
+        # Statis analysis tests of pygmy
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
-        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
-        - cat service/library/version.go | grep 'COMMITTAG = "'
         - GO111MODULE=on go vet $(go list ./...);
         - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
+        # Misc stuff (superseded by a PR)
+        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
+        - cat service/library/version.go | grep 'COMMITTAG = "'
+        # Install Lando
         - wget https://files.devwithlando.io/lando-stable.deb
         - sudo dpkg -i lando-stable.deb
-        - lando --experimental
       script:
 
         # Build
@@ -198,7 +208,6 @@ matrix:
 
         # Clone the official examples:
         - git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
-        - git clone https://github.com/amazeeio/node-example.git lagoon-examples/node-example
         - git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
         # Drupal 8 Simple:
@@ -234,6 +243,16 @@ matrix:
         - docker-compose -p drupal-example-simple rm
         - cd ../../
 
+        # Node:
+        - cd lagoon-examples/node-example
+        - npm install
+        - docker-compose -p node up -d
+        - curl --HEAD http://node.docker.amazee.io
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p node down
+        - docker-compose -p node rm
+        - cd ../../
+
         # Silverstripe Advanced
         - cd lagoon-examples/silverstripe-advanced
         - docker-compose -p silverstripe-advanced up -d
@@ -266,16 +285,6 @@ matrix:
         - curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p wordpress-simple down
         - docker-compose -p wordpress-simple rm
-        - cd ../../
-
-        # Node:
-        - cd lagoon-examples/node-example
-        - npm install
-        - docker-compose -p node up -d
-        - curl --HEAD http://node.docker.amazee.io
-        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p node down
-        - docker-compose -p node rm
         - cd ../../
 
         # Lando test - running Pygmy along-side Lando:
