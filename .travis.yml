@@ -115,6 +115,16 @@ matrix:
         - docker-compose -p drupal-example-simple rm
         - cd ../../
 
+        # Node:
+        - cd lagoon-examples/node-example
+        - npm install
+        - docker-compose -p node up -d
+        - curl --HEAD http://node.docker.amazee.io
+        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
+        - docker-compose -p node down
+        - docker-compose -p node rm
+        - cd ../../
+
         # Silverstripe Advanced
         - cd lagoon-examples/silverstripe-advanced
         - docker-compose -p silverstripe-advanced up -d
@@ -147,16 +157,6 @@ matrix:
         - curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON"
         - docker-compose -p wordpress-simple down
         - docker-compose -p wordpress-simple rm
-        - cd ../../
-
-        # Node:
-        - cd lagoon-examples/node-example
-        - npm install
-        - docker-compose -p node up -d
-        - curl --HEAD http://node.docker.amazee.io
-        - curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON"
-        - docker-compose -p node down
-        - docker-compose -p node rm
         - cd ../../
 
         # Lando test - running Pygmy along-side Lando:
