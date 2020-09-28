@@ -32,7 +32,8 @@ matrix:
         - ssh-add
         - ssh-add -l
         # Git config
-        - git config url.https://github.com/.insteadOf git@github.com:
+        - |
+          git config url.https://github.com/.insteadOf git@github.com:
         # Build pygmy
         - go mod download
         # Statis analysis tests of pygmy
