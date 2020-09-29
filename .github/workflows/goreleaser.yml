@@ -16,27 +16,38 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
-        run: sudo apt update && sudo apt install git golang -y
+        name: System dependencies
+        run: sudo apt update && sudo apt install git golang -y || true
       -
         name: Set up Go
         uses: actions/setup-go@v2
         with:
-          go-version: 1.14
+          go-version: 1.15
       -
-        name: Establish commit ref for compiled files
-        run: sed -i -e "s|COMMITSHA = \"\"|COMMITSHA = \"$GITHUB_SHA\"|g" service/library/version.go
-      -
-        name: Establish version for compiled files
-        run: sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"$GITHUB_REF\"|g" service/library/version.go
-      -
-        name: Echo the version reference
-        run: cat service/library/version.go | grep "COMMITTAG =" | grep "refs" | head -n1 | xargs
-      -
-        name: Echo the commit reference
-        run: cat service/library/version.go | grep "COMMITSHA =" | head -n1 | xargs
+        name: Create version helper
+        run: |
+          cat > service/library/version_state.go << EOF
+          package library
+          import (
+            "fmt"
+            "strings"
+          )
+          var PYGMY_VERSION = "${GITHUB_REF}"
+          func printversion() bool {
+          parts := strings.Split(PYGMY_VERSION, "/")
+          	if PYGMY_VERSION == "" {
+          	  return false
+          	}
+          	fmt.Printf("Pygmy version v%v\n", parts[len(parts)-1])
+          	return true
+          }
+          EOF
       -
         name: Fetch Dependencies
         run: go mod download
+      -
+        name: Print version string
+        run: go run main.go version
       -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v2
