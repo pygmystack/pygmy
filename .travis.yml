@@ -12,8 +12,6 @@ matrix:
       before_install:
         - go mod download
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
-        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
-        - cat service/library/version.go | grep 'COMMITTAG = "'
         - GO111MODULE=on go vet $(go list ./...);
         - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
       script:
@@ -156,9 +154,6 @@ matrix:
         - diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
         - GO111MODULE=on go vet $(go list ./...);
         - docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
-        # Misc stuff (superseded by a PR)
-        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
-        - cat service/library/version.go | grep 'COMMITTAG = "'
         # Install Lando
         - wget https://files.devwithlando.io/lando-stable.deb
         - sudo dpkg -i lando-stable.deb
@@ -313,8 +308,6 @@ matrix:
       before_install:
         - go mod download
         - GO111MODULE=on go vet $(go list ./...);
-        - sed -i -e "s|COMMITTAG = \"\"|COMMITTAG = \"${TRAVIS_COMMIT}\"|g" service/library/version.go
-        - cat service/library/version.go | grep 'COMMITTAG = "'
 
       script:
         - export PYGMY_PATH=pygmy-go.exe;
