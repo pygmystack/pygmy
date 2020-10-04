@@ -2,7 +2,13 @@ services:
   amazeeio-haproxy:
     Config:
       Image: fubarhouse/amazeeio-haproxy-8080
+      Labels:
+        - pygmy.url: http://docker.amazee.io:8080/stats
     HostConfig:
       PortBindings:
         8080/tcp:
           - HostPort: 8080
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.url: http://mailhog.docker.amazee.io:8080
