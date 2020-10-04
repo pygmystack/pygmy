@@ -55,6 +55,7 @@ matrix:
 
         # Tests for custom image example
         - >
+          sleep 10;
           ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.custom-image.yml up;
           docker container inspect amazeeio-haproxy --format '{{ json . }}' | jq '.Config.Image' | grep 'fubarhouse/amazeeio-haproxy-8080';
           curl --HEAD -k -L http://docker.amazee.io:8080/stats | grep 'HTTP/1.1 200 OK';
