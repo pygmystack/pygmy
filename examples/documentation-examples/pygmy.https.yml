@@ -1,6 +1,13 @@
 services:
   amazeeio-haproxy:
+    Config:
+      Labels:
+        - pygmy.url: https://docker.amazee.io/stats
     HostConfig:
       PortBindings:
         443/tcp:
           - HostPort: 443
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.url: https://mailhog.docker.amazee.io
