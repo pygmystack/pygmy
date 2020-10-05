@@ -3,6 +3,7 @@
 package endpoint
 
 import (
+	"crypto/tls"
 	"net/http"
 )
 
@@ -13,6 +14,11 @@ import (
 // This is to provided to the user through the up and status commands.
 func Validate(url string) bool {
 
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
 	// Create a web request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -21,7 +27,7 @@ func Validate(url string) bool {
 	}
 
 	// Submit a web request
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		// Test failed.
 		return false
