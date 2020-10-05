@@ -65,6 +65,8 @@ matrix:
         - docker system prune -a --force
 
         # Tests for https example
+        # Please note that amazeeio's haproxy container does not support https /stats requests.
+        # See https://github.com/amazeeio/docker-haproxy/pull/5 for more info.
         - ./pygmy-go-linux-x86 --config examples/documentation-examples/pygmy.https.yml up;
         - cd node
         - docker-compose up -d
