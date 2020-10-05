@@ -42,6 +42,7 @@ matrix:
           git clone https://github.com/amazeeio/node-example.git node && cd node;
           npm install;
           docker-compose -p node up -d;
+          docker-compose -p node down;
           cd ../;
         - ./pygmy-go-linux-x86 clean;
 
