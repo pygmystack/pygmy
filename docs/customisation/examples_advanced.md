@@ -21,7 +21,7 @@ services:
     HostConfig:
       PortBindings:
         1025/tcp:
-        - HostPort: 2025
+          - HostPort: 2025
 ```
 
 ## Replacement services
@@ -29,21 +29,6 @@ services:
 Replacing the SSH agent for any reason is an involved process, because the base container config will need a new configuration item, and the same with shower/adder containers. This change would also break Windows compatibility because the images in use by default also support Windows when configured correctly. This is not a task that is justified other than a proof of concept to prove that it can be done.
 ```yaml
 services:
-  amazeeio-ssh-agent:
-    Config:
-      Labels:
-        - pygmy.enable: false
-
-  amazeeio-ssh-agent-add-key:
-    Config:
-      Labels:
-        - pygmy.enable: false
-
-  amazeeio-ssh-agent-show-keys:
-    Config:
-      Labels:
-        - pygmy.enable: false
-
   unofficial-ssh-agent:
     Config:
       Cmd:
@@ -109,7 +94,15 @@ services:
       Labels:
         - pygmy.enable: false
 
-  pygmy-traefik-1:
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.enable: true
+        - traefik.enable: true
+        - traefik.port: 80
+        - traefik.frontend.rule: Host:mailhog.docker.amazee.io
+
+  amazeeio-traefik-1:
     Config:
       Image: library/traefik:v1.7.19
       Cmd:
@@ -127,8 +120,7 @@ services:
           HostPort: 8080
       Labels:
         - pygmy: pygmy
-        - pygmy.name: pygmy-traefik-1
-        - pygmy.network: amazeeio-network
+        - pygmy.name: amazeeio-traefik-1
         - pygmy.enable: true
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.enable: true
@@ -158,18 +150,36 @@ services:
         8080/tcp:
           - HostPort: 8080
 
+networks:
+  amazeeio-network:
+    Containers:
+      amazeeio-traefik-1:
+        Name: amazeeio-traefik-1
+      amazeeio-mailhog:
+        Name: amazeeio-mailhog
+
 resolvers: []
 ```
 
 ### Traefik 2.x
 Traefik 2.0 is made for Kubernernetes, so with it comes a lot of difference in configuration for pygmy. This one will require additional configuration. This one is tailored for a single service in a docker-compose project where the labels `traefik.enable` is `true`, and `traefik.port` is the port Traefik will be looking on.
 ```yaml
+services:
+
   amazeeio-haproxy:
     Config:
       Labels:
         - pygmy.enable: false
 
-  pygmy-traefik-2:
+  amazeeio-mailhog:
+    Config:
+      Labels:
+        - pygmy.enable: true
+        - traefik.enable: true
+        - traefik.port: 80
+        - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
+
+  amazeeio-traefik-2:
     Config:
       Image: library/traefik:v2.1.3
       Cmd:
@@ -188,9 +198,9 @@ Traefik 2.0 is made for Kubernernetes, so with it comes a lot of difference in c
         8080/tcp:
           HostPort: 3080
       Labels:
+        - pygmy: pygmy
         - pygmy.enable: true
-        - pygmy.name: pygmy-traefik-2
-        - pygmy.network: amazeeio-network
+        - pygmy.name: amazeeio-traefik-2
         - pygmy.url: http://traefik.docker.amazee.io
         - traefik.docker.network: amazeeio-network
         - traefik.enable: true
@@ -218,91 +228,54 @@ Traefik 2.0 is made for Kubernernetes, so with it comes a lot of difference in c
         8080/tcp:
           - HostPort: 8080
 
+networks:
+  amazeeio-network:
+    Containers:
+      amazeeio-traefik-2:
+        Name: amazeeio-traefik-2
+      amazeeio-mailhog:
+        Name: amazeeio-mailhog
+
 resolvers: []
 ```
 
 ## Completely replacing everything
 ```yaml
-defaults: false
+---
+
 services:
 
-  pygmy-ssh-agent:
+  amazeeio-haproxy:
     Config:
-      Cmd:
-        - ssh-agent
-      Env:
-        - "SSH_AUTH_SOCK=/.ssh-agent/socket"
-      Image: nardeas/ssh-agent
       Labels:
-        - pygmy.name: pygmy-ssh-agent
-        - pygmy.network: pygmy-network
-        - pygmy.enable: true
-        - pygmy.output: false
-        - pygmy.purpose: sshagent
-        - pygmy.weight:  30
-    HostConfig:
-      AutoRemove: false
-      IpcMode: private
-      RestartPolicy:
-        Name: always
-        MaximumRetryCount: 0
+        - pygmy.enable: false
 
-  pygmy-ssh-agent-add-key:
+  amazeeio-dnsmasq:
     Config:
-      Image: nardeas/ssh-agent
       Labels:
-        - pygmy.name: pygmy-ssh-agent-add-key
-        - pygmy.enable: true
-        - pygmy.discrete: true
-        - pygmy.output:  true
-        - pygmy.purpose: addkeys
-        - pygmy.weight: 31
-    HostConfig:
-      AutoRemove: true
-      IpcMode: private
-      VolumesFrom:
-        - pygmy-ssh-agent
+        - pygmy.enable: false
 
-  pygmy-ssh-agent-show-keys:
+  amazeeio-mailhog:
     Config:
-      Cmd:
-        - ssh-add
-        - -l
-      Image: nardeas/ssh-agent
-      Labels:
-        - pygmy.name: pygmy-ssh-agent-show-keys
-        - pygmy.enable: true
-        - pygmy.discrete: true
-        - pygmy.output: true
-        - pygmy.purpose: showkeys
-        - pygmy.weight: 32
-    HostConfig:
-      AutoRemove: true
-      VolumesFrom:
-        - pygmy-ssh-agent
-
-  pygmy-mailhog:
-    Config:
-      Image: mailhog/mailhog
       Labels:
         - pygmy.enable: true
-        - pygmy.name: pygmy-mailhog
-        - pygmy.network: pygmy-network
+        - pygmy.name: amazeeio-mailhog
+        - pygmy.network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
 
-  pygmy-phpmyadmin:
+  unofficial-phpmyadmin:
     Config:
       Image: phpmyadmin/phpmyadmin
       Env:
         - "PMA_ARBITRARY=1"
       Labels:
         - pygmy.enable: true
-        - pygmy.name: pygmy-phpmyadmin
-        - pygmy.network: pygmy-network
-        - pygmy.weight: 20
+        - pygmy.name: unofficial-phpmyadmin
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://phpmyadmin.docker.amazee.io
+        - pygmy.weight: 20
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.phpmyadmin.rule: Host(`phpmyadmin.docker.amazee.io`)
@@ -311,13 +284,13 @@ services:
         80/tcp:
           - HostPort: 8770
 
-  pygmy-portainer:
+  unofficial-portainer:
     Config:
       Image: portainer/portainer
       Labels:
         - pygmy.enable: true
-        - pygmy.name: pygmy-portainer
-        - pygmy.network: pygmy-network
+        - pygmy.name: unofficial-portainer
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://portainer.docker.amazee.io
         - traefik.enable: true
         - traefik.port: 80
@@ -334,7 +307,7 @@ services:
         9000/tcp:
           - HostPort: 8100
 
-  pygmy-traefik:
+  unofficial-traefik-2:
     Config:
       Image: library/traefik:v2.1.3
       Cmd:
@@ -353,11 +326,11 @@ services:
         8080/tcp:
           HostPort: 3080
       Labels:
-        - pygmy.name: pygmy-traefik
-        - pygmy.network: pygmy-network
         - pygmy.enable: true
+        - pygmy.name: unofficial-traefik-2
+        - pygmy.network: amazeeio-network
         - pygmy.url: http://traefik.docker.amazee.io
-        - traefik.docker.network: pygmy-network
+        - traefik.docker.network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.traefik.rule: Host(`traefik.docker.amazee.io`)
@@ -375,7 +348,7 @@ services:
         8080/tcp:
           - HostPort: 8080
       RestartPolicy:
-        Name: always
+        Name: unless-stopped
         MaximumRetryCount: 0
     NetworkConfig:
       Ports:
@@ -385,14 +358,14 @@ services:
           - HostPort: 8080
 
 networks:
-  pygmy-network:
-    IPAM:
-      Config:
-        - Gateway: 10.99.99.1
-          Subnet: 10.99.99.0/24
+  amazeeio-network:
+    Name: amazeeio-network
+    Containers:
+      amazeeio-haproxy: {}
     Labels:
-      - pygmy.name: pygmy-network
-    Name: pygmy-network
+      - pygmy.network: amazeeio-network
+
+resolvers: []
 
 volumes:
   portainer_data:
