@@ -169,8 +169,8 @@ matrix:
         - cd lagoon-examples/drupal9-lagoon-simple-lando
         - lando start || true
         - sleep 5
-        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000
-        - curl --HEAD http://drupal9-example-simple-lando.lndo.site:8000 | grep "X-Lagoon"
+        - curl --HEAD http://drupal9-example-simple.lndo.site
+        - curl --HEAD http://drupal9-example-simple.lndo.site | grep "X-Lagoon"
         - lando destroy -y
         - cd ../../
 
