@@ -22,6 +22,13 @@ func New() model.Service {
 				"pygmy.name":     "amazeeio-dnsmasq",
 				"pygmy.weight":   "13",
 			},
+			Healthcheck: &container.HealthConfig{
+				Test:        []string{"CMD-SHELL", "stat /run/dnsmasq.pid || exit 1"},
+				Interval:    30000000000,
+				Timeout:     5000000000,
+				StartPeriod: 5000000000,
+				Retries:     5,
+			},
 		},
 		HostConfig: container.HostConfig{
 			AutoRemove: false,

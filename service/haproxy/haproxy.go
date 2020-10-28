@@ -20,6 +20,13 @@ func New() model.Service {
 				"pygmy.url":      "http://docker.amazee.io/stats",
 				"pygmy.weight":   "14",
 			},
+			Healthcheck: &container.HealthConfig{
+				Test:        []string{"CMD-SHELL", "wget http://docker.amazee.io/stats -O /dev/null || exit 1"},
+				Interval:    30000000000,
+				Timeout:     5000000000,
+				StartPeriod: 5000000000,
+				Retries:     5,
+			},
 		},
 		HostConfig: container.HostConfig{
 			Binds:        []string{"/var/run/docker.sock:/tmp/docker.sock"},
