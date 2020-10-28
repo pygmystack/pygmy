@@ -25,7 +25,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")
-		So(obj.Config.Healthcheck.Test, ShouldEqual, []string{"CMD-SHELL", "wget http://docker.amazee.io/stats -O /dev/null || exit 1"})
+		So(obj.Config.Healthcheck.Test, ShouldResemble, []string{"CMD-SHELL", "wget http://docker.amazee.io/stats -O /dev/null || exit 1"})
 		So(obj.Config.Healthcheck.Interval, ShouldEqual, 30000000000)
 		So(obj.Config.Healthcheck.Timeout, ShouldEqual, 5000000000)
 		So(obj.Config.Healthcheck.StartPeriod, ShouldEqual, 5000000000)

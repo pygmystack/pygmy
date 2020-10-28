@@ -23,7 +23,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-dnsmasq")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "13")
-		So(obj.Config.Healthcheck.Test, ShouldEqual, []string{"CMD-SHELL", "stat /run/dnsmasq.pid || exit 1"})
+		So(obj.Config.Healthcheck.Test, ShouldResemble, []string{"CMD-SHELL", "stat /run/dnsmasq.pid || exit 1"})
 		So(obj.Config.Healthcheck.Interval, ShouldEqual, 30000000000)
 		So(obj.Config.Healthcheck.Timeout, ShouldEqual, 5000000000)
 		So(obj.Config.Healthcheck.StartPeriod, ShouldEqual, 5000000000)
