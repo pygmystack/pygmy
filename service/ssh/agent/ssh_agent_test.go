@@ -31,7 +31,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "30")
-		So(obj.Config.Healthcheck.Test, ShouldResemble, []string{"CMD-SHELL", "if [ ! \"$SSH_AUTH_SOCK\" = \"\" ]; then exit 0; else exit 1; fi;"})
+		So(obj.Config.Healthcheck.Test, ShouldResemble, []string{"CMD-SHELL", "stat $SSH_AUTH_SOCK"})
 		So(obj.Config.Healthcheck.Interval, ShouldEqual, 30000000000)
 		So(obj.Config.Healthcheck.Timeout, ShouldEqual, 5000000000)
 		So(obj.Config.Healthcheck.StartPeriod, ShouldEqual, 5000000000)

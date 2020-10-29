@@ -23,7 +23,7 @@ func New() model.Service {
 				"pygmy.weight":   "13",
 			},
 			Healthcheck: &container.HealthConfig{
-				Test:        []string{"CMD-SHELL", "stat /run/dnsmasq.pid || exit 1"},
+				Test:        []string{"CMD-SHELL", "stat /run/dnsmasq.pid"},
 				Interval:    30000000000,
 				Timeout:     5000000000,
 				StartPeriod: 5000000000,
