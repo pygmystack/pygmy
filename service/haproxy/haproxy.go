@@ -21,7 +21,7 @@ func New() model.Service {
 				"pygmy.weight":   "14",
 			},
 			Healthcheck: &container.HealthConfig{
-				Test:        []string{"CMD-SHELL", " wget http://mailhog.docker.amazee.io -q -S -O - 2>&1 | grep email"},
+				Test:        []string{"CMD-SHELL", "wget http://docker.amazee.io/stats -q -S -O - 2>&1 | grep docker.amazee.io"},
 				Interval:    30000000000,
 				Timeout:     5000000000,
 				StartPeriod: 5000000000,
