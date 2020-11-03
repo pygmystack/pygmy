@@ -81,7 +81,7 @@ jobs:
       - name: Install Lando
         run: |
           wget https://files.devwithlando.io/lando-stable.deb;
-          sudo dpkg -i lando-stable.deb;
+          sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
 
       - name: Compile
         run: go build -o pygmy-go-linux-x86
