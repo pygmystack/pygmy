@@ -42,6 +42,8 @@ jobs:
           GO111MODULE: on
       - name: Vendor
         run: go mod vendor
+        env:
+          GO111MODULE: on
       - name: remove mod file
         run: rm go.mod
       - name: remove sum file
