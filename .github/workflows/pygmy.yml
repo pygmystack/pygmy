@@ -1,0 +1,29 @@
+name: pygmy
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  pygmy:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.14.1'
+      - name: Install
+        run: go mod download
+        env:
+          GO111MODULE: on
+      - name: Diff
+        run: diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+      - name: Vet
+        run: go vet $(go list ./...);
+      - name: Lint
+        run: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
+      - name: Build
+        run: make build
+      - name: Test
+        run: go test -v ./...
