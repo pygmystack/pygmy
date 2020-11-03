@@ -131,7 +131,7 @@ jobs:
         run: |
           cd lagoon-examples/drupal8-simple;
           docker-compose -p drupal8-example-simple up -d;
-          docker-compose -p drupal8-example-simple exec cli composer install;
+          docker-compose -p drupal8-example-simple exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON";
@@ -143,7 +143,7 @@ jobs:
         run: |
           cd lagoon-examples/drupal9-advanced;
           docker-compose -p drupal9-advanced up -d;
-          docker-compose -p drupal9-advanced exec cli composer install;
+          docker-compose -p drupal9-advanced exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
@@ -155,7 +155,7 @@ jobs:
         run: |
           cd lagoon-examples/drupal9-simple;
           docker-compose -p drupal-example-simple up -d;
-          docker-compose -p drupal-example-simple exec cli composer install;
+          docker-compose -p drupal-example-simple exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON";
@@ -178,7 +178,7 @@ jobs:
         run: |
           cd lagoon-examples/silverstripe-advanced;
           docker-compose -p silverstripe-advanced up -d;
-          docker-compose -p silverstripe-advanced exec cli composer install;
+          docker-compose -p silverstripe-advanced exec -T cli composer install;
           sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
           # Temporarily, we will omit the failure for the X-LAGOON header.;
@@ -191,7 +191,7 @@ jobs:
         run: |
           cd lagoon-examples/silverstripe-simple;
           docker-compose -p silverstripe-simple up -d;
-          docker-compose -p silverstripe-simple exec cli composer install;
+          docker-compose -p silverstripe-simple exec -T cli composer install;
           sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
           curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON";
@@ -203,7 +203,7 @@ jobs:
         run: |
           cd lagoon-examples/wordpress-simple;
           docker-compose -p wordpress-simple up -d;
-          docker-compose -p wordpress-simple exec cli composer install;
+          docker-compose -p wordpress-simple exec -T cli composer install;
           sleep 5;
           curl --HEAD http://wordpress-nginx.docker.amazee.io;
           curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
