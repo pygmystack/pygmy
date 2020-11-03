@@ -105,7 +105,7 @@ jobs:
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
 
       - name: Test for configured container tags.
-      - run: |
+        run: |
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
@@ -123,7 +123,7 @@ jobs:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
       - name: Clone the official examples
-      - run: |
+        run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
           git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
