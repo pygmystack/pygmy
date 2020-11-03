@@ -54,3 +54,11 @@ jobs:
         run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
       - name: Run version command
         run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+
+  slack:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
