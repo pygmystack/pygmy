@@ -57,7 +57,7 @@ jobs:
       - name: Run version command
         run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
 
-  pygmy:
+  complete:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
