@@ -74,7 +74,7 @@ services:
         - ship
       Labels:
         - pygmy.enable: true
-        - pygmy.discrete: true
+        - pygmy.discrete: false
         - pygmy.name: pygmy-cowsay
         - pygmy.output: true
         - pygmy.weight: 99
