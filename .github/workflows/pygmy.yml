@@ -224,15 +224,14 @@ jobs:
       - name: Cleanup Pygmy.
         run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
-      - name: Cleanup after tests.
-        run: docker system prune --all --force
-
       - name: Cowsay test
         run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up | grep '< holy ship >';
 
+      - name: Cleanup after tests.
+        run: docker system prune --all --force
+
       - name: Cleanup pygmy
-        run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml down;
-          ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
+        run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
 
   slack:
     runs-on: ubuntu-18.04
