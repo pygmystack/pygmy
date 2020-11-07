@@ -53,7 +53,7 @@ jobs:
       - name: Build
         run: go build -o pygmy-go.exe main.go
         env:
-          GO111MODULE: on
+          GO111MODULE: off
       - name: Copy the binary
         run: cp pygmy-go.exe builds/pygmy-go.exe
       - name: Run status command
