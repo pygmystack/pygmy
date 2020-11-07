@@ -36,24 +36,8 @@ jobs:
         with:
           stable: 'false'
           go-version: '1.14.1'
-      - name: Install
-        run: go mod download
-        env:
-          GO111MODULE: on
-      - name: Vendor
-        run: go mod vendor
-        env:
-          GO111MODULE: on
-      - name: remove mod file
-        run: rm go.mod
-      - name: remove sum file
-        run: rm go.sum
       - name: Build
-        run: go build -o pygmy-go.exe main.go
-        env:
-          GO111MODULE: off
-      - name: Copy the binary
-        run: cp pygmy-go.exe builds/pygmy-go.exe
+        run: docker build -t pygmy-go .
       - name: Run status command
         run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
       - name: Run version command
