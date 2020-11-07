@@ -48,8 +48,6 @@ jobs:
         run: rm go.mod
       - name: remove sum file
         run: rm go.sum
-      - name: remove git subtree
-        run: rmdir .git
       - name: Test
         run: go test ./...
       - name: Build
