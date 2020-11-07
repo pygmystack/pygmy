@@ -48,8 +48,12 @@ jobs:
         run: rm go.mod
       - name: remove sum file
         run: rm go.sum
+      - name: remove git subtree
+        run: rmdir .git
+      - name: Test
+        run: go test ./...
       - name: Build
-        run: go build -o pygmy-go.exe .
+        run: go build -o pygmy-go.exe main.go
         env:
           GO111MODULE: on
       - name: Copy the binary
