@@ -37,7 +37,7 @@ jobs:
           stable: 'false'
           go-version: '1.14.1'
       - name: Daemon Switch
-        run: 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchDaemon
+        run: C:\Program Files\Docker\Docker\DockerCli.exe -SwitchDaemon
       - name: Build
         run: docker build -t pygmy-go .
       - name: Run status command
