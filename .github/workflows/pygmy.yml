@@ -28,22 +28,20 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-  pygmywindows:
-    runs-on: windows-2019
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-go@v2
-        with:
-          stable: 'false'
-          go-version: '1.14.1'
-      - name: Daemon Switch
-        run: DockerCli.exe -SwitchDaemon
-      - name: Build
-        run: docker build -t pygmy-go .
-      - name: Run status command
-        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
-      - name: Run version command
-        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+#  pygmywindows:
+#    runs-on: windows-2019
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-go@v2
+#        with:
+#          stable: 'false'
+#          go-version: '1.14.1'
+#      - name: Build
+#        run: wsl docker build -t pygmy-go .
+#      - name: Run status command
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
+#      - name: Run version command
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
 
   complete:
     runs-on: ubuntu-18.04
