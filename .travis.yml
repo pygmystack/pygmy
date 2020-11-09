@@ -1,0 +1,29 @@
+---
+language: go
+go:
+  - "1.14.2"
+
+matrix:
+  include:
+
+    - name: Windows build
+      os: windows
+      services: docker
+      before_install:
+        - go mod download
+        - GO111MODULE=on go vet $(go list ./...);
+
+      script:
+        - export PYGMY_PATH=pygmy-go.exe;
+
+        - go mod vendor
+        - rm -f go.mod
+        - rm -f go.sum
+        - go build -o pygmy-go.exe .
+        - cp pygmy-go.exe builds/pygmy-go.exe
+
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
+        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+
+notifications:
+  slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
