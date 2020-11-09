@@ -5,7 +5,7 @@ on:
   pull_request:
 
 jobs:
-  pygmy:
+  basic:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
       - name: Test
         run: go test -v ./...
 
-#  pygmywindows:
+#  windows:
 #    runs-on: windows-2019
 #    steps:
 #      - uses: actions/checkout@v2
@@ -43,7 +43,7 @@ jobs:
 #      - name: Run version command
 #        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
 
-  complete:
+  full:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
