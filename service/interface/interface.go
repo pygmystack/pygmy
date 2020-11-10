@@ -122,7 +122,7 @@ func (Service *Service) GetRunning() (types.Container, error) {
 	containers, _ := docker.DockerContainerList()
 	for _, container := range containers {
 		if _, ok := container.Labels["pygmy.name"]; ok {
-			if strings.Contains(container.Names[0], Service.Config.Labels["pygmy.name"]) {
+			if strings.Contains(container.Labels["pygmy.name"], Service.Config.Labels["pygmy.name"]) {
 				return container, nil
 			}
 		}
@@ -259,6 +259,6 @@ func (Service *Service) DockerRun() ([]byte, error) {
 		return []byte{}, err
 	}
 
-	return docker.DockerContainerLogs(resp.ID)
+	return docker.DockerContainerLogs(resp.ID, Service.HostConfig.AutoRemove)
 
 }
