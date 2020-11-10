@@ -458,7 +458,7 @@ func DockerContainerLogs(ID string, Follow bool) ([]byte, error) {
 	b, _ := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
-		Follow: Follow,
+		Follow:     Follow,
 	})
 
 	buf := new(bytes.Buffer)
