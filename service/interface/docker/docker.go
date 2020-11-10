@@ -448,7 +448,7 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 	return err
 }
 
-func DockerContainerLogs(ID string) ([]byte, error) {
+func DockerContainerLogs(ID string, Follow bool) ([]byte, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
@@ -458,6 +458,7 @@ func DockerContainerLogs(ID string) ([]byte, error) {
 	b, _ := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
+		Follow:     Follow,
 	})
 
 	buf := new(bytes.Buffer)
