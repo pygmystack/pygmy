@@ -36,12 +36,14 @@ jobs:
 #        with:
 #          stable: 'false'
 #          go-version: '1.14.1'
+#      - name: Switch Docker daemon mode to Linux
+#        run: Start-Process $Env:ProgramFiles\Docker\Docker\DockerCli.exe -ArgumentList "-SwitchLinuxEngine"
 #      - name: Build
-#        run: wsl docker build -t pygmy-go .
+#        run: docker build -t pygmy-go .
 #      - name: Run status command
-#        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.basic.yml status;
 #      - name: Run version command
-#        run: builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.basic.yml version;
 
   full:
     runs-on: ubuntu-18.04
@@ -77,9 +79,9 @@ jobs:
           ./pygmy-go-linux-x86 pull;
           ./pygmy-go-linux-x86 pull;
           ./pygmy-go-linux-x86 status;
-          ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up;
-          ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml status;
-          ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml version;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml version;
 
       - name: Test the amazeeio-network for expected results
         run: |
@@ -208,16 +210,16 @@ jobs:
           cd ../../;
 
       - name: Cleanup Pygmy.
-        run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
+        run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml clean;
 
       - name: Cowsay test
-        run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml up | grep '< holy ship >';
+        run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up | grep '< holy ship >';
 
       - name: Cleanup after tests.
         run: docker system prune --all --force
 
       - name: Cleanup pygmy
-        run: ./pygmy-go-linux-x86 --config examples/pygmy.travis.yml clean;
+        run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml clean;
 
   slack:
     runs-on: ubuntu-18.04

@@ -22,8 +22,8 @@ matrix:
         - go build -o pygmy-go.exe .
         - cp pygmy-go.exe builds/pygmy-go.exe
 
-        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml status;
-        - builds/${PYGMY_PATH} --config examples/pygmy.travis.yml version;
+        - builds/${PYGMY_PATH} --config examples/pygmy.basic.yml status;
+        - builds/${PYGMY_PATH} --config examples/pygmy.basic.yml version;
 
 notifications:
   slack: fubarhouse:upHoIzmKb4ikkBOt2cOwgKXY
