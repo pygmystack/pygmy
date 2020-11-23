@@ -49,7 +49,6 @@ func Up(c Config) {
 		service := c.Services[s]
 		enabled, _ := service.GetFieldBool("enable")
 		purpose, _ := service.GetFieldString("purpose")
-		output, _ := service.GetFieldBool("output")
 
 		// Do not show or add keys:
 		if enabled && purpose != "addkeys" && purpose != "showkeys" {
@@ -76,10 +75,7 @@ func Up(c Config) {
 				}
 			}
 
-			o, _ := service.Start()
-			if output && string(o) != "" {
-				fmt.Println(string(o))
-			}
+			service.Start()
 		}
 
 		// If one or more agent was found:
@@ -133,11 +129,9 @@ func Up(c Config) {
 	if agentPresent {
 		i := 1
 		for _, v := range c.Keys {
-			out, err := SshKeyAdd(c, v, i)
+			err := SshKeyAdd(c, v, i)
 			if err != nil {
 				fmt.Println(err)
-			} else if string(out) != "" {
-				fmt.Println(strings.Trim(string(out), "\n"))
 			}
 			i++
 		}

@@ -36,7 +36,7 @@ func Update(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := service.Status(); !s {
-				_, e = service.Start()
+				e = service.Start()
 				if e != nil {
 					fmt.Println(e)
 				}

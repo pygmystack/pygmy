@@ -13,7 +13,7 @@ import (
 type DockerService interface {
 	Setup() error
 	Status() (bool, error)
-	Start() ([]byte, error)
+	Start() error
 	Stop() error
 }
 

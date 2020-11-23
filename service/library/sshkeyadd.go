@@ -12,18 +12,17 @@ import (
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
+func SshKeyAdd(c Config, key string, index int) error {
 
 	Setup(&c)
 
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {
 			fmt.Printf("%v\n", err)
-			return []byte{}, err
+			return err
 		}
 	}
 
-	var b []byte
 	var e error
 
 	for _, Container := range c.Services {
@@ -58,11 +57,25 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 						fmt.Println(e)
 					}
 
-					return newService.Start()
+					newService.Start()
+					l, e := newService.DockerLogs()
+					if e != nil {
+						return e
+					}
+					if string(l) != "" {
+						fmt.Println(string(l))
+					}
 
 				} else {
 
-					return Container.Start()
+					Container.Start()
+					l, e := Container.DockerLogs()
+					if e != nil {
+						return e
+					}
+					if string(l) != "" {
+						fmt.Println(string(l))
+					}
 
 				}
 
@@ -70,5 +83,5 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 		}
 
 	}
-	return b, e
+	return e
 }

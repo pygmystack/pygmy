@@ -39,26 +39,25 @@ func New() model.Service {
 // SshKeyLister will grab the output of all running containers with the proper
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
-func List(service model.Service) []string {
-	var r []byte
+func List(service model.Service) ([]byte, error) {
 	purpose, _ := service.GetFieldString("purpose")
 	if purpose == "showkeys" {
-		r, _ = service.Start()
+		service.Start()
 	}
-	return strings.Split(string(r), "\n")
+	return service.DockerLogs()
 }
 
 // Search will determine if an SSH key has been added to the agent.
 func Search(service model.Service, key string) bool {
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 
-		items := List(service)
+		items, _ := List(service)
 
 		if len(items) == 0 {
 			return false
 		}
 
-		for _, item := range items {
+		for _, item := range strings.Split(string(items), "\n") {
 			if strings.Contains(item, "The agent has no identities") {
 				return false
 			}
