@@ -57,7 +57,7 @@ func Search(service model.Service, key string) bool {
 	result := false
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 		stripped := strings.Trim(key, ".pub")
-		data, err := ioutil.ReadFile(stripped+".pub")
+		data, err := ioutil.ReadFile(stripped + ".pub")
 		if err != nil {
 			fmt.Println(err)
 			return false
