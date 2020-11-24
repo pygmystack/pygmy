@@ -28,7 +28,6 @@ func SshKeyAdd(c Config, key string, index int) error {
 	for _, Container := range c.Services {
 		purpose, _ := Container.GetFieldString("purpose")
 		if purpose == "addkeys" {
-			fmt.Println(agent.Search(Container, key))
 			if !agent.Search(Container, key) {
 				if runtime.GOOS == "windows" {
 					Container.Config.Cmd = []string{"ssh-add", "/key"}

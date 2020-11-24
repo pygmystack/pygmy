@@ -65,12 +65,9 @@ func Search(service model.Service, key string) bool {
 
 		items, _ := List(service)
 
-		fmt.Println(items)
-
 		if len(items) == 0 {
 			return false
 		}
-
 
 		for _, item := range strings.Split(string(items), "\n") {
 			if strings.Contains(item, "The agent has no identities") {
