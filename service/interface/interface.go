@@ -217,7 +217,7 @@ func (Service *Service) DockerLogs() ([]byte, error) {
 		return []byte{}, err
 	}
 
-	name, e := Service.GetFieldString("name")
+	name, _ := Service.GetFieldString("name")
 	log, e := docker.DockerContainerLogs(name)
 
 	if e != nil {

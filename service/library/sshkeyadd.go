@@ -28,6 +28,7 @@ func SshKeyAdd(c Config, key string, index int) error {
 	for _, Container := range c.Services {
 		purpose, _ := Container.GetFieldString("purpose")
 		if purpose == "addkeys" {
+			fmt.Println(agent.Search(Container, key))
 			if !agent.Search(Container, key) {
 				if runtime.GOOS == "windows" {
 					Container.Config.Cmd = []string{"ssh-add", "/key"}
@@ -57,7 +58,10 @@ func SshKeyAdd(c Config, key string, index int) error {
 						fmt.Println(e)
 					}
 
-					newService.Start()
+					e = newService.Start()
+					if e != nil {
+						return e
+					}
 					l, e := newService.DockerLogs()
 					if e != nil {
 						return e
@@ -68,7 +72,10 @@ func SshKeyAdd(c Config, key string, index int) error {
 
 				} else {
 
-					Container.Start()
+					e := Container.Start()
+					if e != nil {
+						return e
+					}
 					l, e := Container.DockerLogs()
 					if e != nil {
 						return e

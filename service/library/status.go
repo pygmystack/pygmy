@@ -90,7 +90,10 @@ func Status(c Config) {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
 			if purpose == "showkeys" {
-				v.Start()
+				e := v.Start()
+				if e != nil {
+					fmt.Println(e)
+				}
 				l, _ := v.DockerLogs()
 				if len(string(l)) > 0 {
 					output := strings.Trim(string(l), "\n")

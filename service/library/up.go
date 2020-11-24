@@ -75,7 +75,10 @@ func Up(c Config) {
 				}
 			}
 
-			service.Start()
+			e := service.Start()
+			if e != nil {
+				fmt.Println(e)
+			}
 		}
 
 		// If one or more agent was found:
