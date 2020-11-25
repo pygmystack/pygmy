@@ -65,8 +65,12 @@ func SshKeyAdd(c Config, key string, index int) error {
 					if e != nil {
 						return e
 					}
-					if string(l) != "" {
-						fmt.Println(string(l))
+
+					// We need tighter control on the output of this container...
+					for _, line := range strings.Split(string(l), "\n") {
+						if strings.Contains(line, "Identity added:") {
+							fmt.Println(line)
+						}
 					}
 
 				} else {
@@ -79,8 +83,12 @@ func SshKeyAdd(c Config, key string, index int) error {
 					if e != nil {
 						return e
 					}
-					if string(l) != "" {
-						fmt.Println(string(l))
+
+					// We need tighter control on the output of this container...
+					for _, line := range strings.Split(string(l), "\n") {
+						if strings.Contains(line, "Identity added:") {
+							fmt.Println(line)
+						}
 					}
 
 				}
