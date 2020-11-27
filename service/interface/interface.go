@@ -40,14 +40,15 @@ func (Service *Service) Setup() error {
 // Start will perform a series of checks to see if the container starting
 // is supposed be removed before-hand and will check to see if the
 // container is running before it is actually started.
-func (Service *Service) Start() ([]byte, error) {
+func (Service *Service) Start() error {
 
 	name, err := Service.GetFieldString("name")
 	discrete, _ := Service.GetFieldBool("discrete")
+	output, _ := Service.GetFieldBool("output")
 	purpose, _ := Service.GetFieldString("purpose")
 
 	if err != nil {
-		return []byte{}, nil
+		return nil
 	}
 
 	s := false
@@ -56,13 +57,13 @@ func (Service *Service) Start() ([]byte, error) {
 		var e error
 		s, e = Service.Status()
 		if e != nil {
-			return []byte{}, e
+			return e
 		}
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
 		fmt.Printf("Already running %v\n", name)
-		return []byte{}, nil
+		return nil
 	}
 
 	if purpose == "addkeys" || purpose == "showkeys" {
@@ -75,21 +76,28 @@ func (Service *Service) Start() ([]byte, error) {
 
 	}
 
-	output, err := Service.DockerRun()
+	err = Service.DockerRun()
 	if err != nil {
-		return []byte{}, err
+		return err
+	}
+
+	l, _ := Service.DockerLogs()
+	if output && string(l) != "" {
+		fmt.Println(string(l))
 	}
 
 	if c, err := Service.GetRunning(); c.ID != "" {
-		if !Service.HostConfig.AutoRemove && !discrete {
+		if !discrete {
 			fmt.Printf("Successfully started %v\n", name)
-		} else if Service.HostConfig.AutoRemove && err != nil {
+			return nil
+		}
+		if err != nil {
 			// We cannot guarantee this container is running at this point if it is to be removed.
-			return output, fmt.Errorf("Failed to run %v: %v\n", name, err)
+			return fmt.Errorf("Failed to run %v: %v\n", name, err)
 		}
 	}
 
-	return output, nil
+	return nil
 }
 
 // Status will check if the container is running.
@@ -200,14 +208,37 @@ func (Service *Service) Stop() error {
 // _ will ensure DockerService is implemented by Service.
 var _ DockerService = (*Service)(nil)
 
-// DockerRun will setup and run a given container.
-func (Service *Service) DockerRun() ([]byte, error) {
-
+// DockerLogs will return the logs from the container.
+func (Service *Service) DockerLogs() ([]byte, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return []byte{}, err
+	}
+
+	name, _ := Service.GetFieldString("name")
+	log, e := docker.DockerContainerLogs(name)
+
+	if e != nil {
+		return []byte{}, err
+	}
+
+	if string(log) != "" {
+		return log, nil
+	}
+
+	return []byte{}, nil
+}
+
+// DockerRun will setup and run a given container.
+func (Service *Service) DockerRun() error {
+
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
+	if err != nil {
+		return err
 	}
 
 	// Ensure we have the image available:
@@ -240,25 +271,25 @@ func (Service *Service) DockerRun() ([]byte, error) {
 	c, _ := docker.DockerContainerList()
 	for _, cn := range c {
 		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
-			return []byte{}, nil
+			return nil
 		}
 	}
 
 	// We need the container name.
 	name, e := Service.GetFieldString("name")
 	if e != nil {
-		return []byte{}, fmt.Errorf("container config is missing label for name")
+		return fmt.Errorf("container config is missing label for name")
 	}
 
-	resp, err := docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
+	_, err = docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
 	if err != nil {
-		return []byte{}, err
+		return err
 	}
 
 	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
-		return []byte{}, err
+		return err
 	}
 
-	return docker.DockerContainerLogs(resp.ID, Service.HostConfig.AutoRemove)
+	return nil
 
 }
