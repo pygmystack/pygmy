@@ -448,25 +448,26 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 	return err
 }
 
-func DockerContainerLogs(ID string, Follow bool) ([]byte, error) {
+func DockerContainerLogs(ID string) ([]byte, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return []byte{}, err
 	}
-	b, _ := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
+	b, e := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
-		Follow:     Follow,
 	})
+
+	if e != nil {
+		return []byte{}, e
+	}
 
 	buf := new(bytes.Buffer)
 	if _, f := buf.ReadFrom(b); f != nil {
 		fmt.Println(f)
 	}
-
-	b.Close()
 
 	return buf.Bytes(), nil
 }

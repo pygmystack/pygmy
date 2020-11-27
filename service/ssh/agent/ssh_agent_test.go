@@ -1,6 +1,7 @@
 package agent_test
 
 import (
+	"fmt"
 	"testing"
 
 	model "github.com/fubarhouse/pygmy-go/service/interface"
@@ -13,7 +14,10 @@ func Example() {
 }
 
 func ExampleList() {
-	agent.List(model.Service{})
+	_, e := agent.List(model.Service{})
+	if e != nil {
+		fmt.Println(e)
+	}
 }
 
 func ExampleSearch() {
