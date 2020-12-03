@@ -3,14 +3,14 @@ package library
 import (
 	"fmt"
 
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
 func Clean(c Config) {
 
 	Setup(&c)
-	Containers, _ := docker.DockerContainerList()
+	Containers, _ := docker.ContainerList()
 	NetworksToClean := []string{}
 
 	for _, Container := range Containers {
@@ -26,12 +26,12 @@ func Clean(c Config) {
 		}
 
 		if target {
-			err := docker.DockerKill(Container.ID)
+			err := docker.ContainerKill(Container.ID)
 			if err == nil {
 				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
 			}
 
-			err = docker.DockerRemove(Container.ID)
+			err = docker.ContainerRemove(Container.ID)
 			if err == nil {
 				fmt.Printf("Successfully removed %v.\n", Container.Names[0])
 			}
@@ -43,12 +43,12 @@ func Clean(c Config) {
 	}
 
 	for n := range unique(NetworksToClean) {
-		if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); s {
-			e := docker.DockerNetworkRemove(NetworksToClean[n])
+		if s, _ := docker.NetworkStatus(NetworksToClean[n]); s {
+			e := docker.NetworkRemove(NetworksToClean[n])
 			if e != nil {
 				fmt.Println(e)
 			}
-			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
+			if s, _ := docker.NetworkStatus(NetworksToClean[n]); !s {
 				fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
 			} else {
 				fmt.Printf("Network %v was not removed\n", NetworksToClean[n])

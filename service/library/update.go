@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 )
 
 // Update will update the the images for all configured services.
@@ -22,7 +22,7 @@ func Update(c Config) {
 		var result string
 		var err error
 		if purpose == "" || purpose == "sshagent" {
-			result, err = docker.DockerPull(service.Config.Image)
+			result, err = docker.ImagePull(service.Config.Image)
 			if err == nil {
 				fmt.Println(result)
 			}

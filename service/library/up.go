@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 )
 
 // Up will bring Pygmy up.
@@ -29,8 +29,8 @@ func Up(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.DockerVolumeExists(volume); !s {
-			_, err := docker.DockerVolumeCreate(volume)
+		if s, _ := docker.VolumeExists(volume); !s {
+			_, err := docker.VolumeCreate(volume)
 			if err == nil {
 				fmt.Printf("Created volume %v\n", volume.Name)
 			} else {
@@ -53,9 +53,9 @@ func Up(c Config) {
 		// Do not show or add keys:
 		if enabled && purpose != "addkeys" && purpose != "showkeys" {
 
-			// Here we will immitate the docker command by
+			// Here we will immitate the command by
 			// pulling the image if it's not in the daemon.
-			images, _ := docker.DockerImageList()
+			images, _ := docker.ImageList()
 			imageFound := false
 			for _, image := range images {
 				for _, digest := range image.RepoDigests {
@@ -67,10 +67,10 @@ func Up(c Config) {
 			}
 
 			// The image wasn't found.
-			// When running 'docker run', it will pull the image.
+			// When running the container, it will pull the image.
 			// For UX it makes sense we do this here.
 			if !imageFound {
-				if _, err := docker.DockerPull(service.Config.Image); err != nil {
+				if _, err := docker.ImagePull(service.Config.Image); err != nil {
 					continue
 				}
 			}
@@ -87,10 +87,10 @@ func Up(c Config) {
 		}
 	}
 
-	// Docker network(s) creation
+	// Network(s) creation
 	for _, Network := range c.Networks {
 		if Network.Name != "" {
-			netVal, _ := docker.DockerNetworkStatus(Network.Name)
+			netVal, _ := docker.NetworkStatus(Network.Name)
 			if !netVal {
 				if err := NetworkCreate(Network); err == nil {
 					fmt.Printf("Successfully created network %v\n", Network.Name)
@@ -107,7 +107,7 @@ func Up(c Config) {
 		name, nameErr := service.GetFieldString("name")
 		// If the network is configured at the container level, connect it.
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
-			if s, _ := docker.DockerNetworkConnected(Network, name); !s {
+			if s, _ := docker.NetworkConnected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
 					fmt.Printf("Successfully connected %v to %v\n", name, Network)
 				} else {

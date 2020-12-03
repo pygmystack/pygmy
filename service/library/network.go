@@ -6,20 +6,20 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 )
 
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
 func NetworkCreate(network types.NetworkResource) error {
-	return docker.DockerNetworkCreate(&network)
+	return docker.NetworkCreate(&network)
 }
 
 // NetworkConnect is part of a centralised abstraction of the Docker API
 // and will connect a created container to a docker network with a
 // specified name.
 func NetworkConnect(network string, containerName string) error {
-	return docker.DockerNetworkConnect(network, containerName)
+	return docker.NetworkConnect(network, containerName)
 }
 
 // NetworkStatus will check the state of a Docker network to test if it has

@@ -7,25 +7,25 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 )
 
 // Setup will detect if the Service's image reference exists and will
-// attempt to run `docker pull` on the non-canonical image if it is
+// attempt to run image pull on the non-canonical image if it is
 // not found in the daemon.
 func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
 		return nil
 	}
 
-	images, _ := docker.DockerImageList()
+	images, _ := docker.ImageList()
 	for _, image := range images {
 		if strings.Contains(fmt.Sprint(image.RepoTags), Service.Config.Image) {
 			return nil
 		}
 	}
 
-	msg, err := docker.DockerPull(Service.Config.Image)
+	msg, err := docker.ImagePull(Service.Config.Image)
 	if msg != "" {
 		fmt.Println(msg)
 	}
@@ -67,10 +67,10 @@ func (Service *Service) Start() error {
 	}
 
 	if purpose == "addkeys" || purpose == "showkeys" {
-		if e := docker.DockerKill(name); e != nil {
+		if e := docker.ContainerKill(name); e != nil {
 			fmt.Sprintln(e)
 		}
-		if e := docker.DockerRemove(name); e != nil {
+		if e := docker.ContainerRemove(name); e != nil {
 			fmt.Sprintln(e)
 		}
 
@@ -111,7 +111,7 @@ func (Service *Service) Status() (bool, error) {
 	if Service.HostConfig.AutoRemove {
 		return true, nil
 	}
-	containers, _ := docker.DockerContainerList()
+	containers, _ := docker.ContainerList()
 	for _, container := range containers {
 		for _, n := range container.Names {
 			if strings.Contains(n, name) && strings.HasPrefix(container.Status, "Up") {
@@ -127,7 +127,7 @@ func (Service *Service) Status() (bool, error) {
 // GetRunning will get a types.Container variable for a given running container
 // and it will not retrieve any information on containers that are not running.
 func (Service *Service) GetRunning() (types.Container, error) {
-	containers, _ := docker.DockerContainerList()
+	containers, _ := docker.ContainerList()
 	for _, container := range containers {
 		if _, ok := container.Labels["pygmy.name"]; ok {
 			if strings.Contains(container.Labels["pygmy.name"], Service.Config.Labels["pygmy.name"]) {
@@ -147,22 +147,22 @@ func (Service *Service) Clean() error {
 		return nil
 	}
 
-	Containers, _ := docker.DockerContainerList()
+	Containers, _ := docker.ContainerList()
 	for _, container := range Containers {
 		if container.Names[0] == name {
 			if pygmy {
 				name := strings.TrimLeft(container.Names[0], "/")
-				if e := docker.DockerKill(container.ID); e == nil {
+				if e := docker.ContainerKill(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
 						fmt.Printf("Successfully killed %v\n", name)
 					}
 				}
-				if e := docker.DockerStop(container.ID); e == nil {
+				if e := docker.ContainerStop(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
 						fmt.Printf("Successfully stopped %v\n", name)
 					}
 				}
-				if e := docker.DockerRemove(container.ID); e != nil {
+				if e := docker.ContainerRemove(container.ID); e != nil {
 					if !Service.HostConfig.AutoRemove {
 						fmt.Printf("Successfully removed %v\n", name)
 					}
@@ -192,8 +192,8 @@ func (Service *Service) Stop() error {
 	}
 
 	for _, name := range container.Names {
-		if e := docker.DockerStop(container.ID); e == nil {
-			if e := docker.DockerRemove(container.ID); e == nil {
+		if e := docker.ContainerStop(container.ID); e == nil {
+			if e := docker.ContainerRemove(container.ID); e == nil {
 				if !discrete {
 					containerName := strings.Trim(name, "/")
 					fmt.Printf("Successfully removed %v\n", containerName)
@@ -218,7 +218,7 @@ func (Service *Service) DockerLogs() ([]byte, error) {
 	}
 
 	name, _ := Service.GetFieldString("name")
-	log, e := docker.DockerContainerLogs(name)
+	log, e := docker.ContainerLogs(name)
 
 	if e != nil {
 		return []byte{}, err
@@ -242,7 +242,7 @@ func (Service *Service) DockerRun() error {
 	}
 
 	// Ensure we have the image available:
-	images, _ := docker.DockerImageList()
+	images, _ := docker.ImageList()
 
 	// Specify a false boolean which we can switch to true if the image is in the registry:
 	imageFound := false
@@ -268,7 +268,7 @@ func (Service *Service) DockerRun() error {
 	}
 
 	// Sanity check to ensure we don't get name conflicts.
-	c, _ := docker.DockerContainerList()
+	c, _ := docker.ContainerList()
 	for _, cn := range c {
 		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
 			return nil
@@ -281,12 +281,12 @@ func (Service *Service) DockerRun() error {
 		return fmt.Errorf("container config is missing label for name")
 	}
 
-	_, err = docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
+	_, err = docker.ContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
 	if err != nil {
 		return err
 	}
 
-	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+	if err := docker.ContainerStart(name, types.ContainerStartOptions{}); err != nil {
 		return err
 	}
 

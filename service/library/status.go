@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/fubarhouse/pygmy-go/service/interface/cri/docker"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 )
 
@@ -23,7 +23,7 @@ func Status(c Config) {
 		fmt.Println()
 	}
 
-	Containers, _ := docker.DockerContainerList()
+	Containers, _ := docker.ContainerList()
 	for _, Container := range Containers {
 		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
@@ -60,7 +60,7 @@ func Status(c Config) {
 
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
-			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
+			if x, _ := docker.NetworkConnected(Network.Name, Container.Name); !x {
 				fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
 			} else {
 				fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)
@@ -78,7 +78,7 @@ func Status(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.DockerVolumeExists(volume); s {
+		if s, _ := docker.VolumeExists(volume); s {
 			fmt.Printf("[*] Volume %v has been created\n", volume.Name)
 		} else {
 			fmt.Printf("[ ] Volume %v has not been created\n", volume.Name)
