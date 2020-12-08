@@ -10,30 +10,33 @@ import (
 func Clean(c Config) {
 
 	Setup(&c)
-	Containers, _ := docker.ContainerList()
 	NetworksToClean := []string{}
 
-	for _, Container := range Containers {
-		target := false
-		if l := Container.Labels["pygmy.enable"]; l == "true" || l == "1" {
-			target = true
-		}
-		if l := Container.Labels["pygmy"]; l == "pygmy" {
-			target = true
-		}
-		if l := Container.Labels["pygmy.network"]; l != "" {
-			NetworksToClean = append(NetworksToClean, l)
-		}
+	if c.Runtime == "docker" {
+		Containers, _ := docker.ContainerList()
 
-		if target {
-			err := docker.ContainerKill(Container.ID)
-			if err == nil {
-				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
+		for _, Container := range Containers {
+			target := false
+			if l := Container.Labels["pygmy.enable"]; l == "true" || l == "1" {
+				target = true
+			}
+			if l := Container.Labels["pygmy"]; l == "pygmy" {
+				target = true
+			}
+			if l := Container.Labels["pygmy.network"]; l != "" {
+				NetworksToClean = append(NetworksToClean, l)
 			}
 
-			err = docker.ContainerRemove(Container.ID)
-			if err == nil {
-				fmt.Printf("Successfully removed %v.\n", Container.Names[0])
+			if target {
+				err := docker.ContainerKill(Container.ID)
+				if err == nil {
+					fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
+				}
+
+				err = docker.ContainerRemove(Container.ID)
+				if err == nil {
+					fmt.Printf("Successfully removed %v.\n", Container.Names[0])
+				}
 			}
 		}
 	}
@@ -43,15 +46,17 @@ func Clean(c Config) {
 	}
 
 	for n := range unique(NetworksToClean) {
-		if s, _ := docker.NetworkStatus(NetworksToClean[n]); s {
-			e := docker.NetworkRemove(NetworksToClean[n])
-			if e != nil {
-				fmt.Println(e)
-			}
-			if s, _ := docker.NetworkStatus(NetworksToClean[n]); !s {
-				fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
-			} else {
-				fmt.Printf("Network %v was not removed\n", NetworksToClean[n])
+		if c.Runtime == "docker" {
+			if s, _ := docker.NetworkStatus(NetworksToClean[n]); s {
+				e := docker.NetworkRemove(NetworksToClean[n])
+				if e != nil {
+					fmt.Println(e)
+				}
+				if s, _ := docker.NetworkStatus(NetworksToClean[n]); !s {
+					fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
+				} else {
+					fmt.Printf("Network %v was not removed\n", NetworksToClean[n])
+				}
 			}
 		}
 	}

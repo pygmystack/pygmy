@@ -22,7 +22,9 @@ func Update(c Config) {
 		var result string
 		var err error
 		if purpose == "" || purpose == "sshagent" {
-			result, err = docker.ImagePull(service.Config.Image)
+			if c.Runtime == "docker" {
+				result, err = docker.ImagePull(service.Config.Image)
+			}
 			if err == nil {
 				fmt.Println(result)
 			}

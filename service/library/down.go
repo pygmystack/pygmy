@@ -34,10 +34,12 @@ func Down(c Config) {
 		if e != nil {
 			fmt.Println(e)
 		}
-		if s, _ := docker.NetworkStatus(network); !s {
-			fmt.Printf("Successfully removed network %v\n", network)
-		} else {
-			fmt.Printf("Network %v was not removed", network)
+		if c.Runtime == "docker" {
+			if s, _ := docker.NetworkStatus(network); !s {
+				fmt.Printf("Successfully removed network %v\n", network)
+			} else {
+				fmt.Printf("Network %v was not removed", network)
+			}
 		}
 	}
 

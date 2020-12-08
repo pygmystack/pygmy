@@ -29,15 +29,17 @@ func Up(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.VolumeExists(volume); !s {
-			_, err := docker.VolumeCreate(volume)
-			if err == nil {
-				fmt.Printf("Created volume %v\n", volume.Name)
+		if c.Runtime == "docker" {
+			if s, _ := docker.VolumeExists(volume); !s {
+				_, err := docker.VolumeCreate(volume)
+				if err == nil {
+					fmt.Printf("Created volume %v\n", volume.Name)
+				} else {
+					fmt.Println(err)
+				}
 			} else {
-				fmt.Println(err)
+				fmt.Printf("Already created volume %v\n", volume.Name)
 			}
-		} else {
-			fmt.Printf("Already created volume %v\n", volume.Name)
 		}
 	}
 
@@ -55,13 +57,15 @@ func Up(c Config) {
 
 			// Here we will immitate the command by
 			// pulling the image if it's not in the daemon.
-			images, _ := docker.ImageList()
 			imageFound := false
-			for _, image := range images {
-				for _, digest := range image.RepoDigests {
-					d := strings.Trim(strings.SplitAfter(digest, "@")[0], "@")
-					if strings.Contains(service.Config.Image, d) {
-						imageFound = true
+			if c.Runtime == "docker" {
+				images, _ := docker.ImageList()
+				for _, image := range images {
+					for _, digest := range image.RepoDigests {
+						d := strings.Trim(strings.SplitAfter(digest, "@")[0], "@")
+						if strings.Contains(service.Config.Image, d) {
+							imageFound = true
+						}
 					}
 				}
 			}
@@ -70,8 +74,10 @@ func Up(c Config) {
 			// When running the container, it will pull the image.
 			// For UX it makes sense we do this here.
 			if !imageFound {
-				if _, err := docker.ImagePull(service.Config.Image); err != nil {
-					continue
+				if c.Runtime == "docker" {
+					if _, err := docker.ImagePull(service.Config.Image); err != nil {
+						continue
+					}
 				}
 			}
 
@@ -90,12 +96,14 @@ func Up(c Config) {
 	// Network(s) creation
 	for _, Network := range c.Networks {
 		if Network.Name != "" {
-			netVal, _ := docker.NetworkStatus(Network.Name)
-			if !netVal {
-				if err := NetworkCreate(Network); err == nil {
-					fmt.Printf("Successfully created network %v\n", Network.Name)
-				} else {
-					fmt.Printf("Could not create network %v\n", Network.Name)
+			if c.Runtime == "docker" {
+				netVal, _ := docker.NetworkStatus(Network.Name)
+				if !netVal {
+					if err := NetworkCreate(&c, Network); err == nil {
+						fmt.Printf("Successfully created network %v\n", Network.Name)
+					} else {
+						fmt.Printf("Could not create network %v\n", Network.Name)
+					}
 				}
 			}
 		}
@@ -107,17 +115,19 @@ func Up(c Config) {
 		name, nameErr := service.GetFieldString("name")
 		// If the network is configured at the container level, connect it.
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
-			if s, _ := docker.NetworkConnected(Network, name); !s {
-				if s := NetworkConnect(Network, name); s == nil {
-					fmt.Printf("Successfully connected %v to %v\n", name, Network)
-				} else {
-					discrete, _ := service.GetFieldBool("discrete")
-					if !discrete {
-						fmt.Printf("Could not connect %v to %v\n", name, Network)
+			if c.Runtime == "docker" {
+				if s, _ := docker.NetworkConnected(Network, name); !s {
+					if s := NetworkConnect(&c, Network, name); s == nil {
+						fmt.Printf("Successfully connected %v to %v\n", name, Network)
+					} else {
+						discrete, _ := service.GetFieldBool("discrete")
+						if !discrete {
+							fmt.Printf("Could not connect %v to %v\n", name, Network)
+						}
 					}
+				} else {
+					fmt.Printf("Already connected %v to %v\n", name, Network)
 				}
-			} else {
-				fmt.Printf("Already connected %v to %v\n", name, Network)
 			}
 		}
 	}

@@ -11,15 +11,21 @@ import (
 
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
-func NetworkCreate(network types.NetworkResource) error {
-	return docker.NetworkCreate(&network)
+func NetworkCreate(c *Config, network types.NetworkResource) error {
+	if c.Runtime == "docker" {
+		return docker.NetworkCreate(&network)
+	}
+	return nil
 }
 
 // NetworkConnect is part of a centralised abstraction of the Docker API
 // and will connect a created container to a docker network with a
 // specified name.
-func NetworkConnect(network string, containerName string) error {
-	return docker.NetworkConnect(network, containerName)
+func NetworkConnect(c *Config, network string, containerName string) error {
+	if c.Runtime == "docker" {
+		return docker.NetworkConnect(network, containerName)
+	}
+	return nil
 }
 
 // NetworkStatus will check the state of a Docker network to test if it has

@@ -71,6 +71,9 @@ func Setup(c *Config) {
 
 	// All Viper API calls for default values go here.
 
+	// Runtime defaults.
+	viper.SetDefault("runtime", "docker")
+
 	// Set default value for default inheritance:
 	viper.SetDefault("defaults", true)
 

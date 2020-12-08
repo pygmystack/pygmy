@@ -14,6 +14,9 @@ import (
 // be passed to package library to configure logic for
 // continued abstraction.
 type Config struct {
+	// Runtime is the CRI to implement
+	Runtime string `yaml:"Runtime"`
+
 	// Keys are the paths to the Keys which should be added.
 	Keys []string `yaml:"Keys"`
 
