@@ -23,6 +23,7 @@ package cmd
 import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // stopCmd represents the stop command
@@ -37,6 +38,11 @@ This command does not check if the containers are running
 because other checks do for speed convenience.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			viper.Set("domain", Domain)
+		}
+
 		library.Clean(c)
 
 	},
@@ -44,6 +50,8 @@ because other checks do for speed convenience.`,
 
 func init() {
 
+	cleanCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	cleanCmd.Flags().MarkHidden("domain")
 	rootCmd.AddCommand(cleanCmd)
 
 }

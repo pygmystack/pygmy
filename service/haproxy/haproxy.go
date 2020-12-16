@@ -1,6 +1,8 @@
 package haproxy
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
@@ -8,7 +10,7 @@ import (
 )
 
 // New will provide the standard object for the haproxy container.
-func New() model.Service {
+func New(domain string) model.Service {
 	return model.Service{
 		Config: container.Config{
 			Image: "amazeeio/haproxy",
@@ -17,7 +19,7 @@ func New() model.Service {
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-haproxy",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      "http://docker.amazee.io/stats",
+				"pygmy.url":      fmt.Sprintf("http://%v/stats", domain),
 				"pygmy.weight":   "14",
 			},
 		},

@@ -23,6 +23,7 @@ package cmd
 import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // downCmd represents the down command
@@ -35,6 +36,11 @@ then if they are, it will not attempt to remove any
 services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			viper.Set("domain", Domain)
+		}
+
 		library.Down(c)
 
 	},
@@ -42,6 +48,8 @@ services which are not running.`,
 
 func init() {
 
+	downCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	downCmd.Flags().MarkHidden("domain")
 	rootCmd.AddCommand(downCmd)
 
 }

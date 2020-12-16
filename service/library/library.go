@@ -14,6 +14,11 @@ import (
 // be passed to package library to configure logic for
 // continued abstraction.
 type Config struct {
+
+	// Domain is the domain path used by Pygmy.
+	// For portability between vendors and users primarily.
+	Domain string
+
 	// Keys are the paths to the Keys which should be added.
 	Keys []string `yaml:"Keys"`
 

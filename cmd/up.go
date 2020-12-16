@@ -27,6 +27,7 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // upCmd represents the up command
@@ -42,6 +43,10 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			viper.Set("domain", Domain)
+		}
 
 		if NoKey {
 			c.Keys = []string{}
@@ -70,6 +75,8 @@ func init() {
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
 	rootCmd.AddCommand(upCmd)
+	upCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	upCmd.Flags().MarkHidden("domain")
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")

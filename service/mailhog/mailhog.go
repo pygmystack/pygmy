@@ -1,6 +1,8 @@
 package mailhog
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
@@ -8,7 +10,7 @@ import (
 )
 
 // New will provide the standard object for the mailhog container.
-func New() model.Service {
+func New(domain string) model.Service {
 	return model.Service{
 		Config: container.Config{
 			User: "0",
@@ -21,7 +23,7 @@ func New() model.Service {
 				"MH_UI_BIND_ADDR=0.0.0.0:80",
 				"MH_API_BIND_ADDR=0.0.0.0:80",
 				"AMAZEEIO=AMAZEEIO",
-				"AMAZEEIO_URL=mailhog.docker.amazee.io",
+				fmt.Sprintf("AMAZEEIO_URL=mailhog.%v", domain),
 			},
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
@@ -29,7 +31,7 @@ func New() model.Service {
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-mailhog",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      "http://mailhog.docker.amazee.io",
+				"pygmy.url":      fmt.Sprintf("http://mailhog.%v", domain),
 				"pygmy.weight":   "15",
 			},
 		},

@@ -23,6 +23,7 @@ package cmd
 import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // updateCmd represents the update command
@@ -34,6 +35,11 @@ var updateCmd = &cobra.Command{
 the string 'amazeeio', which encompasses all lagoon images.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			viper.Set("domain", Domain)
+		}
+
 		library.Update(c)
 
 	},
@@ -41,6 +47,8 @@ the string 'amazeeio', which encompasses all lagoon images.`,
 
 func init() {
 
+	updateCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	updateCmd.Flags().MarkHidden("domain")
 	rootCmd.AddCommand(updateCmd)
 
 }
