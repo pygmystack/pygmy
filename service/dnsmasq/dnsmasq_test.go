@@ -10,12 +10,12 @@ import (
 )
 
 func Example() {
-	dnsmasq.New()
+	dnsmasq.New("docker.amazee.io")
 }
 
 func Test(t *testing.T) {
 	Convey("DNSMasq: Field equality tests...", t, func() {
-		obj := dnsmasq.New()
+		obj := dnsmasq.New("docker.amazee.io")
 
 		So(obj.Config.Image, ShouldEqual, "andyshinn/dnsmasq:2.78")
 		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"-A", "/docker.amazee.io/127.0.0.1"}))

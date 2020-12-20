@@ -10,13 +10,13 @@ import (
 )
 
 func Example() {
-	mailhog.New()
+	mailhog.New("docker.amazee.io")
 	mailhog.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("MailHog: Field equality tests...", t, func() {
-		obj := mailhog.New()
+		obj := mailhog.New("docker.amazee.io")
 		objPorts := mailhog.NewDefaultPorts()
 		So(obj.Config.User, ShouldEqual, "0")
 		So(obj.Config.Image, ShouldEqual, "mailhog/mailhog")

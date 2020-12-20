@@ -10,13 +10,13 @@ import (
 )
 
 func Example() {
-	haproxy.New()
+	haproxy.New("docker.amazee.io")
 	haproxy.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New()
+		obj := haproxy.New("docker.amazee.io")
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldEqual, "amazeeio/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
