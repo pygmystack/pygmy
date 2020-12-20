@@ -1,0 +1,227 @@
+name: pygmy
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  basic:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.14.1'
+      - name: Install
+        run: go mod download
+        env:
+          GO111MODULE: on
+      - name: Diff
+        run: diff -u <(echo -n) <(gofmt -d $(find . -not -path "./vendor/*" -name "*.go"));
+      - name: Vet
+        run: go vet $(go list ./...);
+      - name: Lint
+        run: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.25.1 golangci-lint run -v
+      - name: Build
+        run: make build
+      - name: Test
+        run: go test -v ./...
+
+#  windows:
+#    runs-on: windows-2019
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: actions/setup-go@v2
+#        with:
+#          stable: 'false'
+#          go-version: '1.14.1'
+#      - name: Switch Docker daemon mode to Linux
+#        run: Start-Process $Env:ProgramFiles\Docker\Docker\DockerCli.exe -ArgumentList "-SwitchLinuxEngine"
+#      - name: Build
+#        run: docker build -t pygmy-go .
+#      - name: Run status command
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.basic.yml status;
+#      - name: Run version command
+#        run: builds/${PYGMY_PATH} --config examples/pygmy.basic.yml version;
+
+  full:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.14.1'
+        # Establish some SSH keys.
+      - name: Setup SSH
+        run: |
+          eval $(ssh-agent);
+          ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "";
+          ssh-add;
+          ssh-add -l;
+      - name: Setup git
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:";
+      - name: Install
+        run: go mod download
+        env:
+          GO111MODULE: on
+      - name: Install Lando
+        run: |
+          wget https://files.devwithlando.io/lando-stable.deb;
+          sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
+
+      - name: Compile
+        run: go build -o pygmy-go-linux-x86
+
+      - name: Basic test
+        run: |
+          ./pygmy-go-linux-x86 pull;
+          ./pygmy-go-linux-x86 pull;
+          ./pygmy-go-linux-x86 status;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml version;
+
+      - name: Test the amazeeio-network for expected results
+        run: |
+          docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-haproxy";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-mailhog";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-portainer";
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address';
+          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
+
+      - name: Test for configured container tags.
+        run: |
+          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+
+      - name: Clone the official examples
+        run: |
+          git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
+          git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
+
+      - name: Drupal 8 Simple
+        run: |
+          cd lagoon-examples/drupal8-simple;
+          docker-compose -p drupal8-example-simple up -d;
+          docker-compose -p drupal8-example-simple exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://drupal8-example-simple.docker.amazee.io;
+          curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p drupal8-example-simple down;
+          docker-compose -p drupal8-example-simple rm;
+          cd ../../;
+
+      - name: Drupal 9 Advanced
+        run: |
+          cd lagoon-examples/drupal9-advanced;
+          docker-compose -p drupal9-advanced up -d;
+          docker-compose -p drupal9-advanced exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
+          curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p drupal9-advanced down;
+          docker-compose -p drupal9-advanced rm;
+          cd ../../;
+
+      - name: Drupal 9 Simple
+        run: |
+          cd lagoon-examples/drupal9-simple;
+          docker-compose -p drupal-example-simple up -d;
+          docker-compose -p drupal-example-simple exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://drupal9-example-simple.docker.amazee.io;
+          curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p drupal-example-simple down;
+          docker-compose -p drupal-example-simple rm;
+          cd ../../;
+
+      - name: Node
+        run: |
+          cd lagoon-examples/node-example;
+          npm install;
+          docker-compose -p node up -d;
+          curl --HEAD http://node.docker.amazee.io;
+          curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p node down;
+          docker-compose -p node rm;
+          cd ../../;
+
+      - name: Silverstripe Advanced
+        run: |
+          cd lagoon-examples/silverstripe-advanced;
+          docker-compose -p silverstripe-advanced up -d;
+          docker-compose -p silverstripe-advanced exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://ss.docker.amazee.io;
+          # Temporarily, we will omit the failure for the X-LAGOON header.;
+          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON" || true;
+          docker-compose -p silverstripe-advanced down;
+          docker-compose -p silverstripe-advanced rm;
+          cd ../../;
+
+      - name: Silverstripe Simple
+        run: |
+          cd lagoon-examples/silverstripe-simple;
+          docker-compose -p silverstripe-simple up -d;
+          docker-compose -p silverstripe-simple exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://ss.docker.amazee.io;
+          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p silverstripe-simple down;
+          docker-compose -p silverstripe-simple rm;
+          cd ../../;
+
+      - name: Wordpress Simple
+        run: |
+          cd lagoon-examples/wordpress-simple;
+          docker-compose -p wordpress-simple up -d;
+          docker-compose -p wordpress-simple exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://wordpress-nginx.docker.amazee.io;
+          curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
+          docker-compose -p wordpress-simple down;
+          docker-compose -p wordpress-simple rm;
+          cd ../../;
+
+      - name: Lando test - running Pygmy along-side Lando
+        run: |
+          cd lagoon-examples/drupal9-lagoon-simple-lando;
+          lando start || true;
+          sleep 5;
+          curl --HEAD http://drupal9-example-simple.lndo.site:8000;
+          curl --HEAD http://drupal9-example-simple.lndo.site:8000 | grep "X-Lagoon";
+          lando destroy -y;
+          cd ../../;
+
+      - name: Cowsay test
+        run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
+
+      - name: Cleanup pygmy
+        run: ./pygmy-go-linux-x86 clean;
+
+      - name: Cleanup after tests.
+        run: docker system prune --all --force
+
+  slack:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@master
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
