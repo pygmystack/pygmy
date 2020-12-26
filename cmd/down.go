@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -49,7 +51,10 @@ services which are not running.`,
 func init() {
 
 	downCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	downCmd.Flags().MarkHidden("domain")
+	herr := downCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	rootCmd.AddCommand(downCmd)
 
 }

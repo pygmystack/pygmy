@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -48,7 +50,10 @@ the string 'amazeeio', which encompasses all lagoon images.`,
 func init() {
 
 	updateCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	updateCmd.Flags().MarkHidden("domain")
+	herr :=updateCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	rootCmd.AddCommand(updateCmd)
 
 }

@@ -76,7 +76,10 @@ func init() {
 
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	upCmd.Flags().MarkHidden("domain")
+	herr := upCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")

@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -51,7 +53,10 @@ because other checks do for speed convenience.`,
 func init() {
 
 	cleanCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	cleanCmd.Flags().MarkHidden("domain")
+	herr:= cleanCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	rootCmd.AddCommand(cleanCmd)
 
 }
