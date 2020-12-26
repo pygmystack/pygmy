@@ -210,7 +210,9 @@ jobs:
           cd ../../;
 
       - name: Clean system
-        run: ./pygmy-go-linux-x86 clean
+        run: |
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml clean
+          ./pygmy-go-linux-x86 clean
 
       - name: Custom domain test
         run: |
