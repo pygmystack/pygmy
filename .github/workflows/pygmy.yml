@@ -212,8 +212,10 @@ jobs:
       - name: Clean system
         run: |
           docker ps;
+          docker kill landoproxyhyperion5000gandalfedition_proxy_1;
           ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml clean;
           ./pygmy-go-linux-x86 clean;
+          docker system prune -a;
           docker ps;
 
       - name: Custom domain test
