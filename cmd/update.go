@@ -50,7 +50,7 @@ the string 'amazeeio', which encompasses all lagoon images.`,
 func init() {
 
 	updateCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	herr :=updateCmd.Flags().MarkHidden("domain")
+	herr := updateCmd.Flags().MarkHidden("domain")
 	if herr != nil {
 		fmt.Println(herr)
 	}

@@ -53,7 +53,7 @@ because other checks do for speed convenience.`,
 func init() {
 
 	cleanCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	herr:= cleanCmd.Flags().MarkHidden("domain")
+	herr := cleanCmd.Flags().MarkHidden("domain")
 	if herr != nil {
 		fmt.Println(herr)
 	}
