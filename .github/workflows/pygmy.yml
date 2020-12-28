@@ -199,16 +199,6 @@ jobs:
           docker-compose -p wordpress-simple rm;
           cd ../../;
 
-      - name: Lando test - running Pygmy along-side Lando
-        run: |
-          cd lagoon-examples/drupal9-lagoon-simple-lando;
-          lando start || true;
-          sleep 5;
-          curl --HEAD http://drupal9-example-simple.lndo.site:8000;
-          curl --HEAD http://drupal9-example-simple.lndo.site:8000 | grep "X-Lagoon";
-          lando destroy -y;
-          cd ../../;
-
       - name: Clean system
         run: |
           docker ps;
@@ -224,6 +214,16 @@ jobs:
           curl --HEAD http://kubernetes.amazee.io/stats | grep "mailhog.kubernetes.amazee.io";
           curl http://mailhog.kubernetes.amazee.io | grep MailHog;
           ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io clean;
+
+      - name: Lando test - running Pygmy along-side Lando
+        run: |
+          cd lagoon-examples/drupal9-lagoon-simple-lando;
+          lando start || true;
+          sleep 5;
+          curl --HEAD http://drupal9-example-simple.lndo.site:8000;
+          curl --HEAD http://drupal9-example-simple.lndo.site:8000 | grep "X-Lagoon";
+          lando destroy -y;
+          cd ../../;
 
       - name: Cowsay test
         run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
