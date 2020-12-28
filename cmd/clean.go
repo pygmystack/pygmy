@@ -25,7 +25,6 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // stopCmd represents the stop command
@@ -42,7 +41,7 @@ because other checks do for speed convenience.`,
 
 		Domain, _ := cmd.Flags().GetString("domain")
 		if Domain != "" {
-			viper.Set("domain", Domain)
+			c.Domain = Domain
 		}
 
 		library.Clean(c)

@@ -21,6 +21,8 @@
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 )
@@ -34,6 +36,11 @@ var statusCmd = &cobra.Command{
 This includes the docker services, the resolver and SSH key status`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			c.Domain = Domain
+		}
+
 		library.Status(c)
 
 	},
@@ -42,5 +49,11 @@ This includes the docker services, the resolver and SSH key status`,
 func init() {
 
 	rootCmd.AddCommand(statusCmd)
+
+	statusCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	herr := statusCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 
 }

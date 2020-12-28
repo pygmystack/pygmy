@@ -39,6 +39,11 @@ var restartCmd = &cobra.Command{
 
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
+		Domain, _ := cmd.Flags().GetString("domain")
+
+		if Domain != "" {
+			c.Domain = Domain
+		}
 
 		if NoKey {
 			c.Keys = []string{}
@@ -66,6 +71,11 @@ func init() {
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
 	rootCmd.AddCommand(restartCmd)
+	restartCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	herr := restartCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	restartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")

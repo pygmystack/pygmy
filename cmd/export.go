@@ -22,10 +22,11 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 var exportPath string
@@ -37,6 +38,11 @@ var exportCmd = &cobra.Command{
 	Short:   "Export validated configuration to a given path",
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		Domain, _ := cmd.Flags().GetString("domain")
+		if Domain != "" {
+			c.Domain = Domain
+		}
 
 		library.Export(c, exportPath)
 
@@ -50,6 +56,11 @@ func init() {
 	homedir, _ := homedir.Dir()
 	exportPath = fmt.Sprintf("%v%v.pygmy.yml", homedir, string(os.PathSeparator))
 
+	exportCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	herr := exportCmd.Flags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
 	exportCmd.Flags().StringVarP(&exportPath, "output", "o", exportPath, "Path to exported configuration to be written to")
 
 }

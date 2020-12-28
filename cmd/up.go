@@ -27,7 +27,6 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // upCmd represents the up command
@@ -45,7 +44,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 		Domain, _ := cmd.Flags().GetString("domain")
 		if Domain != "" {
-			viper.Set("domain", Domain)
+			c.Domain = Domain
 		}
 
 		if NoKey {

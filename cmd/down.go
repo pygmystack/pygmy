@@ -25,7 +25,6 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // downCmd represents the down command
@@ -40,7 +39,7 @@ services which are not running.`,
 
 		Domain, _ := cmd.Flags().GetString("domain")
 		if Domain != "" {
-			viper.Set("domain", Domain)
+			c.Domain = Domain
 		}
 
 		library.Down(c)
