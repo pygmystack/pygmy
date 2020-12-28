@@ -61,6 +61,12 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	rootCmd.PersistentFlags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	herr := rootCmd.PersistentFlags().MarkHidden("domain")
+	if herr != nil {
+		fmt.Println(herr)
+	}
+
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

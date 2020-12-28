@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 )
@@ -36,7 +34,7 @@ var updateCmd = &cobra.Command{
 the string 'amazeeio', which encompasses all lagoon images.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		Domain, _ := cmd.Flags().GetString("domain")
+		Domain, _ := rootCmd.PersistentFlags().GetString("domain")
 		if Domain != "" {
 			c.Domain = Domain
 		}
@@ -48,11 +46,6 @@ the string 'amazeeio', which encompasses all lagoon images.`,
 
 func init() {
 
-	updateCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	herr := updateCmd.Flags().MarkHidden("domain")
-	if herr != nil {
-		fmt.Println(herr)
-	}
 	rootCmd.AddCommand(updateCmd)
 
 }

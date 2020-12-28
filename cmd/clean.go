@@ -21,8 +21,6 @@
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +37,7 @@ This command does not check if the containers are running
 because other checks do for speed convenience.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		Domain, _ := cmd.Flags().GetString("domain")
+		Domain, _ := rootCmd.PersistentFlags().GetString("domain")
 		if Domain != "" {
 			c.Domain = Domain
 		}
@@ -51,11 +49,6 @@ because other checks do for speed convenience.`,
 
 func init() {
 
-	cleanCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	herr := cleanCmd.Flags().MarkHidden("domain")
-	if herr != nil {
-		fmt.Println(herr)
-	}
 	rootCmd.AddCommand(cleanCmd)
 
 }

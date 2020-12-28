@@ -39,7 +39,7 @@ var exportCmd = &cobra.Command{
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		Domain, _ := cmd.Flags().GetString("domain")
+		Domain, _ := rootCmd.PersistentFlags().GetString("domain")
 		if Domain != "" {
 			c.Domain = Domain
 		}
@@ -56,11 +56,6 @@ func init() {
 	homedir, _ := homedir.Dir()
 	exportPath = fmt.Sprintf("%v%v.pygmy.yml", homedir, string(os.PathSeparator))
 
-	exportCmd.Flags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
-	herr := exportCmd.Flags().MarkHidden("domain")
-	if herr != nil {
-		fmt.Println(herr)
-	}
 	exportCmd.Flags().StringVarP(&exportPath, "output", "o", exportPath, "Path to exported configuration to be written to")
 
 }
