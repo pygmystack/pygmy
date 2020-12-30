@@ -35,6 +35,7 @@ import (
 var (
 	cfgFile string
 	c       library.Config
+	domain	string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -61,7 +62,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringP("domain", "", "", "Domain suffix to be associated to pygmy when using defaults")
+	rootCmd.PersistentFlags().StringVar(&domain, "domain", "", "Domain suffix to be associated to pygmy when using defaults")
 	herr := rootCmd.PersistentFlags().MarkHidden("domain")
 	if herr != nil {
 		fmt.Println(herr)
