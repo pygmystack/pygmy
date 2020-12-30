@@ -35,7 +35,7 @@ import (
 var (
 	cfgFile string
 	c       library.Config
-	domain	string
+	domain  string
 )
 
 // rootCmd represents the base command when called without any subcommands

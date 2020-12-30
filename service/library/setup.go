@@ -78,7 +78,6 @@ func Setup(c *Config) {
 	if c.Domain == "" {
 		c.Domain = "docker.amazee.io"
 	}
-	fmt.Printf("domain flag set to: '%v'\n", c.Domain)
 
 	// Resolvers don't have hard defaults defined which
 	// are mergable. So we set them in viper before
