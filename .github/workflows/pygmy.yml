@@ -217,7 +217,7 @@ jobs:
 
       - name: Custom domain test
         run: |
-          cat /etc/resolv.conf;
+          rm /etc/resolv.conf;
           ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io up;
           curl --HEAD http://kubernetes.amazee.io/stats | grep "mailhog.kubernetes.amazee.io";
           curl http://mailhog.kubernetes.amazee.io | grep MailHog;
