@@ -152,4 +152,34 @@ func Up(c Config) {
 			}
 		}
 	}
+
+	// List out all running projects to get their URL.
+	containers, _ := docker.DockerContainerList()
+	var urls []string
+	for _, container := range containers {
+		if !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+			obj, _ := docker.DockerInspect(container.ID)
+			vars := obj.Config.Env
+			for _, v := range vars {
+				// Look for the environment variable $LAGOON_ROUTE.
+				if strings.Contains(v, "LAGOON_ROUTE=") {
+					url := strings.TrimLeft(v, "LAGOON_ROUTE=")
+					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "http") {
+						url = "http://" + url
+					}
+					urls = append(urls, url)
+				}
+			}
+		}
+	}
+
+	cleanurls := unique(urls)
+	for _, url := range cleanurls {
+		endpoint.Validate(url)
+		if r := endpoint.Validate(url); r {
+			fmt.Printf(" - %v\n", url)
+		} else {
+			fmt.Printf(" ! %v\n", url)
+		}
+	}
 }

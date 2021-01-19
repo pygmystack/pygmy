@@ -396,6 +396,18 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	})
 }
 
+// DockerInspect will return the full container object.
+func DockerInspect(container string) (types.ContainerJSON, error) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
+	if err != nil {
+		return types.ContainerJSON{}, err
+	}
+
+	return cli.ContainerInspect(context.Background(), container)
+}
+
 // DockerExec will run a command in a Docker container and return the output.
 func DockerExec(container string, command string) ([]byte, error) {
 	ctx := context.Background()
