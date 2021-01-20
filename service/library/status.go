@@ -121,7 +121,7 @@ func Status(c Config) {
 	containers, _ := docker.DockerContainerList()
 	var urls []string
 	for _, container := range containers {
-		if !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
 			obj, _ := docker.DockerInspect(container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {
