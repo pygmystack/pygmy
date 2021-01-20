@@ -163,8 +163,8 @@ func Up(c Config) {
 			for _, v := range vars {
 				// Look for the environment variable $LAGOON_ROUTE.
 				if strings.Contains(v, "LAGOON_ROUTE=") {
-					url := strings.TrimLeft(v, "LAGOON_ROUTE=")
-					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "http") {
+					url := strings.TrimPrefix(v, "LAGOON_ROUTE=")
+					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
 						url = "http://" + url
 					}
 					urls = append(urls, url)
