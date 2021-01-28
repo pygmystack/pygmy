@@ -123,6 +123,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal8-example-simple.docker.amazee.io';
           docker-compose -p drupal8-example-simple down;
           docker-compose -p drupal8-example-simple rm;
           cd ../../;
@@ -135,6 +136,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.docker.amazee.io';
           docker-compose -p drupal9-advanced down;
           docker-compose -p drupal9-advanced rm;
           cd ../../;
@@ -147,6 +149,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-simple.docker.amazee.io';
           docker-compose -p drupal-example-simple down;
           docker-compose -p drupal-example-simple rm;
           cd ../../;
@@ -158,6 +161,7 @@ jobs:
           docker-compose -p node up -d;
           curl --HEAD http://node.docker.amazee.io;
           curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
           docker-compose -p node down;
           docker-compose -p node rm;
           cd ../../;
@@ -195,6 +199,7 @@ jobs:
           sleep 5;
           curl --HEAD http://wordpress-nginx.docker.amazee.io;
           curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
           docker-compose -p wordpress-simple down;
           docker-compose -p wordpress-simple rm;
           cd ../../;
