@@ -92,6 +92,7 @@ func Setup(c *Config) {
 			File:    c.Domain,
 			Folder:  "/etc/resolver",
 			Name:    "MacOS Resolver",
+			Domain:  c.Domain,
 		}
 
 		var ResolvGeneric = resolv.Resolv{
@@ -100,6 +101,7 @@ func Setup(c *Config) {
 			File:    "resolv.conf",
 			Folder:  "/etc",
 			Name:    "Linux Resolver",
+			Domain:  c.Domain,
 		}
 
 		if runtime.GOOS == "darwin" {
@@ -111,7 +113,8 @@ func Setup(c *Config) {
 				ResolvGeneric,
 			})
 		} else if runtime.GOOS == "windows" {
-			viper.SetDefault("resolvers", []resolv.Resolv{})
+
+			viper.SetDefault("resolvers", []resolv.Resolv{resolv.Resolv{Domain: c.Domain}})
 		}
 	}
 
