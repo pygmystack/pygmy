@@ -204,14 +204,6 @@ jobs:
           docker-compose -p wordpress-simple rm;
           cd ../../;
 
-      - name: Custom domain test
-        run: |
-          ./pygmy-go-linux-x86 clean;
-          ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io up;
-          curl --HEAD http://kubernetes.amazee.io/stats | grep "mailhog.kubernetes.amazee.io";
-          curl http://mailhog.kubernetes.amazee.io | grep MailHog;
-          ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io clean;
-
       - name: Cowsay test
         run: |
           ./pygmy-go-linux-x86 clean;
@@ -232,6 +224,43 @@ jobs:
 
       - name: Cleanup after tests.
         run: docker system prune --all --force
+
+  custom_domain:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          stable: 'false'
+          go-version: '1.14.1'
+        # Establish some SSH keys.
+      - name: Setup SSH
+        run: |
+          eval $(ssh-agent);
+          ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "";
+          ssh-add;
+          ssh-add -l;
+      - name: Setup git
+        run: git config --global url."https://github.com/".insteadOf "git@github.com:";
+      - name: Install
+        run: go mod download
+        env:
+          GO111MODULE: on
+      - name: Install Lando
+        run: |
+          wget https://files.devwithlando.io/lando-stable.deb;
+          sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
+
+      - name: Compile
+        run: go build -o pygmy-go-linux-x86
+
+      - name: Start with custom domain
+        run: |
+          ./pygmy-go-linux-x86 clean;
+          ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io up;
+          curl --HEAD http://kubernetes.amazee.io/stats | grep "mailhog.kubernetes.amazee.io";
+          curl http://mailhog.kubernetes.amazee.io | grep MailHog;
+          ./pygmy-go-linux-x86 --domain=kubernetes.amazee.io clean;
 
   slack:
     runs-on: ubuntu-18.04
