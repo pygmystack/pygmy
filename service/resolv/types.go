@@ -10,5 +10,5 @@ type Resolv struct {
 	File    string `yaml:"file"`
 	Folder  string `yaml:"folder"`
 	Name    string `yaml:"name"`
-	Domain	string `yaml:"domain"`
+	Domain  string `yaml:"domain"`
 }
