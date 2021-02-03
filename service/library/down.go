@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	. "github.com/logrusorgru/aurora"
 )
 
 // Down will bring pygmy down safely
@@ -35,9 +36,9 @@ func Down(c Config) {
 			fmt.Println(e)
 		}
 		if s, _ := docker.DockerNetworkStatus(network); !s {
-			fmt.Printf("Successfully removed network %v\n", network)
+			fmt.Printf(Sprintf(Green("Successfully removed network %v\n"), Green(network)))
 		} else {
-			fmt.Printf("Network %v was not removed", network)
+			fmt.Printf(Sprintf(Red("Network %v was not removed"), Red(network)))
 		}
 	}
 

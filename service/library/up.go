@@ -5,6 +5,8 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 )
@@ -32,12 +34,12 @@ func Up(c Config) {
 		if s, _ := docker.DockerVolumeExists(volume); !s {
 			_, err := docker.DockerVolumeCreate(volume)
 			if err == nil {
-				fmt.Printf("Created volume %v\n", volume.Name)
+				fmt.Printf(Sprintf(Green("Created volume %v\n"), Green(volume.Name)))
 			} else {
 				fmt.Println(err)
 			}
 		} else {
-			fmt.Printf("Already created volume %v\n", volume.Name)
+			fmt.Printf(Sprintf(Green("Already created volume %v\n"), Green(volume.Name)))
 		}
 	}
 
@@ -93,9 +95,9 @@ func Up(c Config) {
 			netVal, _ := docker.DockerNetworkStatus(Network.Name)
 			if !netVal {
 				if err := NetworkCreate(Network); err == nil {
-					fmt.Printf("Successfully created network %v\n", Network.Name)
+					fmt.Printf(Sprintf(Green("Successfully created network %v\n"), Green(Network.Name)))
 				} else {
-					fmt.Printf("Could not create network %v\n", Network.Name)
+					fmt.Printf(Sprintf(Red("Could not create network %v\n"), Red(Network.Name)))
 				}
 			}
 		}
@@ -109,15 +111,15 @@ func Up(c Config) {
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
 			if s, _ := docker.DockerNetworkConnected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
-					fmt.Printf("Successfully connected %v to %v\n", name, Network)
+					fmt.Printf(Sprintf(Green("Successfully connected %v to %v\n"), Green(name), Green(Network)))
 				} else {
 					discrete, _ := service.GetFieldBool("discrete")
 					if !discrete {
-						fmt.Printf("Could not connect %v to %v\n", name, Network)
+						fmt.Printf(Sprintf(Red("Could not connect %v to %v\n"), Red(name), Red(Network)))
 					}
 				}
 			} else {
-				fmt.Printf("Already connected %v to %v\n", name, Network)
+				fmt.Printf(Sprintf(Green("Already connected %v to %v\n"), Green(name), Green(Network)))
 			}
 		}
 	}

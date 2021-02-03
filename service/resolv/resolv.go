@@ -9,6 +9,8 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+
+	. "github.com/logrusorgru/aurora"
 )
 
 // run will run a shell command and is not exported.
@@ -38,7 +40,7 @@ func (resolv Resolv) Configure() {
 		return
 	}
 	if resolv.Status() {
-		fmt.Printf("Already configured resolvr %v\n", resolv.Name)
+		fmt.Printf(Sprintf(Green("Already configured resolvr %v\n"), Green(resolv.Name)))
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -107,16 +109,16 @@ func (resolv Resolv) Configure() {
 		if runtime.GOOS == "darwin" {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
 			if err := ifConfig.Run(); err != nil {
-				fmt.Println("error creating loopback UP alias")
+				fmt.Println(Sprintf(Red("error creating loopback UP alias")))
 			}
 			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 			if err := killAll.Run(); err != nil {
-				fmt.Println("error restarting mDNSResponder")
+				fmt.Println(Sprintf(Red("error restarting mDNSResponder")))
 			}
 		}
 
 		if resolv.Status() {
-			fmt.Printf("Successfully configured resolvr %v\n", resolv.Name)
+			fmt.Printf(Sprintf(Green("Successfully configured resolvr %v\n"), Green(resolv.Name)))
 		}
 	}
 }
@@ -165,7 +167,7 @@ func (resolv Resolv) Clean() {
 					fmt.Println(err)
 				}
 				if !resolv.statusFile() {
-					fmt.Println("Successfully removed resolver file")
+					fmt.Println(Sprintf(Green("Successfully removed resolver file")))
 				}
 			}
 		}
@@ -178,10 +180,10 @@ func (resolv Resolv) Clean() {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 			err := ifConfig.Run()
 			if err != nil {
-				fmt.Println("error removing loopback UP alias", err)
+				fmt.Println(Sprintf(Red("error removing loopback UP alias"), Red(err)))
 			} else {
 				if !resolv.statusNet() {
-					fmt.Println("Successfully removed loopback alias IP.")
+					fmt.Println(Sprintf(Green("Successfully removed loopback alias IP.")))
 				}
 			}
 		}
@@ -189,9 +191,9 @@ func (resolv Resolv) Clean() {
 		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 		err := killAll.Run()
 		if err != nil {
-			fmt.Println("error restarting mDNSResponder")
+			fmt.Println(Sprintf(Red("error restarting mDNSResponder")))
 		} else {
-			fmt.Println("Successfully restarted mDNSResponder")
+			fmt.Println(Sprintf(Green("Successfully restarted mDNSResponder")))
 		}
 	}
 }

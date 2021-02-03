@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
@@ -18,7 +20,11 @@ func Status(c Config) {
 
 	if len(checks) > 0 {
 		for _, check := range checks {
-			fmt.Println(check.Message)
+			if (check.State) {
+				fmt.Println(Green(check.Message))
+			} else {
+				fmt.Println(Red(check.Message))
+			}
 		}
 		fmt.Println()
 	}
@@ -38,9 +44,9 @@ func Status(c Config) {
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
-							fmt.Printf("[*] %v: Running as container %v\n", name, name)
+							fmt.Printf(Sprintf(Green("[*] %v: Running as container %v\n"), Green(name), Green(name)))
 						} else {
-							fmt.Printf("[ ] %v is not running\n", name)
+							fmt.Printf("[ ] %v is not running\n", Red(name))
 						}
 					}
 				}
@@ -53,7 +59,7 @@ func Status(c Config) {
 			name, _ := Service.GetFieldString("name")
 			discrete, _ := Service.GetFieldBool("discrete")
 			if !discrete {
-				fmt.Printf("[ ] %v is not running\n", name)
+				fmt.Printf(Sprintf(Red("[ ] %v is not running\n"), Red(name)))
 			}
 		}
 	}
@@ -61,9 +67,9 @@ func Status(c Config) {
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
 			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
-				fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
+				fmt.Printf(Sprintf(Red("[ ] %v is not connected to network %v\n"), Red(Container.Name), Red(Network.Name)))
 			} else {
-				fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)
+				fmt.Printf(Sprintf(Green("[*] %v is connected to network %v\n"), Green(Container.Name), Green(Network.Name)))
 			}
 		}
 	}
@@ -71,17 +77,17 @@ func Status(c Config) {
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
 		if s := r.Status(); s {
-			fmt.Printf("[*] Resolv %v is properly connected\n", resolver.Name)
+			fmt.Printf(Sprintf(Green("[*] Resolv %v is properly connected\n"), Green(resolver.Name)))
 		} else {
-			fmt.Printf("[ ] Resolv %v is not properly connected\n", resolver.Name)
+			fmt.Printf(Sprintf(Red("[ ] Resolv %v is not properly connected\n"), Red(resolver.Name)))
 		}
 	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := docker.DockerVolumeExists(volume); s {
-			fmt.Printf("[*] Volume %v has been created\n", volume.Name)
+			fmt.Printf(Sprintf(Green("[*] Volume %v has been created\n"), Green(volume.Name)))
 		} else {
-			fmt.Printf("[ ] Volume %v has not been created\n", volume.Name)
+			fmt.Printf(Sprintf(Red("[ ] Volume %v has not been created\n"), Red(volume.Name)))
 		}
 	}
 

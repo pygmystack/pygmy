@@ -3,6 +3,8 @@ package library
 import (
 	"fmt"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 )
 
@@ -28,12 +30,12 @@ func Clean(c Config) {
 		if target {
 			err := docker.DockerKill(Container.ID)
 			if err == nil {
-				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
+				fmt.Printf(Sprintf(Green("Successfully killed  %v.\n"), Green(Container.Names[0])))
 			}
 
 			err = docker.DockerRemove(Container.ID)
 			if err == nil {
-				fmt.Printf("Successfully removed %v.\n", Container.Names[0])
+				fmt.Printf(Sprintf(Green("Successfully removed %v.\n"), Green(Container.Names[0])))
 			}
 		}
 	}
@@ -49,9 +51,9 @@ func Clean(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
-				fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
+				fmt.Printf(Sprintf(Green("Successfully removed network %v\n"), Green(NetworksToClean[n])))
 			} else {
-				fmt.Printf("Network %v was not removed\n", NetworksToClean[n])
+				fmt.Printf(Sprintf(Red("Network %v was not removed\n"), Red(NetworksToClean[n])))
 			}
 		}
 	}
