@@ -20,7 +20,7 @@ func Status(c Config) {
 
 	if len(checks) > 0 {
 		for _, check := range checks {
-			if (check.State) {
+			if check.State {
 				fmt.Println(Green(check.Message))
 			} else {
 				fmt.Println(Red(check.Message))
