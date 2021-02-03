@@ -3,9 +3,8 @@ package library
 import (
 	"fmt"
 
-	. "github.com/logrusorgru/aurora"
-
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	. "github.com/logrusorgru/aurora"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon

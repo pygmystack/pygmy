@@ -5,10 +5,9 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
-
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	. "github.com/logrusorgru/aurora"
 )
 
 // Up will bring Pygmy up.

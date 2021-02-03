@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
-
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
+	. "github.com/logrusorgru/aurora"
 )
 
 // Status will show the state of all the things Pygmy manages.
