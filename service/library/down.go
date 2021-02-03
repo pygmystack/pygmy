@@ -36,9 +36,9 @@ func Down(c Config) {
 			fmt.Println(e)
 		}
 		if s, _ := docker.DockerNetworkStatus(network); !s {
-			fmt.Printf(Sprintf(Green("Successfully removed network %v\n"), Green(network)))
+			fmt.Print(Green(fmt.Sprintf("Successfully removed network %s\n", network)))
 		} else {
-			fmt.Printf(Sprintf(Red("Network %v was not removed"), Red(network)))
+			fmt.Print(Red(fmt.Sprintf("Network %s was not removed\n", network)))
 		}
 	}
 

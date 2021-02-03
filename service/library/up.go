@@ -34,12 +34,12 @@ func Up(c Config) {
 		if s, _ := docker.DockerVolumeExists(volume); !s {
 			_, err := docker.DockerVolumeCreate(volume)
 			if err == nil {
-				fmt.Printf(Sprintf(Green("Created volume %v\n"), Green(volume.Name)))
+				fmt.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {
 				fmt.Println(err)
 			}
 		} else {
-			fmt.Printf(Sprintf(Green("Already created volume %v\n"), Green(volume.Name)))
+			fmt.Print(Green(fmt.Sprintf("Already created volume %s\n", volume.Name)))
 		}
 	}
 
@@ -95,9 +95,9 @@ func Up(c Config) {
 			netVal, _ := docker.DockerNetworkStatus(Network.Name)
 			if !netVal {
 				if err := NetworkCreate(Network); err == nil {
-					fmt.Printf(Sprintf(Green("Successfully created network %v\n"), Green(Network.Name)))
+					fmt.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
 				} else {
-					fmt.Printf(Sprintf(Red("Could not create network %v\n"), Red(Network.Name)))
+					fmt.Print(Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
 				}
 			}
 		}
@@ -111,15 +111,15 @@ func Up(c Config) {
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
 			if s, _ := docker.DockerNetworkConnected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
-					fmt.Printf(Sprintf(Green("Successfully connected %v to %v\n"), Green(name), Green(Network)))
+					fmt.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
 					discrete, _ := service.GetFieldBool("discrete")
 					if !discrete {
-						fmt.Printf(Sprintf(Red("Could not connect %v to %v\n"), Red(name), Red(Network)))
+						fmt.Print(Red(fmt.Sprintf("Could not connect %s to %s\n", name, Network)))
 					}
 				}
 			} else {
-				fmt.Printf(Sprintf(Green("Already connected %v to %v\n"), Green(name), Green(Network)))
+				fmt.Print(Green(fmt.Sprintf("Already connected %s to %s\n", name, Network)))
 			}
 		}
 	}

@@ -40,7 +40,7 @@ func (resolv Resolv) Configure() {
 		return
 	}
 	if resolv.Status() {
-		fmt.Printf(Sprintf(Green("Already configured resolvr %v\n"), Green(resolv.Name)))
+		fmt.Print(Green(fmt.Sprintf("Already configured resolvr %s\n", resolv.Name)))
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -118,7 +118,7 @@ func (resolv Resolv) Configure() {
 		}
 
 		if resolv.Status() {
-			fmt.Printf(Sprintf(Green("Successfully configured resolvr %v\n"), Green(resolv.Name)))
+			fmt.Print(Green(fmt.Sprintf("Successfully configured resolvr %s\n", resolv.Name)))
 		}
 	}
 }

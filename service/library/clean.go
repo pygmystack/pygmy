@@ -30,12 +30,12 @@ func Clean(c Config) {
 		if target {
 			err := docker.DockerKill(Container.ID)
 			if err == nil {
-				fmt.Printf(Sprintf(Green("Successfully killed  %v.\n"), Green(Container.Names[0])))
+				fmt.Print(Green(fmt.Sprintf("Successfully killed %s\n", Container.Names[0])))
 			}
 
 			err = docker.DockerRemove(Container.ID)
 			if err == nil {
-				fmt.Printf(Sprintf(Green("Successfully removed %v.\n"), Green(Container.Names[0])))
+				fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", Container.Names[0])))
 			}
 		}
 	}
@@ -51,9 +51,9 @@ func Clean(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
-				fmt.Printf(Sprintf(Green("Successfully removed network %v\n"), Green(NetworksToClean[n])))
+				fmt.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
-				fmt.Printf(Sprintf(Red("Network %v was not removed\n"), Red(NetworksToClean[n])))
+				fmt.Print(Red(fmt.Sprintf("Successfully started %s\n", NetworksToClean[n])))
 			}
 		}
 	}
