@@ -32,6 +32,7 @@ import (
 // upCmd represents the up command
 var upCmd = &cobra.Command{
 	Use:     "up",
+	Aliases: []string{"start"},
 	Example: "pygmy up",
 	Short:   "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
 	Long: `Launch Pygmy - a set of containers and a resolver with very specific
