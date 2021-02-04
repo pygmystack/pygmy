@@ -156,18 +156,13 @@ func (resolv Resolv) Clean() {
 		}
 	}
 
-	if runtime.GOOS == "darwin" {
-
-		if strings.HasPrefix(fullPath, "/etc/resolver/") {
-			if _, err := os.Stat(fullPath); err == nil {
-				err := run([]string{"sudo", "rm", fullPath})
-				if err != nil {
-					fmt.Println(err)
-				}
-				if !resolv.statusFile() {
-					fmt.Println("Successfully removed resolver file")
-				}
-			}
+	if _, err := os.Stat(fullPath); err == nil {
+		err := run([]string{"sudo", "rm", fullPath})
+		if err != nil {
+			fmt.Println(err)
+		}
+		if !resolv.statusFile() {
+			fmt.Println("Successfully removed resolver file")
 		}
 	}
 
