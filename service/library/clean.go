@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	. "github.com/logrusorgru/aurora"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
@@ -28,12 +29,12 @@ func Clean(c Config) {
 		if target {
 			err := docker.DockerKill(Container.ID)
 			if err == nil {
-				fmt.Printf("Successfully killed  %v.\n", Container.Names[0])
+				fmt.Print(Green(fmt.Sprintf("Successfully killed %s\n", Container.Names[0])))
 			}
 
 			err = docker.DockerRemove(Container.ID)
 			if err == nil {
-				fmt.Printf("Successfully removed %v.\n", Container.Names[0])
+				fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", Container.Names[0])))
 			}
 		}
 	}
@@ -49,9 +50,9 @@ func Clean(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
-				fmt.Printf("Successfully removed network %v\n", NetworksToClean[n])
+				fmt.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
-				fmt.Printf("Network %v was not removed\n", NetworksToClean[n])
+				fmt.Print(Red(fmt.Sprintf("Successfully started %s\n", NetworksToClean[n])))
 			}
 		}
 	}
