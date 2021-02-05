@@ -43,7 +43,7 @@ func Status(c Config) {
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
-							fmt.Print(Green(fmt.Sprintf("[*] %s: Running as container %s", name, name)))
+							fmt.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", name, name)))
 						} else {
 							fmt.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
 						}
