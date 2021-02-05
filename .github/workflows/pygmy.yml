@@ -214,6 +214,14 @@ jobs:
           lando destroy -y;
           cd ../../;
 
+      - name: Test the down command
+        run: |
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up;
+          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
+
       - name: Cowsay test
         run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
 
