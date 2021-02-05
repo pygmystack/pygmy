@@ -2,9 +2,8 @@ package library
 
 import (
 	"fmt"
-
-	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+
 	. "github.com/logrusorgru/aurora"
 )
 
@@ -12,17 +11,13 @@ import (
 func Down(c Config) {
 
 	Setup(&c)
-	NetworksToClean := []string{}
-
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool("enable")
+		name, _ := Service.GetFieldString("name")
 		if enabled {
 			e := Service.Stop()
 			if e != nil {
-				fmt.Println(e)
-			}
-			if s, _ := Service.GetFieldString("network"); s != "" {
-				NetworksToClean = append(NetworksToClean, s)
+				fmt.Print(Red(fmt.Sprintf("Successfully removed %s\n", name)))
 			}
 		}
 	}
