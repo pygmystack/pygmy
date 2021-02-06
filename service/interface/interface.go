@@ -17,23 +17,25 @@ import (
 // not found in the daemon.
 func (Service *Service) Setup() error {
 	if Service.Config.Image == "" {
-		return nil
+		return fmt.Errorf("image reference is nil value")
 	}
 
+	found := false
 	images, _ := docker.DockerImageList()
 	for _, image := range images {
 		if strings.Contains(fmt.Sprint(image.RepoTags), Service.Config.Image) {
-			return nil
+			found = true
 		}
 	}
 
-	msg, err := docker.DockerPull(Service.Config.Image)
-	if msg != "" {
-		fmt.Println(msg)
-	}
-
-	if err != nil {
-		fmt.Println(err)
+	if !found {
+		if msg, err := docker.DockerPull(Service.Config.Image); err != nil {
+			return err
+		} else if strings.Contains(msg, "already up to date") {
+			return fmt.Errorf(msg)
+		}
+	} else {
+		return fmt.Errorf("image already in registry, skipping")
 	}
 
 	return nil
@@ -61,6 +63,8 @@ func (Service *Service) Start() error {
 		if e != nil {
 			return e
 		}
+	} else {
+		s = true
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
@@ -93,10 +97,24 @@ func (Service *Service) Start() error {
 			color.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
 			return nil
 		}
-		if err != nil {
-			// We cannot guarantee this container is running at this point if it is to be removed.
-			return fmt.Errorf(Sprintf(Red("Failed to run %s: %s\n"), Red(name), (err)))
+		if e := docker.DockerRemove(name); e != nil {
+			fmt.Sprintln(e)
 		}
+
+	}
+
+	err = Service.DockerCreate()
+	if err != nil {
+		return err
+	}
+
+	l, _ := Service.DockerLogs()
+	if output && string(l) != "" {
+		fmt.Println(string(l))
+	}
+
+	if c, err := Service.GetRunning(); c.ID != "" {
+		return err
 	}
 
 	return nil
@@ -253,7 +271,7 @@ func (Service *Service) DockerLogs() ([]byte, error) {
 	return []byte{}, nil
 }
 
-// DockerRun will setup and run a given container.
+// DockerRun will start an existing container.
 func (Service *Service) DockerRun() error {
 
 	ctx := context.Background()
@@ -263,41 +281,36 @@ func (Service *Service) DockerRun() error {
 		return err
 	}
 
-	// Ensure we have the image available:
-	images, _ := docker.DockerImageList()
-
-	// Specify a false boolean which we can switch to true if the image is in the registry:
-	imageFound := false
-
-	// Loop over our images
-	for _, image := range images {
-
-		// Check if it contains the desired string
-		if strings.Contains(Service.Config.Image, fmt.Sprint(image.RepoTags)) {
-
-			// We found the image, we don't need to pull it into the registry.
-			imageFound = true
-
-		}
-
+	name, e := Service.GetFieldString("name")
+	if e != nil {
+		return fmt.Errorf("container config is missing label for name")
+	}
+	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+		return err
 	}
 
-	// If we don't have the image available in the registry, pull it in!
-	if !imageFound {
-		if e := Service.Setup(); e != nil {
-			fmt.Println(e)
-		}
+	return nil
+
+}
+
+// DockerCreate will setup and run a given container.
+func (Service *Service) DockerCreate() error {
+
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
+	if err != nil {
+		return err
 	}
 
 	// Sanity check to ensure we don't get name conflicts.
 	c, _ := docker.DockerContainerList()
 	for _, cn := range c {
 		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
-			return nil
+			return fmt.Errorf("container already created, or namespace is already taken")
 		}
 	}
 
-	// We need the container name.
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return fmt.Errorf("container config is missing label for name")
@@ -305,10 +318,6 @@ func (Service *Service) DockerRun() error {
 
 	_, err = docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
 	if err != nil {
-		return err
-	}
-
-	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
 		return err
 	}
 

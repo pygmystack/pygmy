@@ -51,36 +51,29 @@ func Up(c Config) {
 		service := c.Services[s]
 		enabled, _ := service.GetFieldBool("enable")
 		purpose, _ := service.GetFieldString("purpose")
+		name, _ := service.GetFieldString("name")
 
 		// Do not show or add keys:
 		if enabled && purpose != "addkeys" && purpose != "showkeys" {
 
-			// Here we will immitate the docker command by
-			// pulling the image if it's not in the daemon.
-			images, _ := docker.DockerImageList()
-			imageFound := false
-			for _, image := range images {
-				for _, digest := range image.RepoDigests {
-					d := strings.Trim(strings.SplitAfter(digest, "@")[0], "@")
-					if strings.Contains(service.Config.Image, d) {
-						imageFound = true
-					}
+			if se := service.Setup(); se == nil {
+				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
+			} else {
+				fmt.Errorf("%s\n", se)
+			}
+			if ce := service.Create(); ce != nil {
+				fmt.Errorf("Failed to create %s: %s\n", Red(name), ce)
+			}
+			if se := service.Start(); se == nil {
+				fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
+			} else {
+				if strings.Contains(se.Error(), "Already running") {
+					fmt.Print(Sprintf(Green("Already Running %s\n"), name))
+				} else {
+					fmt.Errorf("Failed to run %s: %s\n", Red(name), se)
 				}
 			}
 
-			// The image wasn't found.
-			// When running 'docker run', it will pull the image.
-			// For UX it makes sense we do this here.
-			if !imageFound {
-				if _, err := docker.DockerPull(service.Config.Image); err != nil {
-					continue
-				}
-			}
-
-			e := service.Start()
-			if e != nil {
-				fmt.Println(e)
-			}
 		}
 
 		// If one or more agent was found:
