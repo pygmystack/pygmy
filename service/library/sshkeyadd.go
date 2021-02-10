@@ -57,6 +57,9 @@ func SshKeyAdd(c Config, key string, index int) error {
 						fmt.Println(e)
 					}
 
+					// Remove & recreate the container, but don't output anything.
+					newService.Remove()
+					newService.Create()
 					e = newService.Start()
 					if e != nil {
 						return e

@@ -63,8 +63,6 @@ func (Service *Service) Start() error {
 		if e != nil {
 			return e
 		}
-	} else {
-		s = true
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
@@ -79,7 +77,9 @@ func (Service *Service) Start() error {
 		if e := docker.DockerRemove(name); e != nil {
 			fmt.Sprintln(e)
 		}
-
+		if e := Service.Create(); e != nil {
+			fmt.Sprintln(e)
+		}
 	}
 
 	err = Service.DockerRun()
@@ -100,7 +100,6 @@ func (Service *Service) Start() error {
 		if e := docker.DockerRemove(name); e != nil {
 			fmt.Sprintln(e)
 		}
-
 	}
 
 	err = Service.DockerCreate()
