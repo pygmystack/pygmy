@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
@@ -20,9 +21,9 @@ func Status(c Config) {
 	if len(checks) > 0 {
 		for _, check := range checks {
 			if check.State {
-				fmt.Println(Green(check.Message))
+				color.Print(Green(check.Message))
 			} else {
-				fmt.Println(Red(check.Message))
+				color.Print(Red(check.Message))
 			}
 		}
 		fmt.Println()
@@ -43,9 +44,9 @@ func Status(c Config) {
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
-							fmt.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", name, name)))
+							color.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", name, name)))
 						} else {
-							fmt.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
+							color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
 						}
 					}
 				}
@@ -58,7 +59,7 @@ func Status(c Config) {
 			name, _ := Service.GetFieldString("name")
 			discrete, _ := Service.GetFieldBool("discrete")
 			if !discrete {
-				fmt.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
+				color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
 			}
 		}
 	}
@@ -66,9 +67,9 @@ func Status(c Config) {
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
 			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
-				fmt.Print(Red(fmt.Sprintf("[ ] %s is not connected to network %s\n", Container.Name, Network.Name)))
+				color.Print(Red(fmt.Sprintf("[ ] %s is not connected to network %s\n", Container.Name, Network.Name)))
 			} else {
-				fmt.Print(Green(fmt.Sprintf("[*] %s is connected to network %s\n", Container.Name, Network.Name)))
+				color.Print(Green(fmt.Sprintf("[*] %s is connected to network %s\n", Container.Name, Network.Name)))
 			}
 		}
 	}
@@ -76,17 +77,17 @@ func Status(c Config) {
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
 		if s := r.Status(); s {
-			fmt.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
+			color.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
 		} else {
-			fmt.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly conected\n", resolver.Name)))
+			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly conected\n", resolver.Name)))
 		}
 	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := docker.DockerVolumeExists(volume); s {
-			fmt.Print(Green(fmt.Sprintf("[*] Volume %s has been created\n", volume.Name)))
+			color.Print(Green(fmt.Sprintf("[*] Volume %s has been created\n", volume.Name)))
 		} else {
-			fmt.Print(Green(fmt.Sprintf("[ ] Volume %s has not ben created\n", volume.Name)))
+			color.Print(Green(fmt.Sprintf("[ ] Volume %s has not ben created\n", volume.Name)))
 		}
 	}
 

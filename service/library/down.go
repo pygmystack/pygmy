@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 
+	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
 )
@@ -36,9 +37,9 @@ func Down(c Config) {
 			fmt.Println(e)
 		}
 		if s, _ := docker.DockerNetworkStatus(network); !s {
-			fmt.Print(Green(fmt.Sprintf("Successfully removed network %s\n", network)))
+			color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", network)))
 		} else {
-			fmt.Print(Red(fmt.Sprintf("Network %s was not removed\n", network)))
+			color.Print(Red(fmt.Sprintf("Network %s was not removed\n", network)))
 		}
 	}
 

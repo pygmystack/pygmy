@@ -7,6 +7,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
 )
@@ -63,7 +64,7 @@ func (Service *Service) Start() error {
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
-		fmt.Print(Green(fmt.Sprintf("Already running %s\n", name)))
+		color.Print(Green(fmt.Sprintf("Already running %s\n", name)))
 		return nil
 	}
 
@@ -89,7 +90,7 @@ func (Service *Service) Start() error {
 
 	if c, err := Service.GetRunning(); c.ID != "" {
 		if !discrete {
-			fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
+			color.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
 			return nil
 		}
 		if err != nil {
@@ -155,17 +156,17 @@ func (Service *Service) Clean() error {
 				name := strings.TrimLeft(container.Names[0], "/")
 				if e := docker.DockerKill(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
-						fmt.Print(Green(fmt.Sprintf("Successfully killed %s\n", name)))
+						color.Print(Green(fmt.Sprintf("Successfully killed %s\n", name)))
 					}
 				}
 				if e := docker.DockerStop(container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
-						fmt.Print(Green(fmt.Sprintf("Successfully stopped %s\n", name)))
+						color.Print(Green(fmt.Sprintf("Successfully stopped %s\n", name)))
 					}
 				}
 				if e := docker.DockerRemove(container.ID); e != nil {
 					if !Service.HostConfig.AutoRemove {
-						fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", name)))
+						color.Print(Green(fmt.Sprintf("Successfully removed %s\n", name)))
 					}
 				}
 			}
@@ -187,7 +188,7 @@ func (Service *Service) Stop() error {
 	container, err := Service.GetRunning()
 	if err != nil {
 		if !discrete {
-			fmt.Print(Red(fmt.Sprintf("Not running %s\n", name)))
+			color.Print(Red(fmt.Sprintf("Not running %s\n", name)))
 		}
 		return nil
 	}
@@ -197,7 +198,7 @@ func (Service *Service) Stop() error {
 			if e := docker.DockerRemove(container.ID); e == nil {
 				if !discrete {
 					containerName := strings.Trim(name, "/")
-					fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
+					color.Print(Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
 				}
 			}
 		}
