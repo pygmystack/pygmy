@@ -49,6 +49,7 @@ func (Service *Service) Start() error {
 	name, err := Service.GetFieldString("name")
 	discrete, _ := Service.GetFieldBool("discrete")
 	output, _ := Service.GetFieldBool("output")
+	purpose, _ := Service.GetFieldString("purpose")
 
 	if err != nil {
 		return nil
@@ -67,6 +68,18 @@ func (Service *Service) Start() error {
 	if s && !Service.HostConfig.AutoRemove && !discrete {
 		color.Print(Green(fmt.Sprintf("Already running %s\n", name)))
 		return nil
+	}
+
+	if purpose == "addkeys" {
+		if e := docker.DockerKill(name); e != nil {
+			fmt.Sprintln(e)
+		}
+		if e := docker.DockerRemove(name); e != nil {
+			fmt.Sprintln(e)
+		}
+		if e := Service.Create(); e != nil {
+			fmt.Sprintln(e)
+		}
 	}
 
 	err = Service.DockerRun()

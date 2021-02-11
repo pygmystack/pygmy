@@ -36,18 +36,14 @@ func SshKeyAdd(c Config, key string, index int) error {
 				}
 
 				if e := Container.Create(); e != nil {
-					fmt.Println("eee")
-					fmt.Println(e)
 					return e
 				}
 				// THIS.
 				if e := Container.Start(); e != nil {
-					fmt.Println("rrr")
 					return e
 				}
 				var l []byte
 				if l, e = Container.DockerLogs(); e != nil {
-					fmt.Println("ddd")
 					fmt.Println(string(l), e)
 					return e
 				}
