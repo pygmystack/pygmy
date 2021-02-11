@@ -21,9 +21,9 @@ func Status(c Config) {
 	if len(checks) > 0 {
 		for _, check := range checks {
 			if check.State {
-				color.Print(Green(check.Message))
+				color.Print(Green(check.Message + "\n"))
 			} else {
-				color.Print(Red(check.Message))
+				color.Print(Red(check.Message + "\n"))
 			}
 		}
 		fmt.Println()
