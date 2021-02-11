@@ -1,13 +1,11 @@
 package library
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"runtime"
 	"strings"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
 )
 
@@ -37,68 +35,33 @@ func SshKeyAdd(c Config, key string, index int) error {
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
 
-				if index != 0 {
+				if e := Container.Create(); e != nil {
+					fmt.Println("eee")
+					fmt.Println(e)
+					return e
+				}
+				// THIS.
+				if e := Container.Start(); e != nil {
+					fmt.Println("rrr")
+					return e
+				}
+				var l []byte
+				if l, e = Container.DockerLogs(); e != nil {
+					fmt.Println("ddd")
+					fmt.Println(string(l), e)
+					return e
+				}
 
-					// We need a brand new copy of the existing container config.
-					var newService model.Service
-					b, _ := json.Marshal(Container)
-					e := json.Unmarshal(b, &newService)
-					if e != nil {
-						fmt.Println(e)
+				// We need tighter control on the output of this container...
+				for _, line := range strings.Split(string(l), "\n") {
+					if strings.Contains(line, "Identity added:") {
+						fmt.Println(line)
 					}
-
-					name, _ := newService.GetFieldString("name")
-					name = strings.SplitAfter(name, "_")[0]
-
-					// For some reason Container works well here but it should be newService - needs investigation.
-					e = Container.SetField("name", fmt.Sprintf("%v_%v", name, index))
-
-					if e != nil {
-						fmt.Println(e)
-					}
-
-					// Remove & recreate the container, but don't output anything.
-					newService.Remove()
-					newService.Create()
-					e = newService.Start()
-					if e != nil {
-						return e
-					}
-					l, e := newService.DockerLogs()
-					if e != nil {
-						return e
-					}
-
-					// We need tighter control on the output of this container...
-					for _, line := range strings.Split(string(l), "\n") {
-						if strings.Contains(line, "Identity added:") {
-							fmt.Println(line)
-						}
-					}
-
-				} else {
-
-					e := Container.Start()
-					if e != nil {
-						return e
-					}
-					l, e := Container.DockerLogs()
-					if e != nil {
-						return e
-					}
-
-					// We need tighter control on the output of this container...
-					for _, line := range strings.Split(string(l), "\n") {
-						if strings.Contains(line, "Identity added:") {
-							fmt.Println(line)
-						}
-					}
-
 				}
 
 			}
-		}
 
+		}
 	}
 	return e
 }
