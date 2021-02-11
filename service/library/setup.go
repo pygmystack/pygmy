@@ -127,7 +127,6 @@ func Setup(c *Config) {
 
 		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
-		ImportDefaults(c, "amazeeio-ssh-agent-show-keys", key.NewShower())
 		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New())
 		ImportDefaults(c, "amazeeio-haproxy", haproxy.New())
 		ImportDefaults(c, "amazeeio-mailhog", mailhog.New())
