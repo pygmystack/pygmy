@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 
+	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
 )
@@ -29,12 +30,12 @@ func Clean(c Config) {
 		if target {
 			err := docker.DockerKill(Container.ID)
 			if err == nil {
-				fmt.Print(Green(fmt.Sprintf("Successfully killed %s\n", Container.Names[0])))
+				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", Container.Names[0])))
 			}
 
 			err = docker.DockerRemove(Container.ID)
 			if err == nil {
-				fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", Container.Names[0])))
+				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", Container.Names[0])))
 			}
 		}
 	}
@@ -50,9 +51,9 @@ func Clean(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
-				fmt.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
+				color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
-				fmt.Print(Red(fmt.Sprintf("Successfully started %s\n", NetworksToClean[n])))
+				color.Print(Red(fmt.Sprintf("Successfully started %s\n", NetworksToClean[n])))
 			}
 		}
 	}
