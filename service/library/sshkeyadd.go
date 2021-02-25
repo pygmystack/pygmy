@@ -10,7 +10,7 @@ import (
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string, index int) error {
+func SshKeyAdd(c Config, key string) error {
 
 	Setup(&c)
 
@@ -19,9 +19,9 @@ func SshKeyAdd(c Config, key string, index int) error {
 			fmt.Printf("%v\n", err)
 			return err
 		}
+	} else {
+		return nil
 	}
-
-	var e error
 
 	for _, Container := range c.Services {
 		purpose, _ := Container.GetFieldString("purpose")
@@ -38,12 +38,11 @@ func SshKeyAdd(c Config, key string, index int) error {
 				if e := Container.Create(); e != nil {
 					return e
 				}
-				// THIS.
 				if e := Container.Start(); e != nil {
 					return e
 				}
 				l, _ := Container.DockerLogs()
-				Container.Remove()
+				_ = Container.Remove()
 
 				// We need tighter control on the output of this container...
 				for _, line := range strings.Split(string(l), "\n") {
@@ -56,5 +55,5 @@ func SshKeyAdd(c Config, key string, index int) error {
 
 		}
 	}
-	return e
+	return nil
 }
