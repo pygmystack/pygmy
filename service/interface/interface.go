@@ -93,13 +93,24 @@ func (Service *Service) Start() error {
 	}
 
 	if c, err := Service.GetRunning(); c.ID != "" {
-		if !discrete {
-			color.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
-			return nil
-		}
-		if e := docker.DockerRemove(name); e != nil {
-			fmt.Sprintln(e)
-		}
+		return nil
+	} else if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Create will perform a series of checks to see if the container starting
+// is supposed be removed before-hand and will check to see if the
+// container is running before it is actually started.
+func (Service *Service) Create() error {
+
+	name, err := Service.GetFieldString("name")
+	output, _ := Service.GetFieldBool("output")
+
+	if err != nil || name == "" {
+		return fmt.Errorf("missing name property")
 	}
 
 	err = Service.DockerCreate()

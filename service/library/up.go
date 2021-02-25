@@ -54,26 +54,29 @@ func Up(c Config) {
 		name, _ := service.GetFieldString("name")
 
 		// Do not show or add keys:
-		if enabled && purpose != "addkeys" && purpose != "showkeys" {
+		if enabled && purpose != "addkeys" {
 
 			if se := service.Setup(); se == nil {
 				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
-			} else {
-				fmt.Printf("%s\n", se)
 			}
-			if ce := service.Create(); ce != nil {
-				fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
-			}
-			if se := service.Start(); se == nil {
-				fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
-			} else {
-				if strings.Contains(se.Error(), "Already running") {
-					fmt.Print(Sprintf(Green("Already Running %s\n"), name))
-				} else {
-					fmt.Printf("Failed to run %s: %s\n", Red(name), se)
+			if status, _ := service.Status(); !status {
+				if ce := service.Create(); ce != nil {
+					// If the status is false but the container is already created, we can ignore that error.
+					if !strings.Contains(ce.Error(), "namespace is already taken") {
+						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
+					}
 				}
+				if se := service.Start(); se == nil {
+					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
+				} else {
+					if !strings.Contains(se.Error(), "Already running") {
+					} else {
+						fmt.Printf("Failed to run %s: %s\n", Red(name), se)
+					}
+				}
+			} else {
+				fmt.Print(Sprintf(Green("Already Running %s\n"), name))
 			}
-
 		}
 
 		// If one or more agent was found:
