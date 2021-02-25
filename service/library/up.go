@@ -59,10 +59,10 @@ func Up(c Config) {
 			if se := service.Setup(); se == nil {
 				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
 			} else {
-				fmt.Errorf("%s\n", se)
+				fmt.Printf("%s\n", se)
 			}
 			if ce := service.Create(); ce != nil {
-				fmt.Errorf("Failed to create %s: %s\n", Red(name), ce)
+				fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
 			}
 			if se := service.Start(); se == nil {
 				fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
@@ -70,7 +70,7 @@ func Up(c Config) {
 				if strings.Contains(se.Error(), "Already running") {
 					fmt.Print(Sprintf(Green("Already Running %s\n"), name))
 				} else {
-					fmt.Errorf("Failed to run %s: %s\n", Red(name), se)
+					fmt.Printf("Failed to run %s: %s\n", Red(name), se)
 				}
 			}
 
