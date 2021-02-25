@@ -257,17 +257,7 @@ func (Service *Service) DockerLogs() ([]byte, error) {
 	}
 
 	name, _ := Service.GetFieldString("name")
-	log, e := docker.DockerContainerLogs(name)
-
-	if e != nil {
-		return []byte{}, err
-	}
-
-	if string(log) != "" {
-		return log, nil
-	}
-
-	return []byte{}, nil
+	return docker.DockerContainerLogs(name)
 }
 
 // DockerRun will start an existing container.

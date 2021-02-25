@@ -42,11 +42,8 @@ func SshKeyAdd(c Config, key string, index int) error {
 				if e := Container.Start(); e != nil {
 					return e
 				}
-				var l []byte
-				if l, e = Container.DockerLogs(); e != nil {
-					fmt.Println(string(l), e)
-					return e
-				}
+				l, _ := Container.DockerLogs()
+				Container.Remove()
 
 				// We need tighter control on the output of this container...
 				for _, line := range strings.Split(string(l), "\n") {

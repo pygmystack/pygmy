@@ -127,10 +127,7 @@ func Up(c Config) {
 	if agentPresent {
 		i := 1
 		for _, v := range c.Keys {
-			err := SshKeyAdd(c, v, i)
-			if err != nil {
-				fmt.Println(err)
-			}
+			SshKeyAdd(c, v, i)
 			i++
 		}
 	}

@@ -25,7 +25,7 @@ func NewAdder() model.Service {
 			},
 		},
 		HostConfig: container.HostConfig{
-			AutoRemove:  true,
+			AutoRemove:  false,
 			IpcMode:     "private",
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
