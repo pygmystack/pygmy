@@ -24,7 +24,7 @@ func TestAdd(t *testing.T) {
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "addkeys")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "31")
-		So(obj.HostConfig.AutoRemove, ShouldBeTrue)
+		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
 		So(fmt.Sprint(obj.HostConfig.VolumesFrom), ShouldEqual, fmt.Sprint([]string{"amazeeio-ssh-agent"}))
 	})
