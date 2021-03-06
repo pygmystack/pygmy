@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -32,16 +33,35 @@ import (
 // addkeyCmd is the SSH key add command.
 var addkeyCmd = &cobra.Command{
 	Use:     "addkey",
-	Example: "pygmy addkey ~/.ssh/id_rsa",
+	Example: "pygmy addkey --key ~/.ssh/id_rsa",
 	Short:   "Add/re-add an SSH key to the agent",
 	Long:    `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
+		Keys := []string{}
 
-		e := library.SshKeyAdd(c, Key, 0)
-		if e != nil {
-			fmt.Println(e)
+		if Key != "" {
+			Keys = append(Keys, Key)
+		} else {
+			library.Setup(&c)
+			Keys = c.Keys
+		}
+
+		for _, k := range Keys {
+			if e := library.SshKeyAdd(c, k); e != nil {
+				fmt.Println(e)
+			}
+		}
+
+		for _, s := range c.SortedServices {
+			service := c.Services[s]
+			purpose, _ := service.GetFieldString("purpose")
+			if purpose == "sshagent" {
+				name, _ := service.GetFieldString("name")
+				d, _ := docker.DockerExec(name, "ssh-add -l")
+				fmt.Println(string(d))
+			}
 		}
 
 	},
@@ -51,6 +71,10 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+
+	if _, err := os.Stat(keypath); err == nil {
+		keypath = ""
+	}
 
 	rootCmd.AddCommand(addkeyCmd)
 	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")

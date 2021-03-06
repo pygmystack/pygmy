@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
@@ -16,6 +17,7 @@ func Clean(c Config) {
 	NetworksToClean := []string{}
 
 	for _, Container := range Containers {
+		ContainerName := strings.Trim(Container.Names[0], "/")
 		target := false
 		if l := Container.Labels["pygmy.enable"]; l == "true" || l == "1" {
 			target = true
@@ -30,12 +32,12 @@ func Clean(c Config) {
 		if target {
 			err := docker.DockerKill(Container.ID)
 			if err == nil {
-				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", Container.Names[0])))
+				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", ContainerName)))
 			}
 
 			err = docker.DockerRemove(Container.ID)
 			if err == nil {
-				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", Container.Names[0])))
+				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", ContainerName)))
 			}
 		}
 	}

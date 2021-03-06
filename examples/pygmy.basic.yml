@@ -33,11 +33,6 @@ services:
       Labels:
         - pygmy.enable: false
 
-  amazeeio-ssh-agent-show-keys:
-    Config:
-      Labels:
-        - pygmy.enable: false
-
   amazeeio-portainer:
     Config:
       Image: portainer/portainer

@@ -95,16 +95,10 @@ func Status(c Config) {
 	if agentPresent {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
-			if purpose == "showkeys" {
-				e := v.Start()
-				if e != nil {
-					fmt.Println(e)
-				}
-				l, _ := v.DockerLogs()
-				if len(string(l)) > 0 {
-					output := strings.Trim(string(l), "\n")
-					fmt.Println(output)
-				}
+			if purpose == "sshagent" {
+				l, _ := docker.DockerExec(v.Config.Labels["pygmy.name"], "ssh-add -l")
+				output := strings.Trim(string(l), "\n")
+				fmt.Println(output)
 			}
 		}
 	}
