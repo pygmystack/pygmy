@@ -12,7 +12,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           stable: 'false'
-          go-version: '1.14.1'
+          go-version: '1.16'
       - name: Install
         run: go mod download
         env:
@@ -35,7 +35,7 @@ jobs:
 #      - uses: actions/setup-go@v2
 #        with:
 #          stable: 'false'
-#          go-version: '1.14.1'
+#          go-version: '1.16'
 #      - name: Switch Docker daemon mode to Linux
 #        run: Start-Process $Env:ProgramFiles\Docker\Docker\DockerCli.exe -ArgumentList "-SwitchLinuxEngine"
 #      - name: Build
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-go@v2
         with:
           stable: 'false'
-          go-version: '1.14.1'
+          go-version: '1.16'
         # Establish some SSH keys.
       - name: Setup SSH
         run: |
