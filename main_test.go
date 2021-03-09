@@ -15,7 +15,7 @@ import (
 
 const (
 	dindContainerName = "exampleTestContainer"
-	binaryReference   = "pygmy-go-linux-x86"
+	binaryReference   = "pygmy-go-linux-arm"
 )
 
 var (

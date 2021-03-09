@@ -8,8 +8,10 @@ build:
 	docker run -v $(DIR):/data pygmy-go rm -f /data/builds/pygmy-go*
 	@echo "Done"
 	@echo "Copying binaries to build directory"
-	docker run -v $(DIR):/data pygmy-go cp pygmy-go-linux-x86 /data/builds/.
+	docker run -v $(DIR):/data pygmy-go cp pygmy-go-linux /data/builds/.
+	docker run -v $(DIR):/data pygmy-go cp pygmy-go-linux-arm /data/builds/.
 	docker run -v $(DIR):/data pygmy-go cp pygmy-go-darwin /data/builds/.
+	docker run -v $(DIR):/data pygmy-go cp pygmy-go-darwin-arm /data/builds/.
 	docker run -v $(DIR):/data pygmy-go cp pygmy-go.exe /data/builds/.
 	@echo "Done"
 	@echo "Enjoy using pygmy-go binaries in $(DIR)/build directory."

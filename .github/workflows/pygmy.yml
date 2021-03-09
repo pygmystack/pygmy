@@ -72,16 +72,16 @@ jobs:
           sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
 
       - name: Compile
-        run: go build -o pygmy-go-linux-x86
+        run: go build -o pygmy-go-linux-arm
 
       - name: Basic test
         run: |
-          ./pygmy-go-linux-x86 pull;
-          ./pygmy-go-linux-x86 pull;
-          ./pygmy-go-linux-x86 status;
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up;
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status;
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml version;
+          ./pygmy-go-linux-arm pull;
+          ./pygmy-go-linux-arm pull;
+          ./pygmy-go-linux-arm status;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml up;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml status;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml version;
 
       - name: Test the amazeeio-network for expected results
         run: |
@@ -123,7 +123,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io;
           curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal8-example-simple.docker.amazee.io';
+          ../../pygmy-go-linux-arm --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal8-example-simple.docker.amazee.io';
           docker-compose -p drupal8-example-simple down;
           docker-compose -p drupal8-example-simple rm;
           cd ../../;
@@ -136,7 +136,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
           curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.docker.amazee.io';
+          ../../pygmy-go-linux-arm --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.docker.amazee.io';
           docker-compose -p drupal9-advanced down;
           docker-compose -p drupal9-advanced rm;
           cd ../../;
@@ -149,7 +149,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io;
           curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-simple.docker.amazee.io';
+          ../../pygmy-go-linux-arm --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-simple.docker.amazee.io';
           docker-compose -p drupal-example-simple down;
           docker-compose -p drupal-example-simple rm;
           cd ../../;
@@ -161,7 +161,7 @@ jobs:
           docker-compose -p node up -d;
           curl --HEAD http://node.docker.amazee.io;
           curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
+          ../../pygmy-go-linux-arm --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
           docker-compose -p node down;
           docker-compose -p node rm;
           cd ../../;
@@ -199,7 +199,7 @@ jobs:
           sleep 5;
           curl --HEAD http://wordpress-nginx.docker.amazee.io;
           curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-x86 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
+          ../../pygmy-go-linux-arm --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
           docker-compose -p wordpress-simple down;
           docker-compose -p wordpress-simple rm;
           cd ../../;
@@ -216,25 +216,17 @@ jobs:
 
       - name: Test the down command
         run: |
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up;
-          ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml up;
+          ./pygmy-go-linux-arm --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
 
       - name: Cowsay test
-        run: ./pygmy-go-linux-x86 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
+        run: ./pygmy-go-linux-arm --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
 
       - name: Cleanup pygmy
-        run: ./pygmy-go-linux-x86 clean;
+        run: ./pygmy-go-linux-arm clean;
 
       - name: Cleanup after tests.
         run: docker system prune --all --force
-
-  slack:
-    runs-on: ubuntu-18.04
-    steps:
-      - name: Slack Notification
-        uses: rtCamp/action-slack-notify@master
-        env:
-          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
