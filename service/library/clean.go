@@ -55,7 +55,7 @@ func Clean(c Config) {
 			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
 				color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
-				color.Print(Red(fmt.Sprintf("Successfully started %s\n", NetworksToClean[n])))
+				color.Print(Red(fmt.Sprintf("Failed to remove %s\n", NetworksToClean[n])))
 			}
 		}
 	}
