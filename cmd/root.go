@@ -35,11 +35,13 @@ import (
 var (
 	cfgFile string
 	c       library.Config
+	validArgs = []string{ "addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version" }
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "pygmy",
+	Use:   "pygmy-go",
+	ValidArgs: validArgs,
 	Short: "Amazeeio's local development tool",
 	Long: `Amazeeio's local development tool,
 	
@@ -133,6 +135,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		if os.Args[1] != "completion" {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
 	}
 }
