@@ -33,16 +33,16 @@ import (
 )
 
 var (
-	cfgFile string
-	c       library.Config
-	validArgs = []string{ "addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version" }
+	cfgFile   string
+	c         library.Config
+	validArgs = []string{"addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version"}
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "pygmy-go",
+	Use:       "pygmy-go",
 	ValidArgs: validArgs,
-	Short: "Amazeeio's local development tool",
+	Short:     "Amazeeio's local development tool",
 	Long: `Amazeeio's local development tool,
 	
 Runs DNSMasq, HAProxy, MailHog and an SSH Agent in local containers for local development.`,
