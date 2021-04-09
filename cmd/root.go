@@ -26,10 +26,12 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/cobra/doc"
 	"github.com/spf13/viper"
+
+	"github.com/fubarhouse/pygmy-go/service/library"
 )
 
 var (
@@ -61,13 +63,36 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
+	for i, v := range []*cobra.Command{
+		rootCmd,
+		addkeyCmd,
+		cleanCmd,
+		downCmd,
+		exportCmd,
+		pullCmd,
+		restartCmd,
+		statusCmd,
+		upCmd,
+		updateCmd,
+		versionCmd,
+	} {
+		n := i + 1
+		v.DisableAutoGenTag = false
+		v.DisableSuggestions = false
+		_ = doc.GenManTree(v, &doc.GenManHeader{
+			Title:   v.Use,
+			Section: fmt.Sprintf("%v", n),
+		}, os.TempDir())
+	}
+
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", findConfig(), "")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", findConfig(), "")
+
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
