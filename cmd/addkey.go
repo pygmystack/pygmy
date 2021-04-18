@@ -26,7 +26,6 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/library"
-	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 )
 
@@ -44,8 +43,13 @@ var addkeyCmd = &cobra.Command{
 		if Key != "" {
 			Keys = append(Keys, Key)
 		} else {
-			library.Setup(&c)
-			Keys = c.Keys
+			if _, err := os.Stat(os.Args[len(os.Args)-1]); err == os.ErrExist {
+				Keys = append(c.Keys, os.Args[len(os.Args)-1])
+			}
+			if len(Keys) == 0 {
+				library.Setup(&c)
+				Keys = c.Keys
+			}
 		}
 
 		for _, k := range Keys {
@@ -69,14 +73,7 @@ var addkeyCmd = &cobra.Command{
 
 func init() {
 
-	homedir, _ := homedir.Dir()
-	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-
-	if _, err := os.Stat(keypath); err == nil {
-		keypath = ""
-	}
-
 	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("key", "", "", "Path of SSH key to add")
 
 }
