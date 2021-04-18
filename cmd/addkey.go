@@ -43,8 +43,8 @@ var addkeyCmd = &cobra.Command{
 		if Key != "" {
 			Keys = append(Keys, Key)
 		} else {
-			if _, err := os.Stat(os.Args[len(os.Args) - 1]); err == os.ErrExist {
-				Keys = append(c.Keys, os.Args[len(os.Args) - 1])
+			if _, err := os.Stat(os.Args[len(os.Args)-1]); err == os.ErrExist {
+				Keys = append(c.Keys, os.Args[len(os.Args)-1])
 			}
 			if len(Keys) == 0 {
 				library.Setup(&c)
