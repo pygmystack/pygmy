@@ -11,7 +11,7 @@ import (
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "andyshinn/dnsmasq:2.78",
+			Image: "andyshinn/dnsmasq:2.83",
 			Cmd: []string{
 				"-A",
 				"/docker.amazee.io/127.0.0.1",
