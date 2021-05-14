@@ -7,7 +7,7 @@ COPY cmd/ /go/src/github.com/fubarhouse/pygmy-go/cmd/
 COPY service/ /go/src/github.com/fubarhouse/pygmy-go/service/
 
 WORKDIR /go/src/github.com/fubarhouse/pygmy-go/
-RUN go mod verify
+RUN GO111MODULE=on go mod verify
 RUN GO111MODULE=on GOOS=linux GOARCH=386 go build -o pygmy-go-linux .
 RUN GO111MODULE=on GOOS=linux GOARCH=amd64 go build -o pygmy-go-linux-arm .
 RUN GO111MODULE=on GOOS=darwin GOARCH=amd64 go build -o pygmy-go-darwin .
