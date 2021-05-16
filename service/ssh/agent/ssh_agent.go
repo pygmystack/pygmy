@@ -25,6 +25,13 @@ func New() model.Service {
 				"pygmy.purpose":  "sshagent",
 				"pygmy.weight":   "30",
 			},
+			Healthcheck: &container.HealthConfig{
+				Test:        []string{"CMD-SHELL", "stat $SSH_AUTH_SOCK"},
+				Interval:    30000000000,
+				Timeout:     5000000000,
+				StartPeriod: 5000000000,
+				Retries:     5,
+			},
 		},
 		HostConfig: container.HostConfig{
 			AutoRemove: false,
