@@ -23,7 +23,7 @@ func New(c *model.Params) model.Service {
 				"MH_UI_BIND_ADDR=0.0.0.0:80",
 				"MH_API_BIND_ADDR=0.0.0.0:80",
 				"AMAZEEIO=AMAZEEIO",
-				fmt.Sprintf("AMAZEEIO_URL=http://mailhog.%s", c.Domain),
+				fmt.Sprintf("AMAZEEIO_URL=mailhog.%s", c.Domain),
 			},
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
@@ -31,7 +31,7 @@ func New(c *model.Params) model.Service {
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-mailhog",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      fmt.Sprintf("mailhog.%s", c.Domain),
+				"pygmy.url":      fmt.Sprintf("http://mailhog.%s", c.Domain),
 				"pygmy.weight":   "15",
 			},
 		},
