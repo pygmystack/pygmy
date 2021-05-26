@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
 // run will run a shell command and is not exported.
