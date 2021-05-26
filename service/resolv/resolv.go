@@ -11,6 +11,7 @@ import (
 	"strings"
 
 	"github.com/fubarhouse/pygmy-go/service/color"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	. "github.com/logrusorgru/aurora"
 )
 
@@ -32,7 +33,7 @@ func run(args []string) error {
 // this function:
 // * sudo ifconfig lo0 alias 172.16.172.16
 // * sudo killall mDNSResponder
-func (resolv Resolv) Configure() {
+func (resolv Resolv) Configure(c *model.Params) {
 
 	var cmdOut []byte
 	var tmpFile *os.File
@@ -40,7 +41,7 @@ func (resolv Resolv) Configure() {
 	if !resolv.Enabled {
 		return
 	}
-	if resolv.Status() {
+	if resolv.Status(c) {
 		color.Print(Green(fmt.Sprintf("Already configured resolvr %s\n", resolv.Name)))
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
@@ -118,7 +119,7 @@ func (resolv Resolv) Configure() {
 			}
 		}
 
-		if resolv.Status() {
+		if resolv.Status(c) {
 			color.Print(Green(fmt.Sprintf("Successfully configured resolvr %s\n", resolv.Name)))
 		}
 	}
@@ -197,7 +198,7 @@ func (resolv Resolv) Clean() {
 // Status is an exported state function which will check the file contents
 // matches Data on Linux, or return the result of three independent checks
 // on MacOS including the file, network and data checks.
-func (resolv Resolv) Status() bool {
+func (resolv Resolv) Status(c *model.Params) bool {
 
 	if runtime.GOOS == "darwin" {
 		return resolv.statusFile() && resolv.statusNet() && resolv.statusFileData()

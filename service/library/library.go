@@ -17,6 +17,9 @@ type Config struct {
 	// Keys are the paths to the Keys which should be added.
 	Keys []string `yaml:"Keys"`
 
+	// Domain is the default domain suffix to use.
+	Domain string `yaml:"domain"`
+
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]model.Service `yaml:"services"`
 

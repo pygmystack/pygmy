@@ -6,17 +6,18 @@ import (
 
 	"github.com/docker/go-connections/nat"
 	"github.com/fubarhouse/pygmy-go/service/haproxy"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func Example() {
-	haproxy.New()
+	haproxy.New(&model.Params{})
 	haproxy.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New()
+		obj := haproxy.New(&model.Params{})
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldEqual, "amazeeio/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")

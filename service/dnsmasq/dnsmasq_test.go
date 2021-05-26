@@ -6,16 +6,17 @@ import (
 
 	"github.com/docker/go-connections/nat"
 	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func Example() {
-	dnsmasq.New()
+	dnsmasq.New(&model.Params{})
 }
 
 func Test(t *testing.T) {
 	Convey("DNSMasq: Field equality tests...", t, func() {
-		obj := dnsmasq.New()
+		obj := dnsmasq.New(&model.Params{})
 
 		So(obj.Config.Image, ShouldEqual, "andyshinn/dnsmasq:2.83")
 		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"-A", "/docker.amazee.io/127.0.0.1"}))

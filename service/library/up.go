@@ -7,6 +7,7 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
 )
@@ -121,8 +122,8 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status() {
-			resolver.Configure()
+		if !resolver.Status(&model.Params{Domain: c.Domain}) {
+			resolver.Configure(&model.Params{Domain: c.Domain})
 		}
 	}
 
