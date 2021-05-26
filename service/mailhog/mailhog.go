@@ -23,7 +23,7 @@ func New(c *model.Params) model.Service {
 				"MH_UI_BIND_ADDR=0.0.0.0:80",
 				"MH_API_BIND_ADDR=0.0.0.0:80",
 				"AMAZEEIO=AMAZEEIO",
-				fmt.Sprintf("AMAZEEIO_URL=mailhog.%s", c.Domain),
+				fmt.Sprintf("AMAZEEIO_URL=http://mailhog.%s", c.Domain),
 			},
 			Image: "mailhog/mailhog",
 			Labels: map[string]string{
