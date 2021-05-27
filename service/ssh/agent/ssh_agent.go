@@ -38,7 +38,7 @@ func New() model.Service {
 	}
 }
 
-// SshKeyLister will grab the output of all running containers with the proper
+// List will grab the output of all running containers with the proper
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
 func List(service model.Service) ([]byte, error) {

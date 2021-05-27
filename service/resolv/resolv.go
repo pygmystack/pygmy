@@ -247,10 +247,12 @@ func (resolv Resolv) statusFile() bool {
 // This has completely ruled that situation out.
 func (resolv Resolv) statusNet() bool {
 	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig lo0")
-	if out, ifConfigErr := ifConfigCmd.Output(); ifConfigErr != nil {
+	out, ifConfigErr := ifConfigCmd.Output()
+
+	if ifConfigErr != nil {
 		fmt.Println(ifConfigErr.Error())
 		return false
-	} else {
-		return strings.Contains(string(out), "172.16.172.16")
 	}
+
+	return strings.Contains(string(out), "172.16.172.16")
 }

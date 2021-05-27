@@ -235,7 +235,7 @@ func (Service *Service) Stop() error {
 	return nil
 }
 
-// Stop will stop the container.
+// Remove will stop the container.
 func (Service *Service) Remove() error {
 
 	discrete, _ := Service.GetFieldBool("discrete")

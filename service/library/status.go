@@ -80,7 +80,7 @@ func Status(c Config) {
 		if s := r.Status(&model.Params{Domain: c.Domain}); s {
 			color.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
 		} else {
-			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly conected\n", resolver.Name)))
+			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly connected\n", resolver.Name)))
 		}
 	}
 
