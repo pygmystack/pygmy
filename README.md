@@ -33,10 +33,15 @@ curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection re
 
 ## Installation
 
-These instructions will build Linux, OSX and Windows binaries of Pygmy on OSX,
-and then test the OSX version.
+These instructions will build Linux, MacOS and Windows binaries of Pygmy on MacOS,
+and then test the MacOS version. Apple M1 is not officially supported. Upstream
+docker images provided by Amazee are not yet provided. We'll not deviate from these
+images as it would deviate from what is officially supported. You can however provide
+configuration to switch out the `haproxy` image for a compatible one if you'd like.
 
 ### Compile from source
+
+**Works for**: Linux, MacOS & Windows
 
 ```shell
 git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go;
@@ -50,12 +55,16 @@ as `pygmy`. Now start Pygmy and use the new `status` command.
 
 ### Using Homebrew
 
+**Works for**: Linux & MacOS
+
 ```shell
 brew tap fubarhouse/pygmy-go;
-brew install pygmy-go
+brew install pygmy-go;
 ```
 
 ### Using the AUR
+
+**Works for**: [Arch-based Linux Distributions](https://wiki.archlinux.org/title/Arch-based_distributions) (Manjaro, Elementary, ArcoLinux etc)
 
 [pygmy-go](https://aur.archlinux.org/packages/pygmy-go/) and [pygmy-go-git](https://aur.archlinux.org/packages/pygmy-go-git/)
 are available via the Arch User Repository for Arch-based Linux distributions on the community stream. Unfortunately, 
@@ -64,9 +73,9 @@ from source.
 
 ```shell
 # Install the latest release:
-yay -S pygmy-go
+yay -S pygmy-go;
 # Download and compile the latest HEAD from GitHub on the main branch:
-yay -S pygmy-go-git
+yay -S pygmy-go-git;
 ```
 
 ## Usage
