@@ -1,6 +1,8 @@
 package dnsmasq
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
@@ -8,13 +10,13 @@ import (
 )
 
 // New will provide the standard object for the dnsmasq container.
-func New() model.Service {
+func New(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
 			Image: "andyshinn/dnsmasq:2.83",
 			Cmd: []string{
 				"-A",
-				"/docker.amazee.io/127.0.0.1",
+				fmt.Sprintf("/%s/127.0.0.1", c.Domain),
 			},
 			Labels: map[string]string{
 				"pygmy.defaults": "true",

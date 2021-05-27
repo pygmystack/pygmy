@@ -6,6 +6,7 @@ import (
 
 	"github.com/fubarhouse/pygmy-go/service/color"
 	"github.com/fubarhouse/pygmy-go/service/endpoint"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	"github.com/fubarhouse/pygmy-go/service/resolv"
 	. "github.com/logrusorgru/aurora"
@@ -76,10 +77,10 @@ func Status(c Config) {
 
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
-		if s := r.Status(); s {
+		if s := r.Status(&model.Params{Domain: c.Domain}); s {
 			color.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
 		} else {
-			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly conected\n", resolver.Name)))
+			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly connected\n", resolver.Name)))
 		}
 	}
 

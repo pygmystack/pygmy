@@ -5,18 +5,19 @@ import (
 	"testing"
 
 	"github.com/docker/go-connections/nat"
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 	"github.com/fubarhouse/pygmy-go/service/mailhog"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func Example() {
-	mailhog.New()
+	mailhog.New(&model.Params{})
 	mailhog.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("MailHog: Field equality tests...", t, func() {
-		obj := mailhog.New()
+		obj := mailhog.New(&model.Params{Domain: "docker.amazee.io"})
 		objPorts := mailhog.NewDefaultPorts()
 		So(obj.Config.User, ShouldEqual, "0")
 		So(obj.Config.Image, ShouldEqual, "mailhog/mailhog")

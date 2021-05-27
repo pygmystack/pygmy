@@ -119,9 +119,8 @@ func findConfig() string {
 	// Provide a default.
 	if runtime.GOOS == "linux" {
 		return strings.Join([]string{"etc", "pygmy", "config.yml"}, string(os.PathSeparator))
-	} else {
-		return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
 	}
+	return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
 }
 
 // initConfig reads in config file and ENV variables if set.

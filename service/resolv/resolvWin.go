@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+
+	model "github.com/fubarhouse/pygmy-go/service/interface"
 )
 
 // run will run a shell command and is not exported.
@@ -52,22 +54,22 @@ func (resolv Resolv) Clean() {
 		fmt.Println(error.Error())
 	}
 }
-func (resolv Resolv) Configure() {
+func (resolv Resolv) Configure(c *model.Params) {
 	if resolv.Enabled {
-		_, error := run([]string{"Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value docker.amazee.io"})
+		_, error := run([]string{fmt.Sprintf("Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value %s", c.Domain)})
 		if error != nil {
 			fmt.Println(error.Error())
 		}
 	}
 }
 
-func (resolv Resolv) Status() bool {
+func (resolv Resolv) Status(c *model.Params) bool {
 	data, error := run([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
 	if error != nil {
 		return false
 	}
 	for _, v := range strings.Split(string(data), "\n") {
-		if strings.HasPrefix(v, "Domain") && strings.Contains(v, "docker.amazee.io") {
+		if strings.HasPrefix(v, "Domain") && strings.Contains(v, c.Domain) {
 			return true
 		}
 	}

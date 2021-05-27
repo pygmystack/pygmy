@@ -318,7 +318,7 @@ func DockerNetworkConnect(network string, containerName string) error {
 	return nil
 }
 
-// DockerNetworkConnect will check if a container is connected to a network.
+// DockerNetworkConnected will check if a container is connected to a network.
 func DockerNetworkConnected(network string, containerName string) (bool, error) {
 	// Reset network state:
 	c, _ := DockerContainerList()
@@ -417,22 +417,28 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	if rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+	rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
 		AttachStdout: true,
 		AttachStderr: true,
-		Cmd:          strings.Split(command, " ")}); err != nil {
+		Cmd:          strings.Split(command, " ")})
+
+	if err != nil {
 		return []byte{}, err
-	} else {
-		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{}); err != nil {
-			return []byte{}, err
-		} else {
-			data, _ := ioutil.ReadAll(response.Reader)
-			defer response.Close()
-			return data, nil
-		}
 	}
+
+	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{})
+
+	if err != nil {
+		return []byte{}, err
+	}
+
+	data, _ := ioutil.ReadAll(response.Reader)
+	defer response.Close()
+	return data, nil
+
 }
 
+// DockerContainerCreate will create a container, but will not run it.
 func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.ContainerCreateCreatedBody, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -447,6 +453,7 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	return resp, err
 }
 
+// DockerContainerStart will run an existing container.
 func DockerContainerStart(ID string, options types.ContainerStartOptions) error {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
@@ -460,6 +467,9 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 	return err
 }
 
+// DockerContainerLogs will synchronously (blocking, non-concurrently) print
+// logs to stdout and stderr, useful for quick containers with a small amount
+// of output which are expected to exit quickly.
 func DockerContainerLogs(ID string) ([]byte, error) {
 	ctx := context.Background()
 	cli, err := client.NewEnvClient()
