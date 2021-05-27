@@ -31,20 +31,45 @@ curl --HEAD http://myproject.docker.amazee.io
 curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection refused
 ```
 
-## Installation (OSX specific)
+## Installation
 
 These instructions will build Linux, OSX and Windows binaries of Pygmy on OSX,
 and then test the OSX version.
 
-1. `git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go`
-2. `make build`
-3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod +x /usr/local/bin/pygmy-go`
+### Compile from source
+
+```shell
+git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go;
+make build;
+cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go;
+chmod +x /usr/local/bin/pygmy-go;
+```
 
 Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
 as `pygmy`. Now start Pygmy and use the new `status` command.
 
-4. `pygmy-go up`
-5. `pygmy-go status`
+### Using Homebrew
+
+```shell
+brew tap fubarhouse/pygmy-go;
+brew install pygmy-go
+```
+
+### Using the AUR
+
+[pygmy-go](https://aur.archlinux.org/packages/pygmy-go/) and [pygmy-go-git](https://aur.archlinux.org/packages/pygmy-go-git/)
+are available via the Arch User Repository for Arch-based Linux distributions on the community stream. Unfortunately, 
+Pygmy is not yet available via other distribution methods, so it is otherwise recommended to use homebrew or compile 
+from source.  
+
+```shell
+# Install the latest release:
+yay -S pygmy-go
+# Download and compile the latest HEAD from GitHub on the main branch:
+yay -S pygmy-go-git
+```
+
+## Usage
 
 If you have an Amazee Lagoon project running, you can test the web address and
 expect a `HTTP/1.1 200 OK` response.
