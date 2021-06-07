@@ -13,6 +13,7 @@ require (
 	github.com/gogo/protobuf v1.3.1 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/imdario/mergo v0.3.12
+	github.com/lixiangzhong/dnsutil v1.4.0
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.8
 	github.com/mitchellh/go-homedir v1.1.0
@@ -30,6 +31,5 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.4.0 // indirect
 	golang.org/x/net v0.0.0-20200513185701-a91f0712d120 // indirect
-	golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9 // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect
 )

@@ -4,7 +4,12 @@ package endpoint
 
 import (
 	"crypto/tls"
+	"errors"
+	"fmt"
 	"net/http"
+
+	client2 "github.com/docker/docker/client"
+	"github.com/lixiangzhong/dnsutil"
 )
 
 // Validate will submit a web request to test the container service.
@@ -12,7 +17,12 @@ import (
 // Any other result will fail this validation process.
 //
 // This is to provided to the user through the up and status commands.
-func Validate(url string) bool {
+func Validate(url string) (bool, error) {
+
+	// Try to dig test it first.
+	if ok := dig(url); !ok {
+		return false, errors.New("dns check failure")
+	}
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -23,14 +33,14 @@ func Validate(url string) bool {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		// Test failed.
-		return false
+		return false, err
 	}
 
 	// Submit a web request
 	resp, err := client.Do(req)
 	if err != nil {
 		// Test failed.
-		return false
+		return false, err
 	}
 
 	// Housekeeping
@@ -43,7 +53,22 @@ func Validate(url string) bool {
 
 	// Check for known failure status response codes (failures):
 	if resp.StatusCode >= 501 && resp.StatusCode < 600 {
+		return false, errors.New("500 error returned from endpoint")
+	}
+
+	// Test passed.
+	return true, nil
+}
+
+func dig(url string) bool {
+
+	parsedURL, _ := client2.ParseHostURL(url)
+	var dig dnsutil.Dig
+	dig.At("127.0.0.1")
+	a, err := dig.A(parsedURL.Host)
+	if err != nil {
 		return false
+		fmt.Println(a, err)
 	}
 
 	// Test passed.

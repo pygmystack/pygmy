@@ -13,7 +13,8 @@ func Example() {
 
 func Test(t *testing.T) {
 	Convey("URL Endpoint tests...", t, func() {
-		valid := endpoint.Validate("https://www.golang.org/")
+		valid, err := endpoint.Validate("https://www.golang.org/")
+		So(err, ShouldBeNil)
 		So(valid, ShouldBeTrue)
 	})
 }

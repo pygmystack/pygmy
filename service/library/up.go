@@ -141,10 +141,10 @@ func Up(c Config) {
 		url, _ := service.GetFieldString("url")
 		if s, _ := service.Status(); s && url != "" {
 			endpoint.Validate(url)
-			if r := endpoint.Validate(url); r {
+			if r, err := endpoint.Validate(url); r {
 				fmt.Printf(" - %v (%v)\n", url, name)
 			} else {
-				fmt.Printf(" ! %v (%v)\n", url, name)
+				fmt.Printf(" ! %v (%v): %s\n", url, name, err.Error())
 			}
 		}
 	}
@@ -172,10 +172,10 @@ func Up(c Config) {
 	cleanurls := unique(urls)
 	for _, url := range cleanurls {
 		endpoint.Validate(url)
-		if r := endpoint.Validate(url); r {
+		if r, err := endpoint.Validate(url); r {
 			fmt.Printf(" - %v\n", url)
 		} else {
-			fmt.Printf(" ! %v\n", url)
+			fmt.Printf(" ! %v: %s\n", url, err.Error())
 		}
 	}
 }
