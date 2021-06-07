@@ -5,7 +5,6 @@ package endpoint
 import (
 	"crypto/tls"
 	"errors"
-	"fmt"
 	"net/http"
 
 	client2 "github.com/docker/docker/client"
@@ -65,10 +64,9 @@ func dig(url string) bool {
 	parsedURL, _ := client2.ParseHostURL(url)
 	var dig dnsutil.Dig
 	dig.At("127.0.0.1")
-	a, err := dig.A(parsedURL.Host)
+	_, err := dig.A(parsedURL.Host)
 	if err != nil {
 		return false
-		fmt.Println(a, err)
 	}
 
 	// Test passed.
