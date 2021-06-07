@@ -59,6 +59,10 @@ func Validate(url string) (bool, error) {
 	return true, nil
 }
 
+// dig will perform a dig against the DNS record directly.
+// this will check the endpoint for an A record and report back.
+// if the dns is the point of failure, the Validate function will
+// report this to the user, instead of leaving the user to guess.
 func dig(url string) bool {
 
 	parsedURL, _ := client2.ParseHostURL(url)
