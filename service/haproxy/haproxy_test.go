@@ -31,6 +31,6 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
-		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"80/tcp": []nat.PortBinding{{HostIP: "", HostPort: "80"}}}))
+		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"80/tcp": []nat.PortBinding{{HostIP: "", HostPort: "80"}}, "443/tcp": []nat.PortBinding{{HostIP: "", HostPort: "443"}}}))
 	})
 }
