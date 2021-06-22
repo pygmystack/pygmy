@@ -51,6 +51,12 @@ func NewDefaultPorts() model.Service {
 						HostPort: "80",
 					},
 				},
+				"443/tcp": []nat.PortBinding{
+					{
+						HostIP:   "",
+						HostPort: "443",
+					},
+				},
 			},
 		},
 	}
