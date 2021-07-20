@@ -10,8 +10,6 @@ WORKDIR /go/src/github.com/fubarhouse/pygmy-go/
 RUN GO111MODULE=on go mod verify
 RUN GO111MODULE=on GOOS=linux GOARCH=386 go build -o pygmy-go-linux .
 RUN GO111MODULE=on GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o pygmy-go-linux-static .
-	linux 	arm
-	linux 	arm64
 RUN GO111MODULE=on GOOS=linux GOARCH=arm go build -o pygmy-go-linux-amd64 .
 RUN GO111MODULE=on GOOS=linux GOARCH=arm CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o pygmy-go-linux-armrm-static .
 RUN GO111MODULE=on GOOS=linux GOARCH=arm64 go build -o pygmy-go-linux-amd64 .
