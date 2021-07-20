@@ -40,7 +40,9 @@ builds:
       - arm64
 
 brews:
-  - tap:
+  - ids:
+    - pygmy-go
+    tap:
       owner: fubarhouse
       name: homebrew-pygmy-go
     folder: Formula
