@@ -199,7 +199,7 @@ jobs:
           sleep 5;
           curl --HEAD http://wordpress-nginx.docker.amazee.io;
           curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-arm64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
+          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
           docker-compose -p wordpress-simple down;
           docker-compose -p wordpress-simple rm;
           cd ../../;
@@ -214,7 +214,7 @@ jobs:
           lando destroy -y;
           cd ../../;
 
-      - name: Test the down command
+      - name: Test the down commandWordpress
         run: |
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
