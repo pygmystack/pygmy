@@ -14,6 +14,19 @@ builds:
       - amd64
       - arm
       - arm64
+  - env:
+      - CGO_ENABLED=0
+    flags:
+      - -a
+    ldflags:
+      - -extldflags "-static"
+    goos:
+      - linux
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
 
 brews:
   - tap:
