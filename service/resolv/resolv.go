@@ -177,20 +177,20 @@ func (resolv Resolv) Clean() {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 			err := ifConfig.Run()
 			if err != nil {
-				color.Print(Sprintf(Red("error removing loopback UP alias"), Red(err)))
+				color.Print(Sprintf(Red("error removing loopback UP alias\n"), Red(err)))
 			} else {
 				if !resolv.statusNet() {
-					color.Print(Sprintf(Green("Successfully removed loopback alias IP.")))
+					color.Print(Sprintf(Green("Successfully removed loopback alias IP.\n")))
 				}
 			}
 		}
 
-		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder\n")
 		err := killAll.Run()
 		if err != nil {
-			color.Print(Sprintf(Red("error restarting mDNSResponder")))
+			color.Print(Sprintf(Red("error restarting mDNSResponder\n")))
 		} else {
-			color.Print(Sprintf(Green("Successfully restarted mDNSResponder")))
+			color.Print(Sprintf(Green("Successfully restarted mDNSResponder\n")))
 		}
 	}
 }
