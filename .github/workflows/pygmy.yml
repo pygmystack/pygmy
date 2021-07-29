@@ -86,7 +86,7 @@ jobs:
       - name: Resolv file test
         run: |
           stat /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
-          grep "127.0.0.1"/usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
+          grep "127.0.0.1" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
           grep "docker.amazee.io" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
 
       - name: Test the amazeeio-network for expected results
