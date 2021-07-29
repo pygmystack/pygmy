@@ -83,6 +83,12 @@ jobs:
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml status;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml version;
 
+      - name: Resolv file test
+        run: |
+          stat /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
+          grep "127.0.0.1"/usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
+          grep "docker.amazee.io" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
+
       - name: Test the amazeeio-network for expected results
         run: |
           docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
