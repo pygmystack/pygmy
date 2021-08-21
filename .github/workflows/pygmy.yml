@@ -84,14 +84,13 @@ jobs:
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml status;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml version;
 
-      - name: SSH Key test (1)
-        run: ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
-      - name: SSH Key test (2)
-        run: ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_pwd.pub;
-      - name: SSH Key test (3)
-        run: ./pygmy-go-linux-amd64 status | grep id_rsa\.pub;
-      - name: SSH Key test (4)
-        run: ./pygmy-go-linux-amd64 status | grep id_pwd\.pub;
+      - name: SSH Key test
+        run: |
+          ./pygmy-go-linux-amd64 status;
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_pwd.pub;
+          ./pygmy-go-linux-amd64 status | grep 'id_rsa.pub';
+          ./pygmy-go-linux-amd64 status | grep 'id_pwd.pub';
 
       - name: Resolv file test
         run: |
