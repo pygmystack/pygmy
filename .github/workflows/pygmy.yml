@@ -58,6 +58,7 @@ jobs:
         run: |
           eval $(ssh-agent);
           ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "";
+          ssh-keygen -t rsa -q -f "$HOME/.ssh/id_pwd" -N "passphrase";
           ssh-add;
           ssh-add -l;
       - name: Setup git
@@ -82,6 +83,13 @@ jobs:
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml up;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml status;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml version;
+
+      - name: SSH Key test
+        run: |
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_pwd.pub;
+          ./pygmy-go-linux-amd64 status | grep id_rsa\.pub;
+          ./pygmy-go-linux-amd64 status | grep id_pwd\.pub;
 
       - name: Resolv file test
         run: |
