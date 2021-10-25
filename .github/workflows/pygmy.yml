@@ -217,9 +217,9 @@ jobs:
           docker-compose -p wordpress-simple up -d;
           docker-compose -p wordpress-simple exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://wordpress-nginx.docker.amazee.io;
-          curl --HEAD http://wordpress-nginx.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-nginx.docker.amazee.io';
+          curl --HEAD http://wordpress-example-simple.docker.amazee.io;
+          curl --HEAD http://wordpress-example-simple.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-example-simple.docker.amazee.io';
           docker-compose -p wordpress-simple down;
           docker-compose -p wordpress-simple rm;
           cd ../../;
