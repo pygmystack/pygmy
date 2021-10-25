@@ -58,6 +58,7 @@ jobs:
         run: |
           eval $(ssh-agent);
           ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "";
+          ssh-keygen -t rsa -q -f "$HOME/.ssh/id_pwd" -N "passphrase";
           ssh-add;
           ssh-add -l;
       - name: Setup git
@@ -82,6 +83,19 @@ jobs:
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml up;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml status;
           ./pygmy-go-linux-amd64 --config examples/pygmy.basic.yml version;
+
+      - name: Show pygmy image versions
+        run: |
+          docker ps -a --filter "label=pygmy.name"
+
+      - name: SSH Key test
+        run: |
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
+          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_pwd.pub;
+          ./pygmy-go-linux-amd64 status;
+          ./pygmy-go-linux-amd64 status | grep 'id_rsa';
+          docker run --rm -i --volumes-from amazeeio-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
+#          ./pygmy-go-linux-amd64 status | grep 'id_pwd';
 
       - name: Resolv file test
         run: |
