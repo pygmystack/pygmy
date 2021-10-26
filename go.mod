@@ -12,7 +12,7 @@ require (
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/imdario/mergo v0.3.12
 	github.com/logrusorgru/aurora v2.0.3+incompatible
-	github.com/mattn/go-colorable v0.1.8
+	github.com/mattn/go-colorable v0.1.11
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.1 // indirect
