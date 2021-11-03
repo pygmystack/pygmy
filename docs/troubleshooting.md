@@ -246,16 +246,16 @@ If during starting of `pygmy` you see an error like that:
         Error starting userland proxy: listen tcp 0.0.0.0:53: bind: address already in use
         Error: failed to start containers: amazeeio-dnsmasq
 
-You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with `pygmy`. The resolution depends on Ubuntu version.  
+You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with `pygmy`. The resolution depends on Ubuntu version.
 
 #### Ubuntu before 18.04
 You should disable it, see here: http://askubuntu.com/a/233223 (no worries, the default started DNS server is actually not used, so it's safe to disable it).
 
 #### Ubuntu 18.04 and later
-You should disable it as described https://mmoapi.com/post/how-to-disable-dnsmasq-port-53-listening-on-ubuntu-18-04.  
+You should disable it as described https://mmoapi.com/post/how-to-disable-dnsmasq-port-53-listening-on-ubuntu-18-04.
 Instead of reboot the system, remove */etc/resolv.conf*  file (still symlinking to a systemd-resolved file) and create an empty one.
 
-    sudo rm /etc/resolv.conf  
+    sudo rm /etc/resolv.conf
     sudo touch /etc/resolv.conf
 
 If you still run into the error run following command `sudo netstat -tulpn` to see the processlist look for the service running on port 53 (you should find that process in the `Local Address` column). Look for the Process ID (PID)
