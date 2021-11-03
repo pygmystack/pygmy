@@ -202,6 +202,28 @@ Example `hosts` file contents:
 
     10.0.2.2 my-local-website.com.docker.amazee.io
 
+### I get an error like `no such service: amazeeio-ssh-agent` when using `docker-compose up -d` even after pygmy started fine
+
+Restart pygmy and make sure that pygmy could start the ssh-agent container.
+
+    pygmy restart
+    pygmy status
+
+You could see a message like this:
+
+    [*] ssh-agent: Running as docker container amazeeio-ssh-agent, loaded keys:
+
+If you have recently updated Docker Desktop you should ensure that your turn off Docker Compose v2 support.
+
+1. Open Docker Desktop Preferences
+1. Uncheck the option labelled "Use Docker Compose v2"
+1. Click Apply and Restart
+
+Once completed, try starting pygmy and run your `docker-compose up -d` commands again.
+
+    pygmy up
+    docker-compose up -d
+
 ## pygmy
 
 Most issues with `pygmy` can be resolved with:
