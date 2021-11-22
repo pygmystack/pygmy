@@ -34,12 +34,19 @@ jobs:
           )
           var PYGMY_VERSION = "${GITHUB_REF}"
           func printversion() bool {
-          parts := strings.Split(PYGMY_VERSION, "/")
-          	if PYGMY_VERSION == "" {
-          	  return false
-          	}
-          	fmt.Printf("Pygmy version v%v\n", parts[len(parts)-1])
-          	return true
+            parts := strings.Split(PYGMY_VERSION, "/")
+            if PYGMY_VERSION == "" {
+              return false
+            }
+            resultVersion :=  fmt.Sprintf("%v", parts[len(parts)-1])
+            if !strings.HasPrefix(resultVersion, "v") {
+            resultVersion = fmt.Sprintf("v%v", resultVersion)
+            }
+            resultVersion :=  fmt.Sprintf("%v", parts[len(parts)-1])
+            if !strings.HasPrefix(resultVersion, "v") {
+            resultVersion = fmt.Sprintf("v%v", resultVersion)
+            }
+            fmt.Printf("Pygmy version %v", resultVersion)
           }
           EOF
       -
