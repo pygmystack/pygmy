@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/containerd/containerd/platforms"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"io"
 	"io/ioutil"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -388,7 +391,7 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	if err != nil {
 		return types.Volume{}, err
 	}
-	return cli.VolumeCreate(ctx, volumetypes.VolumesCreateBody{
+	return cli.VolumeCreate(ctx, volumetypes.VolumeCreateBody{
 		Driver:     volume.Driver,
 		DriverOpts: volume.Options,
 		Labels:     volume.Labels,
@@ -446,7 +449,11 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
 	}
-	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, ID)
+	platform := platforms.Normalize(v1.Platform{
+		Architecture: runtime.GOARCH,
+		OS:           runtime.GOOS,
+	})
+	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
 	}
