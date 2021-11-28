@@ -26,7 +26,7 @@ func NetworkConnect(network string, containerName string) error {
 // been created, and will return false if the network can not be found.
 func NetworkStatus(network string) (bool, error) {
 	ctx := context.Background()
-	cli, err := client.NewEnvClient()
+	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return false, err
