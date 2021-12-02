@@ -13,7 +13,7 @@ require (
 	github.com/mattn/go-colorable v0.1.11
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/morikuni/aec v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.0.1
+	github.com/opencontainers/image-spec v1.0.2
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.9.0
