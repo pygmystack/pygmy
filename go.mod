@@ -16,5 +16,5 @@ require (
 	github.com/opencontainers/image-spec v1.0.2
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cobra v1.1.3
-	github.com/spf13/viper v1.9.0
+	github.com/spf13/viper v1.10.0
 )
