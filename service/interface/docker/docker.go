@@ -453,6 +453,9 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 		Architecture: runtime.GOARCH,
 		OS:           runtime.GOOS,
 	})
+	if runtime.GOOS == "darwin" {
+		platform.OS = "linux"
+	}
 	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
