@@ -4,7 +4,7 @@ go 1.16
 
 require (
 	github.com/containerd/containerd v1.5.8
-	github.com/docker/docker v20.10.11+incompatible
+	github.com/docker/docker v20.10.12+incompatible
 	github.com/docker/go-connections v0.4.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
