@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/spf13/viper"
+
 	"github.com/pygmystack/pygmy/service/dnsmasq"
 	"github.com/pygmystack/pygmy/service/haproxy"
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -17,7 +19,6 @@ import (
 	"github.com/pygmystack/pygmy/service/resolv"
 	"github.com/pygmystack/pygmy/service/ssh/agent"
 	"github.com/pygmystack/pygmy/service/ssh/key"
-	"github.com/spf13/viper"
 )
 
 // ImportDefaults is an exported function which allows third-party applications
