@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/docker/go-connections/nat"
-	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	"github.com/pygmystack/pygmy/service/dnsmasq"
+	model "github.com/pygmystack/pygmy/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

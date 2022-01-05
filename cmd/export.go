@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"github.com/pygmystack/pygmy/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"os"

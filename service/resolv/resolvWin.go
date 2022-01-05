@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // run will run a shell command and is not exported.

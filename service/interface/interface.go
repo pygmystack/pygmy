@@ -7,8 +7,8 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/color"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
 )
 

@@ -26,7 +26,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"github.com/pygmystack/pygmy/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

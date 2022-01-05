@@ -1,4 +1,4 @@
-module github.com/fubarhouse/pygmy-go
+module github.com/pygmystack/pygmy
 
 go 1.16
 

@@ -6,7 +6,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // New will provide the standard object for the mailhog container.

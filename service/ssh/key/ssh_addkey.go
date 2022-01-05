@@ -5,7 +5,7 @@ package key
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // NewAdder will provide the standard object for the SSH key adder container.

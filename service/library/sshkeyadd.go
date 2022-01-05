@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
+	"github.com/pygmystack/pygmy/service/ssh/agent"
 )
 
 // SshKeyAdd will add a given key to the ssh agent.

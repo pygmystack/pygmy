@@ -43,10 +43,10 @@ brews:
   - ids:
     - pygmy-go
     tap:
-      owner: fubarhouse
-      name: homebrew-pygmy-go
+      owner: pygmystack
+      name: homebrew-pygmy
     folder: Formula
-    homepage: "https://github.com/fubarhouse/pygmy-go"
+    homepage: "https://github.com/pygmystack/pygmy"
     description: "amazee.io's local development helper tool"
     skip_upload: false
     test: system "#{bin}/pygmy-go version"

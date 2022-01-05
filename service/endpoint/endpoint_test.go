@@ -3,7 +3,7 @@ package endpoint_test
 import (
 	"testing"
 
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
+	"github.com/pygmystack/pygmy/service/endpoint"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
