@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/resolv"
-	. "github.com/logrusorgru/aurora"
 )
 
 // Status will show the state of all the things Pygmy manages.

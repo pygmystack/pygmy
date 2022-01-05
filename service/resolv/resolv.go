@@ -1,4 +1,4 @@
-// +build !windows
+//go:build !windows
 
 package resolv
 
@@ -10,9 +10,10 @@ import (
 	"runtime"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/service/color"
 	model "github.com/pygmystack/pygmy/service/interface"
-	. "github.com/logrusorgru/aurora"
 )
 
 // run will run a shell command and is not exported.

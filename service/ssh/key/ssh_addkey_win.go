@@ -1,4 +1,4 @@
-// +build windows
+//gp:build windows
 
 package key
 

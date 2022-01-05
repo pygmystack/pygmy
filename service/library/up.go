@@ -5,11 +5,12 @@ import (
 	"os"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/interface/docker"
-	. "github.com/logrusorgru/aurora"
 )
 
 // Up will bring Pygmy up.

@@ -1,10 +1,11 @@
-// +build darwin linux
+//go:build darwin,linux
 
 package key
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+
 	model "github.com/pygmystack/pygmy/service/interface"
 )
 

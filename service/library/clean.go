@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/interface/docker"
-	. "github.com/logrusorgru/aurora"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon

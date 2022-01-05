@@ -24,9 +24,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pygmystack/pygmy/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 // restartCmd represents the restart command
