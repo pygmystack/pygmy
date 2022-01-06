@@ -2,7 +2,16 @@ name: pygmy
 
 on:
   push:
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
+  release:
+    types:
+      - created
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   basic:
@@ -133,7 +142,6 @@ jobs:
       - name: Clone the official examples
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
-          git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
       - name: Drupal 9 Advanced
         run: |
@@ -148,17 +156,43 @@ jobs:
           docker-compose -p drupal9-advanced rm;
           cd ../../;
 
-      - name: Drupal 9 Simple
+      - name: Drupal 9 Base
         run: |
-          cd lagoon-examples/drupal9-simple;
-          docker-compose -p drupal-example-simple up -d;
-          docker-compose -p drupal-example-simple exec -T cli composer install;
+          cd lagoon-examples/drupal9-base;
+          docker-compose -p drupal-base up -d;
+          docker-compose -p drupal-base exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-example-simple.docker.amazee.io;
-          curl --HEAD http://drupal9-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-simple.docker.amazee.io';
-          docker-compose -p drupal-example-simple down;
-          docker-compose -p drupal-example-simple rm;
+          curl --HEAD http://drupal9-base.docker.amazee.io;
+          curl --HEAD http://drupal9-base.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.docker.amazee.io';
+          docker-compose -p drupal-base down;
+          docker-compose -p drupal-base rm;
+          cd ../../;
+
+      - name: Drupal 9 Elastic
+        run: |
+          cd lagoon-examples/drupal9-elastic;
+          docker-compose -p drupal-elastic up -d;
+          docker-compose -p drupal-elastic exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://drupal9-elastic.docker.amazee.io;
+          curl --HEAD http://drupal9-elastic.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-elastic.docker.amazee.io';
+          docker-compose -p drupal-elastic down;
+          docker-compose -p drupal-elastic rm;
+          cd ../../;
+
+      - name: Drupal 9 Postgres
+        run: |
+          cd lagoon-examples/drupal9-postgres;
+          docker-compose -p drupal-postgres up -d;
+          docker-compose -p drupal-postgres exec -T cli composer install;
+          sleep 5;
+          curl --HEAD http://drupal9-postgres.docker.amazee.io;
+          curl --HEAD http://drupal9-postgres.docker.amazee.io | grep "X-LAGOON";
+          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.docker.amazee.io';
+          docker-compose -p drupal-postgres down;
+          docker-compose -p drupal-postgres rm;
           cd ../../;
 
       - name: Node
