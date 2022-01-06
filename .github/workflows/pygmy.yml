@@ -135,19 +135,6 @@ jobs:
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
           git clone -b 9.x https://github.com/amazeeio/drupal-example-simple.git lagoon-examples/drupal9-lagoon-simple-lando
 
-      - name: Drupal 8 Simple
-        run: |
-          cd lagoon-examples/drupal8-simple;
-          docker-compose -p drupal8-example-simple up -d;
-          docker-compose -p drupal8-example-simple exec -T cli composer install;
-          sleep 5;
-          curl --HEAD http://drupal8-example-simple.docker.amazee.io;
-          curl --HEAD http://drupal8-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-go-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal8-example-simple.docker.amazee.io';
-          docker-compose -p drupal8-example-simple down;
-          docker-compose -p drupal8-example-simple rm;
-          cd ../../;
-
       - name: Drupal 9 Advanced
         run: |
           cd lagoon-examples/drupal9-advanced;
