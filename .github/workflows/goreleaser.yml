@@ -3,10 +3,12 @@ name: goreleaser
 on:
   push:
     branches:
-      - 'main'
+      - main
     tags:
       - 'v*'
   pull_request:
+    branches:
+      - main
 
 jobs:
   goreleaser:
