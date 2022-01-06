@@ -1,4 +1,5 @@
-//gp:build windows
+//go:build windows
+// +build windows
 
 package key
 

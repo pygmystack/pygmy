@@ -1,4 +1,5 @@
-//go:build darwin && linux
+//go:build !windows
+// +build !windows
 
 package resolv
 
