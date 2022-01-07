@@ -7,9 +7,10 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/color"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
 	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // Setup will detect if the Service's image reference exists and will

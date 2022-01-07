@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"github.com/pygmystack/pygmy/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 

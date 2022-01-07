@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/ssh/agent"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

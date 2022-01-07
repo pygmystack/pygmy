@@ -9,7 +9,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

@@ -1,10 +1,9 @@
 # Pygmy
 
 [![Stability](https://img.shields.io/badge/stability-stable-green.svg)]()
-[![Travis CI](https://travis-ci.com/fubarhouse/pygmy-go.svg?branch=main)](https://travis-ci.com/fubarhouse/pygmy-go)
-![goreleaser](https://github.com/fubarhouse/pygmy-go/workflows/goreleaser/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/fubarhouse/pygmy-go)](https://goreportcard.com/report/github.com/fubarhouse/pygmy-go)
-[![GoDoc](https://godoc.org/github.com/fubarhouse/pygmy-go?status.svg)](https://godoc.org/github.com/fubarhouse/pygmy-go)
+![goreleaser](https://github.com/pygmystack/pygmy/workflows/goreleaser/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pygmystack/pygmy)](https://goreportcard.com/report/github.com/pygmystack/pygmy)
+[![GoDoc](https://godoc.org/github.com/pygmystack/pygmy?status.svg)](https://godoc.org/github.com/pygmystack/pygmy)
 
 This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy.readthedocs.io/en/master/)
 currently written in Ruby. The goal is to provide a better cross-platform experience
@@ -44,7 +43,7 @@ configuration to switch out the `haproxy` image for a compatible one if you'd li
 **Works for**: Linux, MacOS & Windows
 
 ```shell
-git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go;
+git clone https://github.com/pygmystack/pygmy.git && cd pygmy-go;
 make build;
 cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go;
 chmod +x /usr/local/bin/pygmy-go;
@@ -58,8 +57,8 @@ as `pygmy`. Now start Pygmy and use the new `status` command.
 **Works for**: Linux & MacOS
 
 ```shell
-brew tap fubarhouse/pygmy-go;
-brew install pygmy-go;
+brew tap pygmystack/pygmy;
+brew install pygmy;
 ```
 
 ### Using the AUR
@@ -122,7 +121,7 @@ It will use `dind` and your local daemon to walk through several tests which sho
 
 1. First clone the project:
    ```
-   git clone https://github.com/fubarhouse/pygmy-go.git pygmy-go && cd pygmy-go
+   git clone https://github.com/pygmystack/pygmy.git pygmy-go && cd pygmy-go
    ```
 2. Perform any updates as required.
 3. Clean the environment.

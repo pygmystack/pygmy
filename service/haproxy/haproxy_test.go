@@ -5,8 +5,8 @@ import (
 	"testing"
 
 	"github.com/docker/go-connections/nat"
-	"github.com/fubarhouse/pygmy-go/service/haproxy"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	"github.com/pygmystack/pygmy/service/haproxy"
+	model "github.com/pygmystack/pygmy/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

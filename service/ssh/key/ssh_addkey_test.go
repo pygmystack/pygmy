@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fubarhouse/pygmy-go/service/ssh/key"
+	"github.com/pygmystack/pygmy/service/ssh/key"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

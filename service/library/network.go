@@ -6,7 +6,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // NetworkCreate is part of a centralised abstraction of the Docker API

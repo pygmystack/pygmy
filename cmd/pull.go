@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 

@@ -20,7 +20,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
+	"github.com/pygmystack/pygmy/service/endpoint"
 )
 
 // DockerContainerList will return a slice of containers

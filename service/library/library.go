@@ -5,9 +5,10 @@ import (
 	"fmt"
 
 	"github.com/docker/docker/api/types"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
+
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/resolv"
 )
 
 // Config is a struct of configurable options which can

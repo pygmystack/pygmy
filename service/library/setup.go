@@ -8,16 +8,17 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
-	"github.com/fubarhouse/pygmy-go/service/dnsmasq"
-	"github.com/fubarhouse/pygmy-go/service/haproxy"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
-	"github.com/fubarhouse/pygmy-go/service/mailhog"
-	"github.com/fubarhouse/pygmy-go/service/network"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
-	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
-	"github.com/fubarhouse/pygmy-go/service/ssh/key"
 	"github.com/spf13/viper"
+
+	"github.com/pygmystack/pygmy/service/dnsmasq"
+	"github.com/pygmystack/pygmy/service/haproxy"
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/mailhog"
+	"github.com/pygmystack/pygmy/service/network"
+	"github.com/pygmystack/pygmy/service/resolv"
+	"github.com/pygmystack/pygmy/service/ssh/agent"
+	"github.com/pygmystack/pygmy/service/ssh/key"
 )
 
 // ImportDefaults is an exported function which allows third-party applications
