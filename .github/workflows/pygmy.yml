@@ -257,4 +257,6 @@ jobs:
         run: ./pygmy-go-linux-amd64 clean;
 
       - name: Cleanup after tests.
-        run: docker system prune --all --force
+        run: | 
+          docker system prune --all --force
+          docker volume prune --force
