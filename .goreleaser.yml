@@ -3,16 +3,16 @@ env:
   - GOPROXY=https://gocenter.io
 
 archives:
-  - id: pygmy-go
+  - id: pygmy
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
-      - pygmy-go
-  - id: pygmy-go-static
+      - pygmy
+  - id: pygmy-static
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
     builds:
-      - pygmy-go-static
+      - pygmy-static
 builds:
-  - id: pygmy-go
+  - id: pygmy
     env:
       - CGO_ENABLED=0
     goos:
@@ -24,7 +24,7 @@ builds:
       - amd64
       - arm
       - arm64
-  - id: pygmy-go-static
+  - id: pygmy-static
     env:
       - CGO_ENABLED=0
     flags:
@@ -41,7 +41,7 @@ builds:
 
 brews:
   - ids:
-    - pygmy-go
+    - pygmy
     tap:
       owner: pygmystack
       name: homebrew-pygmy
@@ -49,5 +49,5 @@ brews:
     homepage: "https://github.com/pygmystack/pygmy"
     description: "amazee.io's local development helper tool"
     skip_upload: false
-    test: system "#{bin}/pygmy-go version"
-    install: bin.install "pygmy-go"
+    test: system "#{bin}/pygmy version"
+    install: bin.install "pygmy"

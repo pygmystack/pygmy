@@ -16,8 +16,8 @@ To install it, put the binary into your system's `$PATH` environment variable an
 
 The following is an example of how you would do this, note the URL and location may change depending on your needs.
 ```console
-$ wget https://github.com/pygmystack/pygmy/releases/download/v0.1.0/pygmy-go-darwin
-$ mv ./pygmy-go-darwin /usr/local/bin/pygmy
+$ wget https://github.com/pygmystack/pygmy/releases/download/v0.8.0/pygmy-darwin
+$ mv ./pygmy-darwin /usr/local/bin/pygmy
 $ chmod u+x /usr/local/bin/pygmy
 ```
 
