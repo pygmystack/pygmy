@@ -21,7 +21,7 @@ past on Windows.
 
 ## Is Pygmy running?
 
-These instructions will currently install the new version as `pygmy-go` so that the
+These instructions will currently install the new version as `pygmy` so that the
 old version is still available if you have installed it. With no Pygmy running,
 you should get "connection refused" when attempting to connect to the local amazee network.
 
@@ -43,13 +43,13 @@ configuration to switch out the `haproxy` image for a compatible one if you'd li
 **Works for**: Linux, MacOS & Windows
 
 ```shell
-git clone https://github.com/pygmystack/pygmy.git && cd pygmy-go;
+git clone https://github.com/pygmystack/pygmy.git && cd pygmy;
 make build;
-cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go;
-chmod +x /usr/local/bin/pygmy-go;
+cp ./builds/pygmy-darwin /usr/local/bin/pygmy;
+chmod +x /usr/local/bin/pygmy;
 ```
 
-Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
+Pygmy is now an executable as `pygmy`, while any existing Pygmy is still executable
 as `pygmy`. Now start Pygmy and use the new `status` command.
 
 ### Using Homebrew
@@ -65,16 +65,19 @@ brew install pygmy;
 
 **Works for**: [Arch-based Linux Distributions](https://wiki.archlinux.org/title/Arch-based_distributions) (Manjaro, Elementary, ArcoLinux etc)
 
-[pygmy-go](https://aur.archlinux.org/packages/pygmy-go/) and [pygmy-go-git](https://aur.archlinux.org/packages/pygmy-go-git/)
-are available via the Arch User Repository for Arch-based Linux distributions on the community stream. Unfortunately, 
-Pygmy is not yet available via other distribution methods, so it is otherwise recommended to use homebrew or compile 
-from source.  
+[pygmy](https://aur.archlinux.org/packages/pygmy/), [pygmy-bin](https://aur.archlinux.org/packages/pygmy-bin/) and
+[pygmy-git](https://aur.archlinux.org/packages/pygmy-git/) are available via the Arch User Repository for Arch-based
+Linux distributions on the community stream. Unfortunately, Pygmy is not yet available via other distribution methods,
+so it is otherwise recommended to use homebrew to install it, download a pre-compiled binary from the releases page, or
+to compile from source.  
 
 ```shell
-# Install the latest release:
-yay -S pygmy-go;
+# Freshly compile the latest release:
+yay -S pygmy;
+# Download the latest release precompiled:
+yay -S pygmy-bin;
 # Download and compile the latest HEAD from GitHub on the main branch:
-yay -S pygmy-go-git;
+yay -S pygmy-git;
 ```
 
 ## Usage
@@ -121,7 +124,7 @@ It will use `dind` and your local daemon to walk through several tests which sho
 
 1. First clone the project:
    ```
-   git clone https://github.com/pygmystack/pygmy.git pygmy-go && cd pygmy-go
+   git clone https://github.com/pygmystack/pygmy.git pygmy && cd pygmy
    ```
 2. Perform any updates as required.
 3. Clean the environment.
