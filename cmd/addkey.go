@@ -24,6 +24,9 @@ import (
 	"fmt"
 	"os"
 
+	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
@@ -54,7 +57,7 @@ var addkeyCmd = &cobra.Command{
 
 		for _, k := range Keys {
 			if e := library.SshKeyAdd(c, k); e != nil {
-				fmt.Println(e)
+				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 

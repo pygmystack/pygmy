@@ -17,4 +17,5 @@ require (
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.10.1
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 )
