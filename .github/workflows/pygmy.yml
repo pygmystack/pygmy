@@ -97,6 +97,12 @@ jobs:
         run: |
           docker ps -a --filter "label=pygmy.name"
 
+      - name: Export configuration
+        run: ./pygmy-go-linux-amd64 export -o ./exported-config.yml
+
+      - name: Show configuration
+        run: cat ./exported-config.yml
+
       - name: SSH Key test
         run: |
           ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
