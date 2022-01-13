@@ -9,8 +9,9 @@ import (
 )
 
 func TestExampleList(t *testing.T) {
-	_, e := agent.List(model.Service{})
-	if e != nil {
+	m := &model.Service{}
+	c, e := agent.List(*m)
+	if c != nil && e != nil {
 		t.Fail()
 	}
 }

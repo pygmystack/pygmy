@@ -3,10 +3,11 @@ package agent
 import (
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"os"
 	"strings"
+
+	"golang.org/x/crypto/ssh"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"

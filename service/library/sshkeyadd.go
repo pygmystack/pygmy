@@ -2,12 +2,13 @@ package library
 
 import (
 	"fmt"
-	"github.com/logrusorgru/aurora"
-	"github.com/pygmystack/pygmy/service/color"
 	"os"
 	"runtime"
 	"strings"
 
+	"github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/ssh/agent"
 )
 
