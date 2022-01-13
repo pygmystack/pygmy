@@ -1,7 +1,6 @@
 package library
 
 import (
-	"errors"
 	"fmt"
 	"github.com/logrusorgru/aurora"
 	"github.com/pygmystack/pygmy/service/color"
@@ -37,13 +36,13 @@ func SshKeyAdd(c Config, key string, passcode string) error {
 
 			} else {
 				if err.Error() == "ssh: no key found" {
-					return errors.New(fmt.Sprintf("[ ] Validation failure for SSH key %v\n", key))
+					return fmt.Errorf(fmt.Sprintf("[ ] Validation failure for SSH key %v\n", key))
 				}
 				if err.Error() == "ssh: this private key is passphrase protected" {
-					return errors.New(fmt.Sprintf("[ ] Passcode not provided for SSH key %v\n", key))
+					return fmt.Errorf(fmt.Sprintf("[ ] Passcode not provided for SSH key %v\n", key))
 				}
 				if err.Error() == "x509: decryption password incorrect" {
-					return errors.New(fmt.Sprintf("[ ] Passcode incorrectly provided for SSH key %v\n", key))
+					return fmt.Errorf(fmt.Sprintf("[ ] Passcode incorrectly provided for SSH key %v\n", key))
 				}
 			}
 

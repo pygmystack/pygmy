@@ -1,7 +1,6 @@
 package agent_test
 
 import (
-	"fmt"
 	"testing"
 
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -9,19 +8,18 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Example() {
-	agent.New()
-}
-
-func ExampleList() {
+func TestExampleList(t *testing.T) {
 	_, e := agent.List(model.Service{})
 	if e != nil {
-		fmt.Println(e)
+		t.Fail()
 	}
 }
 
-func ExampleSearch() {
-	agent.Search(model.Service{}, "id_rsa.pub")
+func TestExampleSearch(t *testing.T) {
+	_, err := agent.Search(model.Service{}, "id_rsa.pub")
+	if err != nil {
+		t.Fail()
+	}
 }
 
 func Test(t *testing.T) {
