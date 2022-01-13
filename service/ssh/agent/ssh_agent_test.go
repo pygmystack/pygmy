@@ -8,13 +8,13 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestExampleList(t *testing.T) {
-	m := &model.Service{}
-	c, e := agent.List(*m)
-	if c != nil && e != nil {
-		t.Fail()
-	}
-}
+//func TestExampleList(t *testing.T) {
+//	m := &model.Service{}
+//	c, e := agent.List(*m)
+//	if c != nil && e != nil {
+//		t.Fail()
+//	}
+//}
 
 func TestExampleSearch(t *testing.T) {
 	_, err := agent.Search(model.Service{}, "id_rsa.pub")
