@@ -43,21 +43,26 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
+		Passphrase, _ := cmd.Flags().GetString("passphrase")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []string{}
+			c.Keys = []library.Key{}
 		} else {
 
 			keyExistsInConfig := false
 			for _, key := range c.Keys {
-				if key == Key {
+				if key.Path == Key {
 					keyExistsInConfig = true
 				}
 			}
 
 			if !keyExistsInConfig {
-				c.Keys = append(c.Keys, Key)
+				thisKey := library.Key{
+					Path:       Key,
+					Passphrase: Passphrase,
+				}
+				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
@@ -70,9 +75,11 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+	var passphrase string
 
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	upCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
