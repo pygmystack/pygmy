@@ -77,7 +77,12 @@ var addkeyCmd = &cobra.Command{
 func init() {
 
 	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().MarkHidden("passphrase")
+
+	err := addkeyCmd.Flags().MarkHidden("passphrase")
+	if err != nil {
+		fmt.Println(err)
+	}
+
 	addkeyCmd.Flags().StringP("key", "k", "", "Path of SSH key to add")
 	addkeyCmd.Flags().StringP("passphrase", "p", "", "Passphrase of the SSH key to add")
 
