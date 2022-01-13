@@ -73,6 +73,7 @@ func init() {
 	var passphrase string
 
 	rootCmd.AddCommand(restartCmd)
+	restartCmd.Flags().MarkHidden("passphrase")
 	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	restartCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
 	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
