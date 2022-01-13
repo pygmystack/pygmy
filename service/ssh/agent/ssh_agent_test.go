@@ -33,7 +33,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-ssh-agent")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
-		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "30")
+		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "10")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)

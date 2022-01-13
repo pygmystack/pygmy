@@ -26,7 +26,7 @@ func New() model.Service {
 				"pygmy.network":  "amazeeio-network",
 				"pygmy.output":   "false",
 				"pygmy.purpose":  "sshagent",
-				"pygmy.weight":   "30",
+				"pygmy.weight":   "10",
 			},
 		},
 		HostConfig: container.HostConfig{
