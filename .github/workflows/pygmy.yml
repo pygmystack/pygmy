@@ -105,7 +105,7 @@ jobs:
 
       - name: Ensure SSH Agent is first in list of SortedServices
         run: |
-          cat ./exported-config.yml | yq '.SortedServices[0]' | grep "amazeeio-ssh-agent"
+          cat ./exported-config.yml | yq .SortedServices[0] | grep "amazeeio-ssh-agent"
 
       - name: SSH Key test
         run: |
