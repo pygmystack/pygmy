@@ -105,16 +105,14 @@ jobs:
 
       - name: Ensure SSH Agent is first in list of SortedServices
         run: |
-          cat exported-config.yml | jq '.SortedServices[0]' | grep "amazeeio-ssh-agent"
+          cat ./exported-config.yml | jq '.SortedServices[0]' | grep "amazeeio-ssh-agent"
 
       - name: SSH Key test
         run: |
           ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
-        # ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_pwd.pub;
           ./pygmy-go-linux-amd64 status;
           ./pygmy-go-linux-amd64 status | grep 'id_rsa';
           docker run --rm -i --volumes-from amazeeio-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
-        # ./pygmy-go-linux-amd64 status | grep 'id_pwd';
 
       - name: Resolv file test
         run: |
