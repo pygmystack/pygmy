@@ -80,7 +80,7 @@ func SshKeyAdd(c Config, key string, passcode string) error {
 					color.Print(aurora.Green(fmt.Sprintf("Successfully added SSH key %v to agent\n", key)))
 				}
 				if strings.Contains(line, "Enter passphrase for") {
-					color.Print(aurora.Yellow(fmt.Sprintf("Warning: Passphrased-protected SSH keys are not currently supported, the key will not be added.\n")))
+					color.Print(aurora.Yellow(fmt.Sprintf("Warning: Passphrase protected SSH keys are not currently supported, the key will not be added.\n")))
 				}
 			}
 

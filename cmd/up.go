@@ -78,15 +78,14 @@ func init() {
 	var passphrase string
 
 	rootCmd.AddCommand(upCmd)
+	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	upCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
+	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
+	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
 	err := upCmd.Flags().MarkHidden("passphrase")
 	if err != nil {
 		fmt.Println(err)
 	}
-
-	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	upCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
-	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
-	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
 
 }
