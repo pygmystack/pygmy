@@ -184,15 +184,40 @@ func Setup(c *Config) {
 		}
 	}
 
-	c.SortedServices = make([]string, 0, len(c.Services))
-	for key, service := range c.Services {
-		weight, _ := service.GetFieldInt("weight")
-		c.SortedServices = append(c.SortedServices, fmt.Sprintf("%06d|%v", weight, key))
-	}
-	sort.Strings(c.SortedServices)
+	// Determine the slice of sorted services
+	c.SortedServices = getServicesSorted(c)
+}
 
-	for n, v := range c.SortedServices {
-		c.SortedServices[n] = strings.Split(v, "|")[1]
+// getServicesSorted will return a list of services as plain text.
+// due to some weirdness the ssh agent must be the first value.
+func getServicesSorted(c *Config) []string {
+
+	SortedServices := make([]string, 0, 0)
+	SSHAgentServiceName := ""
+
+	// Do not add ssh-agent in the first run.
+	for key, service := range c.Services {
+		name, _ := service.GetFieldString("name")
+		purpose, _ := service.GetFieldString("purpose")
+		weight, _ := service.GetFieldInt("weight")
+		if purpose == "sshagent" {
+			SSHAgentServiceName = name
+		} else {
+			SortedServices = append(SortedServices, fmt.Sprintf("%06d|%v", weight, key))
+		}
 	}
+
+	// Alphabetical sorting.
+	sort.Strings(SortedServices)
+
+	// Strip the ordering prefix from the service name
+	for n, v := range SortedServices {
+		SortedServices[n] = strings.Split(v, "|")[1]
+	}
+
+	if SSHAgentServiceName != "" {
+		SortedServices = append([]string{SSHAgentServiceName}, SortedServices...)
+	}
+	return SortedServices
 
 }
