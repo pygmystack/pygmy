@@ -192,7 +192,7 @@ func Setup(c *Config) {
 // due to some weirdness the ssh agent must be the first value.
 func GetServicesSorted(c *Config) []string {
 
-	SortedServices := make([]string, 0, 0)
+	SortedServices := make([]string, 0)
 	SSHAgentServiceName := ""
 
 	// Do not add ssh-agent in the first run.
