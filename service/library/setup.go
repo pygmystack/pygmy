@@ -185,12 +185,12 @@ func Setup(c *Config) {
 	}
 
 	// Determine the slice of sorted services
-	c.SortedServices = getServicesSorted(c)
+	c.SortedServices = GetServicesSorted(c)
 }
 
-// getServicesSorted will return a list of services as plain text.
+// GetServicesSorted will return a list of services as plain text.
 // due to some weirdness the ssh agent must be the first value.
-func getServicesSorted(c *Config) []string {
+func GetServicesSorted(c *Config) []string {
 
 	SortedServices := make([]string, 0, 0)
 	SSHAgentServiceName := ""

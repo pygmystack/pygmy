@@ -103,10 +103,6 @@ jobs:
       - name: Show configuration
         run: cat ./exported-config.yml
 
-      - name: Ensure SSH Agent is first in list of SortedServices
-        run: |
-          cat ./exported-config.yml | yq .SortedServices[0] | grep "amazeeio-ssh-agent"
-
       - name: SSH Key test
         run: |
           ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
