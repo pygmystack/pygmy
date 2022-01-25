@@ -131,8 +131,8 @@ func Up(c Config) {
 	// Add ssh-keys to the agent
 	if agentPresent {
 		for _, v := range c.Keys {
-			if e := SshKeyAdd(c, v); e != nil {
-				fmt.Println(e)
+			if e := SshKeyAdd(c, v.Path, v.Passphrase); e != nil {
+				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package agent_test
 
 import (
-	"fmt"
 	"testing"
 
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -9,19 +8,19 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func Example() {
-	agent.New()
-}
+//func TestExampleList(t *testing.T) {
+//	m := &model.Service{}
+//	c, e := agent.List(*m)
+//	if c != nil && e != nil {
+//		t.Fail()
+//	}
+//}
 
-func ExampleList() {
-	_, e := agent.List(model.Service{})
-	if e != nil {
-		fmt.Println(e)
+func TestExampleSearch(t *testing.T) {
+	_, err := agent.Search(model.Service{}, "id_rsa.pub")
+	if err != nil {
+		t.Fail()
 	}
-}
-
-func ExampleSearch() {
-	agent.Search(model.Service{}, "id_rsa.pub")
 }
 
 func Test(t *testing.T) {
@@ -34,7 +33,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-ssh-agent")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
-		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "30")
+		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "10")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)

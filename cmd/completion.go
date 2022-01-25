@@ -34,13 +34,13 @@ var completionCmd = &cobra.Command{
 
 Bash:
 
-  $ source <(pygmy-go completion bash)
+  $ source <(pygmy completion bash)
 
   # To load completions for each session, execute once:
   # Linux:
-  $ pygmy-go completion bash > /etc/bash_completion.d/pygmy-go
+  $ pygmy completion bash > /etc/bash_completion.d/pygmy
   # macOS:
-  $ pygmy-go completion bash > /usr/local/etc/bash_completion.d/pygmy-go
+  $ pygmy completion bash > /usr/local/etc/bash_completion.d/pygmy
 
 Zsh:
 
@@ -50,23 +50,23 @@ Zsh:
   $ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
   # To load completions for each session, execute once:
-  $ pygmy-go completion zsh > "${fpath[1]}/pygmy-go"
+  $ pygmy completion zsh > "${fpath[1]}/pygmy"
 
   # You will need to start a new shell for this setup to take effect.
 
 fish:
 
-  $ pygmy-go completion fish | source
+  $ pygmy completion fish | source
 
   # To load completions for each session, execute once:
-  $ pygmy-go completion fish > ~/.config/fish/completions/pygmy-go.fish
+  $ pygmy completion fish > ~/.config/fish/completions/pygmy.fish
 
 PowerShell:
 
-  PS> pygmy-go completion powershell | Out-String | Invoke-Expression
+  PS> pygmy completion powershell | Out-String | Invoke-Expression
 
   # To load completions for every new session, run:
-  PS> pygmy-go completion powershell > pygmy-go.ps1
+  PS> pygmy completion powershell > pygmy.ps1
   # and source this file from your PowerShell profile.
 `,
 	DisableFlagsInUseLine: true,

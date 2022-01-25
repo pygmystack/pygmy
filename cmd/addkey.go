@@ -22,8 +22,9 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	. "github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
@@ -38,14 +39,16 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		Keys := []string{}
+		Passphrase, _ := cmd.Flags().GetString("passphrase")
+		var Keys []library.Key
 
 		if Key != "" {
-			Keys = append(Keys, Key)
-		} else {
-			if _, err := os.Stat(os.Args[len(os.Args)-1]); err == os.ErrExist {
-				Keys = append(c.Keys, os.Args[len(os.Args)-1])
+			thisKey := library.Key{
+				Path:       Key,
+				Passphrase: Passphrase,
 			}
+			Keys = append(Keys, thisKey)
+		} else {
 			if len(Keys) == 0 {
 				library.Setup(&c)
 				Keys = c.Keys
@@ -53,8 +56,8 @@ var addkeyCmd = &cobra.Command{
 		}
 
 		for _, k := range Keys {
-			if e := library.SshKeyAdd(c, k); e != nil {
-				fmt.Println(e)
+			if e := library.SshKeyAdd(c, k.Path, k.Passphrase); e != nil {
+				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 
@@ -74,6 +77,12 @@ var addkeyCmd = &cobra.Command{
 func init() {
 
 	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().StringP("key", "", "", "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("key", "k", "", "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("passphrase", "p", "", "Passphrase of the SSH key to add")
+
+	err := addkeyCmd.Flags().MarkHidden("passphrase")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }
