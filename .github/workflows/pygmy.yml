@@ -98,16 +98,16 @@ jobs:
           docker ps -a --filter "label=pygmy.name"
 
       - name: Export configuration
-        run: ./pygmy-go-linux-amd64 export -o ./exported-config.yml
+        run: ./pygmy-linux-amd64 export -o ./exported-config.yml
 
       - name: Show configuration
         run: cat ./exported-config.yml
 
       - name: SSH Key test
         run: |
-          ./pygmy-go-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
-          ./pygmy-go-linux-amd64 status;
-          ./pygmy-go-linux-amd64 status | grep 'id_rsa';
+          ./pygmy-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
+          ./pygmy-linux-amd64 status;
+          ./pygmy-linux-amd64 status | grep 'id_rsa';
           docker run --rm -i --volumes-from amazeeio-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
 
       - name: Resolv file test
