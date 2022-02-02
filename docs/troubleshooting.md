@@ -213,6 +213,8 @@ You could see a message like this:
 
     [*] ssh-agent: Running as docker container amazeeio-ssh-agent, loaded keys:
 
+#### Docker Desktop users
+
 If you have recently updated Docker Desktop you should ensure that your turn off Docker Compose v2 support.
 
 1. Open Docker Desktop Preferences
