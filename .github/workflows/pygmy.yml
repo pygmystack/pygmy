@@ -98,7 +98,7 @@ jobs:
           docker ps -a --filter "label=pygmy.name"
 
       - name: Export configuration
-        run: ./pygmy-linux-amd64 export -o ./exported-config.yml
+        run: ./pygmy-linux-amd64 export -o ./exported-config.yml | grep "got unconvertible type" && exit 1 || exit 0
 
       - name: Show configuration
         run: cat ./exported-config.yml
