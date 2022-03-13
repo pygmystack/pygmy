@@ -5,19 +5,19 @@ services:
   amazeeio-haproxy:
     Config:
       Labels:
-        - pygmy.enable: false
+        - pygmy-enable: false
 
   amazeeio-dnsmasq:
     Config:
       Labels:
-        - pygmy.enable: false
+        - pygmy-enable: false
 
   amazeeio-mailhog:
     Config:
       Labels:
-        - pygmy.enable: true
-        - pygmy.name: amazeeio-mailhog
-        - pygmy.network: amazeeio-network
+        - pygmy-enable: true
+        - pygmy-name: amazeeio-mailhog
+        - pygmy-network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.mailhog.rule: Host(`mailhog.docker.amazee.io`)
@@ -28,11 +28,11 @@ services:
       Env:
         - "PMA_ARBITRARY=1"
       Labels:
-        - pygmy.enable: true
-        - pygmy.name: unofficial-phpmyadmin
-        - pygmy.network: amazeeio-network
-        - pygmy.url: http://phpmyadmin.docker.amazee.io
-        - pygmy.weight: 20
+        - pygmy-enable: true
+        - pygmy-name: unofficial-phpmyadmin
+        - pygmy-network: amazeeio-network
+        - pygmy-url: http://phpmyadmin.docker.amazee.io
+        - pygmy-weight: 20
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.phpmyadmin.rule: Host(`phpmyadmin.docker.amazee.io`)
@@ -45,10 +45,10 @@ services:
     Config:
       Image: portainer/portainer
       Labels:
-        - pygmy.enable: true
-        - pygmy.name: unofficial-portainer
-        - pygmy.network: amazeeio-network
-        - pygmy.url: http://portainer.docker.amazee.io
+        - pygmy-enable: true
+        - pygmy-name: unofficial-portainer
+        - pygmy-network: amazeeio-network
+        - pygmy-url: http://portainer.docker.amazee.io
         - traefik.enable: true
         - traefik.port: 80
         - traefik.http.routers.portainer.rule: Host(`portainer.docker.amazee.io`)
@@ -83,10 +83,10 @@ services:
         8080/tcp:
           HostPort: 3080
       Labels:
-        - pygmy.enable: true
-        - pygmy.name: unofficial-traefik-2
-        - pygmy.network: amazeeio-network
-        - pygmy.url: http://traefik.docker.amazee.io
+        - pygmy-enable: true
+        - pygmy-name: unofficial-traefik-2
+        - pygmy-network: amazeeio-network
+        - pygmy-url: http://traefik.docker.amazee.io
         - traefik.docker.network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
@@ -120,7 +120,7 @@ networks:
     Containers:
       amazeeio-haproxy: {}
     Labels:
-      - pygmy.network: amazeeio-network
+      - pygmy-network: amazeeio-network
 
 resolvers: []
 

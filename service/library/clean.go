@@ -20,13 +20,13 @@ func Clean(c Config) {
 	for _, Container := range Containers {
 		ContainerName := strings.Trim(Container.Names[0], "/")
 		target := false
-		if l := Container.Labels["pygmy.enable"]; l == "true" || l == "1" {
+		if l := Container.Labels["pygmy-enable"]; l == "true" || l == "1" {
 			target = true
 		}
 		if l := Container.Labels["pygmy"]; l == "pygmy" {
 			target = true
 		}
-		if l := Container.Labels["pygmy.network"]; l != "" {
+		if l := Container.Labels["pygmy-network"]; l != "" {
 			NetworksToClean = append(NetworksToClean, l)
 		}
 

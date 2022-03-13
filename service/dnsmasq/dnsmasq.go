@@ -20,10 +20,10 @@ func New(c *model.Params) model.Service {
 				fmt.Sprintf("/%s/127.0.0.1", c.Domain),
 			},
 			Labels: map[string]string{
-				"pygmy.defaults": "true",
-				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-dnsmasq",
-				"pygmy.weight":   "13",
+				"pygmy-defaults": "true",
+				"pygmy-enable":   "true",
+				"pygmy-name":     "amazeeio-dnsmasq",
+				"pygmy-weight":   "13",
 			},
 		},
 		HostConfig: container.HostConfig{

@@ -297,7 +297,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 		return types.NetworkResource{}, err
 	}
 	for _, network := range networks {
-		if val, ok := network.Labels["pygmy.name"]; ok {
+		if val, ok := network.Labels["pygmy-name"]; ok {
 			if val == name {
 				return network, nil
 			}
@@ -326,7 +326,7 @@ func DockerNetworkConnected(network string, containerName string) (bool, error) 
 	// Reset network state:
 	c, _ := DockerContainerList()
 	for d := range c {
-		if c[d].Labels["pygmy.name"] == containerName {
+		if c[d].Labels["pygmy-name"] == containerName {
 			for net := range c[d].NetworkSettings.Networks {
 				if net == network {
 					return true, nil

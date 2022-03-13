@@ -32,7 +32,7 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 		container := c.Services[service]
 
 		// If configuration has a value for the defaults label
-		if val, ok := container.Config.Labels["pygmy.defaults"]; ok {
+		if val, ok := container.Config.Labels["pygmy-defaults"]; ok {
 			if val == "1" || val == "true" {
 				// Clear destination Service to a new nil value.
 				c.Services[service] = model.Service{}
@@ -50,7 +50,7 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 		}
 
 		// If default configuration has a value for the defaults label
-		if val, ok := importer.Config.Labels["pygmy.defaults"]; ok {
+		if val, ok := importer.Config.Labels["pygmy-defaults"]; ok {
 			if val == "1" || val == "true" {
 				c.Services[service] = getService(importer, c.Services[service])
 				return true
@@ -66,7 +66,7 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 	return false
 }
 
-// Setup holds the core of configuration management with Pygmy.
+// Setup holds the core of configuration management with pygmy-
 // It will merge in all the configurations and provide defaults.
 func Setup(c *Config) {
 
@@ -127,7 +127,7 @@ func Setup(c *Config) {
 
 		// If Services have been provided in complete or partially,
 		// this will override the defaults allowing any value to
-		// be changed by the user in the configuration file ~/.pygmy.yml
+		// be changed by the user in the configuration file ~/.pygmy-yml
 		if c.Services == nil || len(c.Services) == 0 {
 			c.Services = make(map[string]model.Service, 6)
 		}
@@ -175,7 +175,7 @@ func Setup(c *Config) {
 	// Mandatory validation check.
 	for id, service := range c.Services {
 		if name, err := service.GetFieldString("name"); err != nil && name != "" {
-			fmt.Printf("service '%v' does not have have a value for label 'pygmy.name'\n", id)
+			fmt.Printf("service '%v' does not have have a value for label 'pygmy-name'\n", id)
 			os.Exit(2)
 		}
 		if service.Config.Image == "" {

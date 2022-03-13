@@ -160,8 +160,8 @@ func (Service *Service) Status() (bool, error) {
 func (Service *Service) GetRunning() (types.Container, error) {
 	containers, _ := docker.DockerContainerList()
 	for _, container := range containers {
-		if _, ok := container.Labels["pygmy.name"]; ok {
-			if strings.Contains(container.Labels["pygmy.name"], Service.Config.Labels["pygmy.name"]) {
+		if _, ok := container.Labels["pygmy-name"]; ok {
+			if strings.Contains(container.Labels["pygmy-name"], Service.Config.Labels["pygmy-name"]) {
 				return container, nil
 			}
 		}
@@ -172,7 +172,7 @@ func (Service *Service) GetRunning() (types.Container, error) {
 // Clean will cleanup and remove the container.
 func (Service *Service) Clean() error {
 
-	pygmy, _ := Service.GetFieldBool("pygmy.enable")
+	pygmy, _ := Service.GetFieldBool("pygmy-enable")
 	name, e := Service.GetFieldString("name")
 	if e != nil {
 		return nil
@@ -307,7 +307,7 @@ func (Service *Service) DockerCreate() error {
 	// Sanity check to ensure we don't get name conflicts.
 	c, _ := docker.DockerContainerList()
 	for _, cn := range c {
-		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy.name"]) {
+		if strings.HasSuffix(cn.Names[0], Service.Config.Labels["pygmy-name"]) {
 			return fmt.Errorf("container already created, or namespace is already taken")
 		}
 	}

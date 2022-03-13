@@ -2,7 +2,7 @@
 
 Per default your SSH Key at `~/.ssh/id_rsa` is added to the Docker containers from `pygmy`
 
-If you need another key, read the documentation of [`pygmy`](linux_pygmy.md) about this.
+If you need another key, read the documentation of [`pygmy`](linux_pygmy-md) about this.
 
 ## How it works
 1. `pygmy` starts `amazeeio/ssh-agent` container with a volume `/tmp/amazeeio_ssh-agent`

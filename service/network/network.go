@@ -21,7 +21,7 @@ func New() types.NetworkResource {
 			},
 		},
 		Labels: map[string]string{
-			"pygmy.name": "amazeeio-network",
+			"pygmy-name": "amazeeio-network",
 		},
 	}
 }

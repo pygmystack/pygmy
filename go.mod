@@ -6,6 +6,7 @@ require (
 	github.com/containerd/containerd v1.6.1
 	github.com/docker/docker v20.10.12+incompatible
 	github.com/docker/go-connections v0.4.0
+	github.com/fsouza/go-dockerclient v1.7.10
 	github.com/ghodss/yaml v1.0.0
 	github.com/gopherjs/gopherjs v0.0.0-20200217142428-fce0ec30dd00 // indirect
 	github.com/imdario/mergo v0.3.12
@@ -17,4 +18,5 @@ require (
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.10.1
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )

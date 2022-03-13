@@ -33,7 +33,7 @@ func Status(c Config) {
 
 	Containers, _ := docker.DockerContainerList()
 	for _, Container := range Containers {
-		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
+		if Container.Labels["pygmy-enable"] == "true" || Container.Labels["pygmy-enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
 			if s, _ := Service.Status(); s {
 				name, _ := Service.GetFieldString("name")
@@ -98,7 +98,7 @@ func Status(c Config) {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
 			if purpose == "sshagent" {
-				l, _ := docker.DockerExec(v.Config.Labels["pygmy.name"], "ssh-add -l")
+				l, _ := docker.DockerExec(v.Config.Labels["pygmy-name"], "ssh-add -l")
 				output := strings.Trim(string(l), "\n")
 				fmt.Println(output)
 			}

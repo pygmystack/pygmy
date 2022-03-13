@@ -16,14 +16,14 @@ func NewAdder() model.Service {
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
-				"pygmy.defaults": "true",
-				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-ssh-agent-add-key",
-				"pygmy.network":  "amazeeio-network",
-				"pygmy.discrete": "true",
-				"pygmy.output":   "false",
-				"pygmy.purpose":  "addkeys",
-				"pygmy.weight":   "31",
+				"pygmy-defaults": "true",
+				"pygmy-enable":   "true",
+				"pygmy-name":     "amazeeio-ssh-agent-add-key",
+				"pygmy-network":  "amazeeio-network",
+				"pygmy-discrete": "true",
+				"pygmy-output":   "false",
+				"pygmy-purpose":  "addkeys",
+				"pygmy-weight":   "31",
 			},
 		},
 		HostConfig: container.HostConfig{

@@ -7,9 +7,9 @@ date: 2020-01-28
 ---
 # Introduction
 
-The following are examples of how somebody can utilise pygmy to customise their environment using a `~/.pygmy.yml` file. This file will have a schema which can be imported and the services match the Docker API.
+The following are examples of how somebody can utilise pygmy to customise their environment using a `~/.pygmy-yml` file. This file will have a schema which can be imported and the services match the Docker API.
 
-**Standard schema for `~/.pygmy.yml`**
+**Standard schema for `~/.pygmy-yml`**
 ```yaml
 # Defaults is a boolean which indicates all default settings should be inherited.
 defaults: true
@@ -41,31 +41,31 @@ services:
 
         # To enable Pygmy to the configuration, you will need this label.
         # This field is MANDATORY as the value will by default be false.
-        pygmy.enable: true
+        pygmy-enable: true
 
         # You need to give this container a name
         # This field is MANDATORY as the value will by default be empty.
-        pygmy.name: mycontainer
+        pygmy-name: mycontainer
 
         # If you are customising an existing service, you can optionally
         # inherit the defaults if the global defaults are disabled.
         # Setting this value on a non-standard service will do nothing.
-        pygmy.defaults: true
+        pygmy-defaults: true
 
         # To display the output when the container starts:
-        pygmy.output: true
+        pygmy-output: true
 
         # To hide the container from the status messages:
-        pygmy.discrete: true
+        pygmy-discrete: true
 
         # To test an endpoint:
-        pygmy.url: http://mycontainer.docker.amazee.io
+        pygmy-url: http://mycontainer.docker.amazee.io
 
         # To identify the purpose of a container - this is rather specialised so please ignore.
-        pygmy.purpose: sshagent
+        pygmy-purpose: sshagent
 
         # To set a weight between 10 and 99 to control the order containers are started:
-        pygmy.weight: 50
+        pygmy-weight: 50
 
     # HostConfig is derived from the Docker API, intended for host configuration.
     # See https://godoc.org/github.com/docker/docker/api/types/container#HostConfig for the full spec.
@@ -90,8 +90,8 @@ services:
 
         Labels:
 
-          # Mandatory for network creation/usage via Pygmy.
-          pygmy.network: true
+          # Mandatory for network creation/usage via pygmy-
+          pygmy-network: true
 
 # networks is a hashmap of the API for a NetworkResource.
 # See https://godoc.org/github.com/docker/docker/api/types#NetworkResource for the full spec.

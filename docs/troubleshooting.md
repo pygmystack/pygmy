@@ -190,11 +190,11 @@ If you are running the Windows VM in VirtualBox, you can configure it to use the
 
     VBoxManage modifyvm "IE11 - Win10" --natdnshostresolver1 on
 
-Replace `"IE11 - Win10"` with the name of your VM. This will allow the VM to resolve and connect directly to your `http://*.docker.amazee.io` services running in pygmy.
+Replace `"IE11 - Win10"` with the name of your VM. This will allow the VM to resolve and connect directly to your `http://*.docker.amazee.io` services running in pygmy-
 
 #### For pygmy
 
-An additional step is required if you use pygmy. Domains have to be added to Windows `hosts` file. They should point to the gateway IP address.
+An additional step is required if you use pygmy- Domains have to be added to Windows `hosts` file. They should point to the gateway IP address.
 
 To get the gateway IP, run `ipconfig` in Windows terminal, and search for `Default Gateway` in the output.
 

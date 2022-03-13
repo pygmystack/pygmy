@@ -1,6 +1,6 @@
 # Update pygmy
 
-As `pygmy` is an active project, you should also take care of updating pygmy.
+As `pygmy` is an active project, you should also take care of updating pygmy-
 
 Use the [same instructions](./installation.md) to update Pygmy as to install it. 
 

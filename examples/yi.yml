@@ -1,0 +1,33 @@
+services:
+
+  amazeeio-portainer:
+    Config:
+      Image: portainer/portainer
+      Env:
+        - "AMAZEEIO=AMAZEEIO"
+        - "AMAZEEIO_URL=portainer.docker.amazee.io"
+        - "AMAZEEIO_HTTP_PORT=9000"
+      Labels:
+        - pygmy-enable: true
+        - pygmy-name: amazeeio-portainer
+        - pygmy-network: amazeeio-network
+        - pygmy-weight: 23
+        - pygmy-url: http://portainer.docker.amazee.io
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
+      ExposedPorts:
+        9000/tcp: {}
+    HostConfig:
+      Binds:
+        - /var/run/docker.sock:/var/run/docker.sock
+        - portainer_data:/data
+      PortBindings:
+        8000/tcp:
+          - HostPort: 8200
+        9000/tcp:
+          - HostPort: 8100
+#
+#volumes:
+#  portainer_data:
+#    Name: portainer_data

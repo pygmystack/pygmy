@@ -50,7 +50,7 @@ func init() {
 	rootCmd.AddCommand(exportCmd)
 
 	homedir, _ := homedir.Dir()
-	exportPath = fmt.Sprintf("%v%v.pygmy.yml", homedir, string(os.PathSeparator))
+	exportPath = fmt.Sprintf("%v%v.pygmy-yml", homedir, string(os.PathSeparator))
 
 	exportCmd.Flags().StringVarP(&exportPath, "output", "o", exportPath, "Path to exported configuration to be written to")
 

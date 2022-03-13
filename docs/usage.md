@@ -33,7 +33,7 @@ Available Commands:
   version     # Check current installed version of pygmy
 
 Flags:
-      --config string   config file (default is $HOME/.pygmy.yml)
+      --config string   config file (default is $HOME/.pygmy-yml)
   -h, --help            help for pygmy
   -t, --toggle          Help message for toggle
 

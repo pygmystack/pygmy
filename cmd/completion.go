@@ -59,14 +59,14 @@ fish:
   $ pygmy completion fish | source
 
   # To load completions for each session, execute once:
-  $ pygmy completion fish > ~/.config/fish/completions/pygmy.fish
+  $ pygmy completion fish > ~/.config/fish/completions/pygmy-fish
 
 PowerShell:
 
   PS> pygmy completion powershell | Out-String | Invoke-Expression
 
   # To load completions for every new session, run:
-  PS> pygmy completion powershell > pygmy.ps1
+  PS> pygmy completion powershell > pygmy-ps1
   # and source this file from your PowerShell profile.
 `,
 	DisableFlagsInUseLine: true,

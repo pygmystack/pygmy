@@ -97,14 +97,14 @@ func findConfig() string {
 		searchFor := []string{
 			home + "/.config/pygmy/config.yaml",
 			home + "/.config/pygmy/config.yml",
-			home + "/.config/pygmy/pygmy.yaml",
-			home + "/.config/pygmy/pygmy.yml",
-			home + "/.pygmy.yaml",
-			home + "/.pygmy.yml",
+			home + "/.config/pygmy/pygmy-yaml",
+			home + "/.config/pygmy/pygmy-yml",
+			home + "/.pygmy-yaml",
+			home + "/.pygmy-yml",
 			"/etc/pygmy/config.yaml",
 			"/etc/pygmy/config.yml",
-			"/etc/pygmy/pygmy.yaml",
-			"/etc/pygmy/pygmy.yml",
+			"/etc/pygmy/pygmy-yaml",
+			"/etc/pygmy/pygmy-yml",
 		}
 
 		// Look for each of the files listed above.
@@ -121,7 +121,7 @@ func findConfig() string {
 	if runtime.GOOS == "linux" {
 		return strings.Join([]string{"etc", "pygmy", "config.yml"}, string(os.PathSeparator))
 	}
-	return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
+	return strings.Join([]string{home, ".pygmy-yml"}, string(os.PathSeparator))
 }
 
 // initConfig reads in config file and ENV variables if set.

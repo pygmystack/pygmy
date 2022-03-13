@@ -3,35 +3,35 @@ services:
   amazeeio-dnsmasq:
     Config:
       Labels:
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
 
   amazeeio-haproxy:
     Config:
       Labels:
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
 
   amazeeio-mailhog:
     Config:
       Labels:
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
 
   amazeeio-ssh-agent:
     Config:
       Labels:
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
 
   amazeeio-ssh-agent-add-key:
     Config:
       Labels:
-        - pygmy.enable: false
+        - pygmy-enable: false
 
   amazeeio-portainer:
     Config:
@@ -41,14 +41,14 @@ services:
         - "AMAZEEIO_URL=portainer.docker.amazee.io"
         - "AMAZEEIO_HTTP_PORT=9000"
       Labels:
-        - pygmy.enable: true
-        - pygmy.name: amazeeio-portainer
-        - pygmy.network: amazeeio-network
-        - pygmy.weight: 23
-        - pygmy.url: http://portainer.docker.amazee.io
-        - pygmy.hocuspocus: 42
-        - pygmy.abracadabra: true
-        - pygmy.opensesame: correct
+        - pygmy-enable: true
+        - pygmy-name: amazeeio-portainer
+        - pygmy-network: amazeeio-network
+        - pygmy-weight: 23
+        - pygmy-url: http://portainer.docker.amazee.io
+        - pygmy-hocuspocus: 42
+        - pygmy-abracadabra: true
+        - pygmy-opensesame: correct
       ExposedPorts:
         9000/tcp: {}
     HostConfig:
@@ -68,11 +68,11 @@ services:
         - holy
         - ship
       Labels:
-        - pygmy.enable: true
-        - pygmy.discrete: false
-        - pygmy.name: pygmy-cowsay
-        - pygmy.output: true
-        - pygmy.weight: 99
+        - pygmy-enable: true
+        - pygmy-discrete: false
+        - pygmy-name: pygmy-cowsay
+        - pygmy-output: true
+        - pygmy-weight: 99
     HostConfig:
       AutoRemove: true
 

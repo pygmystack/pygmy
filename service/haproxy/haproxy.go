@@ -15,12 +15,12 @@ func New(c *model.Params) model.Service {
 		Config: container.Config{
 			Image: "pygmystack/haproxy",
 			Labels: map[string]string{
-				"pygmy.defaults": "true",
-				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-haproxy",
-				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      fmt.Sprintf("http://%s/stats", c.Domain),
-				"pygmy.weight":   "14",
+				"pygmy-defaults": "true",
+				"pygmy-enable":   "true",
+				"pygmy-name":     "amazeeio-haproxy",
+				"pygmy-network":  "amazeeio-network",
+				"pygmy-url":      fmt.Sprintf("http://%s/stats", c.Domain),
+				"pygmy-weight":   "14",
 			},
 			Env: []string{
 				fmt.Sprintf("AMAZEEIO_URL=%s", c.Domain),
