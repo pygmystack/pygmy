@@ -15,6 +15,6 @@ require (
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799
 	github.com/smartystreets/goconvey v1.7.2
 	github.com/spf13/cobra v1.1.3
-	github.com/spf13/viper v1.10.1
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
+	github.com/spf13/viper v1.11.0
+	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
 )
