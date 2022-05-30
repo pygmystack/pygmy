@@ -13,11 +13,19 @@ options via YAML.
 Please see the existing [Pygmy documentation](https://pygmy.readthedocs.io) for more information
 about Pygmy as this is designed to be a drop-in replacement.
 
-## Early testing
+## Making Pygmy always use `docker.amazee.io`
 
-We welcome testers of this tool. You will probably be an existing user of Pygmy who
-can verify the same functionality, or perhaps who has had trouble installing Pygmy in the
-past on Windows.
+To make sure Pygmy always uses the legacy `amazeeio-*` container names and the
+`docker.amazee.io` domain, just set the environment variable `PYGMY_DOMAIN` to
+`docker.amazee.io`
+
+If the `amazeeio-network' is created and ready for use, Pygmy will
+automatically set these variables at runtime. If not, it will now use the
+container names `pygmy-*` and the domain `*.pygmy.site`.
+
+```shell
+echo 'export PYGMY_DOMAIN=docker.amazee.io' >> ~/.bashrc
+```
 
 ## Is Pygmy running?
 
@@ -43,7 +51,7 @@ configuration to switch out the `haproxy` image for a compatible one if you'd li
 **Works for**: Linux, MacOS & Windows
 
 ```shell
-git clone https://github.com/pygmystack/pygmy-git && cd pygmy;
+git clone https://github.com/pygmystack/pygmy.git && cd pygmy;
 make build;
 cp ./builds/pygmy-darwin /usr/local/bin/pygmy;
 chmod +x /usr/local/bin/pygmy;
