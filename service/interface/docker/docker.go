@@ -153,11 +153,11 @@ func DockerPull(image string) (string, error) {
 	}
 
 	if event != nil {
-		if strings.Contains(event.Status, fmt.Sprint("Downloaded newer image")) {
+		if strings.Contains(event.Status, "Downloaded newer image") {
 			return fmt.Sprintf("Successfully pulled %v", image), nil
 		}
 
-		if strings.Contains(event.Status, fmt.Sprint("Image is up to date")) {
+		if strings.Contains(event.Status, "Image is up to date") {
 			return fmt.Sprintf("Image %v is up to date", image), nil
 		}
 	}

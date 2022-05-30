@@ -56,7 +56,7 @@ func setup(t *testing.T, config *config) {
 		downCmd = fmt.Sprintf("/builds/%v down --config %v", binaryReference, config.configpath)
 	}
 
-	time.Sleep(5)
+	time.Sleep(5 * time.Second)
 
 	Convey("Pygmy Application Test: "+config.name, t, func() {
 
