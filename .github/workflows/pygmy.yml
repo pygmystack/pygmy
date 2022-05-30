@@ -118,7 +118,7 @@ jobs:
           grep "127.0.0.1" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
           grep "docker.amazee.io" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
 
-      - name: Test the pygmy-network for expected results
+      - name: Test the amazeeio-network for expected results
         run: |
           docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
           docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-haproxy";
@@ -250,7 +250,7 @@ jobs:
 
       - name: Test the down command
         run: |
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped pygmy';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
