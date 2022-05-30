@@ -1,15 +1,17 @@
 package network
 
 import (
+	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/network"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // New will generate the defaults for the Docker network.
 // If configuration is provided this will not be used at all.
-func New() types.NetworkResource {
+func New(c *model.Params) types.NetworkResource {
 	return types.NetworkResource{
-		Name: "amazeeio-network",
+		Name: fmt.Sprintf("%s-network", c.Prefix),
 		IPAM: network.IPAM{
 			Driver:  "",
 			Options: nil,
@@ -21,7 +23,7 @@ func New() types.NetworkResource {
 			},
 		},
 		Labels: map[string]string{
-			"pygmy.name": "amazeeio-network",
+			"pygmy.name": fmt.Sprintf("%s-network", c.Prefix),
 		},
 	}
 }

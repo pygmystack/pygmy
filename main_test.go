@@ -30,23 +30,33 @@ type config struct {
 	services           []string
 	servicewithports   []string
 	skipendpointchecks bool
+	domain             string
+	prefix             string
+	envs               []string
 }
 
 // setup is a configurable pipeline which allows different configurations to
 // run to keep the consistency for as many tests as are required.
 func setup(t *testing.T, config *config) {
 
+	cmdPrefix := ""
+	for _, v := range config.envs {
+		cmdPrefix += fmt.Sprintf(" %v", v)
+	}
+
 	var cleanCmd = fmt.Sprintf("/builds/%v clean", binaryReference)
 	var statusCmd = fmt.Sprintf("/builds/%v status", binaryReference)
-	var upCmd = fmt.Sprintf("/builds/%v up", binaryReference)
+	var upCmd = fmt.Sprintf("%v /builds/%v up", cmdPrefix, binaryReference)
 	var downCmd = fmt.Sprintf("/builds/%v down", binaryReference)
 
 	if config.configpath != "" {
 		cleanCmd = fmt.Sprintf("/builds/%v clean --config %v", binaryReference, config.configpath)
 		statusCmd = fmt.Sprintf("/builds/%v status --config %v", binaryReference, config.configpath)
 		upCmd = fmt.Sprintf("/builds/%v up --config %v", binaryReference, config.configpath)
-		downCmd = fmt.Sprintf("/builds/%v dow --config %v", binaryReference, config.configpath)
+		downCmd = fmt.Sprintf("/builds/%v down --config %v", binaryReference, config.configpath)
 	}
+
+	time.Sleep(5)
 
 	Convey("Pygmy Application Test: "+config.name, t, func() {
 
@@ -184,13 +194,18 @@ func setup(t *testing.T, config *config) {
 
 // TestDefault will test an environment with no additional configuration.
 func TestDefault(t *testing.T) {
+	domain := "docker.amazee.io"
+	prefix := "custom"
 	configuration := &config{
 		name:               "default",
 		configpath:         "/examples/pygmy.basic.yml",
-		endpoints:          []string{"http://docker.amazee.io/stats", "http://mailhog.docker.amazee.io"},
+		domain:             domain,
+		envs:               []string{"PYGMY_DOMAIN=docker.amazee.io"},
+		prefix:             prefix,
+		endpoints:          []string{fmt.Sprintf("http://%s/stats", domain), fmt.Sprintf("http://mailhog.%s/", domain)},
 		images:             []string{"pygmystack/haproxy", "pygmystack/dnsmasq", "pygmystack/mailhog"},
-		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
-		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
+		services:           []string{fmt.Sprintf("%s-haproxy", prefix), fmt.Sprintf("%s-dnsmasq", prefix), fmt.Sprintf("%s-mailhog", prefix)},
+		servicewithports:   []string{fmt.Sprintf("%s-haproxy", prefix), fmt.Sprintf("%s-mailhog", prefix)},
 		skipendpointchecks: false,
 	}
 	setup(t, configuration)
@@ -198,13 +213,18 @@ func TestDefault(t *testing.T) {
 
 // TestCustom will test a highly customised environment.
 func TestCustom(t *testing.T) {
+	domain := "pygmy.site"
+	prefix := "unofficial"
 	configuration := &config{
 		name:               "custom",
 		configpath:         "/examples/pygmy.complex.yml",
-		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://portainer.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
+		domain:             domain,
+		envs:               []string{"PYGMY_DOMAIN=docker.amazee.io"},
+		prefix:             prefix,
+		endpoints:          []string{fmt.Sprintf("http://traefik.%s", domain), fmt.Sprintf("http://mailhog.%s", domain), fmt.Sprintf("http://portainer.%s", domain), "http://phpmyadmin.pygmy.site"},
 		images:             []string{"pygmystack/ssh-agent", "pygmystack/mailhog", "phpmyadmin/phpmyadmin", "portainer/portainer", "library/traefik:v2.1.3"},
-		services:           []string{"unofficial-portainer", "unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
-		servicewithports:   []string{"amazeeio-mailhog", "unofficial-portainer", "unofficial-phpmyadmin", "unofficial-traefik-2"},
+		services:           []string{fmt.Sprintf("%s-portainer", prefix), fmt.Sprintf("%s-traefik-2", prefix), fmt.Sprintf("%s-phpmyadmin", prefix), fmt.Sprintf("%s-mailhog", prefix)},
+		servicewithports:   []string{fmt.Sprintf("%s-mailhog", prefix), fmt.Sprintf("%s-portainer", prefix), fmt.Sprintf("%s-phpmyadmin", prefix), fmt.Sprintf("%s-traefik-2", prefix)},
 		skipendpointchecks: false,
 	}
 	setup(t, configuration)

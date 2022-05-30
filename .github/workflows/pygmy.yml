@@ -108,40 +108,40 @@ jobs:
           ./pygmy-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
           ./pygmy-linux-amd64 status;
           ./pygmy-linux-amd64 status | grep 'id_rsa';
-          docker run --rm -i --volumes-from amazeeio-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
+          docker run --rm -i --volumes-from pygmy-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
 
       - name: Resolv file test
         run: |
-          stat /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
-          grep "127.0.0.1" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
-          grep "docker.amazee.io" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
+          stat /usr/lib/systemd/resolved.conf.d/pygmy.site.conf;
+          grep "127.0.0.1" /usr/lib/systemd/resolved.conf.d/pygmy.site.conf;
+          grep "pygmy.site" /usr/lib/systemd/resolved.conf.d/pygmy.site.conf;
 
-      - name: Test the amazeeio-network for expected results
+      - name: Test the pygmy-network for expected results
         run: |
-          docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-haproxy";
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-mailhog";
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].Name' | grep "amazeeio-portainer";
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address';
-          docker network inspect amazeeio-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
+          docker network inspect pygmy-network | jq '.[].Name' | grep "pygmy-network";
+          docker network inspect pygmy-network | jq '.[].Containers' | jq '.[].Name' | grep "pygmy-haproxy";
+          docker network inspect pygmy-network | jq '.[].Containers' | jq '.[].Name' | grep "pygmy-mailhog";
+          docker network inspect pygmy-network | jq '.[].Containers' | jq '.[].Name' | grep "pygmy-portainer";
+          docker network inspect pygmy-network | jq '.[].Containers' | jq '.[].IPv4Address';
+          docker network inspect pygmy-network | jq '.[].Containers' | jq '.[].IPv4Address' | grep "10.99.99.";
 
       - name: Test for configured container tags.
         run: |
-          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
-          docker inspect amazeeio-dnsmasq   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
-          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
-          docker inspect amazeeio-haproxy   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
-          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
-          docker inspect amazeeio-portainer | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
-          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
-          docker inspect amazeeio-ssh-agent | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
-          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
-          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
-          docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect pygmy-dnsmasq   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect pygmy-dnsmasq   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect pygmy-dnsmasq   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect pygmy-haproxy   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect pygmy-haproxy   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect pygmy-haproxy   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect pygmy-portainer | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect pygmy-portainer | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect pygmy-portainer | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect pygmy-ssh-agent | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect pygmy-ssh-agent | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect pygmy-ssh-agent | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
+          docker inspect pygmy-mailhog   | jq '.[].Config.Labels["pygmy.hocuspocus"]'  | grep "42";
+          docker inspect pygmy-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
+          docker inspect pygmy-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
       - name: Clone the official examples
         run: |
@@ -153,9 +153,9 @@ jobs:
           docker-compose -p drupal9-advanced up -d;
           docker-compose -p drupal9-advanced exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
-          curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.docker.amazee.io';
+          curl --HEAD http://drupal9-example-advanced.pygmy.site;
+          curl --HEAD http://drupal9-example-advanced.pygmy.site | grep "X-LAGOON";
+          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.pygmy.site';
           docker-compose -p drupal9-advanced down;
           docker-compose -p drupal9-advanced rm;
           cd ../../;
@@ -166,9 +166,9 @@ jobs:
           docker-compose -p drupal-base up -d;
           docker-compose -p drupal-base exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-base.docker.amazee.io;
-          curl --HEAD http://drupal9-base.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.docker.amazee.io';
+          curl --HEAD http://drupal9-base.pygmy.site;
+          curl --HEAD http://drupal9-base.pygmy.site | grep "X-LAGOON";
+          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.pygmy.site';
           docker-compose -p drupal-base down;
           docker-compose -p drupal-base rm;
           cd ../../;
@@ -179,9 +179,9 @@ jobs:
           docker-compose -p drupal-postgres up -d;
           docker-compose -p drupal-postgres exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-postgres.docker.amazee.io;
-          curl --HEAD http://drupal9-postgres.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.docker.amazee.io';
+          curl --HEAD http://drupal9-postgres.pygmy.site;
+          curl --HEAD http://drupal9-postgres.pygmy.site | grep "X-LAGOON";
+          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.pygmy.site';
           docker-compose -p drupal-postgres down;
           docker-compose -p drupal-postgres rm;
           cd ../../;
@@ -191,9 +191,9 @@ jobs:
           cd lagoon-examples/node-example;
           npm install;
           docker-compose -p node up -d;
-          curl --HEAD http://node.docker.amazee.io;
-          curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
+          curl --HEAD http://node.pygmy.site;
+          curl --HEAD http://node.pygmy.site | grep "X-LAGOON";
+          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.pygmy.site';
           docker-compose -p node down;
           docker-compose -p node rm;
           cd ../../;
@@ -204,9 +204,9 @@ jobs:
           docker-compose -p silverstripe-advanced up -d;
           docker-compose -p silverstripe-advanced exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://ss.docker.amazee.io;
+          curl --HEAD http://ss.pygmy.site;
           # Temporarily, we will omit the failure for the X-LAGOON header.;
-          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON" || true;
+          curl --HEAD http://ss.pygmy.site | grep "X-LAGOON" || true;
           docker-compose -p silverstripe-advanced down;
           docker-compose -p silverstripe-advanced rm;
           cd ../../;
@@ -217,8 +217,8 @@ jobs:
           docker-compose -p silverstripe-simple up -d;
           docker-compose -p silverstripe-simple exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://ss.docker.amazee.io;
-          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://ss.pygmy.site;
+          curl --HEAD http://ss.pygmy.site | grep "X-LAGOON";
           docker-compose -p silverstripe-simple down;
           docker-compose -p silverstripe-simple rm;
           cd ../../;
@@ -229,9 +229,9 @@ jobs:
           docker-compose -p wordpress-simple up -d;
           docker-compose -p wordpress-simple exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://wordpress-example-simple.docker.amazee.io;
-          curl --HEAD http://wordpress-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-example-simple.docker.amazee.io';
+          curl --HEAD http://wordpress-example-simple.pygmy.site;
+          curl --HEAD http://wordpress-example-simple.pygmy.site | grep "X-LAGOON";
+          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-example-simple.pygmy.site';
           docker-compose -p wordpress-simple down;
           docker-compose -p wordpress-simple rm;
           cd ../../;
@@ -248,11 +248,11 @@ jobs:
 
       - name: Test the down command
         run: |
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped pygmy';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] pygmy-' | grep 'is not running';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container pygmy-' && false || true;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container pygmy-' && true || false;
 
       - name: Cowsay test
         run: ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;

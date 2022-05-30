@@ -75,10 +75,28 @@ func Setup(c *Config) {
 	// Set default value for default inheritance:
 	viper.SetDefault("defaults", true)
 
-	// Set the default domain.
-	viper.SetDefault("domain", "docker.amazee.io")
-	if c.Domain == "" {
-		c.Domain = viper.GetString("domain")
+	// Check if amazeeio-network exists, and assign the prefix.
+	if viper.GetString("prefix") == "" && viper.GetString("domain") == "" {
+		amazeeioNetwork, _ := docker.DockerNetworkGet("amazeeio-network")
+		if amazeeioNetwork.Name == "amazeeio-network" {
+			c.Domain = "docker.amazee.io"
+			c.Prefix = "amazeeio"
+		} else {
+			c.Domain = "pygmy.site"
+			c.Prefix = "pygmy"
+		}
+	}
+
+	// Marry up key/value pairs for docker.amazee.io configuraiton
+	if os.Getenv("PYGMY_DOMAIN") == "docker.amazee.io" || viper.GetString("prefix") == "amazeeio" || viper.GetString("domain") == "docker.amazee.io" {
+		viper.SetDefault("domain", "docker.amazee.io")
+		viper.SetDefault("prefix", "amazeeio")
+	}
+
+	// Marry up key/value pairs for pygmy.site configuraiton
+	if os.Getenv("PYGMY_DOMAIN") == "pygmy.site" || viper.GetString("prefix") == "pygmy" || viper.GetString("domain") == "pygmy.site" {
+		viper.SetDefault("domain", "pygmy.site")
+		viper.SetDefault("prefix", "pygmy")
 	}
 
 	// Resolvers don't have hard defaults defined which
@@ -132,31 +150,31 @@ func Setup(c *Config) {
 			c.Services = make(map[string]model.Service, 6)
 		}
 
-		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
-		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
-		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New(&model.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&model.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-mailhog", mailhog.New(&model.Params{Domain: c.Domain}))
+		ImportDefaults(c, fmt.Sprintf("%s-ssh-agent", c.Prefix), agent.New(&model.Params{Domain: c.Domain, Prefix: c.Prefix}))
+		ImportDefaults(c, fmt.Sprintf("%s-ssh-agent-add-key", c.Prefix), key.NewAdder(&model.Params{Domain: c.Domain, Prefix: c.Prefix}))
+		ImportDefaults(c, fmt.Sprintf("%s-dnsmasq", c.Prefix), dnsmasq.New(&model.Params{Domain: c.Domain, Prefix: c.Prefix}))
+		ImportDefaults(c, fmt.Sprintf("%s-haproxy", c.Prefix), haproxy.New(&model.Params{Domain: c.Domain, Prefix: c.Prefix}))
+		ImportDefaults(c, fmt.Sprintf("%s-mailhog", c.Prefix), mailhog.New(&model.Params{Domain: c.Domain, Prefix: c.Prefix}))
 
 		// We need Port 80 to be configured by default.
-		// If a port on amazeeio-haproxy isn't explicitly declared,
+		// If a port on pygmy-haproxy isn't explicitly declared,
 		// then we should set this value. This is far more creative
 		// than needed, so feel free to revisit if you can compile it.
-		if c.Services["amazeeio-haproxy"].HostConfig.PortBindings == nil {
-			c.Services["amazeeio-haproxy"] = getService(haproxy.NewDefaultPorts(), c.Services["amazeeio-haproxy"])
+		if c.Services[fmt.Sprintf("%s-haproxy", c.Prefix)].HostConfig.PortBindings == nil {
+			c.Services[fmt.Sprintf("%s-haproxy", c.Prefix)] = getService(haproxy.NewDefaultPorts(), c.Services[fmt.Sprintf("%s-haproxy", c.Prefix)])
 		}
 
 		// It's sensible to use the same logic for port 1025.
 		// If a user needs to configure it, the default value should not be set also.
-		if c.Services["amazeeio-mailhog"].HostConfig.PortBindings == nil {
-			c.Services["amazeeio-mailhog"] = getService(mailhog.NewDefaultPorts(), c.Services["amazeeio-mailhog"])
+		if c.Services[fmt.Sprintf("%s-mailhog", c.Prefix)].HostConfig.PortBindings == nil {
+			c.Services[fmt.Sprintf("%s-mailhog", c.Prefix)] = getService(mailhog.NewDefaultPorts(), c.Services[fmt.Sprintf("%s-mailhog", c.Prefix)])
 		}
 
 		// Ensure Networks has a at least a zero value.
-		// We should provide defaults for amazeeio-network when no value is provided.
+		// We should provide defaults for pygmy-network when no value is provided.
 		if c.Networks == nil {
 			c.Networks = make(map[string]types.NetworkResource)
-			c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
+			c.Networks[fmt.Sprintf("%s-network", c.Prefix)] = getNetwork(network.New(&model.Params{Domain: c.Domain, Prefix: c.Prefix}), c.Networks[fmt.Sprintf("%s-network", c.Prefix)])
 		}
 
 		// Ensure Volumes has a at least a zero value.

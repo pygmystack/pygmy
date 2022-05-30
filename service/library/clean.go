@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	model "github.com/pygmystack/pygmy/service/interface"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
@@ -62,6 +63,6 @@ func Clean(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		resolver.Clean()
+		resolver.Clean(&model.Params{Domain: c.Domain, Prefix: c.Prefix})
 	}
 }

@@ -1,6 +1,7 @@
 package library_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/pygmystack/pygmy/service/library"
@@ -11,7 +12,7 @@ func TestSortedServices(t *testing.T) {
 	c := &library.Config{}
 	library.Setup(c)
 	c.SortedServices = library.GetServicesSorted(c)
-	if c.SortedServices[0] != "amazeeio-ssh-agent" {
+	if !strings.HasSuffix(c.SortedServices[0], "-ssh-agent") {
 		t.Fail()
 	}
 	for _, v := range c.SortedServices {

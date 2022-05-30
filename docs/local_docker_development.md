@@ -52,12 +52,12 @@ It is possible to add mount ssh private keys into Docker containers, but this is
 
 amazee.io implemented a Drupal Docker Development environment which handles all these issues nicely for you. It allows you to:
 
-* Access all sites via the Port 80 or 443 with just different URLs like site1.docker.amazee.io and site2.docker.amazee.io
+* Access all sites via the Port 80 or 443 with just different URLs like site1.pygmy.site and site2.pygmy.site
 * Add your SSH Key once to the system and can forget about it, no need to add it to each container
 
 The environment starts 4 containers:
 
-* [andyshinn/dnsmasq](https://hub.docker.com/r/andyshinn/dnsmasq/) Docker container which will listen on port 53 and resolve all DNS requests from `*.docker.amazee.io` to `127.0.0.1` \(so basically a better way then filling your `/etc/hosts` file by hand\)
+* [andyshinn/dnsmasq](https://hub.docker.com/r/andyshinn/dnsmasq/) Docker container which will listen on port 53 and resolve all DNS requests from `*.pygmy.site` to `127.0.0.1` \(so basically a better way then filling your `/etc/hosts` file by hand\)
 * [amazeeio/haproxy](https://hub.docker.com/r/amazeeio/haproxy/) Docker container which will listen on port 80 and 443. It additionally listens to the Docker socket, realize when you start a new Drupal Container and adapt fully automatically it's haproxy configuration \(thanks to the awesome tool [docker-gen](https://github.com/jwilder/docker-gen)\). It forwards HTTP and HTTPs requests to the correct Drupal Container. With that we can access all Drupal Containers via a single Port.
 * [amazeeio/ssh-agent](https://hub.docker.com/r/amazeeio/ssh-agent/) Docker container which will keeps an ssh-agent at hand for the other Drupal Containers. With that the Drupal Containers do not need to handle ssh-agenting themselves
 * [mailhog/mailhog](https://hub.docker.com/r/mailhog/mailhog/) Docker container which will keeps emails from being sent but allows for you to read and debug message contents.
@@ -69,7 +69,7 @@ The environment starts 4 containers:
                                             |Docker                                                              |
                                             |                                                                    |
                                             |          HAProxy knows which                                       |
-                                            |          *.docker.amazee.io is                                     |
+                                            |          *.pygmy.site is                                           |
                                             |          handled by which container  +---------------------+       |
                                             |                                      |                     |       |
                                             |                              +-------+ Drupal Container 1  <--+    |

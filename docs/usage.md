@@ -57,15 +57,15 @@ Run `pygmy status` and `pygmy` will tell you how it feels right now and which ss
 
     pygmy status
 
-    [*] amazeeio-ssh-agent: Running as container amazeeio-ssh-agent
-    [*] mailhog.docker.amazee.io: Running as container mailhog.docker.amazee.io
-    [*] amazeeio-haproxy: Running as container amazeeio-haproxy
-    [*] amazeeio-dnsmasq: Running as container amazeeio-dnsmasq
-    [*] amazeeio-haproxy is connected to network amazeeio-network
+    [*] pygmy-ssh-agent: Running as container pygmy-ssh-agent
+    [*] mailhog.pygmy.site: Running as container mailhog.pygmy.site
+    [*] pygmy-haproxy: Running as container pygmy-haproxy
+    [*] pygmy-dnsmasq: Running as container pygmy-dnsmasq
+    [*] pygmy-haproxy is connected to network pygmy-network
     [*] Resolv MacOS Resolver is properly connected
     �ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDNxWpKZcU/D+t7ToRGPNEXbvojrFtxKH99ZuaOJ7cs9KurVJyiEHyBEUZAPt0j9SO5yzdVEM//rVoZIwZeypW9C7CYgTpRoA/k1BnE1xvtoQT+528GmjQG542NBFo2KdO+LWqx19kClvoN7haGDtYKbS6MWUYEwD0ey69cquFDKC+A5NKx3z065gn9UZqLIeXjHCJ+v5PCSWXL3CFn57UlN824j1OFAECrjfNNfFEVmDJqa2Da6o9DhN+W1wyZJCklRPCiRlK5m3p9x1ClPKALUGQ0hvpjz36QSsXqS88MJPHsZvsv2PuW6xXNW8PSBCHcK6no5lYV/4hk8jcDQd2P6dpwvDiti+bTcfDH3jrVNqFati7ku37xIc3jWGn7CkCpMy008ai4kFMq2W2w6gOy0HncQ7z8AE8BdndxyEFYCLJviWOjW1SjSesPJpc9dxgmSmp/2qa6u0UZzFFHxJklIHepJAvcoHghs5Te2oMHwriRdpKqXiW+eJyudWCOzEeJljr73/Caft+CgZ7+kmmiy0hlqVAD6xkyBsuEF8+MdONfBHarpY8qZdLehavGd0DJW36nDnPvefDxoidJ0qYtjF8ElpNkeguAnsUFEwHkoc3Ur/NDcrkdGTKS8wb5AtkdwbDOCQTR00ABfAcYUFwOAvXodoQLrvm2ibp5l7/Y/Q== user@localhost
-     - http://mailhog.docker.amazee.io (mailhog.docker.amazee.io)
-     - http://docker.amazee.io/stats (amazeeio-haproxy)
+     - http://mailhog.pygmy.site (mailhog.pygmy.site)
+     - http://pygmy.site/stats (pygmy-haproxy)
 
 ## `pygmy down` vs `pygmy clean`
 
@@ -77,6 +77,6 @@ If you like to cleanup though, use `pygmy clean` to kill and remove all of the D
 
 ## Access HAProxy statistic page and logs  
 
-HAProxy service has statistics web page already enabled. To access the page, just point the browser to [http://docker.amazee.io/stats](http://docker.amazee.io/stats).  
+HAProxy service has statistics web page already enabled. To access the page, just point the browser to [http://pygmy.site/stats](http://pygmy.site/stats).  
 
-To watch at haproxy container logs, use the `docker logs amazeeio-haproxy` command with standard `docker logs` options like `-f` to follow.
+To watch at haproxy container logs, use the `docker logs pygmy-haproxy` command with standard `docker logs` options like `-f` to follow.

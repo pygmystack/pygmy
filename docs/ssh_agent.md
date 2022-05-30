@@ -10,7 +10,7 @@ If you need another key, read the documentation of [`pygmy`](linux_pygmy.md) abo
 3. `docker-compose.yml` should have volume inclusion specified for CLI container:
   ```
   volumes_from:
-    - container:amazeeio-ssh-agent
+    - container:pygmy-ssh-agent
   ```
 4. When CLI container starts, the volume is mounted and an entrypoint script adds SHH key into agent.
   @see https://github.com/amazeeio/lagoon/blob/master/images/php/cli/10-ssh-agent.sh

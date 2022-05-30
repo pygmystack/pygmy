@@ -24,7 +24,7 @@ resolvers:
 # Services is a hashmap of 
 services:
 
-  # The hashmap entry denotes the service name - such as "amazeeio-dnsmasq".
+  # The hashmap entry denotes the service name - such as "pygmy-dnsmasq".
   mycontainer:
 
     # Config is derrived from the Docker API, intended for container configuration.
@@ -59,7 +59,7 @@ services:
         pygmy.discrete: true
 
         # To test an endpoint:
-        pygmy.url: http://mycontainer.docker.amazee.io
+        pygmy.url: http://mycontainer.pygmy.site
 
         # To identify the purpose of a container - this is rather specialised so please ignore.
         pygmy.purpose: sshagent
@@ -77,16 +77,16 @@ services:
       
       # Hashmap value ideally should be the network name - but could be anything.
       # Results may vary, so try what works.
-      amazeeio-network:
+      pygmy-network:
 
         # Every network needs a name.
-        Name: amazeeio-network
+        Name: pygmy-network
 
         # An array of Containers.
         Containers:
 
           # Container name will tell Pygmy to integrate the container of the specified name should be connected to the docker network.
-          Name: amazeeio-haproxy
+          Name: pygmy-haproxy
 
         Labels:
 

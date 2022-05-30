@@ -1,5 +1,7 @@
 ---
-
+prefix: amazeeio
+domain: docker.amazee.io
+defaults: true
 services:
 
   amazeeio-haproxy:
@@ -16,7 +18,7 @@ services:
     Config:
       Labels:
         - pygmy.enable: true
-        - pygmy.name: amazeeio-mailhog
+        - pygmy.name: unofficial-mailhog
         - pygmy.network: amazeeio-network
         - traefik.enable: true
         - traefik.port: 80
