@@ -147,17 +147,17 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
 
-      - name: Drupal 9 Advanced
+      - name: Drupal 9 Full
         run: |
-          cd lagoon-examples/drupal9-advanced;
-          docker-compose -p drupal9-advanced up -d;
-          docker-compose -p drupal9-advanced exec -T cli composer install;
+          cd lagoon-examples/drupal9-full;
+          docker-compose -p drupal9-full up -d;
+          docker-compose -p drupal9-full exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-example-advanced.docker.amazee.io;
-          curl --HEAD http://drupal9-example-advanced.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://drupal9-example-full.docker.amazee.io;
+          curl --HEAD http://drupal9-example-full.docker.amazee.io | grep "X-LAGOON";
           ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-example-advanced.docker.amazee.io';
-          docker-compose -p drupal9-advanced down;
-          docker-compose -p drupal9-advanced rm;
+          docker-compose -p drupal9-full down;
+          docker-compose -p drupal9-full rm;
           cd ../../;
 
       - name: Drupal 9 Base
