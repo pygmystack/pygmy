@@ -18,12 +18,20 @@ builds:
     goos:
       - linux
       - darwin
-      - windows
     goarch:
       - 386
       - amd64
       - arm
       - arm64
+  - id: pygmy-windows
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
   - id: pygmy-static
     env:
       - CGO_ENABLED=0
