@@ -3,7 +3,7 @@
 
 # Map additional ports
 
-As it explained in the [Connect to MySQL](./connect_to_mysql_from_external.md) section, Docker maps MySQL's 3306 port to a random port on docker.amazee.io. This happens because port 3306 is set in the `docker-compose.yml` file:
+As it explained in the [Connect to MySQL](./connect_to_mysql_from_external.md) section, Docker maps MySQL's 3306 port to a random port on pygmy.site. This happens because port 3306 is set in the `docker-compose.yml` file:
 ```
     ports:
       - "3306"
@@ -19,4 +19,4 @@ In this case, to play with Solr queries:
 - add `"8149"` to the `ports` section of `docker-compose.yml` file
 - restart the container with `docker-compose stop && docker-compose up -d`
 - get the port number with `docker-compose port drupal 8149`
-- start playing at http://docker.amazee.io:&lt;PORT_NUMBER&gt;/solr/drupal/admin/
+- start playing at http://pygmy.site:&lt;PORT_NUMBER&gt;/solr/drupal/admin/

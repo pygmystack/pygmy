@@ -40,9 +40,9 @@ This is the easier way, you need to be in the same folder where also the `docker
 
 If you want to connect to a container wherever you are right now with your bash:
 
-	docker exec -itu drupal example.com.docker.amazee.io bash
+	docker exec -itu drupal example.com.pygmy.site bash
 
-*Replace `example.com.docker.amazee.io` with the docker container you want to connect to*
+*Replace `example.com.pygmy.site` with the docker container you want to connect to*
 
 ### Drush from your host machine
 

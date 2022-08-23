@@ -48,7 +48,7 @@ func Up(c Config) {
 	// Maps are... bad for predictable sequencing.
 	// Look over the sorted slice and start them in
 	// alphabetical order - so that one can configure
-	// an ssh-agent like amazeeio-ssh-agent.
+	// an ssh-agent like pygmy-ssh-agent.
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
 		enabled, _ := service.GetFieldBool("enable")
@@ -82,7 +82,7 @@ func Up(c Config) {
 		}
 
 		// If one or more agent was found:
-		if purpose == "sshagent" {
+		if enabled && purpose == "sshagent" {
 			agentPresent = true
 		}
 	}
@@ -154,7 +154,7 @@ func Up(c Config) {
 	containers, _ := docker.DockerContainerList()
 	var urls []string
 	for _, container := range containers {
-		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+		if container.State == "running" && strings.Contains(fmt.Sprint(container.Names), c.Prefix) {
 			obj, _ := docker.DockerInspect(container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {

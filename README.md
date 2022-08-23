@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/pygmystack/pygmy)](https://goreportcard.com/report/github.com/pygmystack/pygmy)
 [![GoDoc](https://godoc.org/github.com/pygmystack/pygmy?status.svg)](https://godoc.org/github.com/pygmystack/pygmy)
 
-This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy.readthedocs.io/en/master/)
+This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy-readthedocs.io/en/master/)
 currently written in Ruby. The goal is to provide a better cross-platform experience
 for various users running Lagoon, as well as much greater control over configuration
 options via YAML.
@@ -13,11 +13,19 @@ options via YAML.
 Please see the existing [Pygmy documentation](https://pygmy.readthedocs.io) for more information
 about Pygmy as this is designed to be a drop-in replacement.
 
-## Early testing
+## Making Pygmy always use `docker.amazee.io`
 
-We welcome testers of this tool. You will probably be an existing user of Pygmy who
-can verify the same functionality, or perhaps who has had trouble installing Pygmy in the
-past on Windows.
+To make sure Pygmy always uses the legacy `amazeeio-*` container names and the
+`docker.amazee.io` domain, just set the environment variable `PYGMY_DOMAIN` to
+`docker.amazee.io`
+
+If the `amazeeio-network' is created and ready for use, Pygmy will
+automatically set these variables at runtime. If not, it will now use the
+container names `pygmy-*` and the domain `*.pygmy.site`.
+
+```shell
+echo 'export PYGMY_DOMAIN=docker.amazee.io' >> ~/.bashrc
+```
 
 ## Is Pygmy running?
 
@@ -26,8 +34,8 @@ old version is still available if you have installed it. With no Pygmy running,
 you should get "connection refused" when attempting to connect to the local amazee network.
 
 ```
-curl --HEAD http://myproject.docker.amazee.io
-curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection refused
+curl --HEAD http://myproject.pygmy.site
+curl: (7) Failed to connect to myproject.pygmy.site port 80: Connection refused
 ```
 
 ## Installation
@@ -86,7 +94,7 @@ If you have an Amazee Lagoon project running, you can test the web address and
 expect a `HTTP/1.1 200 OK` response.
 
 ```
-$ curl --HEAD http://myproject.docker.amazee.io
+$ curl --HEAD http://myproject.pygmy.site
 HTTP/1.1 200 OK
 Server: openresty
 Content-Type: text/html; charset=UTF-8
@@ -106,7 +114,7 @@ X-Frame-Options: SameOrigin
 If your project is not running you should expect a 503 response:
 
 ```
-$ curl --HEAD http://FUBARNOTINDAHOUSE.docker.amazee.io
+$ curl --HEAD http://FUBARNOTINDAHOUSE.pygmy.site
 HTTP/1.0 503 Service Unavailable
 Cache-Control: no-cache
 Connection: close
@@ -124,7 +132,7 @@ It will use `dind` and your local daemon to walk through several tests which sho
 
 1. First clone the project:
    ```
-   git clone https://github.com/pygmystack/pygmy.git pygmy && cd pygmy
+   git clone https://github.com/pygmystack/pygmy-git pygmy && cd pygmy
    ```
 2. Perform any updates as required.
 3. Clean the environment.

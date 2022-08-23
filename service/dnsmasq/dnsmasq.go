@@ -22,7 +22,7 @@ func New(c *model.Params) model.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-dnsmasq",
+				"pygmy.name":     fmt.Sprintf("%s-dnsmasq", c.Prefix),
 				"pygmy.weight":   "13",
 			},
 		},

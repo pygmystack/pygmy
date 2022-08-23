@@ -4,21 +4,23 @@
 package key
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // NewAdder will provide the standard object for the SSH key adder container.
-func NewAdder() model.Service {
+func NewAdder(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-ssh-agent-add-key",
-				"pygmy.network":  "amazeeio-network",
+				"pygmy.name":     fmt.Sprintf("%s-ssh-agent-add-key", c.Prefix),
+				"pygmy.network":  fmt.Sprintf("%s-network", c.Prefix),
 				"pygmy.discrete": "true",
 				"pygmy.output":   "false",
 				"pygmy.purpose":  "addkeys",
@@ -28,7 +30,7 @@ func NewAdder() model.Service {
 		HostConfig: container.HostConfig{
 			IpcMode:     "private",
 			AutoRemove:  false,
-			VolumesFrom: []string{"amazeeio-ssh-agent"},
+			VolumesFrom: []string{fmt.Sprintf("%s-ssh-agent", c.Prefix)},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

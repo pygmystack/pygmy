@@ -25,13 +25,13 @@ func TestExampleSearch(t *testing.T) {
 
 func Test(t *testing.T) {
 	Convey("SSH Agent: Field equality tests...", t, func() {
-		obj := agent.New()
+		obj := agent.New(&model.Params{Domain: "pygmy.site", Prefix: "pygmy"})
 		So(obj.Config.Image, ShouldEqual, "pygmystack/ssh-agent")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.output"], ShouldEqual, "false")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-ssh-agent")
-		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-ssh-agent")
+		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "pygmy-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "10")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)

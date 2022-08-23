@@ -60,7 +60,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 
 			// Create the file if it doesn't exist.
 			if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-				if tmpFile, err = ioutil.TempFile("", "pygmy-"); err != nil {
+				if tmpFile, err = ioutil.TempFile("", fmt.Sprintf("%s-", c.Prefix)); err != nil {
 					fmt.Println(err)
 				}
 				if err = os.Chmod(tmpFile.Name(), 0777); err != nil {
@@ -87,7 +87,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 						fmt.Println("/bin/sh", "-c", "cat "+fullPath)
 					}
 
-					if tmpFile, err = ioutil.TempFile("", "pygmy-"); err != nil {
+					if tmpFile, err = ioutil.TempFile("", fmt.Sprintf("%s-", c.Prefix)); err != nil {
 						fmt.Println(err)
 					} else {
 						if err = os.Chmod(tmpFile.Name(), 0777); err != nil {
@@ -129,7 +129,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 
 // Clean will cleanup the resolv file configured to the system and run some
 // cleanup commands which were ran at the end of resolv.Configure on MacOS.
-func (resolv Resolv) Clean() {
+func (resolv Resolv) Clean(c *model.Params) {
 
 	fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 	if runtime.GOOS == "linux" {
@@ -141,7 +141,7 @@ func (resolv Resolv) Clean() {
 			} else {
 				if strings.Contains(string(cmdOut), resolv.Data) {
 					newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
-					if tmpFile, err := ioutil.TempFile("", "pygmy-"); err != nil {
+					if tmpFile, err := ioutil.TempFile("", fmt.Sprintf("%s-", c.Prefix)); err != nil {
 						fmt.Println(err)
 					} else {
 						if err = os.Chmod(tmpFile.Name(), 0777); err != nil {

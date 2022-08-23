@@ -31,7 +31,7 @@ var updateCmd = &cobra.Command{
 	Example: "pygmy update",
 	Short:   "Pulls Docker Images and recreates the Containers",
 	Long: `Pull all images Pygmy uses, as well as any images containing
-the string 'amazeeio', which encompasses all lagoon images.`,
+the string 'pygmy' or 'amazeeio', which encompasses all lagoon images.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		library.Update(c)

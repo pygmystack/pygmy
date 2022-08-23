@@ -29,6 +29,11 @@ type Config struct {
 	// Networks is for network configuration
 	Networks map[string]types.NetworkResource `yaml:"networks"`
 
+	// Prefix defines what services and networks should be associated to.
+	// This is to easily rename all the services by reference rather than
+	// hard-coding prefix values.
+	Prefix string `yaml:"prefix"`
+
 	// NoDefaults will prevent default configuration items.
 	Defaults bool
 
@@ -55,6 +60,9 @@ func mergeService(destination model.Service, src *model.Service) (*model.Service
 
 func getService(s model.Service, c model.Service) model.Service {
 	Service, _ := mergeService(s, &c)
+	if Service == nil {
+		return model.Service{}
+	}
 	return *Service
 }
 

@@ -49,7 +49,7 @@ func run(args []string) ([]byte, error) {
 
 }
 
-func (resolv Resolv) Clean() {
+func (resolv Resolv) Clean(c *model.Params) {
 	_, error := run([]string{"Clear-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain"})
 	if error != nil {
 		fmt.Println(error.Error())

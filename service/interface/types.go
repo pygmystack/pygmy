@@ -12,6 +12,8 @@ import (
 type Params struct {
 	// Domain is the target domain for Pygmy to use.
 	Domain string
+	// Prefix is the service prefix
+	Prefix string
 }
 
 // DockerService is the requirements for a Docker container to be compatible.

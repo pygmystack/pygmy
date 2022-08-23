@@ -17,14 +17,14 @@ func Example() {
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New(&model.Params{Domain: "docker.amazee.io"})
+		obj := haproxy.New(&model.Params{Domain: "pygmy.site", Prefix: "pygmy"})
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldEqual, "pygmystack/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-haproxy")
-		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
-		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-haproxy")
+		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "pygmy-network")
+		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://pygmy.site/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock"}))

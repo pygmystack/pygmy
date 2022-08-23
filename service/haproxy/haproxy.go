@@ -17,8 +17,8 @@ func New(c *model.Params) model.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-haproxy",
-				"pygmy.network":  "amazeeio-network",
+				"pygmy.name":     fmt.Sprintf("%s-haproxy", c.Prefix),
+				"pygmy.network":  fmt.Sprintf("%s-network", c.Prefix),
 				"pygmy.url":      fmt.Sprintf("http://%s/stats", c.Domain),
 				"pygmy.weight":   "14",
 			},

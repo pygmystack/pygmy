@@ -15,15 +15,15 @@ import (
 )
 
 // New will provide the standard object for the SSH agent container.
-func New() model.Service {
+func New(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-ssh-agent",
-				"pygmy.network":  "amazeeio-network",
+				"pygmy.name":     fmt.Sprintf("%s-ssh-agent", c.Prefix),
+				"pygmy.network":  fmt.Sprintf("%s-network", c.Prefix),
 				"pygmy.output":   "false",
 				"pygmy.purpose":  "sshagent",
 				"pygmy.weight":   "10",

@@ -16,13 +16,13 @@ func Example() {
 
 func Test(t *testing.T) {
 	Convey("DNSMasq: Field equality tests...", t, func() {
-		obj := dnsmasq.New(&model.Params{Domain: "docker.amazee.io"})
+		obj := dnsmasq.New(&model.Params{Domain: "pygmy.site", Prefix: "pygmy"})
 
 		So(obj.Config.Image, ShouldEqual, "pygmystack/dnsmasq")
-		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"--log-facility=-", "-A", "/docker.amazee.io/127.0.0.1"}))
+		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"--log-facility=-", "-A", "/pygmy.site/127.0.0.1"}))
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-dnsmasq")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-dnsmasq")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "13")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.CapAdd), ShouldEqual, fmt.Sprint([]string{"NET_ADMIN"}))
