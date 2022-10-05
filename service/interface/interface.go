@@ -185,6 +185,35 @@ func (Service *Service) Stop() error {
 
 	for _, name := range container.Names {
 		if e := docker.DockerStop(container.ID); e == nil {
+			if !discrete {
+				containerName := strings.Trim(name, "/")
+				fmt.Printf("Successfully stopped %v\n", containerName)
+			}
+		}
+	}
+
+	return nil
+}
+
+// Remove will stop the container.
+func (Service *Service) Remove() error {
+
+	name, e := Service.GetFieldString("name")
+	discrete, _ := Service.GetFieldBool("discrete")
+	if e != nil {
+		return nil
+	}
+
+	container, err := Service.GetRunning()
+	if err != nil {
+		if !discrete {
+			fmt.Printf("Not running %v\n", name)
+		}
+		return nil
+	}
+
+	for _, name := range container.Names {
+		if e := docker.DockerStop(container.ID); e == nil {
 			if e := docker.DockerRemove(container.ID); e == nil {
 				if !discrete {
 					containerName := strings.Trim(name, "/")

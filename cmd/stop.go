@@ -26,23 +26,23 @@ import (
 	"github.com/fubarhouse/pygmy-go/service/library"
 )
 
-// downCmd represents the down command
-var downCmd = &cobra.Command{
-	Use:     "down",
-	Example: "pygmy down",
-	Short:   "Stop and remove all pygmy services",
+// stopCmd represents the stop command
+var stopCmd = &cobra.Command{
+	Use:     "stop",
+	Example: "pygmy stop",
+	Short:   "Stop and do not remove all pygmy services",
 	Long: `Check if any pygmy containers are running and removes
-then if they are, it will attempt to remove any
+then if they are, it will not attempt to remove any
 services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Down(c)
+		library.Stop(c)
 
 	},
 }
 
 func init() {
 
-	rootCmd.AddCommand(downCmd)
+	rootCmd.AddCommand(stopCmd)
 
 }

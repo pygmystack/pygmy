@@ -15,7 +15,7 @@ func Down(c Config) {
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool("enable")
 		if enabled {
-			e := Service.Stop()
+			e := Service.Remove()
 			if e != nil {
 				fmt.Println(e)
 			}
