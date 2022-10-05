@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/docker/docker/client"
 	"os"
 	"runtime"
 	"sort"
@@ -75,6 +76,9 @@ func Setup(c *Config) {
 	// Set default value for default inheritance:
 	viper.SetDefault("defaults", true)
 
+	// Set the default docker socket path
+	viper.SetDefault("socket", client.DefaultDockerHost)
+
 	// Set the default domain.
 	viper.SetDefault("domain", "docker.amazee.io")
 	if c.Domain == "" {
@@ -135,7 +139,7 @@ func Setup(c *Config) {
 		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
 		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New(&model.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&model.Params{Domain: c.Domain}))
+		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&model.Params{Domain: c.Domain, Socket: viper.GetString("socket")}))
 		ImportDefaults(c, "amazeeio-mailhog", mailhog.New(&model.Params{Domain: c.Domain}))
 
 		// We need Port 80 to be configured by default.
