@@ -16,6 +16,8 @@ on:
 jobs:
   basic:
     runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
@@ -56,6 +58,8 @@ jobs:
 
   full:
     runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2

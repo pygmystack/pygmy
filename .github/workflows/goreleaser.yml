@@ -13,6 +13,8 @@ on:
 jobs:
   goreleaser:
     runs-on: ubuntu-18.04
+    env:
+      GO111MODULE: on
     steps:
       -
         name: Checkout
