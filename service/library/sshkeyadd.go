@@ -1,35 +1,53 @@
 package library
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"runtime"
 	"strings"
 
-	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/ssh/agent"
+	"github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/ssh/agent"
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
+func SshKeyAdd(c Config, key string, passcode string) error {
 
 	Setup(&c)
 
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {
 			fmt.Printf("%v\n", err)
-			return []byte{}, err
+			return err
 		}
+	} else {
+		return nil
 	}
-
-	var b []byte
-	var e error
 
 	for _, Container := range c.Services {
 		purpose, _ := Container.GetFieldString("purpose")
 		if purpose == "addkeys" {
-			if !agent.Search(Container, key) {
+
+			// Validate SSH Key before adding.
+			valid, err := agent.Validate(key, passcode)
+			if valid {
+				color.Print(aurora.Green(fmt.Sprintf("Validation success for SSH key %v\n", key)))
+
+			} else {
+				if err.Error() == "ssh: no key found" {
+					return fmt.Errorf(fmt.Sprintf("[ ] Validation failure for SSH key %v\n", key))
+				}
+				if err.Error() == "ssh: this private key is passphrase protected" {
+					return fmt.Errorf(fmt.Sprintf("[ ] Passcode not provided for SSH key %v\n", key))
+				}
+				if err.Error() == "x509: decryption password incorrect" {
+					return fmt.Errorf(fmt.Sprintf("[ ] Passcode incorrectly provided for SSH key %v\n", key))
+				}
+			}
+
+			if passcode == "" {
 				if runtime.GOOS == "windows" {
 					Container.Config.Cmd = []string{"ssh-add", "/key"}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
@@ -37,38 +55,37 @@ func SshKeyAdd(c Config, key string, index int) ([]byte, error) {
 					Container.Config.Cmd = []string{"ssh-add", key}
 					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
-
-				if index != 0 {
-
-					// We need a brand new copy of the existing container config.
-					var newService model.Service
-					b, _ := json.Marshal(Container)
-					e := json.Unmarshal(b, &newService)
-					if e != nil {
-						fmt.Println(e)
-					}
-
-					name, _ := newService.GetFieldString("name")
-					name = strings.SplitAfter(name, "_")[0]
-
-					// For some reason Container works well here but it should be newService - needs investigation.
-					e = Container.SetField("name", fmt.Sprintf("%v_%v", name, index))
-
-					if e != nil {
-						fmt.Println(e)
-					}
-
-					return newService.Start()
-
+			} else {
+				if runtime.GOOS == "windows" {
+					Container.Config.Cmd = []string{"ssh-add", "/key"}
+					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
 				} else {
-
-					return Container.Start()
-
+					Container.Config.Cmd = []string{"ssh-add", key}
+					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 				}
-
 			}
+
+			if e := Container.Create(); e != nil {
+				return e
+			}
+			if e := Container.Start(); e != nil {
+				return e
+			}
+			l, _ := Container.DockerLogs()
+			_ = Container.Remove()
+
+			// We need tighter control on the output of this container...
+			for _, line := range strings.Split(string(l), "\n") {
+				if strings.Contains(line, "Identity added:") {
+					color.Print(aurora.Green(fmt.Sprintf("Successfully added SSH key %v to agent\n", key)))
+				}
+				if strings.Contains(line, "Enter passphrase for") {
+					color.Print(aurora.Yellow(fmt.Sprintf("Warning: Passphrase protected SSH keys are not currently supported, the key will not be added.\n")))
+				}
+			}
+
 		}
 
 	}
-	return b, e
+	return nil
 }

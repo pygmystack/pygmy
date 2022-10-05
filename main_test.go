@@ -9,13 +9,13 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 const (
 	dindContainerName = "exampleTestContainer"
-	binaryReference   = "pygmy-go-linux-x86"
+	binaryReference   = "pygmy-linux-amd64"
 )
 
 var (
@@ -186,9 +186,9 @@ func setup(t *testing.T, config *config) {
 func TestDefault(t *testing.T) {
 	configuration := &config{
 		name:               "default",
-		configpath:         "/examples/pygmy.travis.yml",
+		configpath:         "/examples/pygmy.basic.yml",
 		endpoints:          []string{"http://docker.amazee.io/stats", "http://mailhog.docker.amazee.io"},
-		images:             []string{"amazeeio/haproxy", "andyshinn/dnsmasq:2.78", "mailhog/mailhog"},
+		images:             []string{"pygmystack/haproxy", "pygmystack/dnsmasq", "pygmystack/mailhog"},
 		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
 		skipendpointchecks: false,
@@ -202,7 +202,7 @@ func TestCustom(t *testing.T) {
 		name:               "custom",
 		configpath:         "/examples/pygmy.complex.yml",
 		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://portainer.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
-		images:             []string{"amazeeio/ssh-agent", "mailhog/mailhog", "phpmyadmin/phpmyadmin", "portainer/portainer", "library/traefik:v2.1.3"},
+		images:             []string{"pygmystack/ssh-agent", "pygmystack/mailhog", "phpmyadmin/phpmyadmin", "portainer/portainer", "library/traefik:v2.1.3"},
 		services:           []string{"unofficial-portainer", "unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-mailhog", "unofficial-portainer", "unofficial-phpmyadmin", "unofficial-traefik-2"},
 		skipendpointchecks: false,

@@ -5,9 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/containerd/containerd/platforms"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"io"
 	"io/ioutil"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -17,7 +20,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
+	"github.com/pygmystack/pygmy/service/endpoint"
 )
 
 // DockerContainerList will return a slice of containers
@@ -318,7 +321,7 @@ func DockerNetworkConnect(network string, containerName string) error {
 	return nil
 }
 
-// DockerNetworkConnect will check if a container is connected to a network.
+// DockerNetworkConnected will check if a container is connected to a network.
 func DockerNetworkConnected(network string, containerName string) (bool, error) {
 	// Reset network state:
 	c, _ := DockerContainerList()
@@ -396,6 +399,18 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	})
 }
 
+// DockerInspect will return the full container object.
+func DockerInspect(container string) (types.ContainerJSON, error) {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
+	if err != nil {
+		return types.ContainerJSON{}, err
+	}
+
+	return cli.ContainerInspect(context.Background(), container)
+}
+
 // DockerExec will run a command in a Docker container and return the output.
 func DockerExec(container string, command string) ([]byte, error) {
 	ctx := context.Background()
@@ -405,22 +420,28 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	if rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+	rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
 		AttachStdout: true,
 		AttachStderr: true,
-		Cmd:          strings.Split(command, " ")}); err != nil {
+		Cmd:          strings.Split(command, " ")})
+
+	if err != nil {
 		return []byte{}, err
-	} else {
-		if response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{}); err != nil {
-			return []byte{}, err
-		} else {
-			data, _ := ioutil.ReadAll(response.Reader)
-			defer response.Close()
-			return data, nil
-		}
 	}
+
+	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{})
+
+	if err != nil {
+		return []byte{}, err
+	}
+
+	data, _ := ioutil.ReadAll(response.Reader)
+	defer response.Close()
+	return data, nil
+
 }
 
+// DockerContainerCreate will create a container, but will not run it.
 func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.ContainerCreateCreatedBody, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
@@ -428,13 +449,18 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
 	}
-	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, ID)
+	platform := platforms.Normalize(v1.Platform{
+		Architecture: runtime.GOARCH,
+		OS:           "linux",
+	})
+	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
 	}
 	return resp, err
 }
 
+// DockerContainerStart will run an existing container.
 func DockerContainerStart(ID string, options types.ContainerStartOptions) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
@@ -448,6 +474,9 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 	return err
 }
 
+// DockerContainerLogs will synchronously (blocking, non-concurrently) print
+// logs to stdout and stderr, useful for quick containers with a small amount
+// of output which are expected to exit quickly.
 func DockerContainerLogs(ID string) ([]byte, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
@@ -455,17 +484,19 @@ func DockerContainerLogs(ID string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	b, _ := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
+	b, e := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
 	})
+
+	if e != nil {
+		return []byte{}, e
+	}
 
 	buf := new(bytes.Buffer)
 	if _, f := buf.ReadFrom(b); f != nil {
 		fmt.Println(f)
 	}
-
-	b.Close()
 
 	return buf.Bytes(), nil
 }

@@ -6,6 +6,14 @@ import (
 	"github.com/docker/docker/api/types/network"
 )
 
+// Params is an arbitrary struct to pass around configuration from the top
+// level to the lowest level - such as variable input to one of the
+// containers.
+type Params struct {
+	// Domain is the target domain for Pygmy to use.
+	Domain string
+}
+
 // DockerService is the requirements for a Docker container to be compatible.
 // The Service struct is used to implement this interface, and individual
 // variables of type Service can/have overwritten them when logic deems
@@ -13,7 +21,7 @@ import (
 type DockerService interface {
 	Setup() error
 	Status() (bool, error)
-	Start() ([]byte, error)
+	Start() error
 	Stop() error
 }
 

@@ -5,8 +5,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/endpoint"
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // Up will bring Pygmy up.
@@ -32,12 +36,12 @@ func Up(c Config) {
 		if s, _ := docker.DockerVolumeExists(volume); !s {
 			_, err := docker.DockerVolumeCreate(volume)
 			if err == nil {
-				fmt.Printf("Created volume %v\n", volume.Name)
+				color.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {
 				fmt.Println(err)
 			}
 		} else {
-			fmt.Printf("Already created volume %v\n", volume.Name)
+			color.Print(Green(fmt.Sprintf("Already created volume %s\n", volume.Name)))
 		}
 	}
 
@@ -49,20 +53,19 @@ func Up(c Config) {
 		service := c.Services[s]
 		enabled, _ := service.GetFieldBool("enable")
 		purpose, _ := service.GetFieldString("purpose")
-		output, _ := service.GetFieldBool("output")
+		name, _ := service.GetFieldString("name")
 
 		// Do not show or add keys:
-		if enabled && purpose != "addkeys" && purpose != "showkeys" {
+		if enabled && purpose != "addkeys" {
 
-			// Here we will immitate the docker command by
-			// pulling the image if it's not in the daemon.
-			images, _ := docker.DockerImageList()
-			imageFound := false
-			for _, image := range images {
-				for _, digest := range image.RepoDigests {
-					d := strings.Trim(strings.SplitAfter(digest, "@")[0], "@")
-					if strings.Contains(service.Config.Image, d) {
-						imageFound = true
+			if se := service.Setup(); se == nil {
+				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
+			}
+			if status, _ := service.Status(); !status {
+				if ce := service.Create(); ce != nil {
+					// If the status is false but the container is already created, we can ignore that error.
+					if !strings.Contains(ce.Error(), "namespace is already taken") {
+						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
 					}
 				}
 			}
@@ -75,11 +78,8 @@ func Up(c Config) {
 					fmt.Println(err.Error())
 					continue
 				}
-			}
-
-			o, _ := service.Start()
-			if output && string(o) != "" {
-				fmt.Println(string(o))
+			} else {
+				fmt.Print(Sprintf(Green("Already Running %s\n"), name))
 			}
 		}
 
@@ -95,9 +95,9 @@ func Up(c Config) {
 			netVal, _ := docker.DockerNetworkStatus(Network.Name)
 			if !netVal {
 				if err := NetworkCreate(Network); err == nil {
-					fmt.Printf("Successfully created network %v\n", Network.Name)
+					color.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
 				} else {
-					fmt.Printf("Could not create network %v\n", Network.Name)
+					color.Print(Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
 				}
 			}
 		}
@@ -111,33 +111,31 @@ func Up(c Config) {
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
 			if s, _ := docker.DockerNetworkConnected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
-					fmt.Printf("Successfully connected %v to %v\n", name, Network)
+					color.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
-					fmt.Printf("Could not connect %v to %v\n", name, Network)
+					discrete, _ := service.GetFieldBool("discrete")
+					if !discrete {
+						color.Print(Red(fmt.Sprintf("Could not connect %s to %s\n", name, Network)))
+					}
 				}
 			} else {
-				fmt.Printf("Already connected %v to %v\n", name, Network)
+				color.Print(Green(fmt.Sprintf("Already connected %s to %s\n", name, Network)))
 			}
 		}
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status() {
-			resolver.Configure()
+		if !resolver.Status(&model.Params{Domain: c.Domain}) {
+			resolver.Configure(&model.Params{Domain: c.Domain})
 		}
 	}
 
 	// Add ssh-keys to the agent
 	if agentPresent {
-		i := 1
 		for _, v := range c.Keys {
-			out, err := SshKeyAdd(c, v, i)
-			if err != nil {
-				fmt.Println(err)
-			} else if string(out) != "" {
-				fmt.Println(strings.Trim(string(out), "\n"))
+			if e := SshKeyAdd(c, v.Path, v.Passphrase); e != nil {
+				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
-			i++
 		}
 	}
 
@@ -151,6 +149,36 @@ func Up(c Config) {
 			} else {
 				fmt.Printf(" ! %v (%v)\n", url, name)
 			}
+		}
+	}
+
+	// List out all running projects to get their URL.
+	containers, _ := docker.DockerContainerList()
+	var urls []string
+	for _, container := range containers {
+		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+			obj, _ := docker.DockerInspect(container.ID)
+			vars := obj.Config.Env
+			for _, v := range vars {
+				// Look for the environment variable $LAGOON_ROUTE.
+				if strings.Contains(v, "LAGOON_ROUTE=") {
+					url := strings.TrimPrefix(v, "LAGOON_ROUTE=")
+					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
+						url = "http://" + url
+					}
+					urls = append(urls, url)
+				}
+			}
+		}
+	}
+
+	cleanurls := unique(urls)
+	for _, url := range cleanurls {
+		endpoint.Validate(url)
+		if r := endpoint.Validate(url); r {
+			fmt.Printf(" - %v\n", url)
+		} else {
+			fmt.Printf(" ! %v\n", url)
 		}
 	}
 }

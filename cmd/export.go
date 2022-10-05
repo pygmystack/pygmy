@@ -22,10 +22,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"os"
+
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-	"os"
+
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 var exportPath string

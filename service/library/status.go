@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/endpoint"
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
+	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/endpoint"
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/resolv"
 )
 
 // Status will show the state of all the things Pygmy manages.
@@ -18,7 +22,11 @@ func Status(c Config) {
 
 	if len(checks) > 0 {
 		for _, check := range checks {
-			fmt.Println(check.Message)
+			if check.State {
+				color.Print(Green(check.Message + "\n"))
+			} else {
+				color.Print(Red(check.Message + "\n"))
+			}
 		}
 		fmt.Println()
 	}
@@ -38,9 +46,9 @@ func Status(c Config) {
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(); s {
-							fmt.Printf("[*] %v: Running as container %v\n", name, name)
+							color.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", name, name)))
 						} else {
-							fmt.Printf("[ ] %v is not running\n", name)
+							color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
 						}
 					}
 				}
@@ -53,7 +61,7 @@ func Status(c Config) {
 			name, _ := Service.GetFieldString("name")
 			discrete, _ := Service.GetFieldBool("discrete")
 			if !discrete {
-				fmt.Printf("[ ] %v is not running\n", name)
+				color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
 			}
 		}
 	}
@@ -61,27 +69,27 @@ func Status(c Config) {
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
 			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
-				fmt.Printf("[ ] %v is not connected to network %v\n", Container.Name, Network.Name)
+				color.Print(Red(fmt.Sprintf("[ ] %s is not connected to network %s\n", Container.Name, Network.Name)))
 			} else {
-				fmt.Printf("[*] %v is connected to network %v\n", Container.Name, Network.Name)
+				color.Print(Green(fmt.Sprintf("[*] %s is connected to network %s\n", Container.Name, Network.Name)))
 			}
 		}
 	}
 
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
-		if s := r.Status(); s {
-			fmt.Printf("[*] Resolv %v is properly connected\n", resolver.Name)
+		if s := r.Status(&model.Params{Domain: c.Domain}); s {
+			color.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
 		} else {
-			fmt.Printf("[ ] Resolv %v is not properly connected\n", resolver.Name)
+			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly connected\n", resolver.Name)))
 		}
 	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := docker.DockerVolumeExists(volume); s {
-			fmt.Printf("[*] Volume %v has been created\n", volume.Name)
+			color.Print(Green(fmt.Sprintf("[*] Volume %s has been created\n", volume.Name)))
 		} else {
-			fmt.Printf("[ ] Volume %v has not been created\n", volume.Name)
+			color.Print(Green(fmt.Sprintf("[ ] Volume %s has not ben created\n", volume.Name)))
 		}
 	}
 
@@ -89,12 +97,10 @@ func Status(c Config) {
 	if agentPresent {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
-			if purpose == "showkeys" {
-				out, _ := v.Start()
-				if len(string(out)) > 0 {
-					output := strings.Trim(string(out), "\n")
-					fmt.Println(output)
-				}
+			if purpose == "sshagent" {
+				l, _ := docker.DockerExec(v.Config.Labels["pygmy.name"], "ssh-add -l")
+				output := strings.Trim(string(l), "\n")
+				fmt.Println(output)
 			}
 		}
 	}
@@ -110,6 +116,36 @@ func Status(c Config) {
 			} else {
 				fmt.Printf(" ! %v (%v)\n", url, name)
 			}
+		}
+	}
+
+	// List out all running projects to get their URL.
+	containers, _ := docker.DockerContainerList()
+	var urls []string
+	for _, container := range containers {
+		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+			obj, _ := docker.DockerInspect(container.ID)
+			vars := obj.Config.Env
+			for _, v := range vars {
+				// Look for the environment variable $LAGOON_ROUTE.
+				if strings.Contains(v, "LAGOON_ROUTE=") {
+					url := strings.TrimPrefix(v, "LAGOON_ROUTE=")
+					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
+						url = "http://" + url
+					}
+					urls = append(urls, url)
+				}
+			}
+		}
+	}
+
+	cleanurls := unique(urls)
+	for _, url := range cleanurls {
+		endpoint.Validate(url)
+		if r := endpoint.Validate(url); r {
+			fmt.Printf(" - %v\n", url)
+		} else {
+			fmt.Printf(" ! %v\n", url)
 		}
 	}
 

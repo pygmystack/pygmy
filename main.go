@@ -1,4 +1,4 @@
-// Copyright © 2019 NAME HERE <EMAIL ADDRESS>
+// Copyright © 2019 Amazee.io <hello@amazee.io>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,9 @@
 
 package main
 
-import "github.com/fubarhouse/pygmy-go/cmd"
+import (
+	"github.com/pygmystack/pygmy/cmd"
+)
 
 func main() {
 	cmd.Execute()

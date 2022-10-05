@@ -3,6 +3,7 @@
 package endpoint
 
 import (
+	"crypto/tls"
 	"net/http"
 )
 
@@ -13,6 +14,11 @@ import (
 // This is to provided to the user through the up and status commands.
 func Validate(url string) bool {
 
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
+	client := &http.Client{Transport: tr}
+
 	// Create a web request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -21,7 +27,7 @@ func Validate(url string) bool {
 	}
 
 	// Submit a web request
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := client.Do(req)
 	if err != nil {
 		// Test failed.
 		return false
@@ -30,12 +36,16 @@ func Validate(url string) bool {
 	// Housekeeping
 	defer resp.Body.Close()
 
-	// Check for the desired result
-	if resp.StatusCode == 200 || resp.StatusCode == 401 {
-		// Test passed!
-		return true
+	// The default response for a failed loopback is a 503.
+	// Because server errors are 503, we should make sure
+	// we do not get a 5xx response code from the endpoint.
+	// 500 is known to be a success as well, so start from 501.
+
+	// Check for known failure status response codes (failures):
+	if resp.StatusCode >= 501 && resp.StatusCode < 600 {
+		return false
 	}
 
-	// Test failed.
-	return false
+	// Test passed.
+	return true
 }

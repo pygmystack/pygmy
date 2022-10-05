@@ -5,7 +5,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"testing"
 
-	n "github.com/fubarhouse/pygmy-go/service/network"
+	n "github.com/pygmystack/pygmy/service/network"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

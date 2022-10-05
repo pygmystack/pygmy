@@ -5,9 +5,10 @@ import (
 	"fmt"
 
 	"github.com/docker/docker/api/types"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
-	"github.com/fubarhouse/pygmy-go/service/resolv"
 	"github.com/imdario/mergo"
+
+	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/resolv"
 )
 
 // Config is a struct of configurable options which can
@@ -15,7 +16,10 @@ import (
 // continued abstraction.
 type Config struct {
 	// Keys are the paths to the Keys which should be added.
-	Keys []string `yaml:"Keys"`
+	Keys []Key `yaml:"keys"`
+
+	// Domain is the default domain suffix to use.
+	Domain string `yaml:"domain"`
 
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]model.Service `yaml:"services"`
@@ -33,6 +37,12 @@ type Config struct {
 
 	// Volumes will ensure names volumes are created
 	Volumes map[string]types.Volume
+}
+
+// Key is a struct with SSH key details.
+type Key struct {
+	Path       string `yaml:"path"`
+	Passphrase string `yaml:"passphrase"`
 }
 
 func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {

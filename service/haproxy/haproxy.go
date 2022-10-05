@@ -1,24 +1,29 @@
 package haproxy
 
 import (
+	"fmt"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // New will provide the standard object for the haproxy container.
-func New() model.Service {
+func New(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "amazeeio/haproxy",
+			Image: "pygmystack/haproxy",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-haproxy",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      "http://docker.amazee.io/stats",
+				"pygmy.url":      fmt.Sprintf("http://%s/stats", c.Domain),
 				"pygmy.weight":   "14",
+			},
+			Env: []string{
+				fmt.Sprintf("AMAZEEIO_URL=%s", c.Domain),
 			},
 		},
 		HostConfig: container.HostConfig{
@@ -28,7 +33,7 @@ func New() model.Service {
 			RestartPolicy: struct {
 				Name              string
 				MaximumRetryCount int
-			}{Name: "on-failure", MaximumRetryCount: 0},
+			}{Name: "unless-stopped", MaximumRetryCount: 0},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}
@@ -44,6 +49,12 @@ func NewDefaultPorts() model.Service {
 					{
 						HostIP:   "",
 						HostPort: "80",
+					},
+				},
+				"443/tcp": []nat.PortBinding{
+					{
+						HostIP:   "",
+						HostPort: "443",
 					},
 				},
 			},

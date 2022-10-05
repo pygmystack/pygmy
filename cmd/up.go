@@ -24,14 +24,16 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 // upCmd represents the up command
 var upCmd = &cobra.Command{
 	Use:     "up",
+	Aliases: []string{"start"},
 	Example: "pygmy up",
 	Short:   "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
 	Long: `Launch Pygmy - a set of containers and a resolver with very specific
@@ -41,21 +43,26 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
+		Passphrase, _ := cmd.Flags().GetString("passphrase")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []string{}
+			c.Keys = []library.Key{}
 		} else {
 
 			keyExistsInConfig := false
 			for _, key := range c.Keys {
-				if key == Key {
+				if key.Path == Key {
 					keyExistsInConfig = true
 				}
 			}
 
 			if !keyExistsInConfig {
-				c.Keys = append(c.Keys, Key)
+				thisKey := library.Key{
+					Path:       Key,
+					Passphrase: Passphrase,
+				}
+				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
@@ -68,10 +75,17 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+	var passphrase string
 
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	upCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+
+	err := upCmd.Flags().MarkHidden("passphrase")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }

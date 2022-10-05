@@ -26,21 +26,24 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 var (
-	cfgFile string
-	c       library.Config
+	cfgFile   string
+	c         library.Config
+	validArgs = []string{"addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version"}
 )
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "pygmy",
-	Short: "Amazeeio's local development tool",
+	Use:       "pygmy",
+	ValidArgs: validArgs,
+	Short:     "Amazeeio's local development tool",
 	Long: `Amazeeio's local development tool,
 	
 Runs DNSMasq, HAProxy, MailHog and an SSH Agent in local containers for local development.`,
@@ -117,9 +120,8 @@ func findConfig() string {
 	// Provide a default.
 	if runtime.GOOS == "linux" {
 		return strings.Join([]string{"etc", "pygmy", "config.yml"}, string(os.PathSeparator))
-	} else {
-		return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
 	}
+	return strings.Join([]string{home, ".pygmy.yml"}, string(os.PathSeparator))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -133,6 +135,8 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+		if os.Args[1] != "completion" {
+			fmt.Println("Using config file:", viper.ConfigFileUsed())
+		}
 	}
 }

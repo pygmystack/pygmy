@@ -33,11 +33,6 @@ services:
       Labels:
         - pygmy.enable: false
 
-  amazeeio-ssh-agent-show-keys:
-    Config:
-      Labels:
-        - pygmy.enable: false
-
   amazeeio-portainer:
     Config:
       Image: portainer/portainer
@@ -74,7 +69,7 @@ services:
         - ship
       Labels:
         - pygmy.enable: true
-        - pygmy.discrete: true
+        - pygmy.discrete: false
         - pygmy.name: pygmy-cowsay
         - pygmy.output: true
         - pygmy.weight: 99

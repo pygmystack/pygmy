@@ -3,18 +3,16 @@ SHELL := /bin/bash
 DIR := ${CURDIR}
 
 build:
-	docker build -t pygmy-go .
+	docker build -t pygmy .
 	@echo "Removing binaries from previous build"
-	docker run -v $(DIR):/data pygmy-go rm -f /data/builds/pygmy-go*
+	docker run --rm -v $(DIR):/data pygmy sh -c 'rm -f /data/builds/pygmy*'
 	@echo "Done"
 	@echo "Copying binaries to build directory"
-	docker run -v $(DIR):/data pygmy-go cp pygmy-go-linux-x86 /data/builds/.
-	docker run -v $(DIR):/data pygmy-go cp pygmy-go-darwin /data/builds/.
-	docker run -v $(DIR):/data pygmy-go cp pygmy-go.exe /data/builds/.
+	docker run --rm -v $(DIR):/data pygmy sh -c 'cp pygmy* /data/builds/.'
 	@echo "Done"
-	@echo "Enjoy using pygmy-go binaries in $(DIR)/build directory."
+	@echo "Enjoy using pygmy binaries in the $(DIR)/build directory."
 
 clean:
-	docker image rm -f pygmy-go
-	docker image prune -f --filter label=stage=builder
+	docker image rm -f pygmy
+	docker image prune -f --filter="label=stage=builder"
 

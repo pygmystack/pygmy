@@ -1,2 +1,4 @@
 builds/*
 dist/*
+vendor/*
+.idea/*

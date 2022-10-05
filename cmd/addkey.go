@@ -22,26 +22,53 @@ package cmd
 
 import (
 	"fmt"
-	"os"
+	. "github.com/logrusorgru/aurora"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
-	"github.com/mitchellh/go-homedir"
+	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 
 // addkeyCmd is the SSH key add command.
 var addkeyCmd = &cobra.Command{
 	Use:     "addkey",
-	Example: "pygmy addkey ~/.ssh/id_rsa",
+	Example: "pygmy addkey --key ~/.ssh/id_rsa",
 	Short:   "Add/re-add an SSH key to the agent",
 	Long:    `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
+		Passphrase, _ := cmd.Flags().GetString("passphrase")
+		var Keys []library.Key
 
-		_, e := library.SshKeyAdd(c, Key, 0)
-		if e != nil {
-			fmt.Println(e)
+		if Key != "" {
+			thisKey := library.Key{
+				Path:       Key,
+				Passphrase: Passphrase,
+			}
+			Keys = append(Keys, thisKey)
+		} else {
+			if len(Keys) == 0 {
+				library.Setup(&c)
+				Keys = c.Keys
+			}
+		}
+
+		for _, k := range Keys {
+			if e := library.SshKeyAdd(c, k.Path, k.Passphrase); e != nil {
+				color.Print(Red(fmt.Sprintf("%v\n", e)))
+			}
+		}
+
+		for _, s := range c.SortedServices {
+			service := c.Services[s]
+			purpose, _ := service.GetFieldString("purpose")
+			if purpose == "sshagent" {
+				name, _ := service.GetFieldString("name")
+				d, _ := docker.DockerExec(name, "ssh-add -l")
+				fmt.Println(string(d))
+			}
 		}
 
 	},
@@ -49,10 +76,13 @@ var addkeyCmd = &cobra.Command{
 
 func init() {
 
-	homedir, _ := homedir.Dir()
-	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-
 	rootCmd.AddCommand(addkeyCmd)
-	addkeyCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("key", "k", "", "Path of SSH key to add")
+	addkeyCmd.Flags().StringP("passphrase", "p", "", "Passphrase of the SSH key to add")
+
+	err := addkeyCmd.Flags().MarkHidden("passphrase")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 }

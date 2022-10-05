@@ -1,3 +1,4 @@
+//go:build !windows
 // +build !windows
 
 package resolv
@@ -9,6 +10,11 @@ import (
 	"os/exec"
 	"runtime"
 	"strings"
+
+	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/service/color"
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // run will run a shell command and is not exported.
@@ -29,7 +35,7 @@ func run(args []string) error {
 // this function:
 // * sudo ifconfig lo0 alias 172.16.172.16
 // * sudo killall mDNSResponder
-func (resolv Resolv) Configure() {
+func (resolv Resolv) Configure(c *model.Params) {
 
 	var cmdOut []byte
 	var tmpFile *os.File
@@ -37,8 +43,8 @@ func (resolv Resolv) Configure() {
 	if !resolv.Enabled {
 		return
 	}
-	if resolv.Status() {
-		fmt.Printf("Already configured resolvr %v\n", resolv.Name)
+	if resolv.Status(c) {
+		color.Print(Green(fmt.Sprintf("Already configured resolvr %s\n", resolv.Name)))
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -107,16 +113,16 @@ func (resolv Resolv) Configure() {
 		if runtime.GOOS == "darwin" {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
 			if err := ifConfig.Run(); err != nil {
-				fmt.Println("error creating loopback UP alias")
+				color.Print(Sprintf(Red("error creating loopback UP alias")))
 			}
 			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 			if err := killAll.Run(); err != nil {
-				fmt.Println("error restarting mDNSResponder")
+				color.Print(Sprintf(Red("error restarting mDNSResponder")))
 			}
 		}
 
-		if resolv.Status() {
-			fmt.Printf("Successfully configured resolvr %v\n", resolv.Name)
+		if resolv.Status(c) {
+			color.Print(Green(fmt.Sprintf("Successfully configured resolvr %s\n", resolv.Name)))
 		}
 	}
 }
@@ -156,18 +162,13 @@ func (resolv Resolv) Clean() {
 		}
 	}
 
-	if runtime.GOOS == "darwin" {
-
-		if strings.HasPrefix(fullPath, "/etc/resolver/") {
-			if _, err := os.Stat(fullPath); err == nil {
-				err := run([]string{"sudo", "rm", fullPath})
-				if err != nil {
-					fmt.Println(err)
-				}
-				if !resolv.statusFile() {
-					fmt.Println("Successfully removed resolver file")
-				}
-			}
+	if _, err := os.Stat(fullPath); err == nil {
+		err := run([]string{"sudo", "rm", fullPath})
+		if err != nil {
+			fmt.Println(err)
+		}
+		if !resolv.statusFile() {
+			color.Print(Sprintf(Green("Successfully removed resolver file")))
 		}
 	}
 
@@ -178,20 +179,20 @@ func (resolv Resolv) Clean() {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 			err := ifConfig.Run()
 			if err != nil {
-				fmt.Println("error removing loopback UP alias", err)
+				color.Print(Sprintf(Red("error removing loopback UP alias\n"), Red(err)))
 			} else {
 				if !resolv.statusNet() {
-					fmt.Println("Successfully removed loopback alias IP.")
+					color.Print(Sprintf(Green("Successfully removed loopback alias IP.\n")))
 				}
 			}
 		}
 
-		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
+		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder\n")
 		err := killAll.Run()
 		if err != nil {
-			fmt.Println("error restarting mDNSResponder")
+			color.Print(Sprintf(Red("error restarting mDNSResponder\n")))
 		} else {
-			fmt.Println("Successfully restarted mDNSResponder")
+			color.Print(Sprintf(Green("Successfully restarted mDNSResponder\n")))
 		}
 	}
 }
@@ -199,7 +200,7 @@ func (resolv Resolv) Clean() {
 // Status is an exported state function which will check the file contents
 // matches Data on Linux, or return the result of three independent checks
 // on MacOS including the file, network and data checks.
-func (resolv Resolv) Status() bool {
+func (resolv Resolv) Status(c *model.Params) bool {
 
 	if runtime.GOOS == "darwin" {
 		return resolv.statusFile() && resolv.statusNet() && resolv.statusFileData()
@@ -248,10 +249,12 @@ func (resolv Resolv) statusFile() bool {
 // This has completely ruled that situation out.
 func (resolv Resolv) statusNet() bool {
 	ifConfigCmd := exec.Command("/bin/sh", "-c", "ifconfig lo0")
-	if out, ifConfigErr := ifConfigCmd.Output(); ifConfigErr != nil {
+	out, ifConfigErr := ifConfigCmd.Output()
+
+	if ifConfigErr != nil {
 		fmt.Println(ifConfigErr.Error())
 		return false
-	} else {
-		return strings.Contains(string(out), "172.16.172.16")
 	}
+
+	return strings.Contains(string(out), "172.16.172.16")
 }

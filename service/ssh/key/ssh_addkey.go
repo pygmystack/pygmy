@@ -1,18 +1,20 @@
-// +build darwin linux
+//go:build !windows
+// +build !windows
 
 package key
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	model "github.com/fubarhouse/pygmy-go/service/interface"
+
+	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // NewAdder will provide the standard object for the SSH key adder container.
 func NewAdder() model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "amazeeio/ssh-agent",
+			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
@@ -25,8 +27,8 @@ func NewAdder() model.Service {
 			},
 		},
 		HostConfig: container.HostConfig{
+			AutoRemove:  false,
 			IpcMode:     "private",
-			AutoRemove:  true,
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
 		NetworkConfig: network.NetworkingConfig{},

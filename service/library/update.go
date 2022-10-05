@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/fubarhouse/pygmy-go/service/interface/docker"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // Update will update the the images for all configured services.
@@ -36,7 +36,7 @@ func Update(c Config) {
 				fmt.Println(e)
 			}
 			if s, _ := service.Status(); !s {
-				_, e = service.Start()
+				e = service.Start()
 				if e != nil {
 					fmt.Println(e)
 				}

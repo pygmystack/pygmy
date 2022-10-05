@@ -105,7 +105,7 @@ services:
         8080/tcp:
           - HostPort: 8080
       RestartPolicy:
-        Name: always
+        Name: unless-stopped
         MaximumRetryCount: 0
     NetworkConfig:
       Ports:

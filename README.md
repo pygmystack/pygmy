@@ -1,10 +1,9 @@
 # Pygmy
 
 [![Stability](https://img.shields.io/badge/stability-stable-green.svg)]()
-[![Travis CI](https://travis-ci.com/fubarhouse/pygmy-go.svg?branch=master)](https://travis-ci.com/fubarhouse/pygmy-go)
-![goreleaser](https://github.com/fubarhouse/pygmy-go/workflows/goreleaser/badge.svg)
-[![Go Report Card](https://goreportcard.com/badge/github.com/fubarhouse/pygmy-go)](https://goreportcard.com/report/github.com/fubarhouse/pygmy-go)
-[![GoDoc](https://godoc.org/github.com/fubarhouse/pygmy-go?status.svg)](https://godoc.org/github.com/fubarhouse/pygmy-go)
+![goreleaser](https://github.com/pygmystack/pygmy/workflows/goreleaser/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/pygmystack/pygmy)](https://goreportcard.com/report/github.com/pygmystack/pygmy)
+[![GoDoc](https://godoc.org/github.com/pygmystack/pygmy?status.svg)](https://godoc.org/github.com/pygmystack/pygmy)
 
 This is an application written in Go which is a proposed replacement for [Pygmy](https://pygmy.readthedocs.io/en/master/)
 currently written in Ruby. The goal is to provide a better cross-platform experience
@@ -22,7 +21,7 @@ past on Windows.
 
 ## Is Pygmy running?
 
-These instructions will currently install the new version as `pygmy-go` so that the
+These instructions will currently install the new version as `pygmy` so that the
 old version is still available if you have installed it. With no Pygmy running,
 you should get "connection refused" when attempting to connect to the local amazee network.
 
@@ -31,20 +30,57 @@ curl --HEAD http://myproject.docker.amazee.io
 curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection refused
 ```
 
-## Installation (OSX specific)
+## Installation
 
-These instructions will build Linux, OSX and Windows binaries of Pygmy on OSX,
-and then test the OSX version.
+These instructions will build Linux, MacOS and Windows binaries of Pygmy on MacOS,
+and then test the MacOS version. Apple M1 is not officially supported. Upstream
+docker images provided by Amazee are not yet provided. We'll not deviate from these
+images as it would deviate from what is officially supported. You can however provide
+configuration to switch out the `haproxy` image for a compatible one if you'd like.
 
-1. `git clone https://github.com/fubarhouse/pygmy-go.git && cd pygmy-go`
-2. `make build`
-3. `cp ./builds/pygmy-go-darwin /usr/local/bin/pygmy-go && chmod +x /usr/local/bin/pygmy-go`
+### Compile from source
 
-Pygmy is now an executable as `pygmy-go`, while any existing Pygmy is still executable
+**Works for**: Linux, MacOS & Windows
+
+```shell
+git clone https://github.com/pygmystack/pygmy.git && cd pygmy;
+make build;
+cp ./builds/pygmy-darwin /usr/local/bin/pygmy;
+chmod +x /usr/local/bin/pygmy;
+```
+
+Pygmy is now an executable as `pygmy`, while any existing Pygmy is still executable
 as `pygmy`. Now start Pygmy and use the new `status` command.
 
-4. `pygmy-go up`
-5. `pygmy-go status`
+### Using Homebrew
+
+**Works for**: Linux & MacOS
+
+```shell
+brew tap pygmystack/pygmy;
+brew install pygmy;
+```
+
+### Using the AUR
+
+**Works for**: [Arch-based Linux Distributions](https://wiki.archlinux.org/title/Arch-based_distributions) (Manjaro, Elementary, ArcoLinux etc)
+
+[pygmy](https://aur.archlinux.org/packages/pygmy/), [pygmy-bin](https://aur.archlinux.org/packages/pygmy-bin/) and
+[pygmy-git](https://aur.archlinux.org/packages/pygmy-git/) are available via the Arch User Repository for Arch-based
+Linux distributions on the community stream. Unfortunately, Pygmy is not yet available via other distribution methods,
+so it is otherwise recommended to use homebrew to install it, download a pre-compiled binary from the releases page, or
+to compile from source.  
+
+```shell
+# Freshly compile the latest release:
+yay -S pygmy;
+# Download the latest release precompiled:
+yay -S pygmy-bin;
+# Download and compile the latest HEAD from GitHub on the main branch:
+yay -S pygmy-git;
+```
+
+## Usage
 
 If you have an Amazee Lagoon project running, you can test the web address and
 expect a `HTTP/1.1 200 OK` response.
@@ -88,7 +124,7 @@ It will use `dind` and your local daemon to walk through several tests which sho
 
 1. First clone the project:
    ```
-   git clone https://github.com/fubarhouse/pygmy-go.git pygmy-go && cd pygmy-go
+   git clone https://github.com/pygmystack/pygmy.git pygmy && cd pygmy
    ```
 2. Perform any updates as required.
 3. Clean the environment.

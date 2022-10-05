@@ -2,13 +2,45 @@ env:
   - GO111MODULE=on
   - GOPROXY=https://gocenter.io
 
+archives:
+  - id: pygmy
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - pygmy
+  - id: pygmy-static
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
+    builds:
+      - pygmy-static
 builds:
-  - env:
+  - id: pygmy
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
       - darwin
+    goarch:
+      - 386
+      - amd64
+      - arm
+      - arm64
+  - id: pygmy-windows
+    env:
+      - CGO_ENABLED=0
+    goos:
       - windows
+    goarch:
+      - 386
+      - amd64
+      - arm
+  - id: pygmy-static
+    env:
+      - CGO_ENABLED=0
+    flags:
+      - -a
+    ldflags:
+      - -extldflags "-static"
+    goos:
+      - linux
     goarch:
       - 386
       - amd64
@@ -16,12 +48,14 @@ builds:
       - arm64
 
 brews:
-  - github:
-      owner: fubarhouse
-      name: homebrew-pygmy-go
+  - ids:
+    - pygmy
+    tap:
+      owner: pygmystack
+      name: homebrew-pygmy
     folder: Formula
-    homepage: "https://github.com/fubarhouse/pygmy-go"
+    homepage: "https://github.com/pygmystack/pygmy"
     description: "amazee.io's local development helper tool"
     skip_upload: false
-    test: system "#{bin}/pygmy-go version"
-    install: bin.install "pygmy-go"
+    test: system "#{bin}/pygmy version"
+    install: bin.install "pygmy"

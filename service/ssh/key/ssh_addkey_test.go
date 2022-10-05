@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fubarhouse/pygmy-go/service/ssh/key"
+	"github.com/pygmystack/pygmy/service/ssh/key"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -15,7 +15,7 @@ import (
 func TestAdd(t *testing.T) {
 	Convey("SSH Key Adder: Field equality tests...", t, func() {
 		obj := key.NewAdder()
-		So(obj.Config.Image, ShouldEqual, "amazeeio/ssh-agent")
+		So(obj.Config.Image, ShouldEqual, "pygmystack/ssh-agent")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.output"], ShouldEqual, "false")
@@ -24,7 +24,7 @@ func TestAdd(t *testing.T) {
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "addkeys")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "31")
-		So(obj.HostConfig.AutoRemove, ShouldBeTrue)
+		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
 		So(fmt.Sprint(obj.HostConfig.VolumesFrom), ShouldEqual, fmt.Sprint([]string{"amazeeio-ssh-agent"}))
 	})
