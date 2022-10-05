@@ -13,7 +13,6 @@ import (
 // New will provide the standard object for the haproxy container.
 func New(c *model.Params) model.Service {
 	c.Socket = strings.TrimPrefix(c.Socket, "unix://")
-	fmt.Println(c.Socket)
 	return model.Service{
 		Config: container.Config{
 			Image: "pygmystack/haproxy",
