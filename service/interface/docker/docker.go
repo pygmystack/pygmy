@@ -9,6 +9,7 @@ import (
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"io"
 	"io/ioutil"
+	"os"
 	"regexp"
 	"runtime"
 	"strings"
@@ -23,11 +24,19 @@ import (
 	"github.com/pygmystack/pygmy/service/endpoint"
 )
 
+// GetSocket is a bandaid solution to providing a custom socket path.
+func GetSocket() string {
+	socket := os.Getenv("PYGMY_SOCKET")
+	if socket == "" {
+		return client.DefaultDockerHost
+	}
+	return socket
+}
+
 // DockerContainerList will return a slice of containers
 func DockerContainerList() ([]types.Container, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -46,8 +55,7 @@ func DockerContainerList() ([]types.Container, error) {
 // DockerImageList will return a slice of Docker images.
 func DockerImageList() ([]types.ImageSummary, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -64,8 +72,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 // DockerPull will pull a Docker image into the daemon.
 func DockerPull(image string) (string, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -167,8 +174,7 @@ func DockerPull(image string) (string, error) {
 // DockerStop will stop the container.
 func DockerStop(name string) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -183,8 +189,7 @@ func DockerStop(name string) error {
 // DockerKill will kill the container.
 func DockerKill(name string) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -199,8 +204,7 @@ func DockerKill(name string) error {
 // It will not remove the image.
 func DockerRemove(id string) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -220,8 +224,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 	}
 
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -247,8 +250,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 // and will not apply force to removal.
 func DockerNetworkRemove(network string) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -263,8 +265,7 @@ func DockerNetworkRemove(network string) error {
 // specified name is present been created and return a boolean.
 func DockerNetworkStatus(network string) (bool, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return false, err
 	}
@@ -287,8 +288,7 @@ func DockerNetworkStatus(network string) (bool, error) {
 // which has a given name.
 func DockerNetworkGet(name string) (types.NetworkResource, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return types.NetworkResource{}, err
 	}
@@ -309,8 +309,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 // DockerNetworkConnect will connect a container to a network.
 func DockerNetworkConnect(network string, containerName string) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -340,8 +339,7 @@ func DockerNetworkConnected(network string, containerName string) (bool, error) 
 // DockerVolumeExists will check if a Docker volume has been created.
 func DockerVolumeExists(volume types.Volume) (bool, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return false, err
 	}
@@ -356,8 +354,7 @@ func DockerVolumeExists(volume types.Volume) (bool, error) {
 // DockerVolumeGet will return the full contents of a types.Volume from the API.
 func DockerVolumeGet(name string) (types.Volume, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 
 	if err != nil {
 		return types.Volume{
@@ -386,8 +383,7 @@ func DockerVolumeGet(name string) (types.Volume, error) {
 // DockerVolumeCreate will create a Docker Volume as configured.
 func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return types.Volume{}, err
 	}
@@ -401,9 +397,7 @@ func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
 
 // DockerInspect will return the full container object.
 func DockerInspect(container string) (types.ContainerJSON, error) {
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return types.ContainerJSON{}, err
 	}
@@ -414,8 +408,7 @@ func DockerInspect(container string) (types.ContainerJSON, error) {
 // DockerExec will run a command in a Docker container and return the output.
 func DockerExec(container string, command string) ([]byte, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return []byte{}, err
 	}
@@ -444,8 +437,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 // DockerContainerCreate will create a container, but will not run it.
 func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.ContainerCreateCreatedBody, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return container.ContainerCreateCreatedBody{}, err
 	}
@@ -463,8 +455,7 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 // DockerContainerStart will run an existing container.
 func DockerContainerStart(ID string, options types.ContainerStartOptions) error {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return err
 	}
@@ -479,8 +470,7 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 // of output which are expected to exit quickly.
 func DockerContainerLogs(ID string) ([]byte, error) {
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
+	cli, err := client.NewClientWithOpts(client.WithHost(GetSocket()), client.WithAPIVersionNegotiation())
 	if err != nil {
 		return []byte{}, err
 	}

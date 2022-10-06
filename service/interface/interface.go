@@ -292,13 +292,6 @@ var _ DockerService = (*Service)(nil)
 
 // DockerLogs will return the logs from the container.
 func (Service *Service) DockerLogs() ([]byte, error) {
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
-	if err != nil {
-		return []byte{}, err
-	}
-
 	name, _ := Service.GetFieldString("name")
 	return docker.DockerContainerLogs(name)
 }
@@ -328,13 +321,6 @@ func (Service *Service) DockerRun() error {
 // DockerCreate will setup and run a given container.
 func (Service *Service) DockerCreate() error {
 
-	ctx := context.Background()
-	cli, err := client.NewClientWithOpts()
-	cli.NegotiateAPIVersion(ctx)
-	if err != nil {
-		return err
-	}
-
 	// Sanity check to ensure we don't get name conflicts.
 	c, _ := docker.DockerContainerList()
 	for _, cn := range c {
@@ -348,7 +334,7 @@ func (Service *Service) DockerCreate() error {
 		return fmt.Errorf("container config is missing label for name")
 	}
 
-	_, err = docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
+	_, err := docker.DockerContainerCreate(name, Service.Config, Service.HostConfig, Service.NetworkConfig)
 	if err != nil {
 		return err
 	}
