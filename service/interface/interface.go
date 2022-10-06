@@ -235,8 +235,8 @@ func (Service *Service) Stop() error {
 	return nil
 }
 
-// Remove will stop the container.
-func (Service *Service) Remove() error {
+// StopAndRemove will stop and remove the container.
+func (Service *Service) StopAndRemove() error {
 
 	name, e := Service.GetFieldString("name")
 	discrete, _ := Service.GetFieldBool("discrete")

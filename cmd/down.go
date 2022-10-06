@@ -23,7 +23,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/fubarhouse/pygmy-go/service/library"
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 // downCmd represents the down command

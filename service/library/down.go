@@ -9,10 +9,10 @@ func Down(c Config) {
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool("enable")
 		if enabled {
-			e := Service.Remove()
+			e := Service.StopAndRemove()
 			if e != nil {
 				name, _ := Service.GetFieldString("name")
-				fmt.Printf("Failed to stop %s\n", name)
+				fmt.Printf("Failed to stop and remove %s\n", name)
 			}
 		}
 	}
