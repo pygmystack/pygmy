@@ -223,7 +223,6 @@ func (Service *Service) Stop() error {
 	}
 
 	for _, name := range container.Names {
-		containerName := strings.Trim(name, "/")
 		if e := docker.DockerStop(container.ID); e == nil {
 			if !discrete {
 				containerName := strings.Trim(name, "/")

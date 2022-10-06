@@ -69,18 +69,6 @@ func Up(c Config) {
 					}
 				}
 			}
-
-			// The image wasn't found.
-			// When running 'docker run', it will pull the image.
-			// For UX it makes sense we do this here.
-			if !imageFound {
-				if _, err := docker.DockerPull(service.Config.Image); err != nil {
-					fmt.Println(err.Error())
-					continue
-				}
-			} else {
-				fmt.Print(Sprintf(Green("Already Running %s\n"), name))
-			}
 		}
 
 		// If one or more agent was found:
