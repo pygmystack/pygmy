@@ -68,6 +68,13 @@ func Up(c Config) {
 						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
 					}
 				}
+				if se := service.Start(); se == nil {
+					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
+				} else {
+					fmt.Printf("Failed to start %s: %s\n", Red(name), se)
+				}
+			} else {
+				fmt.Print(Green(fmt.Sprintf("Already started %s\n", name)))
 			}
 		}
 

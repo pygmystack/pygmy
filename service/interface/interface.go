@@ -256,7 +256,7 @@ func (Service *Service) StopAndRemove() error {
 			if e := docker.DockerRemove(container.ID); e == nil {
 				if !discrete {
 					containerName := strings.Trim(name, "/")
-					fmt.Printf("Successfully removed %v\n", containerName)
+					fmt.Print(Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
 				}
 			}
 		} else {
