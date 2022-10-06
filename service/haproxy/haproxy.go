@@ -2,17 +2,17 @@ package haproxy
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // New will provide the standard object for the haproxy container.
 func New(c *model.Params) model.Service {
-	c.Socket = strings.TrimPrefix(c.Socket, "unix://")
+	socket := docker.GetSocket()
 	return model.Service{
 		Config: container.Config{
 			Image: "pygmystack/haproxy",
@@ -29,7 +29,7 @@ func New(c *model.Params) model.Service {
 			},
 		},
 		HostConfig: container.HostConfig{
-			Binds:        []string{fmt.Sprintf("%s:/tmp/docker.sock", c.Socket)},
+			Binds:        []string{fmt.Sprintf("%s:/tmp/docker.sock", socket)},
 			AutoRemove:   false,
 			PortBindings: nil,
 			RestartPolicy: struct {
