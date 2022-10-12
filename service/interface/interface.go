@@ -226,7 +226,7 @@ func (Service *Service) Stop() error {
 		if e := docker.DockerStop(container.ID); e == nil {
 			if !discrete {
 				containerName := strings.Trim(name, "/")
-				fmt.Printf("Successfully stopped %v\n", containerName)
+				color.Print(Green(fmt.Sprintf("Successfully stopped %v\n", containerName)))
 			}
 		}
 	}
