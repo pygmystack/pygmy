@@ -246,7 +246,7 @@ func (Service *Service) StopAndRemove() error {
 	container, err := Service.GetRunning()
 	if err != nil {
 		if !discrete {
-			fmt.Printf("Not running %v\n", name)
+			color.Print(Red(fmt.Sprintf("Not running %v\n", name)))
 		}
 		return nil
 	}
