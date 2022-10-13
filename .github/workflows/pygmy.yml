@@ -250,6 +250,14 @@ jobs:
           lando destroy -y;
           cd ../../;
 
+      - name: Debug the stop command
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
+
       - name: Test the stop command
         run: |
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
