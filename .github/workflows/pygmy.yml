@@ -250,9 +250,17 @@ jobs:
           lando destroy -y;
           cd ../../;
 
+      - name: Test the stop command
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully removed amazeeio';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
+
       - name: Test the down command
         run: |
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully stopped amazeeio';
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml stop | grep 'Successfully stopped amazeeio';
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;

@@ -71,13 +71,10 @@ func Up(c Config) {
 				if se := service.Start(); se == nil {
 					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
 				} else {
-					if !strings.Contains(se.Error(), "Already running") {
-					} else {
-						fmt.Printf("Failed to run %s: %s\n", Red(name), se)
-					}
+					fmt.Printf("Failed to start %s: %s\n", Red(name), se)
 				}
 			} else {
-				fmt.Print(Sprintf(Green("Already Running %s\n"), name))
+				fmt.Print(Green(fmt.Sprintf("Already started %s\n", name)))
 			}
 		}
 

@@ -119,8 +119,8 @@ func DockerPull(image string) (string, error) {
 	// We can check for this and report back, handling it gracefully and
 	// tell the user the service is down momentarily, and to try again shortly.
 	if strings.HasPrefix(image, "docker.io") {
-		if s := endpoint.Validate("https://registry-1.docker.io"); !s {
-			return "", fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes.")
+		if s := endpoint.Validate("https://registry-1.docker.io/v2/"); !s {
+			return "", fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes")
 		}
 	}
 

@@ -21,8 +21,9 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/service/library"
 )
 
 // pullCmd represents the down command
