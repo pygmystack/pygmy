@@ -33,12 +33,22 @@ curl: (7) Failed to connect to myproject.docker.amazee.io port 80: Connection re
 ## Installation
 
 These instructions will build Linux, MacOS and Windows binaries of Pygmy on MacOS,
-and then test the MacOS version. Apple M1 is not officially supported. Upstream
-docker images provided by Amazee are not yet provided. We'll not deviate from these
-images as it would deviate from what is officially supported. You can however provide
-configuration to switch out the `haproxy` image for a compatible one if you'd like.
+and then test the MacOS version. M1 and arm64 images are available and supported
+
+### Using Homebrew
+
+Homebrew is the recommended way to install pygmy and keep it up to date on compatible systems.
+
+**Works for**: Linux & MacOS (also WSL-based systems)
+
+```shell
+brew tap pygmystack/pygmy;
+brew install pygmy;
+```
 
 ### Compile from source
+
+Ensure to select the correct build for your OS and architecture in the `cp` command.
 
 **Works for**: Linux, MacOS & Windows
 
@@ -49,17 +59,8 @@ cp ./builds/pygmy-darwin /usr/local/bin/pygmy;
 chmod +x /usr/local/bin/pygmy;
 ```
 
-Pygmy is now an executable as `pygmy`, while any existing Pygmy is still executable
-as `pygmy`. Now start Pygmy and use the new `status` command.
-
-### Using Homebrew
-
-**Works for**: Linux & MacOS
-
-```shell
-brew tap pygmystack/pygmy;
-brew install pygmy;
-```
+Pygmy is now executable as `pygmy`. Now start Pygmy and use the new `status` command.
+If you still need to use the previous `pygmy`, cp the binary to a different name (e.g. pygmy-go)
 
 ### Using the AUR
 
