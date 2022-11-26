@@ -27,7 +27,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
-		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock"}))
+		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"unix:///var/run/docker.sock:/tmp/docker.sock"}))
 		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
