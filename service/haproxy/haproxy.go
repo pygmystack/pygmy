@@ -2,12 +2,13 @@ package haproxy
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/interface/docker"
-	"strings"
 )
 
 // New will provide the standard object for the haproxy container.
