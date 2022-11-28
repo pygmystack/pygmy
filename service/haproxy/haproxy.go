@@ -13,7 +13,7 @@ import (
 
 // New will provide the standard object for the haproxy container.
 func New(c *model.Params) model.Service {
-	socket := strings.TrimLeft(docker.GetSocket(), "unix:///")
+	socket := strings.TrimPrefix(docker.GetSocket(), "unix:///")
 	return model.Service{
 		Config: container.Config{
 			Image: "pygmystack/haproxy",
