@@ -115,6 +115,12 @@ Content-Type: text/html
 
 Thanks for testing, please post issues and successes in the queue.
 
+## Using a different socket.
+
+By specifying the environment variable `PYGMY_SOCKET`, you can tell Pygmy to interact with other Docker-compatible
+sockets such as Colima. The implementation needs work and a major refactor, so this is the recommended way for the
+meantime.
+
 ## Local development
 
 To run full regression tests locally, you can follow this process if you have `cmake`, `git` and `go` installed. This 
