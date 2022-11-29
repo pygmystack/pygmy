@@ -30,7 +30,10 @@ func GetSocket() string {
 	if socket == "" {
 		return client.DefaultDockerHost
 	}
-	return socket
+	if strings.HasPrefix(socket, "unix:///") {
+		return socket
+	}
+	return fmt.Sprintf("unix://%s", socket)
 }
 
 // DockerContainerList will return a slice of containers
