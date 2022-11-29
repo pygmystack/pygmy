@@ -117,6 +117,14 @@ func Up(c Config) {
 				color.Print(Green(fmt.Sprintf("Already connected %s to %s\n", name, Network)))
 			}
 		}
+		if strings.HasSuffix(name, "haproxy") {
+			logs, _ := docker.DockerContainerLogs(name)
+			if !strings.Contains(string(logs), "cannot connect to Docker endpoint") {
+				color.Print(Green(fmt.Sprintf("Successfully connected HAProxy to the Docker endpoint\n")))
+			} else {
+				color.Print(Red(fmt.Sprintf("Unable to connect HAProxy to the Docker endpoint\n")))
+			}
+		}
 	}
 
 	for _, resolver := range c.Resolvers {
