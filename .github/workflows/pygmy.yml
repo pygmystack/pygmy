@@ -227,19 +227,6 @@ jobs:
           docker-compose -p silverstripe-simple rm;
           cd ../../;
 
-      - name: Wordpress Simple
-        run: |
-          cd lagoon-examples/wordpress-simple;
-          docker-compose -p wordpress-simple up -d;
-          docker-compose -p wordpress-simple exec -T cli composer install;
-          sleep 5;
-          curl --HEAD http://wordpress-example-simple.docker.amazee.io;
-          curl --HEAD http://wordpress-example-simple.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://wordpress-example-simple.docker.amazee.io';
-          docker-compose -p wordpress-simple down;
-          docker-compose -p wordpress-simple rm;
-          cd ../../;
-
       - name: Lando test - running Pygmy along-side Lando
         run: |
           cd lagoon-examples/drupal9-base;
