@@ -6,21 +6,19 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/containerd/containerd/platforms"
-	v1 "github.com/opencontainers/image-spec/specs-go/v1"
-	"io"
-	"io/ioutil"
-	"regexp"
-	"runtime"
-	"strings"
-	"time"
-
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/pygmystack/pygmy/service/endpoint"
+	"io"
+	"io/ioutil"
+	"regexp"
+	"runtime"
+	"strings"
 )
 
 // DockerContainerList will return a slice of containers
@@ -172,8 +170,9 @@ func DockerStop(name string) error {
 	if err != nil {
 		return err
 	}
-	timeout := time.Duration(10)
-	err = cli.ContainerStop(ctx, name, &timeout)
+	var timeout *int
+	*timeout = 10
+	err = cli.ContainerStop(ctx, name, container.StopOptions{Timeout: timeout})
 	if err != nil {
 		return err
 	}
