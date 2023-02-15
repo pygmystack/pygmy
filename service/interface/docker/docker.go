@@ -173,8 +173,7 @@ func DockerStop(name string) error {
 	if err != nil {
 		return err
 	}
-	var timeout int
-	timeout = 10
+	timeout := 10
 	err = cli.ContainerStop(ctx, name, container.StopOptions{Timeout: &timeout})
 	if err != nil {
 		return err
