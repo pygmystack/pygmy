@@ -3,6 +3,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/docker/docker/api/types/volume"
 
 	"github.com/docker/docker/api/types"
 	"github.com/imdario/mergo"
@@ -36,7 +37,7 @@ type Config struct {
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
 
 	// Volumes will ensure names volumes are created
-	Volumes map[string]types.Volume
+	Volumes map[string]volume.Volume
 }
 
 // Key is a struct with SSH key details.
@@ -71,7 +72,7 @@ func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkR
 	return *Network
 }
 
-func mergeVolume(destination types.Volume, src *types.Volume) (*types.Volume, error) {
+func mergeVolume(destination volume.Volume, src *volume.Volume) (*volume.Volume, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -79,7 +80,7 @@ func mergeVolume(destination types.Volume, src *types.Volume) (*types.Volume, er
 	return &destination, nil
 }
 
-func getVolume(s types.Volume, c types.Volume) types.Volume {
+func getVolume(s volume.Volume, c volume.Volume) volume.Volume {
 	Volume, _ := mergeVolume(s, &c)
 	return *Volume
 }

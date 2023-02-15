@@ -86,7 +86,7 @@ func Status(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.DockerVolumeExists(volume); s {
+		if s, _ := docker.DockerVolumeExists(volume.Name); s {
 			color.Print(Green(fmt.Sprintf("[*] Volume %s has been created\n", volume.Name)))
 		} else {
 			color.Print(Green(fmt.Sprintf("[ ] Volume %s has not ben created\n", volume.Name)))

@@ -5,21 +5,22 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/containerd/containerd/platforms"
-	v1 "github.com/opencontainers/image-spec/specs-go/v1"
 	"io"
 	"io/ioutil"
 	"regexp"
 	"runtime"
 	"strings"
-	"time"
 
+	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+
 	"github.com/pygmystack/pygmy/service/endpoint"
 )
 
@@ -153,11 +154,11 @@ func DockerPull(image string) (string, error) {
 	}
 
 	if event != nil {
-		if strings.Contains(event.Status, fmt.Sprint("Downloaded newer image")) {
+		if strings.Contains(event.Status, "Downloaded newer image") {
 			return fmt.Sprintf("Successfully pulled %v", image), nil
 		}
 
-		if strings.Contains(event.Status, fmt.Sprint("Image is up to date")) {
+		if strings.Contains(event.Status, "Image is up to date") {
 			return fmt.Sprintf("Image %v is up to date", image), nil
 		}
 	}
@@ -172,8 +173,8 @@ func DockerStop(name string) error {
 	if err != nil {
 		return err
 	}
-	timeout := time.Duration(10)
-	err = cli.ContainerStop(ctx, name, &timeout)
+	timeout := 10
+	err = cli.ContainerStop(ctx, name, container.StopOptions{Timeout: &timeout})
 	if err != nil {
 		return err
 	}
@@ -338,14 +339,14 @@ func DockerNetworkConnected(network string, containerName string) (bool, error) 
 }
 
 // DockerVolumeExists will check if a Docker volume has been created.
-func DockerVolumeExists(volume types.Volume) (bool, error) {
+func DockerVolumeExists(volume string) (bool, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
 		return false, err
 	}
-	_, _, err = cli.VolumeInspectWithRaw(ctx, volume.Name)
+	_, _, err = cli.VolumeInspectWithRaw(ctx, volume)
 	if err != nil {
 		return false, err
 	}
@@ -354,20 +355,20 @@ func DockerVolumeExists(volume types.Volume) (bool, error) {
 }
 
 // DockerVolumeGet will return the full contents of a types.Volume from the API.
-func DockerVolumeGet(name string) (types.Volume, error) {
+func DockerVolumeGet(name string) (volume.Volume, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 
 	if err != nil {
-		return types.Volume{
+		return volume.Volume{
 			Name: name,
 		}, err
 	}
 
 	volumes, err := cli.VolumeList(ctx, filters.Args{})
 	if err != nil {
-		return types.Volume{
+		return volume.Volume{
 			Name: name,
 		}, err
 	}
@@ -378,24 +379,24 @@ func DockerVolumeGet(name string) (types.Volume, error) {
 		}
 	}
 
-	return types.Volume{
+	return volume.Volume{
 		Name: name,
 	}, nil
 }
 
 // DockerVolumeCreate will create a Docker Volume as configured.
-func DockerVolumeCreate(volume types.Volume) (types.Volume, error) {
+func DockerVolumeCreate(volumeInput volume.Volume) (volume.Volume, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
-		return types.Volume{}, err
+		return volume.Volume{}, err
 	}
-	return cli.VolumeCreate(ctx, volumetypes.VolumeCreateBody{
-		Driver:     volume.Driver,
-		DriverOpts: volume.Options,
-		Labels:     volume.Labels,
-		Name:       volume.Name,
+	return cli.VolumeCreate(ctx, volumetypes.CreateOptions{
+		Driver:     volumeInput.Driver,
+		DriverOpts: volumeInput.Options,
+		Labels:     volumeInput.Labels,
+		Name:       volumeInput.Name,
 	})
 }
 
@@ -442,12 +443,12 @@ func DockerExec(container string, command string) ([]byte, error) {
 }
 
 // DockerContainerCreate will create a container, but will not run it.
-func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.ContainerCreateCreatedBody, error) {
+func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.CreateResponse, error) {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts()
 	cli.NegotiateAPIVersion(ctx)
 	if err != nil {
-		return container.ContainerCreateCreatedBody{}, err
+		return container.CreateResponse{}, err
 	}
 	platform := platforms.Normalize(v1.Platform{
 		Architecture: runtime.GOARCH,
@@ -455,7 +456,7 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	})
 	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
-		return container.ContainerCreateCreatedBody{}, err
+		return container.CreateResponse{}, err
 	}
 	return resp, err
 }
