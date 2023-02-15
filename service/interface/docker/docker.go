@@ -5,6 +5,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
+	"regexp"
+	"runtime"
+	"strings"
+
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
@@ -13,12 +19,8 @@ import (
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
+
 	"github.com/pygmystack/pygmy/service/endpoint"
-	"io"
-	"io/ioutil"
-	"regexp"
-	"runtime"
-	"strings"
 )
 
 // DockerContainerList will return a slice of containers
