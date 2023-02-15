@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/docker/docker/api/types/volume"
 	"os"
 	"runtime"
 	"sort"
@@ -161,7 +162,7 @@ func Setup(c *Config) {
 
 		// Ensure Volumes has a at least a zero value.
 		if c.Volumes == nil {
-			c.Volumes = make(map[string]types.Volume)
+			c.Volumes = make(map[string]volume.Volume)
 		}
 
 		for _, v := range c.Volumes {
