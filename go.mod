@@ -3,7 +3,7 @@ module github.com/pygmystack/pygmy
 go 1.16
 
 require (
-	github.com/containerd/containerd v1.6.17
+	github.com/containerd/containerd v1.6.18
 	github.com/docker/distribution v2.8.0+incompatible // indirect
 	github.com/docker/docker v23.0.1+incompatible
 	github.com/docker/go-connections v0.4.0
