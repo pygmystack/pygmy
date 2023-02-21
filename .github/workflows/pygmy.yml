@@ -15,7 +15,7 @@ on:
 
 jobs:
   basic:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       GO111MODULE: on
     steps:
@@ -57,7 +57,7 @@ jobs:
 #        run: builds/${PYGMY_PATH} --config examples/pygmy.basic.yml version;
 
   full:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     env:
       GO111MODULE: on
     steps:
