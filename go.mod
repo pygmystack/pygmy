@@ -15,9 +15,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799
 	github.com/smartystreets/goconvey v1.7.2
-	github.com/spf13/afero v1.9.3 // indirect
 	github.com/spf13/cobra v1.1.3
 	github.com/spf13/viper v1.15.0
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	golang.org/x/crypto v0.6.0
 	golang.org/x/net v0.7.0 // indirect
 )
