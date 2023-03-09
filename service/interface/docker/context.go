@@ -59,7 +59,7 @@ func EndpointFromContext(context string) (string, error) {
 
 	var contextManifest DockerContextManifest
 
-	filepath.WalkDir(manifestDir, func(path string, d fs.DirEntry, err error) error {
+	err = filepath.WalkDir(manifestDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -83,6 +83,11 @@ func EndpointFromContext(context string) (string, error) {
 		}
 		return nil
 	})
+
+	if err != nil {
+		return "", err
+	}
+
 	return contextManifest.Endpoints["docker"].Host, nil
 }
 
