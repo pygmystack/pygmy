@@ -19,6 +19,8 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
       -
         name: System dependencies
         run: sudo apt update && sudo apt install git golang -y || true
