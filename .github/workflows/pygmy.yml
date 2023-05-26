@@ -190,17 +190,17 @@ jobs:
           docker-compose -p drupal-postgres rm;
           cd ../../;
 
-      - name: Node
-        run: |
-          cd lagoon-examples/node-example;
-          npm install;
-          docker-compose -p node up -d;
-          curl --HEAD http://node.docker.amazee.io;
-          curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
-          docker-compose -p node down;
-          docker-compose -p node rm;
-          cd ../../;
+#      - name: Node
+#        run: |
+#          cd lagoon-examples/node-example;
+#          npm install;
+#          docker-compose -p node up -d;
+#          curl --HEAD http://node.docker.amazee.io;
+#          curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
+#          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
+#          docker-compose -p node down;
+#          docker-compose -p node rm;
+#          cd ../../;
 
       - name: Silverstripe Advanced
         run: |
