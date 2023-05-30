@@ -18,7 +18,7 @@ func Test(t *testing.T) {
 	Convey("DNSMasq: Field equality tests...", t, func() {
 		obj := dnsmasq.New(&model.Params{Domain: "docker.amazee.io"})
 
-		So(obj.Config.Image, ShouldEqual, "pygmystack/dnsmasq")
+		So(obj.Config.Image, ShouldEqual, "ghcr.io/pygmystack/dnsmasq:pr-2")
 		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"--log-facility=-", "-A", "/docker.amazee.io/127.0.0.1"}))
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
