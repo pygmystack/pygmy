@@ -158,7 +158,7 @@ jobs:
           docker-compose -p drupal9-full exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-full.docker.amazee.io;
-          curl --HEAD http://drupal9-full.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://drupal9-full.docker.amazee.io | grep -i "x-lagoon";
           ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-full.docker.amazee.io';
           docker-compose -p drupal9-full down;
           docker-compose -p drupal9-full rm;
@@ -171,7 +171,7 @@ jobs:
           docker-compose -p drupal-base exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-base.docker.amazee.io;
-          curl --HEAD http://drupal9-base.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://drupal9-base.docker.amazee.io | grep -i "x-lagoon";
           ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.docker.amazee.io';
           docker-compose -p drupal-base down;
           docker-compose -p drupal-base rm;
@@ -184,7 +184,7 @@ jobs:
           docker-compose -p drupal-postgres exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-postgres.docker.amazee.io;
-          curl --HEAD http://drupal9-postgres.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://drupal9-postgres.docker.amazee.io | grep -i "x-lagoon";
           ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.docker.amazee.io';
           docker-compose -p drupal-postgres down;
           docker-compose -p drupal-postgres rm;
@@ -196,7 +196,7 @@ jobs:
 #          npm install;
 #          docker-compose -p node up -d;
 #          curl --HEAD http://node.docker.amazee.io;
-#          curl --HEAD http://node.docker.amazee.io | grep "X-LAGOON";
+#          curl --HEAD http://node.docker.amazee.io | grep -i "x-lagoon";
 #          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
 #          docker-compose -p node down;
 #          docker-compose -p node rm;
@@ -210,7 +210,7 @@ jobs:
           sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
           # Temporarily, we will omit the failure for the X-LAGOON header.;
-          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON" || true;
+          curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon" || true;
           docker-compose -p silverstripe-advanced down;
           docker-compose -p silverstripe-advanced rm;
           cd ../../;
@@ -222,7 +222,7 @@ jobs:
           docker-compose -p silverstripe-simple exec -T cli composer install;
           sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
-          curl --HEAD http://ss.docker.amazee.io | grep "X-LAGOON";
+          curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon";
           docker-compose -p silverstripe-simple down;
           docker-compose -p silverstripe-simple rm;
           cd ../../;
@@ -233,7 +233,7 @@ jobs:
           lando start || true;
           sleep 5;
           curl --HEAD http://drupal9-base.lndo.site:8000;
-          curl --HEAD http://drupal9-base.lndo.site:8000 | grep "X-Lagoon";
+          curl --HEAD http://drupal9-base.lndo.site:8000 | grep -i "x-lagoon";
           lando destroy -y;
           cd ../../;
 
