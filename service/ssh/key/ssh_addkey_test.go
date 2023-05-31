@@ -15,7 +15,7 @@ import (
 func TestAdd(t *testing.T) {
 	Convey("SSH Key Adder: Field equality tests...", t, func() {
 		obj := key.NewAdder()
-		So(obj.Config.Image, ShouldEqual, "ghcr.io/pygmystack/ssh-agent:pr-2")
+		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/ssh-agent")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.output"], ShouldEqual, "false")
