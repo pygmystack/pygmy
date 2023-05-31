@@ -89,40 +89,42 @@ func DockerPull(image string) (string, error) {
 		// To support image references from external sources to docker.io we need to check
 		// and validate the image reference for all known cases of validity.
 
-		if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
-			// URL was not provided (in full), but the tag was provided.
-			// For this, we prepend 'docker.io/' to the reference.
-			// Examples:
-			//  - amazeeio/pygmy:latest
-			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[/][a-zA-Z0-9:-]+[a-zA-Z0-9:-_.]+)$", image); m {
-			// URL was not provided (in full), but the tag was not provided.
-			// For this, we prepend 'docker.io/' to the reference.
-			// Examples:
-			//  - amazeeio/pygmy
-			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+[a-zA-Z0-9:-_.]+)$", image); m {
+		if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
 			// URL was provided (in full), but the tag was provided.
 			// For this, we do not alter the value provided.
 			// Examples:
-			//  - quay.io/amazeeio/pygmy:latest
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9.].+[a-zA-Z0-9]+[/][a-zA-Z0-9:-_]+)$", image); m {
+			//  - quay.io/pygmystack/pygmy:latest
+			image = fmt.Sprintf("%v", image)
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+))$", image); m {
 			// URL was provided (in full), but the tag was not provided.
 			// For this, we do not alter the value provided.
 			// Examples:
-			//  - quay.io/amazeeio/pygmy
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9]+[:][a-zA-Z0-9.-_]+)$", image); m {
+			//  - quay.io/pygmystack/pygmy
+			image = fmt.Sprintf("%v:latest", image)
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
+			// URL was not provided (in full), but the tag was provided.
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - pygmystack/pygmy:latest
+			image = fmt.Sprintf("docker.io/%v", image)
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+))$", image); m {
+			// URL was not provided (in full), but the tag was not provided.
+			// For this, we prepend 'docker.io/' to the reference.
+			// Examples:
+			//  - pygmystack/pygmy
+			image = fmt.Sprintf("docker.io/%v:latest", image)
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
 			// Library image was provided with tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9-_]+)$", image); m {
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9_-]+)$", image); m {
 			// Library image was provided without tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmy
-			image = fmt.Sprintf("docker.io/%v", image)
+			image = fmt.Sprintf("docker.io/%v:latest", image)
 		} else {
 			// Validation not successful
 			return "", fmt.Errorf("error: regexp validation for %v failed", image)
