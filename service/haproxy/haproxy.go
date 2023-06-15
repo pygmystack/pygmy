@@ -13,7 +13,7 @@ import (
 func New(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "ghcr.io/pygmystack/haproxy:pr-12",
+			Image: "ghcr.io/pygmystack/haproxy:pr-15",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",

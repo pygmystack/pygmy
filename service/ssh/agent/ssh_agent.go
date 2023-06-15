@@ -18,7 +18,7 @@ import (
 func New() model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "ghcr.io/pygmystack/ssh-agent:pr-2",
+			Image: "ghcr.io/pygmystack/ssh-agent:main",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",

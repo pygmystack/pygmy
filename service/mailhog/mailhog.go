@@ -25,7 +25,7 @@ func New(c *model.Params) model.Service {
 				"AMAZEEIO=AMAZEEIO",
 				fmt.Sprintf("AMAZEEIO_URL=mailhog.%s", c.Domain),
 			},
-			Image: "ghcr.io/pygmystack/mailhog:pr-3",
+			Image: "ghcr.io/pygmystack/mailhog:main",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
