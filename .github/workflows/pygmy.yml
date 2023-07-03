@@ -152,9 +152,9 @@ jobs:
           ./pygmy-linux-amd64 clean
           ./pygmy-linux-amd64 up --config ../../examples/pygmy.overrides.yml
           docker container inspect amazeeio-dnsmasq | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
-          docker container inspect amazeeio-haproxy | jq '.[].Config.Image' | jq '.[].Name' | grep "ghcr.io/pygmystack/haproxy:pr-12";
-          docker container inspect amazeeio-mailhog | jq '.[].Config.Image' | jq '.[].Name' | grep "ghcr.io/pygmystack/mailhog:pr-3";
-          docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | jq '.[].Name' | grep "ghcr.io/pygmystack/ssh-agent:pr-2";
+          docker container inspect amazeeio-haproxy | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:pr-12';
+          docker container inspect amazeeio-mailhog | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog:pr-3";
+          docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent:pr-2";
           ./pygmy-linux-amd64 clean
           ./pygmy-linux-amd64 up
 
