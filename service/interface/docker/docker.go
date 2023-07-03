@@ -15,6 +15,7 @@ import (
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
@@ -360,7 +361,7 @@ func DockerVolumeGet(name string) (volume.Volume, error) {
 		}, err
 	}
 
-	volumes, err := cli.VolumeList(ctx, volume.ListOptions{})
+	volumes, err := cli.VolumeList(ctx, filters.Args{})
 	if err != nil {
 		return volume.Volume{
 			Name: name,
