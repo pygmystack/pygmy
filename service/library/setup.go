@@ -190,9 +190,12 @@ func Setup(c *Config) {
 		if service.Image != "" {
 			// Re-apply the image reference.
 			service.Config.Image = service.Image
-			// Replace the Service object.
-			c.Services[name] = service
+		} else {
+			// Sync the strings when unspecified.
+			service.Image = service.Config.Image
 		}
+		// Replace the Service object.
+		c.Services[name] = service
 	}
 
 	// Determine the slice of sorted services
