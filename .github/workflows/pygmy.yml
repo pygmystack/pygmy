@@ -149,13 +149,22 @@ jobs:
 
       - name: Test the container image overrides configuration
         run: |
+          echo "Cleaning...";
           ./pygmy-linux-amd64 clean
+          echo "Starting...";
           ./pygmy-linux-amd64 up --config ../../examples/pygmy.overrides.yml
-          docker container inspect amazeeio-dnsmasq | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
-          docker container inspect amazeeio-haproxy | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:pr-12';
-          docker container inspect amazeeio-mailhog | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog:pr-3";
+          echo "Debug";
+          docker container inspect amazeeio-dnsmasq
+          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image'
+          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
+          echo "Checking image references in started containers...";
+          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
+          docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:pr-12';
+          docker container inspect amazeeio-mailhog   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog:pr-3";
           docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent:pr-2";
+          echo "Cleaning...";
           ./pygmy-linux-amd64 clean
+          echo "Starting...";
           ./pygmy-linux-amd64 up
 
       - name: Clone the official examples
