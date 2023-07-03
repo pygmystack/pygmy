@@ -152,11 +152,9 @@ jobs:
           echo "Cleaning...";
           ./pygmy-linux-amd64 clean
           echo "Starting...";
-          ./pygmy-linux-amd64 up --config ../../examples/pygmy.overrides.yml
+          ./pygmy-linux-amd64 --config ../../examples/pygmy.overrides.yml up;
           echo "Debug";
-          docker container inspect amazeeio-dnsmasq
           docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image'
-          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
           echo "Checking image references in started containers...";
           docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
           docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:pr-12';
