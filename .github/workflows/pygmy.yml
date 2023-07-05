@@ -154,10 +154,10 @@ jobs:
           echo "Starting...";
           ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml up;
           echo "Checking image references in started containers...";
-          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:pr-2";
-          docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:pr-12';
-          docker container inspect amazeeio-mailhog   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog:pr-3";
-          docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent:pr-2";
+          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq";
+          docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy';
+          docker container inspect amazeeio-mailhog   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog";
+          docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent";
           echo "Cleaning...";
           ./pygmy-linux-amd64 clean
           echo "Starting...";
