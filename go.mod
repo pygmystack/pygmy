@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/containerd/containerd v1.7.3
-	github.com/docker/docker v23.0.3+incompatible
+	github.com/docker/docker v24.0.5+incompatible
 	github.com/docker/go-connections v0.4.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/imdario/mergo v0.3.16
