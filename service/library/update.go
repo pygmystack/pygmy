@@ -44,4 +44,15 @@ func Update(c Config) {
 		}
 	}
 
+	images, _ := docker.DockerImageList()
+	for _, image := range images {
+		if strings.Contains(fmt.Sprint(image.RepoDigests), "uselagoon") {
+			ref := strings.Split(image.RepoDigests[0], "@")[0]
+			result, err := docker.DockerPull(ref)
+			if err == nil {
+				fmt.Println(result)
+			}
+		}
+	}
+
 }
