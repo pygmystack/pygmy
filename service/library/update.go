@@ -46,9 +46,8 @@ func Update(c Config) {
 
 	images, _ := docker.DockerImageList()
 	for _, image := range images {
-		if strings.Contains(fmt.Sprint(image.RepoDigests), "uselagoon") {
-			ref := strings.Split(image.RepoDigests[0], "@")[0]
-			result, err := docker.DockerPull(ref)
+		if strings.Contains(fmt.Sprint(image.RepoTags), "uselagoon") && len(image.RepoTags) > 0 {
+			result, err := docker.DockerPull(image.RepoTags[0])
 			if err == nil {
 				fmt.Println(result)
 			}

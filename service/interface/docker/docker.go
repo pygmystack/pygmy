@@ -68,7 +68,9 @@ func DockerImageList() ([]types.ImageSummary, error) {
 		fmt.Println(err)
 	}
 
-	images, err := cli.ImageList(ctx, types.ImageListOptions{})
+	images, err := cli.ImageList(ctx, types.ImageListOptions{
+		All: true,
+	})
 	if err != nil {
 		return []types.ImageSummary{}, err
 	}
