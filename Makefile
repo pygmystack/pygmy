@@ -10,7 +10,7 @@ build:
 	@echo "Copying binaries to build directory"
 	docker run --rm -v $(DIR):/data pygmy sh -c 'cp pygmy* /data/builds/.'
 	@echo "Done"
-	@echo "Enjoy using pygmy binaries in the $(DIR)/build directory."
+	@echo "Enjoy using pygmy binaries in the $(DIR)/builds directory."
 
 clean:
 	docker image rm -f pygmy
