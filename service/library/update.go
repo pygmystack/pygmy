@@ -47,9 +47,11 @@ func Update(c Config) {
 	images, _ := docker.DockerImageList()
 	for _, image := range images {
 		if strings.Contains(fmt.Sprint(image.RepoTags), "uselagoon") && len(image.RepoTags) > 0 {
-			result, err := docker.DockerPull(image.RepoTags[0])
-			if err == nil {
-				fmt.Println(result)
+			for _, tag := range image.RepoTags {
+				result, err := docker.DockerPull(tag)
+				if err == nil {
+					fmt.Println(result)
+				}
 			}
 		}
 	}
