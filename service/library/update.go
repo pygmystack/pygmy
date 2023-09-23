@@ -46,8 +46,8 @@ func Update(c Config) {
 
 	images, _ := docker.DockerImageList()
 	for _, image := range images {
-		if strings.Contains(fmt.Sprint(image.RepoTags), "uselagoon") && len(image.RepoTags) > 0 {
-			for _, tag := range image.RepoTags {
+		for _, tag := range image.RepoTags {
+			if strings.Contains(tag, "uselagoon") {
 				result, err := docker.DockerPull(tag)
 				if err == nil {
 					fmt.Println(result)
@@ -55,5 +55,4 @@ func Update(c Config) {
 			}
 		}
 	}
-
 }
