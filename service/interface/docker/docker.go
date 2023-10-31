@@ -68,7 +68,9 @@ func DockerImageList() ([]types.ImageSummary, error) {
 		fmt.Println(err)
 	}
 
-	images, err := cli.ImageList(ctx, types.ImageListOptions{})
+	images, err := cli.ImageList(ctx, types.ImageListOptions{
+		All: true,
+	})
 	if err != nil {
 		return []types.ImageSummary{}, err
 	}
@@ -89,37 +91,37 @@ func DockerPull(image string) (string, error) {
 		// To support image references from external sources to docker.io we need to check
 		// and validate the image reference for all known cases of validity.
 
-		if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
+		if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_.-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
 			// URL was provided (in full), but the tag was provided.
 			// For this, we do not alter the value provided.
 			// Examples:
 			//  - quay.io/pygmystack/pygmy:latest
 			image = fmt.Sprintf("%v", image)
-		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+))$", image); m {
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9._-]+)[/]([a-zA-Z0-9_.-]+)[/]([a-zA-Z0-9_-]+))$", image); m {
 			// URL was provided (in full), but the tag was not provided.
 			// For this, we do not alter the value provided.
 			// Examples:
 			//  - quay.io/pygmystack/pygmy
 			image = fmt.Sprintf("%v:latest", image)
-		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_.-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
 			// URL was not provided (in full), but the tag was provided.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmystack/pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_-]+))$", image); m {
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[/]([a-zA-Z0-9_.-]+))$", image); m {
 			// URL was not provided (in full), but the tag was not provided.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmystack/pygmy
 			image = fmt.Sprintf("docker.io/%v:latest", image)
-		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_-]+))$", image); m {
+		} else if m, _ := regexp.MatchString("^(([a-zA-Z0-9_-]+)[:]([a-zA-Z0-9_.-]+))$", image); m {
 			// Library image was provided with tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
 			//  - pygmy:latest
 			image = fmt.Sprintf("docker.io/%v", image)
-		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9_-]+)$", image); m {
+		} else if m, _ := regexp.MatchString("^([a-zA-Z0-9_.-]+)$", image); m {
 			// Library image was provided without tag identifier.
 			// For this, we prepend 'docker.io/' to the reference.
 			// Examples:
@@ -141,10 +143,6 @@ func DockerPull(image string) (string, error) {
 	}
 
 	data, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	d := json.NewDecoder(data)
 
 	type Event struct {
@@ -158,26 +156,35 @@ func DockerPull(image string) (string, error) {
 	}
 
 	var event *Event
-	for {
-		if err := d.Decode(&event); err != nil {
-			if err == io.EOF {
-				break
+	if err == nil {
+		for {
+			if err := d.Decode(&event); err != nil {
+				if err == io.EOF {
+					break
+				}
+
+				panic(err)
+			}
+		}
+
+		if event != nil {
+			if strings.Contains(event.Status, "Downloaded newer image") {
+				return fmt.Sprintf("Successfully pulled %v", image), nil
 			}
 
-			panic(err)
-		}
-	}
-
-	if event != nil {
-		if strings.Contains(event.Status, "Downloaded newer image") {
-			return fmt.Sprintf("Successfully pulled %v", image), nil
+			if strings.Contains(event.Status, "Image is up to date") {
+				return fmt.Sprintf("Image %v is up to date", image), nil
+			}
 		}
 
-		if strings.Contains(event.Status, "Image is up to date") {
-			return fmt.Sprintf("Image %v is up to date", image), nil
-		}
+		return event.Status, nil
 	}
-	return event.Status, nil
+
+	if strings.Contains(err.Error(), "pull access denied") {
+		return fmt.Sprintf("Error trying to update image %v: pull access denied", image), nil
+	}
+
+	return "", nil
 }
 
 // DockerStop will stop the container.
