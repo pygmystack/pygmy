@@ -14,7 +14,7 @@ type CompatibilityCheck struct {
 }
 
 // DryRun will check for. It is here to check for port compatibility before
-//Pygmy attempts to start any containers and provide the user with a report.
+// Pygmy attempts to start any containers and provide the user with a report.
 func DryRun(c *Config) []CompatibilityCheck {
 
 	messages := []CompatibilityCheck{}
