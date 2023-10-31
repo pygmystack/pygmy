@@ -1,6 +1,6 @@
 module github.com/pygmystack/pygmy
 
-go 1.18
+go 1.19
 
 require (
 	github.com/containerd/containerd v1.7.3
