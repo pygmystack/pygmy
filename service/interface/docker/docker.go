@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"regexp"
 	"runtime"
@@ -432,7 +431,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	data, _ := ioutil.ReadAll(response.Reader)
+	data, _ := io.ReadAll(response.Reader)
 	defer response.Close()
 	return data, nil
 

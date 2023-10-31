@@ -3,7 +3,6 @@ package agent
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -59,7 +58,7 @@ func List(service model.Service) ([]byte, error) {
 func Validate(filePath, passcode string) (bool, error) {
 
 	filePath = strings.TrimRight(filePath, ".pub")
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Println("Err")
 	}
@@ -84,7 +83,7 @@ func Search(service model.Service, key string) (bool, error) {
 	result := false
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 		stripped := strings.Trim(key, ".pub")
-		data, err := ioutil.ReadFile(stripped + ".pub")
+		data, err := os.ReadFile(stripped + ".pub")
 		if err != nil {
 			return false, err
 		}

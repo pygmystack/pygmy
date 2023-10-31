@@ -5,7 +5,6 @@ package resolv
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"runtime"
@@ -60,7 +59,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 
 			// Create the file if it doesn't exist.
 			if _, err := os.Stat(fullPath); os.IsNotExist(err) {
-				if tmpFile, err = ioutil.TempFile("", "pygmy-"); err != nil {
+				if tmpFile, err = os.CreateTemp("", "pygmy-"); err != nil {
 					fmt.Println(err)
 				}
 				if err = os.Chmod(tmpFile.Name(), 0777); err != nil {
@@ -87,7 +86,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 						fmt.Println("/bin/sh", "-c", "cat "+fullPath)
 					}
 
-					if tmpFile, err = ioutil.TempFile("", "pygmy-"); err != nil {
+					if tmpFile, err = os.CreateTemp("", "pygmy-"); err != nil {
 						fmt.Println(err)
 					} else {
 						if err = os.Chmod(tmpFile.Name(), 0777); err != nil {
@@ -141,7 +140,7 @@ func (resolv Resolv) Clean() {
 			} else {
 				if strings.Contains(string(cmdOut), resolv.Data) {
 					newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
-					if tmpFile, err := ioutil.TempFile("", "pygmy-"); err != nil {
+					if tmpFile, err := os.CreateTemp("", "pygmy-"); err != nil {
 						fmt.Println(err)
 					} else {
 						if err = os.Chmod(tmpFile.Name(), 0777); err != nil {
