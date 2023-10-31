@@ -50,7 +50,7 @@ jobs:
           EOF
       -
         name: Fetch Dependencies
-        run: go mod download
+        run: go mod vendor
       -
         name: Print version string
         run: go run main.go version
