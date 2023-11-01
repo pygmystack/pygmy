@@ -1,8 +1,9 @@
 package agent_test
 
 import (
-	"github.com/docker/go-connections/nat"
 	"testing"
+
+	"github.com/docker/go-connections/nat"
 
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/ssh/agent"
