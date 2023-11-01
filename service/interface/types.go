@@ -31,6 +31,7 @@ type DockerService interface {
 type Service struct {
 	Config        container.Config
 	HostConfig    container.HostConfig
+	Image         string `yaml:"image"`
 	NetworkConfig network.NetworkingConfig
 }
 

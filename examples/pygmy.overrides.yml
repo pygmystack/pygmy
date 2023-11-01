@@ -1,0 +1,10 @@
+---
+services:
+  amazeeio-haproxy:
+    image: ghcr.io/pygmystack/haproxy
+  amazeeio-ssh-agent:
+    image: ghcr.io/pygmystack/ssh-agent
+  amazeeio-dnsmasq:
+    image: ghcr.io/pygmystack/dnsmasq
+  amazeeio-mailhog:
+    image: ghcr.io/pygmystack/mailhog

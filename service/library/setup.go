@@ -2,7 +2,6 @@ package library
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types/volume"
 	"os"
 	"runtime"
 	"sort"
@@ -11,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/spf13/viper"
 
+	"github.com/docker/docker/api/types/volume"
 	"github.com/pygmystack/pygmy/service/dnsmasq"
 	"github.com/pygmystack/pygmy/service/haproxy"
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -183,6 +183,19 @@ func Setup(c *Config) {
 			fmt.Printf("service '%v' does not have have a value for {{.Config.Image}}\n", id)
 			os.Exit(2)
 		}
+	}
+
+	// Image overrides when specified.
+	for name, service := range c.Services {
+		if service.Image != "" {
+			// Re-apply the image reference.
+			service.Config.Image = service.Image
+		} else {
+			// Sync the strings when unspecified.
+			service.Image = service.Config.Image
+		}
+		// Replace the Service object.
+		c.Services[name] = service
 	}
 
 	// Determine the slice of sorted services

@@ -146,6 +146,22 @@ jobs:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
+      - name: Test the container image overrides configuration
+        run: |
+          echo "Cleaning...";
+          ./pygmy-linux-amd64 clean
+          echo "Starting...";
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml up;
+          echo "Checking image references in started containers...";
+          docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq";
+          docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy';
+          docker container inspect amazeeio-mailhog   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog";
+          docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent";
+          echo "Cleaning...";
+          ./pygmy-linux-amd64 clean
+          echo "Starting...";
+          ./pygmy-linux-amd64 up
+
       - name: Clone the official examples
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
