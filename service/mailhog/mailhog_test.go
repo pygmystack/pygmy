@@ -30,7 +30,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://mailhog.docker.amazee.io")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "15")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
-		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
+		So(obj.HostConfig.PortBindings, ShouldEqual, nat.PortMap(nil))
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"1025/tcp": []nat.PortBinding{{HostIP: "", HostPort: "1025"}}}))

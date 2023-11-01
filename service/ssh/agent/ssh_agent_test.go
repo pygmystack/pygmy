@@ -1,6 +1,7 @@
 package agent_test
 
 import (
+	"github.com/docker/go-connections/nat"
 	"testing"
 
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -35,8 +36,8 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "10")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
-		So(obj.HostConfig.IpcMode, ShouldEqual, "private")
-		So(obj.HostConfig.PortBindings, ShouldEqual, nil)
+		So(obj.HostConfig.IpcMode.IsPrivate(), ShouldBeTrue)
+		So(obj.HostConfig.PortBindings, ShouldEqual, nat.PortMap(nil))
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 	})
