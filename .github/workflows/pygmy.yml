@@ -168,26 +168,26 @@ jobs:
 
       - name: Drupal 9 Full
         run: |
-          cd lagoon-examples/drupal9-full;
-          docker-compose -p drupal9-full up -d;
-          docker-compose -p drupal9-full exec -T cli composer install;
+          cd lagoon-examples/drupal-full;
+          docker-compose -p drupal-full up -d;
+          docker-compose -p drupal-full exec -T cli composer install;
           sleep 5;
           curl --HEAD http://drupal9-full.docker.amazee.io;
           curl --HEAD http://drupal9-full.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-full.docker.amazee.io';
-          docker-compose -p drupal9-full down;
-          docker-compose -p drupal9-full rm;
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-full.docker.amazee.io';
+          docker-compose -p drupal-full down;
+          docker-compose -p drupal-full rm;
           cd ../../;
 
       - name: Drupal 9 Base
         run: |
-          cd lagoon-examples/drupal9-base;
+          cd lagoon-examples/drupal-base;
           docker-compose -p drupal-base up -d;
           docker-compose -p drupal-base exec -T cli composer install;
           sleep 5;
-          curl --HEAD http://drupal9-base.docker.amazee.io;
-          curl --HEAD http://drupal9-base.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.docker.amazee.io';
+          curl --HEAD http://drupal-base.docker.amazee.io;
+          curl --HEAD http://drupal-base.docker.amazee.io | grep -i "x-lagoon";
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal-base.docker.amazee.io';
           docker-compose -p drupal-base down;
           docker-compose -p drupal-base rm;
           cd ../../;
@@ -200,7 +200,7 @@ jobs:
           sleep 5;
           curl --HEAD http://drupal9-postgres.docker.amazee.io;
           curl --HEAD http://drupal9-postgres.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.docker.amazee.io';
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-postgres.docker.amazee.io';
           docker-compose -p drupal-postgres down;
           docker-compose -p drupal-postgres rm;
           cd ../../;
