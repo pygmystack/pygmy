@@ -83,6 +83,8 @@ jobs:
         run: |
           wget https://files.devwithlando.io/lando-stable.deb;
           sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
+      - name: Install Dockerize
+        run: wget -O - https://github.com/jwilder/dockerize/releases/download/v0.7.0/dockerize-linux-arm64-v0.7.0.tar.gz | tar xzf - -C /usr/local/bin
 
       - name: Compile
         run: go build -o pygmy-linux-amd64
@@ -166,7 +168,7 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
 
-      - name: Drupal 9 Full
+      - name: [Example] Drupal Full
         run: |
           cd lagoon-examples/drupal-full;
           docker-compose -p drupal-full up -d;
@@ -179,7 +181,7 @@ jobs:
           docker-compose -p drupal-full rm;
           cd ../../;
 
-      - name: Drupal 9 Base
+      - name: [Example] Drupal Base
         run: |
           cd lagoon-examples/drupal-base;
           docker-compose -p drupal-base up -d;
@@ -217,7 +219,7 @@ jobs:
 #          docker-compose -p node rm;
 #          cd ../../;
 
-      - name: Silverstripe Advanced
+      - name: [Example] Silverstripe Advanced
         run: |
           cd lagoon-examples/silverstripe-advanced;
           docker-compose -p silverstripe-advanced up -d;
@@ -230,7 +232,7 @@ jobs:
           docker-compose -p silverstripe-advanced rm;
           cd ../../;
 
-      - name: Silverstripe Simple
+      - name: [Example] Silverstripe Simple
         run: |
           cd lagoon-examples/silverstripe-simple;
           docker-compose -p silverstripe-simple up -d;
