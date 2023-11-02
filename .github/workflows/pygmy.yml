@@ -168,7 +168,7 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
 
-      - name: [Example] Drupal Full
+      - name: "[Example] Drupal Full"
         run: |
           cd lagoon-examples/drupal-full;
           docker-compose -p drupal-full up -d;
@@ -181,7 +181,7 @@ jobs:
           docker-compose -p drupal-full rm;
           cd ../../;
 
-      - name: [Example] Drupal Base
+      - name: "[Example] Drupal Base"
         run: |
           cd lagoon-examples/drupal-base;
           docker-compose -p drupal-base up -d;
@@ -194,7 +194,7 @@ jobs:
           docker-compose -p drupal-base rm;
           cd ../../;
 
-      - name: Drupal 9 Postgres
+      - name: "[Example] Drupal Postgres"
         run: |
           cd lagoon-examples/drupal9-postgres;
           docker-compose -p drupal-postgres up -d;
@@ -219,7 +219,7 @@ jobs:
 #          docker-compose -p node rm;
 #          cd ../../;
 
-      - name: [Example] Silverstripe Advanced
+      - name: "[Example] Silverstripe Advanced"
         run: |
           cd lagoon-examples/silverstripe-advanced;
           docker-compose -p silverstripe-advanced up -d;
@@ -232,7 +232,7 @@ jobs:
           docker-compose -p silverstripe-advanced rm;
           cd ../../;
 
-      - name: [Example] Silverstripe Simple
+      - name: "[Example] Silverstripe Simple"
         run: |
           cd lagoon-examples/silverstripe-simple;
           docker-compose -p silverstripe-simple up -d;
