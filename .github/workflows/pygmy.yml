@@ -224,7 +224,7 @@ jobs:
           cd lagoon-examples/silverstripe-advanced;
           docker-compose -p silverstripe-advanced up -d;
           docker-compose -p silverstripe-advanced exec -T cli composer install;
-          dockerize -wait http://ss.docker.amazee.io -timeout 10s;
+          sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
           # Temporarily, we will omit the failure for the X-LAGOON header.;
           curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon" || true;
@@ -237,7 +237,7 @@ jobs:
           cd lagoon-examples/silverstripe-simple;
           docker-compose -p silverstripe-simple up -d;
           docker-compose -p silverstripe-simple exec -T cli composer install;
-          dockerize -wait http://ss.docker.amazee.io -timeout 10s;
+          sleep 5;
           curl --HEAD http://ss.docker.amazee.io;
           curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon";
           docker-compose -p silverstripe-simple down;
