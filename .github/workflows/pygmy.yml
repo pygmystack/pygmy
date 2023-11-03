@@ -83,6 +83,8 @@ jobs:
         run: |
           wget https://files.devwithlando.io/lando-stable.deb;
           sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
+      - name: Install Dockerize
+        run: wget -O - https://github.com/jwilder/dockerize/releases/download/v0.7.0/dockerize-linux-amd64-v0.7.0.tar.gz | tar xzf - -C /usr/local/bin
 
       - name: Compile
         run: go build -o pygmy-linux-amd64
@@ -166,41 +168,41 @@ jobs:
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
 
-      - name: Drupal 9 Full
+      - name: "[Example] Drupal Full"
         run: |
-          cd lagoon-examples/drupal9-full;
-          docker-compose -p drupal9-full up -d;
-          docker-compose -p drupal9-full exec -T cli composer install;
-          sleep 5;
+          cd lagoon-examples/drupal-full;
+          docker-compose -p drupal-full up -d;
+          docker-compose -p drupal-full exec -T cli composer install;
+          dockerize -wait http://drupal9-full.docker.amazee.io:80 -timeout 10s;
           curl --HEAD http://drupal9-full.docker.amazee.io;
           curl --HEAD http://drupal9-full.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-full.docker.amazee.io';
-          docker-compose -p drupal9-full down;
-          docker-compose -p drupal9-full rm;
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-full.docker.amazee.io';
+          docker-compose -p drupal-full down;
+          docker-compose -p drupal-full rm;
           cd ../../;
 
-      - name: Drupal 9 Base
+      - name: "[Example] Drupal Base"
         run: |
-          cd lagoon-examples/drupal9-base;
+          cd lagoon-examples/drupal-base;
           docker-compose -p drupal-base up -d;
           docker-compose -p drupal-base exec -T cli composer install;
-          sleep 5;
-          curl --HEAD http://drupal9-base.docker.amazee.io;
-          curl --HEAD http://drupal9-base.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-base.docker.amazee.io';
+          dockerize -wait http://drupal-base.docker.amazee.io:80 -timeout 10s;
+          curl --HEAD http://drupal-base.docker.amazee.io;
+          curl --HEAD http://drupal-base.docker.amazee.io | grep -i "x-lagoon";
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal-base.docker.amazee.io';
           docker-compose -p drupal-base down;
           docker-compose -p drupal-base rm;
           cd ../../;
 
-      - name: Drupal 9 Postgres
+      - name: "[Example] Drupal Postgres"
         run: |
           cd lagoon-examples/drupal9-postgres;
           docker-compose -p drupal-postgres up -d;
           docker-compose -p drupal-postgres exec -T cli composer install;
-          sleep 5;
+          dockerize -wait http://drupal9-postgres.docker.amazee.io:80 -timeout 10s;
           curl --HEAD http://drupal9-postgres.docker.amazee.io;
           curl --HEAD http://drupal9-postgres.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://drupal9-postgres.docker.amazee.io';
+          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-postgres.docker.amazee.io';
           docker-compose -p drupal-postgres down;
           docker-compose -p drupal-postgres rm;
           cd ../../;
@@ -217,7 +219,7 @@ jobs:
 #          docker-compose -p node rm;
 #          cd ../../;
 
-      - name: Silverstripe Advanced
+      - name: "[Example] Silverstripe Advanced"
         run: |
           cd lagoon-examples/silverstripe-advanced;
           docker-compose -p silverstripe-advanced up -d;
@@ -230,7 +232,7 @@ jobs:
           docker-compose -p silverstripe-advanced rm;
           cd ../../;
 
-      - name: Silverstripe Simple
+      - name: "[Example] Silverstripe Simple"
         run: |
           cd lagoon-examples/silverstripe-simple;
           docker-compose -p silverstripe-simple up -d;
@@ -244,11 +246,11 @@ jobs:
 
       - name: Lando test - running Pygmy along-side Lando
         run: |
-          cd lagoon-examples/drupal9-base;
+          cd lagoon-examples/drupal-base;
           lando start || true;
-          sleep 5;
-          curl --HEAD http://drupal9-base.lndo.site:8000;
-          curl --HEAD http://drupal9-base.lndo.site:8000 | grep -i "x-lagoon";
+          dockerize -wait http://drupal-base.lndo.site:8000 -timeout 10s;
+          curl --HEAD http://drupal-base.lndo.site:8000;
+          curl --HEAD http://drupal-base.lndo.site:8000 | grep -i "x-lagoon";
           lando destroy -y;
           cd ../../;
 
