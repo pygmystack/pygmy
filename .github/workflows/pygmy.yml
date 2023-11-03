@@ -246,11 +246,11 @@ jobs:
 
       - name: Lando test - running Pygmy along-side Lando
         run: |
-          cd lagoon-examples/drupal9-base;
+          cd lagoon-examples/drupal-base;
           lando start || true;
-          dockerize -wait http://drupal9-base.lndo.site:8000 -timeout 10s;
-          curl --HEAD http://drupal9-base.lndo.site:8000;
-          curl --HEAD http://drupal9-base.lndo.site:8000 | grep -i "x-lagoon";
+          dockerize -wait http://drupal-base.lndo.site:8000 -timeout 10s;
+          curl --HEAD http://drupal-base.lndo.site:8000;
+          curl --HEAD http://drupal-base.lndo.site:8000 | grep -i "x-lagoon";
           lando destroy -y;
           cd ../../;
 
