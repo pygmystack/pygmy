@@ -54,7 +54,6 @@ To find such issues, we need to analyze the docker logs, do that via:
     amazee_io.docker.amazee.io | Child (246) said Child starts
 
 Check the latest few lines of code and you probably see the issue.
-Stuck here? Join our Slack at [slack.amazee.io](https://slack.amazee.io) and we help you.
 
 ### Shared container logs
 

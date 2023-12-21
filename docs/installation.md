@@ -8,6 +8,16 @@ Make sure you have the following dependencies installed:
 
 ## Installation
 
+### Installing from homebrew (recommended for most users)
+
+**Works for**: Linux & MacOS
+
+```shell
+brew tap pygmystack/pygmy;
+brew install pygmy;
+```
+
+
 ### Installing from a precompiled binary
 
 Releases on GitHub accompany binaries [available for download](https://github.com/pygmystack/pygmy/releases).

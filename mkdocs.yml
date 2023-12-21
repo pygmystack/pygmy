@@ -1,5 +1,32 @@
-site_name: Pygmy Documentation
-theme: readthedocs
+site_name: 'Pygmy'
+site_url: https://pygmystack.github.io/pygmy/
+repo_url: https://github.com/pygmystack/pygmy/
+repo_name: pygmystack/pygmy
+edit_uri: edit/main/docs
+site_author: The pygmystack authors
+
+theme:
+  name: 'material'
+  palette:
+    primary: 'blue'
+    accent: 'light blue'
+  favicon: images/pygmystack_icon.png
+  logo: images/pygmystack_icon_wh.png
+  icon:
+    repo: fontawesome/brands/github 
+
+markdown_extensions:
+  - toc:
+      permalink: "#"
+      baselevel: 2
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+
+plugins:
+  - search
 
 nav:
   - Pygmy: index.md
@@ -14,9 +41,3 @@ nav:
   - Mapping additional ports: map_addtitional_ports.md
   - Customisation:
       - Introduction: customisation/introduction.md
-
-markdown_extensions:
-  - toc:
-      permalink: true
-      baselevel: 1
-  - admonition
