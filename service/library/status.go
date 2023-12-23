@@ -1,12 +1,13 @@
 package library
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/logrusorgru/aurora"
+	"github.com/pygmystack/pygmy/service/color"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
-
-	"github.com/pygmystack/pygmy/service/color"
+	_ "github.com/logrusorgru/aurora"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/interface/docker"
@@ -15,20 +16,14 @@ import (
 
 // Status will show the state of all the things Pygmy manages.
 func Status(c Config) {
-
 	Setup(&c)
 	checks := DryRun(&c)
 	agentPresent := false
 
 	if len(checks) > 0 {
 		for _, check := range checks {
-			if check.State {
-				color.Print(Green(check.Message + "\n"))
-			} else {
-				color.Print(Red(check.Message + "\n"))
-			}
+			c.JSONStatus.PortAvailability = append(c.JSONStatus.PortAvailability, check.Message)
 		}
-		fmt.Println()
 	}
 
 	Containers, _ := docker.DockerContainerList()
@@ -45,10 +40,16 @@ func Status(c Config) {
 						agentPresent = true
 					}
 					if enabled && !discrete && name != "" {
+						st := StatusJSONStatus{
+							Name:      name,
+							Container: name,
+						}
 						if s, _ := Service.Status(); s {
-							color.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", name, name)))
+							st.State = "running"
+							c.JSONStatus.Services = append(c.JSONStatus.Services, st)
 						} else {
-							color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
+							st.State = "not running"
+							c.JSONStatus.Services = append(c.JSONStatus.Services, st)
 						}
 					}
 				}
@@ -61,7 +62,12 @@ func Status(c Config) {
 			name, _ := Service.GetFieldString("name")
 			discrete, _ := Service.GetFieldBool("discrete")
 			if !discrete {
-				color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", name)))
+				st := StatusJSONStatus{
+					Name:      name,
+					Container: name,
+					State:     "not running",
+				}
+				c.JSONStatus.Services = append(c.JSONStatus.Services, st)
 			}
 		}
 	}
@@ -69,9 +75,9 @@ func Status(c Config) {
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
 			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
-				color.Print(Red(fmt.Sprintf("[ ] %s is not connected to network %s\n", Container.Name, Network.Name)))
+				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is not connected to the network %s", Container.Name, Network.Name))
 			} else {
-				color.Print(Green(fmt.Sprintf("[*] %s is connected to network %s\n", Container.Name, Network.Name)))
+				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is connected to the network %s", Container.Name, Network.Name))
 			}
 		}
 	}
@@ -79,17 +85,17 @@ func Status(c Config) {
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
 		if s := r.Status(&model.Params{Domain: c.Domain}); s {
-			color.Print(Green(fmt.Sprintf("[*] Resolv %v is properly connected\n", resolver.Name)))
+			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is properly connected", resolver.Name))
 		} else {
-			color.Print(Red(fmt.Sprintf("[ ] Resolv %v is not properly connected\n", resolver.Name)))
+			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is not properly connected", resolver.Name))
 		}
 	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := docker.DockerVolumeExists(volume.Name); s {
-			color.Print(Green(fmt.Sprintf("[*] Volume %s has been created\n", volume.Name)))
+			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has been created", volume.Name))
 		} else {
-			color.Print(Green(fmt.Sprintf("[ ] Volume %s has not ben created\n", volume.Name)))
+			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has not been created", volume.Name))
 		}
 	}
 
@@ -99,8 +105,11 @@ func Status(c Config) {
 			purpose, _ := v.GetFieldString("purpose")
 			if purpose == "sshagent" {
 				l, _ := docker.DockerExec(v.Config.Labels["pygmy.name"], "ssh-add -l")
-				output := strings.Trim(string(l), "\n")
-				fmt.Println(output)
+				// Remove \u0000 & \u0001 from output messages.
+				output := strings.ReplaceAll(string(l), "\u0000", "")
+				output = strings.ReplaceAll(output, "\u0001", "")
+				output = strings.Trim(output, "\n")
+				c.JSONStatus.SSHMessages = append(c.JSONStatus.SSHMessages, fmt.Sprintf("%s", output))
 			}
 		}
 	}
@@ -112,9 +121,9 @@ func Status(c Config) {
 		if url != "" && Status {
 			endpoint.Validate(url)
 			if r := endpoint.Validate(url); r {
-				fmt.Printf(" - %v (%v)\n", url, name)
+				c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" - %s (%s)", url, name))
 			} else {
-				fmt.Printf(" ! %v (%v)\n", url, name)
+				c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" ! %s (%s)", url, name))
 			}
 		}
 	}
@@ -139,14 +148,67 @@ func Status(c Config) {
 		}
 	}
 
-	cleanurls := unique(urls)
-	for _, url := range cleanurls {
-		endpoint.Validate(url)
-		if r := endpoint.Validate(url); r {
-			fmt.Printf(" - %v\n", url)
+	if c.JSONFormat {
+		PrintStatusJSON(c)
+		return
+	}
+
+	PrintStatusHumanReadable(c)
+
+}
+
+func PrintStatusJSON(c Config) {
+	jsonData, _ := json.Marshal(c.JSONStatus)
+	fmt.Println(string(jsonData))
+
+}
+func PrintStatusHumanReadable(c Config) {
+	for _, v := range c.JSONStatus.PortAvailability {
+		if strings.Contains(v, "is not able to start on port") {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
 		} else {
-			fmt.Printf(" ! %v\n", url)
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
 		}
+	}
+
+	for _, v := range c.JSONStatus.Services {
+		if strings.Contains(v.State, "not running") {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", v.Name)))
+		} else {
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s: Running as container %s\n", v.Name, v.Container)))
+		}
+	}
+
+	for _, v := range c.JSONStatus.Resolvers {
+		if strings.Contains(v, "not properly connected") {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+		} else {
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+		}
+	}
+
+	for _, v := range c.JSONStatus.Networks {
+		if strings.Contains(v, "is not connected to network") {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+		} else {
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+		}
+	}
+
+	for _, v := range c.JSONStatus.Volumes {
+		if strings.Contains(v, "has not been created") {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+		} else {
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+		}
+	}
+
+	for _, v := range c.JSONStatus.SSHMessages {
+		fmt.Printf("%s\n", v)
+	}
+
+	for _, v := range c.JSONStatus.URLValidations {
+		fmt.Printf("%s\n", v)
 	}
 
 }
