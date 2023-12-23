@@ -4,10 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/logrusorgru/aurora"
-	"github.com/pygmystack/pygmy/service/color"
 	"strings"
 
-	_ "github.com/logrusorgru/aurora"
+	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/interface/docker"
