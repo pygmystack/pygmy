@@ -108,21 +108,7 @@ func Status(c Config) {
 				output := strings.ReplaceAll(string(l), "\u0000", "")
 				output = strings.ReplaceAll(output, "\u0001", "")
 				output = strings.Trim(output, "\n")
-				c.JSONStatus.SSHMessages = append(c.JSONStatus.SSHMessages, fmt.Sprintf("%s", output))
-			}
-		}
-	}
-
-	for _, Container := range c.Services {
-		Status, _ := Container.Status()
-		name, _ := Container.GetFieldString("name")
-		url, _ := Container.GetFieldString("url")
-		if url != "" && Status {
-			endpoint.Validate(url)
-			if r := endpoint.Validate(url); r {
-				c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" - %s (%s)", url, name))
-			} else {
-				c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" ! %s (%s)", url, name))
+				c.JSONStatus.SSHMessages = append(c.JSONStatus.SSHMessages, output)
 			}
 		}
 	}
@@ -144,6 +130,16 @@ func Status(c Config) {
 					urls = append(urls, url)
 				}
 			}
+		}
+	}
+
+	cleanurls := unique(urls)
+	for _, url := range cleanurls {
+		endpoint.Validate(url)
+		if r := endpoint.Validate(url); !r {
+			c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" ! %v\n", url))
+		} else {
+			c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" - %v\n", url))
 		}
 	}
 
