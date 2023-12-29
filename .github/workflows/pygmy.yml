@@ -124,15 +124,14 @@ jobs:
       - name: Test JSON output
         run: |
           ./pygmy-linux-amd64 status --json > pygmy.json
-          cat pygmy.json
           cat pygmy.json | jq --raw-output '.service_status["amazeeio-dnsmasq"].state' | grep 'running'
-          cat pygmy.json | jq --raw-output '.service_status["amazeeio-dnsmasq"].image' | grep 'running'
+          cat pygmy.json | jq --raw-output '.service_status["amazeeio-dnsmasq"].image' | grep 'pygmystack/dnsmasq'
           cat pygmy.json | jq --raw-output '.service_status["amazeeio-haproxy"].state' | grep 'running'
-          cat pygmy.json | jq --raw-output '.service_status["amazeeio-haproxy"].image' | grep 'running'
+          cat pygmy.json | jq --raw-output '.service_status["amazeeio-haproxy"].image' | grep 'ygmystack/haproxy'
           cat pygmy.json | jq --raw-output '.service_status["amazeeio-mailhog"].state' | grep 'running'
-          cat pygmy.json | jq --raw-output '.service_status["amazeeio-mailhog"].image' | grep 'running'
+          cat pygmy.json | jq --raw-output '.service_status["amazeeio-mailhog"].image' | grep 'pygmystack/mailhog'
           cat pygmy.json | jq --raw-output '.service_status["amazeeio-ssh-agent"].state' | grep 'running'
-          cat pygmy.json | jq --raw-output '.service_status["amazeeio-ssh-agent"].image' | grep 'running'
+          cat pygmy.json | jq --raw-output '.service_status["amazeeio-ssh-agent"].image' | grep 'pygmystack/ssh-agent'
 
       - name: Test the amazeeio-network for expected results
         run: |
