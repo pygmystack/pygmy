@@ -118,8 +118,17 @@ func Status(c Config) {
 	}
 
 	// List out all running projects to get their URL.
-	containers, _ := docker.DockerContainerList()
 	var urls []string
+
+	for _, Container := range c.Services {
+		Status, _ := Container.Status()
+		url, _ := Container.GetFieldString("url")
+		if url != "" && Status {
+			urls = append(urls, fmt.Sprintf("%s", url))
+		}
+	}
+
+	containers, _ := docker.DockerContainerList()
 	for _, container := range containers {
 		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
 			obj, _ := docker.DockerInspect(container.ID)
