@@ -124,7 +124,7 @@ func Status(c Config) {
 		Status, _ := Container.Status()
 		url, _ := Container.GetFieldString("url")
 		if url != "" && Status {
-			urls = append(urls, fmt.Sprintf("%s", url))
+			urls = append(urls, url)
 		}
 	}
 
