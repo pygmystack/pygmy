@@ -25,6 +25,9 @@ func Status(c Config) {
 		}
 	}
 
+	// Ensure the services struct is not nil.
+	c.JSONStatus.Services = make(map[string]StatusJSONStatus)
+
 	Containers, _ := docker.DockerContainerList()
 	for _, Container := range Containers {
 		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
@@ -39,16 +42,18 @@ func Status(c Config) {
 						agentPresent = true
 					}
 					if enabled && !discrete && name != "" {
-						st := StatusJSONStatus{
-							Name:      name,
-							Container: name,
-						}
 						if s, _ := Service.Status(); s {
-							st.State = "running"
-							c.JSONStatus.Services = append(c.JSONStatus.Services, st)
+							c.JSONStatus.Services[name] = StatusJSONStatus{
+								Container: name,
+								ImageRef:  Service.Image,
+								State:     "running",
+							}
 						} else {
-							st.State = "not running"
-							c.JSONStatus.Services = append(c.JSONStatus.Services, st)
+							c.JSONStatus.Services[name] = StatusJSONStatus{
+								Container: name,
+								ImageRef:  Service.Image,
+								State:     "not running",
+							}
 						}
 					}
 				}
@@ -61,12 +66,11 @@ func Status(c Config) {
 			name, _ := Service.GetFieldString("name")
 			discrete, _ := Service.GetFieldBool("discrete")
 			if !discrete {
-				st := StatusJSONStatus{
-					Name:      name,
+				c.JSONStatus.Services[name] = StatusJSONStatus{
 					Container: name,
+					ImageRef:  Service.Image,
 					State:     "not running",
 				}
-				c.JSONStatus.Services = append(c.JSONStatus.Services, st)
 			}
 		}
 	}
@@ -166,11 +170,11 @@ func PrintStatusHumanReadable(c Config) {
 		}
 	}
 
-	for _, v := range c.JSONStatus.Services {
+	for k, v := range c.JSONStatus.Services {
 		if strings.Contains(v.State, "not running") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", v.Name)))
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", k)))
 		} else {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s: Running as container %s\n", v.Name, v.Container)))
+			color.Print(aurora.Green(fmt.Sprintf("[*] %s: Running as container %s\n", k, v.Container)))
 		}
 	}
 

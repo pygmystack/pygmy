@@ -46,18 +46,18 @@ type Config struct {
 }
 
 type StatusJSON struct {
-	PortAvailability []string           `json:"port-availability"`
-	Services         []StatusJSONStatus `json:"service-status"`
-	Networks         []string           `json:"networks"`
-	Resolvers        []string           `json:"resolvers"`
-	Volumes          []string           `json:"volumes"`
-	SSHMessages      []string           `json:"ssh-messages"`
-	URLValidations   []string           `json:"url-validations"`
+	PortAvailability []string                    `json:"port_availability"`
+	Services         map[string]StatusJSONStatus `json:"service_status"`
+	Networks         []string                    `json:"networks"`
+	Resolvers        []string                    `json:"resolvers"`
+	Volumes          []string                    `json:"volumes"`
+	SSHMessages      []string                    `json:"ssh_messages"`
+	URLValidations   []string                    `json:"url_validations"`
 }
 
 type StatusJSONStatus struct {
-	Name      string `json:"name"`
 	Container string `json:"container"`
+	ImageRef  string `json:"image"`
 	State     string `json:"state"`
 }
 
