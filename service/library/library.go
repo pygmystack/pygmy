@@ -58,7 +58,7 @@ type StatusJSON struct {
 type StatusJSONStatus struct {
 	Container string `json:"container"`
 	ImageRef  string `json:"image"`
-	State     string `json:"state"`
+	State     bool   `json:"running"`
 }
 
 // Key is a struct with SSH key details.

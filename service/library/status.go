@@ -46,13 +46,12 @@ func Status(c Config) {
 							c.JSONStatus.Services[name] = StatusJSONStatus{
 								Container: name,
 								ImageRef:  Service.Image,
-								State:     "running",
+								State:     true,
 							}
 						} else {
 							c.JSONStatus.Services[name] = StatusJSONStatus{
 								Container: name,
 								ImageRef:  Service.Image,
-								State:     "not running",
 							}
 						}
 					}
@@ -69,7 +68,6 @@ func Status(c Config) {
 				c.JSONStatus.Services[name] = StatusJSONStatus{
 					Container: name,
 					ImageRef:  Service.Image,
-					State:     "not running",
 				}
 			}
 		}
@@ -180,10 +178,10 @@ func PrintStatusHumanReadable(c Config) {
 	}
 
 	for k, v := range c.JSONStatus.Services {
-		if strings.Contains(v.State, "not running") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", k)))
-		} else {
+		if v.State {
 			color.Print(aurora.Green(fmt.Sprintf("[*] %s: Running as container %s\n", k, v.Container)))
+		} else {
+			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", k)))
 		}
 	}
 
