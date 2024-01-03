@@ -14,7 +14,7 @@ import (
 func NewAdder() model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "pygmystack/ssh-agent",
+			Image: "pygmystack/ssh-agent:main",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",

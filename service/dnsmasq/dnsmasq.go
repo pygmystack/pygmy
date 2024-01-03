@@ -13,7 +13,7 @@ import (
 func New(c *model.Params) model.Service {
 	return model.Service{
 		Config: container.Config{
-			Image: "pygmystack/dnsmasq",
+			Image: "pygmystack/dnsmasq:main",
 			Cmd: []string{
 				"--log-facility=-",
 				"-A",
