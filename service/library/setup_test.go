@@ -16,11 +16,11 @@ func TestSetup(t *testing.T) {
 		Services: map[string]model.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
-				Image: "example-amazeeio-dnsmasq",
+				Image: "example-amazeeio-dnsmasq:main",
 			},
 			"amazeeio-mailhog": {
 				// Set an override config value so it can be tested.
-				Image: "example-amazeeio-mailhog",
+				Image: "example-amazeeio-mailhog:main",
 			},
 		},
 	}
@@ -38,8 +38,8 @@ func TestSetup(t *testing.T) {
 		So(c.SortedServices[3], ShouldEqual, "amazeeio-mailhog")
 		So(c.SortedServices[4], ShouldEqual, "amazeeio-ssh-agent-add-key")
 		// Test Image Override configuration.
-		So(c.Services["amazeeio-dnsmasq"].Image, ShouldEqual, "example-amazeeio-dnsmasq")
-		So(c.Services["amazeeio-dnsmasq"].Config.Image, ShouldEqual, "example-amazeeio-dnsmasq")
+		So(c.Services["amazeeio-dnsmasq"].Image, ShouldEqual, "example-amazeeio-dnsmasq:main")
+		So(c.Services["amazeeio-dnsmasq"].Config.Image, ShouldEqual, "example-amazeeio-dnsmasq:main")
 		So(c.Services["amazeeio-haproxy"].Image, ShouldEqual, "pygmystack/haproxy:main")
 		So(c.Services["amazeeio-haproxy"].Config.Image, ShouldEqual, "pygmystack/haproxy:main")
 		So(c.Services["amazeeio-mailhog"].Image, ShouldEqual, "example-amazeeio-mailhog:main")
