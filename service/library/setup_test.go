@@ -40,11 +40,11 @@ func TestSetup(t *testing.T) {
 		// Test Image Override configuration.
 		So(c.Services["amazeeio-dnsmasq"].Image, ShouldEqual, "example-amazeeio-dnsmasq")
 		So(c.Services["amazeeio-dnsmasq"].Config.Image, ShouldEqual, "example-amazeeio-dnsmasq")
-		So(c.Services["amazeeio-haproxy"].Image, ShouldEqual, "pygmystack/haproxy")
-		So(c.Services["amazeeio-haproxy"].Config.Image, ShouldEqual, "pygmystack/haproxy")
-		So(c.Services["amazeeio-mailhog"].Image, ShouldEqual, "example-amazeeio-mailhog")
-		So(c.Services["amazeeio-mailhog"].Config.Image, ShouldEqual, "example-amazeeio-mailhog")
-		So(c.Services["amazeeio-ssh-agent"].Image, ShouldEqual, "pygmystack/ssh-agent")
-		So(c.Services["amazeeio-ssh-agent"].Config.Image, ShouldEqual, "pygmystack/ssh-agent")
+		So(c.Services["amazeeio-haproxy"].Image, ShouldEqual, "pygmystack/haproxy:main")
+		So(c.Services["amazeeio-haproxy"].Config.Image, ShouldEqual, "pygmystack/haproxy:main")
+		So(c.Services["amazeeio-mailhog"].Image, ShouldEqual, "example-amazeeio-mailhog:main")
+		So(c.Services["amazeeio-mailhog"].Config.Image, ShouldEqual, "example-amazeeio-mailhog:main")
+		So(c.Services["amazeeio-ssh-agent"].Image, ShouldEqual, "pygmystack/ssh-agent:main")
+		So(c.Services["amazeeio-ssh-agent"].Config.Image, ShouldEqual, "pygmystack/ssh-agent:main")
 	})
 }
