@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"strings"
 
 	"github.com/logrusorgru/aurora"
 
@@ -13,7 +12,7 @@ import (
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string, passcode string) error {
+func SshKeyAdd(c Config, key string) error {
 
 	Setup(&c)
 
@@ -31,38 +30,24 @@ func SshKeyAdd(c Config, key string, passcode string) error {
 		if purpose == "addkeys" {
 
 			// Validate SSH Key before adding.
-			valid, err := agent.Validate(key, passcode)
+			valid, err := agent.Validate(key)
 			if valid {
 				color.Print(aurora.Green(fmt.Sprintf("Validation success for SSH key %v\n", key)))
-
 			} else {
+				if err.Error() == "ssh: this private key is passphrase protected" {
+					color.Print(aurora.Green(fmt.Sprintf("Validation success for protected SSH key %v\n", key)))
+				}
 				if err.Error() == "ssh: no key found" {
 					return fmt.Errorf(fmt.Sprintf("[ ] Validation failure for SSH key %v\n", key))
 				}
-				if err.Error() == "ssh: this private key is passphrase protected" {
-					return fmt.Errorf(fmt.Sprintf("[ ] Passcode not provided for SSH key %v\n", key))
-				}
-				if err.Error() == "x509: decryption password incorrect" {
-					return fmt.Errorf(fmt.Sprintf("[ ] Passcode incorrectly provided for SSH key %v\n", key))
-				}
 			}
 
-			if passcode == "" {
-				if runtime.GOOS == "windows" {
-					Container.Config.Cmd = []string{"ssh-add", "/key"}
-					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
-				} else {
-					Container.Config.Cmd = []string{"ssh-add", key}
-					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
-				}
+			if runtime.GOOS == "windows" {
+				Container.Config.Cmd = []string{"ssh-add", "/key"}
+				Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
 			} else {
-				if runtime.GOOS == "windows" {
-					Container.Config.Cmd = []string{"ssh-add", "/key"}
-					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
-				} else {
-					Container.Config.Cmd = []string{"ssh-add", key}
-					Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
-				}
+				Container.Config.Cmd = []string{"ssh-add", key}
+				Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 			}
 
 			if e := Container.Create(); e != nil {

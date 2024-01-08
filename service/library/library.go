@@ -3,6 +3,7 @@ package library
 
 import (
 	"fmt"
+
 	"github.com/docker/docker/api/types/volume"
 
 	"github.com/docker/docker/api/types"
@@ -42,8 +43,7 @@ type Config struct {
 
 // Key is a struct with SSH key details.
 type Key struct {
-	Path       string `yaml:"path"`
-	Passphrase string `yaml:"passphrase"`
+	Path string `yaml:"path"`
 }
 
 func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
