@@ -44,7 +44,7 @@ func SshKeyAdd(c Config, key string) error {
 			}
 
 			if runtime.GOOS == "windows" {
-				Container.Config.Cmd = []string{"ssh-add", "/key"}
+				Container.Config.Cmd = []string{"windows-key-add", "/key"}
 				Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:/key", key))
 			} else {
 				Container.Config.Cmd = []string{"ssh-add", key}
