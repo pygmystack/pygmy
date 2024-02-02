@@ -3,9 +3,8 @@ package library
 
 import (
 	"fmt"
-	"github.com/docker/docker/api/types/volume"
-
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/imdario/mergo"
 
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -33,11 +32,33 @@ type Config struct {
 	// NoDefaults will prevent default configuration items.
 	Defaults bool
 
+	// JSONFormat indicates the `status` command should print to stdout in JSON format.
+	JSONFormat bool
+
+	// JSONStatus contains JSON status content.
+	JSONStatus StatusJSON
+
 	// Resolvers is for all resolvers
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
 
 	// Volumes will ensure names volumes are created
 	Volumes map[string]volume.Volume
+}
+
+type StatusJSON struct {
+	PortAvailability []string                    `json:"port_availability"`
+	Services         map[string]StatusJSONStatus `json:"service_status"`
+	Networks         []string                    `json:"networks"`
+	Resolvers        []string                    `json:"resolvers"`
+	Volumes          []string                    `json:"volumes"`
+	SSHMessages      []string                    `json:"ssh_messages"`
+	URLValidations   []string                    `json:"url_validations"`
+}
+
+type StatusJSONStatus struct {
+	Container string `json:"container"`
+	ImageRef  string `json:"image"`
+	State     bool   `json:"running"`
 }
 
 // Key is a struct with SSH key details.

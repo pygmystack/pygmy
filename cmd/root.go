@@ -135,7 +135,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
-		if os.Args[1] != "completion" {
+		if os.Args[1] != "completion" && !jsonOutput {
 			fmt.Println("Using config file:", viper.ConfigFileUsed())
 		}
 	}

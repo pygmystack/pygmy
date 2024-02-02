@@ -37,7 +37,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 							if err != nil {
 								messages = append(messages, CompatibilityCheck{
 									State:   true,
-									Message: fmt.Sprintf("[*] %v is able to start on port %v", name, p),
+									Message: fmt.Sprintf("%v is able to start on port %v", name, p),
 								})
 							} else {
 								conn, err := net.Listen("tcp", ":"+p)
@@ -47,7 +47,7 @@ func DryRun(c *Config) []CompatibilityCheck {
 								if err != nil {
 									messages = append(messages, CompatibilityCheck{
 										State:   false,
-										Message: fmt.Sprintf("[ ] %v is not able to start on port %v: %v", name, p, err),
+										Message: fmt.Sprintf("%v is not able to start on port %v: %v", name, p, err),
 									})
 								}
 							}
