@@ -121,6 +121,18 @@ jobs:
           grep "127.0.0.1" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
           grep "docker.amazee.io" /usr/lib/systemd/resolved.conf.d/docker.amazee.io.conf;
 
+      - name: Test JSON output
+        run: |
+          ./pygmy-linux-amd64 status --json > pygmy.json
+          cat pygmy.json | jq '.service_status["amazeeio-dnsmasq"].running' | grep 'true'
+          cat pygmy.json | jq '.service_status["amazeeio-dnsmasq"].image' | grep 'pygmystack/dnsmasq'
+          cat pygmy.json | jq '.service_status["amazeeio-haproxy"].running' | grep 'true'
+          cat pygmy.json | jq '.service_status["amazeeio-haproxy"].image' | grep 'ygmystack/haproxy'
+          cat pygmy.json | jq '.service_status["amazeeio-mailhog"].running' | grep 'true'
+          cat pygmy.json | jq '.service_status["amazeeio-mailhog"].image' | grep 'pygmystack/mailhog'
+          cat pygmy.json | jq '.service_status["amazeeio-ssh-agent"].running' | grep 'true'
+          cat pygmy.json | jq '.service_status["amazeeio-ssh-agent"].image' | grep 'pygmystack/ssh-agent'
+
       - name: Test the amazeeio-network for expected results
         run: |
           docker network inspect amazeeio-network | jq '.[].Name' | grep "amazeeio-network";

@@ -25,6 +25,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var jsonOutput bool
+
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:     "status",
@@ -34,6 +36,9 @@ var statusCmd = &cobra.Command{
 This includes the docker services, the resolver and SSH key status`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		if jsonOutput {
+			c.JSONFormat = true
+		}
 		library.Status(c)
 
 	},
@@ -42,5 +47,6 @@ This includes the docker services, the resolver and SSH key status`,
 func init() {
 
 	rootCmd.AddCommand(statusCmd)
+	statusCmd.Flags().BoolVarP(&jsonOutput, "json", "", false, "Output status in JSON format")
 
 }
