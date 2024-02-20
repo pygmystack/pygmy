@@ -14,11 +14,9 @@ require (
 	github.com/opencontainers/image-spec v1.1.0-rc.6
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/cobra v1.2.1
-	github.com/spf13/viper v1.17.0
-	golang.org/x/crypto v0.15.0
 	github.com/spf13/viper v1.18.2
 	golang.org/x/crypto v0.18.0
-  golang.org/x/term v0.15.0
+	golang.org/x/term v0.16.0
 )
 
 require (
@@ -54,7 +52,6 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
