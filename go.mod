@@ -3,7 +3,7 @@ module github.com/pygmystack/pygmy
 go 1.21
 
 require (
-	github.com/containerd/containerd v1.6.19
+	github.com/containerd/containerd v1.7.13
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/ghodss/yaml v1.0.0
@@ -11,16 +11,18 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mattn/go-colorable v0.1.13
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/opencontainers/image-spec v1.1.0-rc.6
+	github.com/opencontainers/image-spec v1.1.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/spf13/cobra v1.2.1
 	github.com/spf13/viper v1.18.2
-	golang.org/x/crypto v0.18.0
+	golang.org/x/crypto v0.19.0
 	golang.org/x/term v0.16.0
 )
 
 require (
 	github.com/Microsoft/go-winio v0.6.1 // indirect
+	github.com/Microsoft/hcsshim v0.11.4 // indirect
+	github.com/containerd/log v0.1.0 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -52,7 +54,7 @@ require (
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/mod v0.12.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.13.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231120223509-83a465c0220f // indirect
