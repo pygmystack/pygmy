@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+
 	. "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/service/color"
@@ -39,13 +40,11 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		Passphrase, _ := cmd.Flags().GetString("passphrase")
 		var Keys []library.Key
 
 		if Key != "" {
 			thisKey := library.Key{
-				Path:       Key,
-				Passphrase: Passphrase,
+				Path: Key,
 			}
 			Keys = append(Keys, thisKey)
 		} else {
@@ -56,7 +55,7 @@ var addkeyCmd = &cobra.Command{
 		}
 
 		for _, k := range Keys {
-			if e := library.SshKeyAdd(c, k.Path, k.Passphrase); e != nil {
+			if e := library.SshKeyAdd(c, k.Path); e != nil {
 				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
@@ -75,14 +74,6 @@ var addkeyCmd = &cobra.Command{
 }
 
 func init() {
-
 	rootCmd.AddCommand(addkeyCmd)
 	addkeyCmd.Flags().StringP("key", "k", "", "Path of SSH key to add")
-	addkeyCmd.Flags().StringP("passphrase", "p", "", "Passphrase of the SSH key to add")
-
-	err := addkeyCmd.Flags().MarkHidden("passphrase")
-	if err != nil {
-		fmt.Println(err)
-	}
-
 }

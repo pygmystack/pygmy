@@ -3,11 +3,15 @@ package model
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	. "github.com/logrusorgru/aurora"
+	"golang.org/x/term"
 
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/interface/docker"
@@ -49,6 +53,7 @@ func (Service *Service) Start() error {
 
 	name, err := Service.GetFieldString("name")
 	discrete, _ := Service.GetFieldBool("discrete")
+	interactive, _ := Service.GetFieldBool("interactive")
 	output, _ := Service.GetFieldBool("output")
 	purpose, _ := Service.GetFieldString("purpose")
 
@@ -83,20 +88,27 @@ func (Service *Service) Start() error {
 		}
 	}
 
-	err = Service.DockerRun()
-	if err != nil {
-		return err
-	}
+	if !interactive {
+		err = Service.DockerRun()
+		if err != nil {
+			return err
+		}
 
-	l, _ := Service.DockerLogs()
-	if output && string(l) != "" {
-		fmt.Println(string(l))
-	}
+		l, _ := Service.DockerLogs()
+		if output && string(l) != "" {
+			fmt.Println(string(l))
+		}
 
-	if c, err := Service.GetRunning(); c.ID != "" {
-		return nil
-	} else if err != nil {
-		return err
+		if c, err := Service.GetRunning(); c.ID != "" {
+			return nil
+		} else if err != nil {
+			return err
+		}
+	} else {
+		err = Service.DockerRunInteractive()
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -318,6 +330,78 @@ func (Service *Service) DockerRun() error {
 		return fmt.Errorf("container config is missing label for name")
 	}
 	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+// DockerRunInteractive will start an interactive container.
+func (Service *Service) DockerRunInteractive() error {
+
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts()
+	cli.NegotiateAPIVersion(ctx)
+	if err != nil {
+		return err
+	}
+
+	name, e := Service.GetFieldString("name")
+	if e != nil {
+		return fmt.Errorf("container config is missing label for name")
+	}
+
+	waiter, err := docker.DockerContainerAttach(name, types.ContainerAttachOptions{
+		Stderr: true,
+		Stdout: true,
+		Stdin:  true,
+		Stream: true,
+	})
+	if err != nil {
+		return err
+	}
+
+	// Connect the stdin/stdout/stderr streams to the container.
+	go func() {
+		if _, err := io.Copy(os.Stdout, waiter.Reader); err != nil {
+			panic(fmt.Sprintf("Error streaming Stdout: %s", err))
+		}
+	}()
+
+	go func() {
+		if _, err := io.Copy(os.Stderr, waiter.Reader); err != nil {
+			panic(fmt.Sprintf("Error streaming Stderr: %s", err))
+		}
+	}()
+
+	go func() {
+		if _, err := io.Copy(waiter.Conn, os.Stdin); err != nil {
+			panic(fmt.Sprintf("Error streaming Stdin: %s", err))
+		}
+	}()
+
+	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+		return err
+	}
+
+	// Manipulate the terminal raw mode to support passing password prompts.
+	fd := int(os.Stdin.Fd())
+	var oldState *term.State
+	if term.IsTerminal(fd) {
+		oldState, err = term.MakeRaw(fd)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			if err := term.Restore(fd, oldState); err != nil {
+				panic(fmt.Sprintf("Error restoring terminal: %s", err))
+			}
+		}()
+	}
+
+	if err := docker.DockerContainerWait(name, container.WaitConditionNotRunning); err != nil {
 		return err
 	}
 

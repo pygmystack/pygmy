@@ -453,6 +453,19 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	return resp, err
 }
 
+// DockerContainerAttach will return an attached response to a container.
+func DockerContainerAttach(ID string, options types.ContainerAttachOptions) (types.HijackedResponse, error) {
+	cli, ctx, err := NewClient()
+	if err != nil {
+		return types.HijackedResponse{}, err
+	}
+	resp, err := cli.ContainerAttach(ctx, ID, options)
+	if err != nil {
+		return types.HijackedResponse{}, err
+	}
+	return resp, err
+}
+
 // DockerContainerStart will run an existing container.
 func DockerContainerStart(ID string, options types.ContainerStartOptions) error {
 	cli, ctx, err := NewClient()
@@ -463,6 +476,25 @@ func DockerContainerStart(ID string, options types.ContainerStartOptions) error 
 		return err
 	}
 	return err
+}
+
+// DockerContainerWait will wait for the specificied container condition.
+func DockerContainerWait(ID string, condition container.WaitCondition) error {
+	cli, ctx, err := NewClient()
+	if err != nil {
+		return err
+	}
+	statusCh, errCh := cli.ContainerWait(ctx, ID, condition)
+	select {
+	case err := <-errCh:
+		if err != nil {
+			return err
+		}
+	case <-statusCh:
+		return nil
+	}
+
+	return nil
 }
 
 // DockerContainerLogs will synchronously (blocking, non-concurrently) print
