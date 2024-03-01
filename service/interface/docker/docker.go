@@ -455,7 +455,7 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 }
 
 // DockerContainerAttach will return an attached response to a container.
-func DockerContainerAttach(ID string, options types.ContainerAttachOptions) (types.HijackedResponse, error) {
+func DockerContainerAttach(ID string, options container.AttachOptions) (types.HijackedResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return types.HijackedResponse{}, err
