@@ -31,10 +31,10 @@ func New() model.Service {
 		HostConfig: container.HostConfig{
 			AutoRemove: false,
 			IpcMode:    "private",
-			RestartPolicy: struct {
-				Name              string
-				MaximumRetryCount int
-			}{Name: "unless-stopped", MaximumRetryCount: 0},
+			RestartPolicy: container.RestartPolicy{
+				Name:              "unless-stopped",
+				MaximumRetryCount: 0,
+			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

@@ -44,10 +44,10 @@ func New(c *model.Params) model.Service {
 					},
 				},
 			},
-			RestartPolicy: struct {
-				Name              string
-				MaximumRetryCount int
-			}{Name: "unless-stopped", MaximumRetryCount: 0},
+			RestartPolicy: container.RestartPolicy{
+				Name:              "unless-stopped",
+				MaximumRetryCount: 0,
+			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

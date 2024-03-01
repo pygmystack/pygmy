@@ -30,10 +30,10 @@ func New(c *model.Params) model.Service {
 			Binds:        []string{"/var/run/docker.sock:/tmp/docker.sock"},
 			AutoRemove:   false,
 			PortBindings: nil,
-			RestartPolicy: struct {
-				Name              string
-				MaximumRetryCount int
-			}{Name: "unless-stopped", MaximumRetryCount: 0},
+			RestartPolicy: container.RestartPolicy{
+				Name:              "unless-stopped",
+				MaximumRetryCount: 0,
+			},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}
