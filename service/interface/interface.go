@@ -329,7 +329,7 @@ func (Service *Service) DockerRun() error {
 	if e != nil {
 		return fmt.Errorf("container config is missing label for name")
 	}
-	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+	if err := docker.DockerContainerStart(name, container.StartOptions{}); err != nil {
 		return err
 	}
 
@@ -352,7 +352,7 @@ func (Service *Service) DockerRunInteractive() error {
 		return fmt.Errorf("container config is missing label for name")
 	}
 
-	waiter, err := docker.DockerContainerAttach(name, types.ContainerAttachOptions{
+	waiter, err := docker.DockerContainerAttach(name, container.AttachOptions{
 		Stderr: true,
 		Stdout: true,
 		Stdin:  true,
@@ -381,7 +381,7 @@ func (Service *Service) DockerRunInteractive() error {
 		}
 	}()
 
-	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+	if err := docker.DockerContainerStart(name, container.StartOptions{}); err != nil {
 		return err
 	}
 

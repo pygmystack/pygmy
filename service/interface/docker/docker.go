@@ -14,6 +14,7 @@ import (
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
@@ -48,7 +49,7 @@ func DockerContainerList() ([]types.Container, error) {
 		fmt.Println(err)
 	}
 
-	containers, err := cli.ContainerList(ctx, types.ContainerListOptions{
+	containers, err := cli.ContainerList(ctx, container.ListOptions{
 		All: true,
 	})
 	if err != nil {
@@ -60,7 +61,7 @@ func DockerContainerList() ([]types.Container, error) {
 }
 
 // DockerImageList will return a slice of Docker images.
-func DockerImageList() ([]types.ImageSummary, error) {
+func DockerImageList() ([]image.Summary, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		fmt.Println(err)
@@ -70,7 +71,7 @@ func DockerImageList() ([]types.ImageSummary, error) {
 		All: true,
 	})
 	if err != nil {
-		return []types.ImageSummary{}, err
+		return []image.Summary{}, err
 	}
 
 	return images, nil
@@ -219,7 +220,7 @@ func DockerRemove(id string) error {
 	if err != nil {
 		return err
 	}
-	err = cli.ContainerRemove(ctx, id, types.ContainerRemoveOptions{})
+	err = cli.ContainerRemove(ctx, id, container.RemoveOptions{})
 	if err != nil {
 		return err
 	}
@@ -454,7 +455,7 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 }
 
 // DockerContainerAttach will return an attached response to a container.
-func DockerContainerAttach(ID string, options types.ContainerAttachOptions) (types.HijackedResponse, error) {
+func DockerContainerAttach(ID string, options container.AttachOptions) (types.HijackedResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return types.HijackedResponse{}, err
@@ -467,12 +468,12 @@ func DockerContainerAttach(ID string, options types.ContainerAttachOptions) (typ
 }
 
 // DockerContainerStart will run an existing container.
-func DockerContainerStart(ID string, options types.ContainerStartOptions) error {
+func DockerContainerStart(ID string, options container.StartOptions) error {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return err
 	}
-	if err := cli.ContainerStart(ctx, ID, types.ContainerStartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, ID, container.StartOptions{}); err != nil {
 		return err
 	}
 	return err
@@ -505,7 +506,7 @@ func DockerContainerLogs(ID string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	b, e := cli.ContainerLogs(ctx, ID, types.ContainerLogsOptions{
+	b, e := cli.ContainerLogs(ctx, ID, container.LogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
 	})

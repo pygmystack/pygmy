@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/pygmystack/pygmy/service/haproxy"
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -29,7 +30,7 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock"}))
 		So(obj.HostConfig.PortBindings, ShouldEqual, nat.PortMap(nil))
-		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
+		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, container.RestartPolicyMode("unless-stopped"))
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"80/tcp": []nat.PortBinding{{HostIP: "", HostPort: "80"}}, "443/tcp": []nat.PortBinding{{HostIP: "", HostPort: "443"}}}))
 	})

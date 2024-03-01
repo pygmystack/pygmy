@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/pygmystack/pygmy/service/interface/docker"
@@ -75,7 +74,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container started", func() {
-				err := docker.DockerContainerStart(dindContainerName, types.ContainerStartOptions{})
+				err := docker.DockerContainerStart(dindContainerName, container.StartOptions{})
 				So(err, ShouldEqual, nil)
 			})
 		})
@@ -88,7 +87,7 @@ func setup(t *testing.T, config *config) {
 				time.Sleep(time.Second * 2)
 			})
 
-			e := docker.DockerContainerStart(dindContainerName, types.ContainerStartOptions{})
+			e := docker.DockerContainerStart(dindContainerName, container.StartOptions{})
 			if e != nil {
 				fmt.Println(e)
 			}
