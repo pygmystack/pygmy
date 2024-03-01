@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/pygmystack/pygmy/service/dnsmasq"
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -28,7 +29,7 @@ func Test(t *testing.T) {
 		So(fmt.Sprint(obj.HostConfig.CapAdd), ShouldEqual, fmt.Sprint([]string{"NET_ADMIN"}))
 		So(obj.HostConfig.IpcMode.IsPrivate(), ShouldBeTrue)
 		So(fmt.Sprint(obj.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"53/tcp": []nat.PortBinding{{HostIP: "", HostPort: "6053"}}, "53/udp": []nat.PortBinding{{HostIP: "", HostPort: "6053"}}}))
-		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, "unless-stopped")
+		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, container.RestartPolicyMode("unless-stopped"))
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldBeZeroValue)
 	})
 }
