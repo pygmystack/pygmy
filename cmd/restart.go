@@ -39,7 +39,6 @@ var restartCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		Passphrase, _ := cmd.Flags().GetString("passphrase")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
@@ -54,8 +53,7 @@ var restartCmd = &cobra.Command{
 
 			if !FoundKey {
 				thisKey := library.Key{
-					Path:       Key,
-					Passphrase: Passphrase,
+					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
 			}
@@ -70,17 +68,9 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-	var passphrase string
 
 	rootCmd.AddCommand(restartCmd)
 	restartCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
-	restartCmd.Flags().StringP("passphrase", "", passphrase, "Passphrase of the SSH key to add")
 	restartCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	restartCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-
-	err := restartCmd.Flags().MarkHidden("passphrase")
-	if err != nil {
-		fmt.Println(err)
-	}
-
 }

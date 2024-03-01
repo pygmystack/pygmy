@@ -6,6 +6,7 @@ package key
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+
 	model "github.com/pygmystack/pygmy/service/interface"
 )
 
@@ -15,19 +16,22 @@ func NewAdder() model.Service {
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
-				"pygmy.defaults": "true",
-				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-ssh-agent-add-key",
-				"pygmy.network":  "amazeeio-network",
-				"pygmy.discrete": "true",
-				"pygmy.output":   "false",
-				"pygmy.purpose":  "addkeys",
-				"pygmy.weight":   "31",
+				"pygmy.defaults":    "true",
+				"pygmy.enable":      "true",
+				"pygmy.name":        "amazeeio-ssh-agent-add-key",
+				"pygmy.network":     "amazeeio-network",
+				"pygmy.discrete":    "true",
+				"pygmy.interactive": "true",
+				"pygmy.output":      "false",
+				"pygmy.purpose":     "addkeys",
+				"pygmy.weight":      "31",
 			},
+			Tty:       true,
+			OpenStdin: true,
 		},
 		HostConfig: container.HostConfig{
-			IpcMode:     "private",
 			AutoRemove:  false,
+			IpcMode:     "private",
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
 		NetworkConfig: network.NetworkingConfig{},

@@ -55,7 +55,7 @@ func List(service model.Service) ([]byte, error) {
 }
 
 // Validate will validate if an SSH key is valid.
-func Validate(filePath, passcode string) (bool, error) {
+func Validate(filePath string) (bool, error) {
 
 	filePath = strings.TrimRight(filePath, ".pub")
 	content, err := os.ReadFile(filePath)
@@ -63,16 +63,9 @@ func Validate(filePath, passcode string) (bool, error) {
 		fmt.Println("Err")
 	}
 
-	if passcode == "" {
-		_, err = ssh.ParsePrivateKey(content)
-		if err != nil {
-			return false, err
-		}
-	} else {
-		_, err = ssh.ParsePrivateKeyWithPassphrase(content, []byte(passcode))
-		if err != nil {
-			return false, err
-		}
+	_, err = ssh.ParsePrivateKey(content)
+	if err != nil {
+		return false, err
 	}
 
 	return true, nil
