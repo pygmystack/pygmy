@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	. "github.com/logrusorgru/aurora"
 
@@ -317,7 +318,7 @@ func (Service *Service) DockerRun() error {
 	if e != nil {
 		return fmt.Errorf("container config is missing label for name")
 	}
-	if err := docker.DockerContainerStart(name, types.ContainerStartOptions{}); err != nil {
+	if err := docker.DockerContainerStart(name, container.StartOptions{}); err != nil {
 		return err
 	}
 
