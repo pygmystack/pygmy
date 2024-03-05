@@ -204,20 +204,32 @@ jobs:
           ./pygmy-linux-amd64 status;
 
       - name: SSH Key test
+        id: ssh-key-test
         run: |
           ./pygmy-linux-amd64 addkey /home/runner/.ssh/id_rsa;
           sleep 10
           ./pygmy-linux-amd64 status;
           ./pygmy-linux-amd64 status | grep 'RSA';
           docker run --rm -i --volumes-from amazeeio-ssh-agent ghcr.io/pygmystack/ssh-agent:latest /usr/bin/ssh-add -l | grep 'RSA';
+        continue-on-error: true
 
       - name: SSH encrypted Key test
+        id: ssh-enc-key-test
         run: |
           expect -f .github/workflows/expect.exp;
           sleep 10
           ./pygmy-linux-amd64 status;
           ./pygmy-linux-amd64 status | grep 'ED25519';
           docker run --rm -i --volumes-from amazeeio-ssh-agent ghcr.io/pygmystack/ssh-agent:latest /usr/bin/ssh-add -l | grep 'ED25519';
+        continue-on-error: true
+
+      - name: Check & dump on SSH failures
+        if: steps.ssh-key-test.outcome != 'success' || steps.ssh-enc-key-test.outcome != 'success'
+        run: |
+          docker logs amazeeio-ssh-agent
+          ./pygmy-linux-amd64 export -o ./exported-config-err.yml
+          cat ./exported-config-err.yml
+          exit 1
 
       - name: Clone the official examples
         run: |
