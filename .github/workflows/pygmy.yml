@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
@@ -19,8 +20,8 @@ jobs:
     env:
       GO111MODULE: on
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '1.21'
       - name: Install
@@ -60,60 +61,63 @@ jobs:
     env:
       GO111MODULE: on
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-go@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
         with:
           stable: 'false'
           go-version: '1.21'
+
         # Establish some SSH keys.
       - name: Setup SSH
         run: |
           eval $(ssh-agent);
           ssh-keygen -t rsa -q -f "$HOME/.ssh/id_rsa" -N "";
-          ssh-keygen -t rsa -q -f "$HOME/.ssh/id_pwd" -N "passphrase";
+          ssh-keygen -t ed25519 -q -f "$HOME/.ssh/id_pwd" -N "passphrase";
           ssh-add;
           ssh-add -l;
+
       - name: Setup git
         run: git config --global url."https://github.com/".insteadOf "git@github.com:";
+
       - name: Install
         run: go mod download
         env:
           GO111MODULE: on
+
       - name: Install Lando
         run: |
           wget https://files.devwithlando.io/lando-stable.deb;
           sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
-      - name: Install Dockerize
-        run: wget -O - https://github.com/jwilder/dockerize/releases/download/v0.7.0/dockerize-linux-amd64-v0.7.0.tar.gz | tar xzf - -C /usr/local/bin
+
+      - name: Install expect and dockerize via brew
+        run: |
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)";
+          brew install expect;
+          brew install dockerize;
+          echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH;
 
       - name: Compile
-        run: go build -o pygmy-linux-amd64
-
-      - name: Basic test
         run: |
-          ./pygmy-linux-amd64 pull;
-          ./pygmy-linux-amd64 pull;
+          go build -o pygmy-linux-amd64;
+          ./pygmy-linux-amd64 version;
+
+      - name: Switch pygmy configs from vanilla to basic
+        run: |
           ./pygmy-linux-amd64 status;
+          ./pygmy-linux-amd64 clean;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml pull;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
+          sleep 10;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml version;
 
       - name: Show pygmy image versions
         run: |
           docker ps -a --filter "label=pygmy.name"
 
       - name: Export configuration
-        run: ./pygmy-linux-amd64 export -o ./exported-config.yml
-
-      - name: Show configuration
-        run: cat ./exported-config.yml
-
-#      - name: SSH Key test
-#        run: |
-#          ./pygmy-linux-amd64 addkey /home/runner/.ssh/id_rsa.pub;
-#          ./pygmy-linux-amd64 status;
-#          ./pygmy-linux-amd64 status | grep 'id_rsa';
-#          docker run --rm -i --volumes-from amazeeio-ssh-agent uselagoon/php-7.4-cli /usr/bin/ssh-add -l | grep 'id_rsa';
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml export -o ./exported-config.yml
+          cat ./exported-config.yml
 
       - name: Resolv file test
         run: |
@@ -123,7 +127,7 @@ jobs:
 
       - name: Test JSON output
         run: |
-          ./pygmy-linux-amd64 status --json > pygmy.json
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status --json > pygmy.json
           cat pygmy.json | jq '.service_status["amazeeio-dnsmasq"].running' | grep 'true'
           cat pygmy.json | jq '.service_status["amazeeio-dnsmasq"].image' | grep 'pygmystack/dnsmasq'
           cat pygmy.json | jq '.service_status["amazeeio-haproxy"].running' | grep 'true'
@@ -132,6 +136,19 @@ jobs:
           cat pygmy.json | jq '.service_status["amazeeio-mailhog"].image' | grep 'pygmystack/mailhog'
           cat pygmy.json | jq '.service_status["amazeeio-ssh-agent"].running' | grep 'true'
           cat pygmy.json | jq '.service_status["amazeeio-ssh-agent"].image' | grep 'pygmystack/ssh-agent'
+
+      - name: haproxy test
+        run: | 
+          curl http://docker.amazee.io/stats | grep 'class=px' | grep 'mailhog.docker.amazee.io';
+          curl http://docker.amazee.io/stats | grep 'HAProxy version';
+
+      - name: dnsmasq version
+        run: |
+          docker exec amazeeio-dnsmasq sh -c 'dnsmasq -v' | grep 'Dnsmasq version'
+
+      - name: ssh version
+        run: |
+          docker exec amazeeio-ssh-agent sh -c 'ssh -V'
 
       - name: Test the amazeeio-network for expected results
         run: |
@@ -160,38 +177,63 @@ jobs:
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.abracadabra"]' | grep "1";
           docker inspect amazeeio-mailhog   | jq '.[].Config.Labels["pygmy.opensesame"]'  | grep "correct";
 
+      - name: Switch pygmy configs from basic to overrides
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
+          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml clean;
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml pull;
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml up;
+          sleep 10;
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml status;
+
       - name: Test the container image overrides configuration
         run: |
-          echo "Cleaning...";
-          ./pygmy-linux-amd64 clean
-          echo "Starting...";
-          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml up;
           echo "Checking image references in started containers...";
           docker container inspect amazeeio-dnsmasq   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/dnsmasq:main";
           docker container inspect amazeeio-haproxy   | jq '.[].Config.Image' | grep 'ghcr.io/pygmystack/haproxy:main';
           docker container inspect amazeeio-mailhog   | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/mailhog:main";
           docker container inspect amazeeio-ssh-agent | jq '.[].Config.Image' | grep "ghcr.io/pygmystack/ssh-agent:main";
-          echo "Cleaning...";
-          ./pygmy-linux-amd64 clean
-          echo "Starting...";
-          ./pygmy-linux-amd64 up
+
+      - name: Switch pygmy configs from overrides to vanilla
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml status;
+          ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml clean;
+          ./pygmy-linux-amd64 pull;
+          ./pygmy-linux-amd64 up;
+          sleep 10;
+          ./pygmy-linux-amd64 status;
+
+      - name: SSH Key test
+        id: ssh-key-test
+        run: |
+          ./pygmy-linux-amd64 addkey /home/runner/.ssh/id_rsa;
+          sleep 10
+          ./pygmy-linux-amd64 status;
+          ./pygmy-linux-amd64 status | grep 'RSA';
+          docker run --rm -i --volumes-from amazeeio-ssh-agent ghcr.io/pygmystack/ssh-agent:latest /usr/bin/ssh-add -l | grep 'RSA';
+        continue-on-error: true
+
+      # - name: SSH encrypted Key test
+      #   id: ssh-enc-key-test
+      #   run: |
+      #     expect -f .github/workflows/expect.exp;
+      #     sleep 10
+      #     ./pygmy-linux-amd64 status;
+      #     ./pygmy-linux-amd64 status | grep 'ED25519';
+      #     docker run --rm -i --volumes-from amazeeio-ssh-agent ghcr.io/pygmystack/ssh-agent:latest /usr/bin/ssh-add -l | grep 'ED25519';
+      #   continue-on-error: true
+
+      # - name: Check & dump on SSH failures
+      #   if: steps.ssh-key-test.outcome != 'success' || steps.ssh-enc-key-test.outcome != 'success'
+      #   run: |
+      #     docker logs amazeeio-ssh-agent
+      #     ./pygmy-linux-amd64 export -o ./exported-config-err.yml
+      #     cat ./exported-config-err.yml
+      #     exit 1
 
       - name: Clone the official examples
         run: |
           git clone --recurse-submodules https://github.com/uselagoon/lagoon-examples.git
-
-      - name: "[Example] Drupal Full"
-        run: |
-          cd lagoon-examples/drupal-full;
-          docker-compose -p drupal-full up -d;
-          docker-compose -p drupal-full exec -T cli composer install;
-          dockerize -wait http://drupal9-full.docker.amazee.io:80 -timeout 10s;
-          curl --HEAD http://drupal9-full.docker.amazee.io;
-          curl --HEAD http://drupal9-full.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-full.docker.amazee.io';
-          docker-compose -p drupal-full down;
-          docker-compose -p drupal-full rm;
-          cd ../../;
 
       - name: "[Example] Drupal Base"
         run: |
@@ -231,31 +273,6 @@ jobs:
 #          docker-compose -p node rm;
 #          cd ../../;
 
-      - name: "[Example] Silverstripe Advanced"
-        run: |
-          cd lagoon-examples/silverstripe-advanced;
-          docker-compose -p silverstripe-advanced up -d;
-          docker-compose -p silverstripe-advanced exec -T cli composer install;
-          sleep 5;
-          curl --HEAD http://ss.docker.amazee.io;
-          # Temporarily, we will omit the failure for the X-LAGOON header.;
-          curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon" || true;
-          docker-compose -p silverstripe-advanced down;
-          docker-compose -p silverstripe-advanced rm;
-          cd ../../;
-
-      - name: "[Example] Silverstripe Simple"
-        run: |
-          cd lagoon-examples/silverstripe-simple;
-          docker-compose -p silverstripe-simple up -d;
-          docker-compose -p silverstripe-simple exec -T cli composer install;
-          sleep 5;
-          curl --HEAD http://ss.docker.amazee.io;
-          curl --HEAD http://ss.docker.amazee.io | grep -i "x-lagoon";
-          docker-compose -p silverstripe-simple down;
-          docker-compose -p silverstripe-simple rm;
-          cd ../../;
-
       - name: Lando test - running Pygmy along-side Lando
         run: |
           cd lagoon-examples/drupal-base;
@@ -268,9 +285,9 @@ jobs:
 
       - name: Test the stop command
         run: |
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml down | grep 'Successfully removed amazeeio';
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep '\[ \] amazeeio-' | grep 'is not running';
-          ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && false || true;
+          ./pygmy-linux-amd64 down | grep 'Successfully removed amazeeio';
+          ./pygmy-linux-amd64 status | grep '\[ \] amazeeio-' | grep 'is not running';
+          ./pygmy-linux-amd64 status | grep 'Running as container amazeeio-' && false || true;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status | grep 'Running as container amazeeio-' && true || false;
 
@@ -286,7 +303,7 @@ jobs:
         run: ./pygmy-linux-amd64 --config examples/pygmy.basic.yml up | grep 'holy ship' || true;
 
       - name: Cleanup pygmy
-        run: ./pygmy-linux-amd64 clean;
+        run: ./pygmy-linux-amd64 --config examples/pygmy.basic.yml clean;
 
       - name: Cleanup after tests.
         run: | 

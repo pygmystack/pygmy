@@ -1,0 +1,7 @@
+#!/usr/bin/expect
+spawn ./pygmy-linux-amd64 addkey -k /home/runner/.ssh/id_pwd
+expect "Enter passphrase " 
+send "passphrase\r" 
+expect "Identity added: "
+spawn ./pygmy-linux-amd64 status
+interact
