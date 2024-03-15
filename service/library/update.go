@@ -25,6 +25,8 @@ func Update(c Config) {
 			result, err = docker.DockerPull(service.Config.Image)
 			if err == nil {
 				fmt.Println(result)
+			} else {
+				fmt.Println(err)
 			}
 		}
 
