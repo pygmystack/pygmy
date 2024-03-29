@@ -14,7 +14,7 @@ import (
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/image"
+	img "github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
@@ -61,17 +61,17 @@ func DockerContainerList() ([]types.Container, error) {
 }
 
 // DockerImageList will return a slice of Docker images.
-func DockerImageList() ([]image.Summary, error) {
+func DockerImageList() ([]img.Summary, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	images, err := cli.ImageList(ctx, types.ImageListOptions{
+	images, err := cli.ImageList(ctx, img.ListOptions{
 		All: true,
 	})
 	if err != nil {
-		return []image.Summary{}, err
+		return []img.Summary{}, err
 	}
 
 	return images, nil
@@ -141,7 +141,7 @@ func DockerPull(image string) (string, error) {
 		}
 	}
 
-	data, err := cli.ImagePull(ctx, image, types.ImagePullOptions{})
+	data, err := cli.ImagePull(ctx, image, img.PullOptions{})
 	d := json.NewDecoder(data)
 
 	type Event struct {
