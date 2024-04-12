@@ -14,7 +14,7 @@ During [Part I](./local_docker_development.md#part-i-shared-docker-containers) w
 
 ##  Find the right `docker-compose.yml`
 
-1. Visit https://github.com/uselagoon/lagoon-examples or clone https://github.com/lagoon-examples/drupal9-base.git into a folder on your computer
+1. Visit https://github.com/uselagoon/lagoon-examples or clone https://github.com/lagoon-examples/drupal-base.git into a folder on your computer
 2. Copy the desired example file into your Drupal directory (see descriptions below). Use `example-docker-compose-drupal.yml` if unsure.
 3. Rename the file to `docker-compose.yml`
 4. Edit the file according to your needs, change at least the host name. _BTW: It's perfectly fine to commit this file into your git repository, so others that are also using docker can use it as well._

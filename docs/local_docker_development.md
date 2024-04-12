@@ -23,7 +23,7 @@ The Docker Containers which will run Drupal. These are made to be copied into a 
 
 ## What it includes
 
-An example local Docker Drupal Development environment, such as https://www.github.com/lagoon-examples/drupal9-solr, equips you with all the tools you need to develop your Drupal site locally:
+An example local Docker Drupal Development environment, such as https://www.github.com/lagoon-examples/drupal-solr, equips you with all the tools you need to develop your Drupal site locally:
 
 * **Webserver:** Nginx
 * **Frontend Caching:** Varnish
