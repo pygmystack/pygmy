@@ -3,13 +3,13 @@
 
 # Local Drupal Docker Development
 
-amazee.io supports development workflows which involve local development sites. We provide a Drupal Docker development environment that runs on your local computer.
-It uses the exact same configuration for **all** services like on the amazee.io servers. This means:
+Lagoon supports development workflows which involve local development sites. We provide a Drupal Docker development environment that runs on your local computer.
+It uses the exact same configuration for **all** services like on the Lagoon servers. This means:
 
 * If the site runs locally, it also runs on production
 * You can use the exact same `settings.php` file for local and production
 
-**And the best:** You don't need to have any amazee.io account or site running in order to use the local development environment! Just install it, and experience all the benefits of amazee.io for free.
+**And the best:** You don't need to have a Lagoon account or site running in order to use the local development environment! Just install it, and experience all the benefits of Lagoon for free.
 
 The Docker based Drupal Development environment consists of two parts:
 
@@ -23,7 +23,7 @@ The Docker Containers which will run Drupal. These are made to be copied into a 
 
 ## What it includes
 
-The amazee.io Local Docker Drupal Development environment equips you with all the tools you need to develop your Drupal site locally:
+An example local Docker Drupal Development environment, such as https://www.github.com/lagoon-examples/drupal9-solr, equips you with all the tools you need to develop your Drupal site locally:
 
 * **Webserver:** Nginx
 * **Frontend Caching:** Varnish
@@ -34,7 +34,7 @@ The amazee.io Local Docker Drupal Development environment equips you with all th
 * **Dependency Manager for PHP:** Composer
 * NodeJS / NPM
 
-For more information about software components used in the amazee.io Stack head over to the [Components](../architecture/components.md) overview page.
+For more information about software components used in the Lagoon Stack head over to [their docs](https://docs.lagoon.sh).
 
 ## How this works
 
@@ -50,7 +50,7 @@ It is possible to add mount ssh private keys into Docker containers, but this is
 
 ### The Solution
 
-amazee.io implemented a Drupal Docker Development environment which handles all these issues nicely for you. It allows you to:
+`pygmy` allows you to:
 
 * Access all sites via the Port 80 or 443 with just different URLs like site1.docker.amazee.io and site2.docker.amazee.io
 * Add your SSH Key once to the system and can forget about it, no need to add it to each container

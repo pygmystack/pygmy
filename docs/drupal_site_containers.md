@@ -14,14 +14,14 @@ During [Part I](./local_docker_development.md#part-i-shared-docker-containers) w
 
 ##  Find the right `docker-compose.yml`
 
-1. Visit https://github.com/amazeeio/docker or clone https://github.com/amazeeio/docker.git into a folder on your computer
+1. Visit https://github.com/uselagoon/lagoon-examples or clone https://github.com/lagoon-examples/drupal9-base.git into a folder on your computer
 2. Copy the desired example file into your Drupal directory (see descriptions below). Use `example-docker-compose-drupal.yml` if unsure.
 3. Rename the file to `docker-compose.yml`
-4. Edit the file according to your needs, change at least the host name. _BTW: It's perfectly fine to commit this file into your git repository, so others that are also using amazee.io docker can use it as well._
+4. Edit the file according to your needs, change at least the host name. _BTW: It's perfectly fine to commit this file into your git repository, so others that are also using docker can use it as well._
 5. Run in the same directory as the `docker-compose.yml`:
 
         docker-compose up -d
-6. If you are on Windows add the URL to the Hosts file (see [windows documentation](local_docker_development/windows.md) for that).
+6. If you are on Windows add the URL to the Hosts file (see [windows documentation](local_docker_development.md) for that).
 7. Open your browser with the entered URL in the `docker-compose.yml`, happy Drupaling!
 
 ## Connect to the container
@@ -78,7 +78,7 @@ When you next start a bash session, you'll be able to use `ddrush` just like you
 
 ## Update Images
 
-We constantly make improvements, updates and some other nice things to our container images. Visit [changelog.amazee.io](https://changelog.amazee.io) to see if there is something new. If you need to update the Docker Images to the newest version from the Docker Hub run in the same folder as the `docker-compose.yml`:
+We constantly make improvements, updates and some other nice things to our container images. Visit the [Lagoon Image releases page](https://github.com/uselagoon/lagoon-images/releases) to see if there is something new. If you need to update the Docker Images to the newest version from the Docker Hub run in the same folder as the `docker-compose.yml`:
 
 	docker-compose pull
 	docker-compose up -d
@@ -92,7 +92,4 @@ Just open another terminal window at the exact same directory than you run the f
 
 ## `docker-compose.yml` example files
 
-| Example File                                                                                                           | PHP    | Services                           | Description                                                                                                                     |
-|----------------------------------------------------------------------------------------------------------------------------------|--------|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| [`example-docker-compose-drupal.yml`](https://github.com/amazeeio/docker/blob/master/example-docker-compose-drupal.yml)          | 5.6/7.0/7.1| nginx, varnish, mariadb       |Drupal container without provisions for solr. See comments in file for choosing PHP version and customizing for Composer sites   |
-| [`example-docker-compose-drupal-solr.yml`](https://github.com/amazeeio/docker/blob/master/example-docker-compose-drupal-solr.yml)| 5.6/7.0/7.1| nginx, varnish, mariadb, solr |Drupal container with provisions for solr. See comments in file for choosing PHP version and customizing for Composer sites      |
+Visit https://github.com/uselagoon/lagoon-examples to see a range of example projects that you can clone as a starting point

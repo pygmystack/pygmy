@@ -13,7 +13,7 @@ If you need to map other ports, simply add them to the `ports` section and resta
 
 ### Example for Solr
 
-If you use one of amazee.io Drupal containers with Solr included, your Solr URL most likely looks like this: http://127.0.0.1:8149/solr/drupal/
+If you use one of Lagoon's Drupal containers with Solr included, your Solr URL most likely looks like this: http://127.0.0.1:8149/solr/drupal/
 
 In this case, to play with Solr queries:
 - add `"8149"` to the `ports` section of `docker-compose.yml` file
