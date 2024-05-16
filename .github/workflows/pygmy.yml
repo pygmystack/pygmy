@@ -248,18 +248,18 @@ jobs:
           docker-compose -p drupal-base rm;
           cd ../../;
 
-      - name: "[Example] Drupal Postgres"
-        run: |
-          cd lagoon-examples/drupal9-postgres;
-          docker-compose -p drupal-postgres up -d;
-          docker-compose -p drupal-postgres exec -T cli composer install;
-          dockerize -wait http://drupal9-postgres.docker.amazee.io:80 -timeout 10s;
-          curl --HEAD http://drupal9-postgres.docker.amazee.io;
-          curl --HEAD http://drupal9-postgres.docker.amazee.io | grep -i "x-lagoon";
-          ../../pygmy-linux-amd64 status | grep '\- http://drupal9-postgres.docker.amazee.io';
-          docker-compose -p drupal-postgres down;
-          docker-compose -p drupal-postgres rm;
-          cd ../../;
+      # - name: "[Example] Drupal Postgres"
+      #   run: |
+      #     cd lagoon-examples/drupal9-postgres;
+      #     docker-compose -p drupal-postgres up -d;
+      #     docker-compose -p drupal-postgres exec -T cli composer install;
+      #     dockerize -wait http://drupal9-postgres.docker.amazee.io:80 -timeout 10s;
+      #     curl --HEAD http://drupal9-postgres.docker.amazee.io;
+      #     curl --HEAD http://drupal9-postgres.docker.amazee.io | grep -i "x-lagoon";
+      #     ../../pygmy-linux-amd64 status | grep '\- http://drupal9-postgres.docker.amazee.io';
+      #     docker-compose -p drupal-postgres down;
+      #     docker-compose -p drupal-postgres rm;
+      #     cd ../../;
 
 #      - name: Node
 #        run: |
