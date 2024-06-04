@@ -2,8 +2,6 @@
 
 Per default your SSH Key at `~/.ssh/id_rsa` is added to the Docker containers from `pygmy`
 
-If you need another key, read the documentation of [`pygmy`](linux_pygmy.md) about this.
-
 ## How it works
 1. `pygmy` starts `amazeeio/ssh-agent` container with a volume `/tmp/amazeeio_ssh-agent`
 2. `pygmy` adds a default SSH key from the host into this volume
@@ -13,14 +11,14 @@ If you need another key, read the documentation of [`pygmy`](linux_pygmy.md) abo
     - container:amazeeio-ssh-agent
   ```
 4. When CLI container starts, the volume is mounted and an entrypoint script adds SHH key into agent.
-  @see https://github.com/amazeeio/lagoon/blob/master/images/php/cli/10-ssh-agent.sh
+  @see https://github.com/uselagoon/lagoon-images/blob/main/images/php-cli/entrypoints/10-ssh-agent.sh
 
 Running `ssh-add -L` within CLI container should show that the SSH key is correctly loaded.
 
 ## Troubleshooting
 ### SSH Key issues
 
-As everything on amazee.io works with key authentication sometimes you might run into issues where the drush aliases aren't displayed or you can't connect to the servers.
+As everything on Lagoon works with key authentication sometimes you might run into issues where the drush aliases aren't displayed or you can't connect to the servers.
 
     Could not load API JWT Token, error was: 'lagoon@ssh.lagoon.amazeeio.cloud: Permission denied (publickey).'
 
