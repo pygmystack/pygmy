@@ -4,8 +4,8 @@ package library
 import (
 	"fmt"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/volume"
+	networktypes "github.com/docker/docker/api/types/network"
+	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/imdario/mergo"
 
 	model "github.com/pygmystack/pygmy/service/interface"
@@ -28,7 +28,7 @@ type Config struct {
 	SortedServices []string
 
 	// Networks is for network configuration
-	Networks map[string]types.NetworkResource `yaml:"networks"`
+	Networks map[string]networktypes.Inspect `yaml:"networks"`
 
 	// NoDefaults will prevent default configuration items.
 	Defaults bool
@@ -43,7 +43,7 @@ type Config struct {
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
 
 	// Volumes will ensure names volumes are created
-	Volumes map[string]volume.Volume
+	Volumes map[string]volumetypes.Volume
 }
 
 type StatusJSON struct {
@@ -80,7 +80,7 @@ func getService(s model.Service, c model.Service) model.Service {
 	return *Service
 }
 
-func mergeNetwork(destination types.NetworkResource, src *types.NetworkResource) (*types.NetworkResource, error) {
+func mergeNetwork(destination networktypes.Inspect, src *networktypes.Inspect) (*networktypes.Inspect, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -88,12 +88,12 @@ func mergeNetwork(destination types.NetworkResource, src *types.NetworkResource)
 	return &destination, nil
 }
 
-func getNetwork(s types.NetworkResource, c types.NetworkResource) types.NetworkResource {
+func getNetwork(s networktypes.Inspect, c networktypes.Inspect) networktypes.Inspect {
 	Network, _ := mergeNetwork(s, &c)
 	return *Network
 }
 
-func mergeVolume(destination volume.Volume, src *volume.Volume) (*volume.Volume, error) {
+func mergeVolume(destination volumetypes.Volume, src *volumetypes.Volume) (*volumetypes.Volume, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -101,7 +101,7 @@ func mergeVolume(destination volume.Volume, src *volume.Volume) (*volume.Volume,
 	return &destination, nil
 }
 
-func getVolume(s volume.Volume, c volume.Volume) volume.Volume {
+func getVolume(s volumetypes.Volume, c volumetypes.Volume) volumetypes.Volume {
 	Volume, _ := mergeVolume(s, &c)
 	return *Volume
 }

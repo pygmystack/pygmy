@@ -13,7 +13,7 @@ import (
 
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
+	containertypes "github.com/docker/docker/api/types/container"
 	img "github.com/docker/docker/api/types/image"
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
@@ -49,7 +49,7 @@ func DockerContainerList() ([]types.Container, error) {
 		fmt.Println(err)
 	}
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{
+	containers, err := cli.ContainerList(ctx, containertypes.ListOptions{
 		All: true,
 	})
 	if err != nil {
@@ -193,7 +193,7 @@ func DockerStop(name string) error {
 		return err
 	}
 	timeout := 10
-	err = cli.ContainerStop(ctx, name, container.StopOptions{Timeout: &timeout})
+	err = cli.ContainerStop(ctx, name, containertypes.StopOptions{Timeout: &timeout})
 	if err != nil {
 		return err
 	}
@@ -220,7 +220,7 @@ func DockerRemove(id string) error {
 	if err != nil {
 		return err
 	}
-	err = cli.ContainerRemove(ctx, id, container.RemoveOptions{})
+	err = cli.ContainerRemove(ctx, id, containertypes.RemoveOptions{})
 	if err != nil {
 		return err
 	}
@@ -416,7 +416,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+	rst, err := cli.ContainerExecCreate(ctx, container, containertypes.ExecOptions{
 		AttachStdout: true,
 		AttachStderr: true,
 		Cmd:          strings.Split(command, " ")})
@@ -425,7 +425,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{})
+	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, containertypes.ExecAttachOptions{})
 
 	if err != nil {
 		return []byte{}, err
@@ -438,10 +438,10 @@ func DockerExec(container string, command string) ([]byte, error) {
 }
 
 // DockerContainerCreate will create a container, but will not run it.
-func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig networktypes.NetworkingConfig) (container.CreateResponse, error) {
+func DockerContainerCreate(ID string, config containertypes.Config, hostconfig containertypes.HostConfig, networkconfig networktypes.NetworkingConfig) (containertypes.CreateResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
-		return container.CreateResponse{}, err
+		return containertypes.CreateResponse{}, err
 	}
 	platform := platforms.Normalize(v1.Platform{
 		Architecture: runtime.GOARCH,
@@ -449,13 +449,13 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	})
 	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
-		return container.CreateResponse{}, err
+		return containertypes.CreateResponse{}, err
 	}
 	return resp, err
 }
 
 // DockerContainerAttach will return an attached response to a container.
-func DockerContainerAttach(ID string, options container.AttachOptions) (types.HijackedResponse, error) {
+func DockerContainerAttach(ID string, options containertypes.AttachOptions) (types.HijackedResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return types.HijackedResponse{}, err
@@ -468,19 +468,19 @@ func DockerContainerAttach(ID string, options container.AttachOptions) (types.Hi
 }
 
 // DockerContainerStart will run an existing container.
-func DockerContainerStart(ID string, options container.StartOptions) error {
+func DockerContainerStart(ID string, options containertypes.StartOptions) error {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return err
 	}
-	if err := cli.ContainerStart(ctx, ID, container.StartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, ID, containertypes.StartOptions{}); err != nil {
 		return err
 	}
 	return err
 }
 
 // DockerContainerWait will wait for the specificied container condition.
-func DockerContainerWait(ID string, condition container.WaitCondition) error {
+func DockerContainerWait(ID string, condition containertypes.WaitCondition) error {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return err
@@ -506,7 +506,7 @@ func DockerContainerLogs(ID string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	b, e := cli.ContainerLogs(ctx, ID, container.LogsOptions{
+	b, e := cli.ContainerLogs(ctx, ID, containertypes.LogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
 	})

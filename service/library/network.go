@@ -3,6 +3,7 @@ package library
 import (
 	"context"
 	"fmt"
+	networktypes "github.com/docker/docker/api/types/network"
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
@@ -11,7 +12,7 @@ import (
 
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
-func NetworkCreate(network types.NetworkResource) error {
+func NetworkCreate(network networktypes.Inspect) error {
 	return docker.DockerNetworkCreate(&network)
 }
 
