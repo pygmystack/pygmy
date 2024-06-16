@@ -15,7 +15,7 @@ import (
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	img "github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
+	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
@@ -229,7 +229,7 @@ func DockerRemove(id string) error {
 
 // DockerNetworkCreate is an abstraction layer on top of the Docker API call
 // which will create a Docker network using a specified configuration.
-func DockerNetworkCreate(network *types.NetworkResource) error {
+func DockerNetworkCreate(network *networktypes.Inspect) error {
 	netVal, _ := DockerNetworkStatus(network.Name)
 	if netVal {
 		return fmt.Errorf("docker network %v already exists", network.Name)
@@ -240,7 +240,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		return err
 	}
 
-	config := types.NetworkCreate{
+	config := networktypes.CreateOptions{
 		Driver:     network.Driver,
 		EnableIPv6: &network.EnableIPv6,
 		IPAM:       &network.IPAM,
@@ -279,7 +279,7 @@ func DockerNetworkStatus(network string) (bool, error) {
 		return false, err
 	}
 
-	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networks, err := cli.NetworkList(ctx, networktypes.ListOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -295,14 +295,14 @@ func DockerNetworkStatus(network string) (bool, error) {
 
 // DockerNetworkGet will use the Docker API to retrieve a Docker network
 // which has a given name.
-func DockerNetworkGet(name string) (types.NetworkResource, error) {
+func DockerNetworkGet(name string) (networktypes.Inspect, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
-		return types.NetworkResource{}, err
+		return networktypes.Inspect{}, err
 	}
-	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networks, err := cli.NetworkList(ctx, networktypes.ListOptions{})
 	if err != nil {
-		return types.NetworkResource{}, err
+		return networktypes.Inspect{}, err
 	}
 	for _, network := range networks {
 		if val, ok := network.Labels["pygmy.name"]; ok {
@@ -311,7 +311,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 			}
 		}
 	}
-	return types.NetworkResource{}, nil
+	return networktypes.Inspect{}, nil
 }
 
 // DockerNetworkConnect will connect a container to a network.
@@ -438,7 +438,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 }
 
 // DockerContainerCreate will create a container, but will not run it.
-func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.CreateResponse, error) {
+func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig networktypes.NetworkingConfig) (container.CreateResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return container.CreateResponse{}, err

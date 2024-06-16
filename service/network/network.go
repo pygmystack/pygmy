@@ -1,19 +1,18 @@
 package network
 
 import (
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/network"
+	networktypes "github.com/docker/docker/api/types/network"
 )
 
 // New will generate the defaults for the Docker network.
 // If configuration is provided this will not be used at all.
-func New() types.NetworkResource {
-	return types.NetworkResource{
+func New() networktypes.Inspect {
+	return networktypes.Inspect{
 		Name: "amazeeio-network",
-		IPAM: network.IPAM{
+		IPAM: networktypes.IPAM{
 			Driver:  "",
 			Options: nil,
-			Config: []network.IPAMConfig{
+			Config: []networktypes.IPAMConfig{
 				{
 					Subnet:  "10.99.99.0/24",
 					Gateway: "10.99.99.1",
