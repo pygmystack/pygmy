@@ -55,6 +55,15 @@ jobs:
         name: Print version string
         run: go run main.go version
       -
+        name: Check GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: '~> v2'
+          args: release --clean --skip=docker --skip=homebrew
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      -
         name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
