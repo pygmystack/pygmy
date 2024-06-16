@@ -1,9 +1,8 @@
 package model
 
 import (
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
+	containertypes "github.com/docker/docker/api/types/container"
+	networktypes "github.com/docker/docker/api/types/network"
 )
 
 // Params is an arbitrary struct to pass around configuration from the top
@@ -29,10 +28,10 @@ type DockerService interface {
 // provides a way for config of any container to be overridden and start
 // fully compatible with Docker's API.
 type Service struct {
-	Config        container.Config
-	HostConfig    container.HostConfig
+	Config        containertypes.Config
+	HostConfig    containertypes.HostConfig
 	Image         string `yaml:"image"`
-	NetworkConfig network.NetworkingConfig
+	NetworkConfig networktypes.NetworkingConfig
 }
 
 // Network is a struct containing the configuration of a single Docker network
@@ -47,5 +46,5 @@ type Network struct {
 	Containers []string `yaml:"containers"`
 	// Config is the actual Network configuration for the Docker Network.
 	// It is the Network creation configuration as provided by the Docker API.
-	Config types.NetworkCreate `yaml:"config"`
+	Config networktypes.CreateOptions `yaml:"config"`
 }

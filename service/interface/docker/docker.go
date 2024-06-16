@@ -13,9 +13,9 @@ import (
 
 	"github.com/containerd/containerd/platforms"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
+	containertypes "github.com/docker/docker/api/types/container"
 	img "github.com/docker/docker/api/types/image"
-	"github.com/docker/docker/api/types/network"
+	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
@@ -49,7 +49,7 @@ func DockerContainerList() ([]types.Container, error) {
 		fmt.Println(err)
 	}
 
-	containers, err := cli.ContainerList(ctx, container.ListOptions{
+	containers, err := cli.ContainerList(ctx, containertypes.ListOptions{
 		All: true,
 	})
 	if err != nil {
@@ -193,7 +193,7 @@ func DockerStop(name string) error {
 		return err
 	}
 	timeout := 10
-	err = cli.ContainerStop(ctx, name, container.StopOptions{Timeout: &timeout})
+	err = cli.ContainerStop(ctx, name, containertypes.StopOptions{Timeout: &timeout})
 	if err != nil {
 		return err
 	}
@@ -220,7 +220,7 @@ func DockerRemove(id string) error {
 	if err != nil {
 		return err
 	}
-	err = cli.ContainerRemove(ctx, id, container.RemoveOptions{})
+	err = cli.ContainerRemove(ctx, id, containertypes.RemoveOptions{})
 	if err != nil {
 		return err
 	}
@@ -229,7 +229,7 @@ func DockerRemove(id string) error {
 
 // DockerNetworkCreate is an abstraction layer on top of the Docker API call
 // which will create a Docker network using a specified configuration.
-func DockerNetworkCreate(network *types.NetworkResource) error {
+func DockerNetworkCreate(network *networktypes.Inspect) error {
 	netVal, _ := DockerNetworkStatus(network.Name)
 	if netVal {
 		return fmt.Errorf("docker network %v already exists", network.Name)
@@ -240,9 +240,9 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 		return err
 	}
 
-	config := types.NetworkCreate{
+	config := networktypes.CreateOptions{
 		Driver:     network.Driver,
-		EnableIPv6: network.EnableIPv6,
+		EnableIPv6: &network.EnableIPv6,
 		IPAM:       &network.IPAM,
 		Internal:   network.Internal,
 		Attachable: network.Attachable,
@@ -279,7 +279,7 @@ func DockerNetworkStatus(network string) (bool, error) {
 		return false, err
 	}
 
-	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networks, err := cli.NetworkList(ctx, networktypes.ListOptions{})
 	if err != nil {
 		return false, err
 	}
@@ -295,14 +295,14 @@ func DockerNetworkStatus(network string) (bool, error) {
 
 // DockerNetworkGet will use the Docker API to retrieve a Docker network
 // which has a given name.
-func DockerNetworkGet(name string) (types.NetworkResource, error) {
+func DockerNetworkGet(name string) (networktypes.Inspect, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
-		return types.NetworkResource{}, err
+		return networktypes.Inspect{}, err
 	}
-	networks, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networks, err := cli.NetworkList(ctx, networktypes.ListOptions{})
 	if err != nil {
-		return types.NetworkResource{}, err
+		return networktypes.Inspect{}, err
 	}
 	for _, network := range networks {
 		if val, ok := network.Labels["pygmy.name"]; ok {
@@ -311,7 +311,7 @@ func DockerNetworkGet(name string) (types.NetworkResource, error) {
 			}
 		}
 	}
-	return types.NetworkResource{}, nil
+	return networktypes.Inspect{}, nil
 }
 
 // DockerNetworkConnect will connect a container to a network.
@@ -416,7 +416,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	rst, err := cli.ContainerExecCreate(ctx, container, types.ExecConfig{
+	rst, err := cli.ContainerExecCreate(ctx, container, containertypes.ExecOptions{
 		AttachStdout: true,
 		AttachStderr: true,
 		Cmd:          strings.Split(command, " ")})
@@ -425,7 +425,7 @@ func DockerExec(container string, command string) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, types.ExecStartCheck{})
+	response, err := cli.ContainerExecAttach(context.Background(), rst.ID, containertypes.ExecAttachOptions{})
 
 	if err != nil {
 		return []byte{}, err
@@ -438,10 +438,10 @@ func DockerExec(container string, command string) ([]byte, error) {
 }
 
 // DockerContainerCreate will create a container, but will not run it.
-func DockerContainerCreate(ID string, config container.Config, hostconfig container.HostConfig, networkconfig network.NetworkingConfig) (container.CreateResponse, error) {
+func DockerContainerCreate(ID string, config containertypes.Config, hostconfig containertypes.HostConfig, networkconfig networktypes.NetworkingConfig) (containertypes.CreateResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
-		return container.CreateResponse{}, err
+		return containertypes.CreateResponse{}, err
 	}
 	platform := platforms.Normalize(v1.Platform{
 		Architecture: runtime.GOARCH,
@@ -449,13 +449,13 @@ func DockerContainerCreate(ID string, config container.Config, hostconfig contai
 	})
 	resp, err := cli.ContainerCreate(ctx, &config, &hostconfig, &networkconfig, &platform, ID)
 	if err != nil {
-		return container.CreateResponse{}, err
+		return containertypes.CreateResponse{}, err
 	}
 	return resp, err
 }
 
 // DockerContainerAttach will return an attached response to a container.
-func DockerContainerAttach(ID string, options container.AttachOptions) (types.HijackedResponse, error) {
+func DockerContainerAttach(ID string, options containertypes.AttachOptions) (types.HijackedResponse, error) {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return types.HijackedResponse{}, err
@@ -468,19 +468,19 @@ func DockerContainerAttach(ID string, options container.AttachOptions) (types.Hi
 }
 
 // DockerContainerStart will run an existing container.
-func DockerContainerStart(ID string, options container.StartOptions) error {
+func DockerContainerStart(ID string, options containertypes.StartOptions) error {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return err
 	}
-	if err := cli.ContainerStart(ctx, ID, container.StartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, ID, containertypes.StartOptions{}); err != nil {
 		return err
 	}
 	return err
 }
 
 // DockerContainerWait will wait for the specificied container condition.
-func DockerContainerWait(ID string, condition container.WaitCondition) error {
+func DockerContainerWait(ID string, condition containertypes.WaitCondition) error {
 	cli, ctx, err := NewClient()
 	if err != nil {
 		return err
@@ -506,7 +506,7 @@ func DockerContainerLogs(ID string) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
-	b, e := cli.ContainerLogs(ctx, ID, container.LogsOptions{
+	b, e := cli.ContainerLogs(ctx, ID, containertypes.LogsOptions{
 		ShowStdout: true,
 		ShowStderr: true,
 	})
