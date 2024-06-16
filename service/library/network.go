@@ -5,7 +5,6 @@ import (
 	"fmt"
 	networktypes "github.com/docker/docker/api/types/network"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
 	"github.com/pygmystack/pygmy/service/interface/docker"
 )
@@ -32,7 +31,7 @@ func NetworkStatus(network string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	networkResources, _ := cli.NetworkList(ctx, types.NetworkListOptions{})
+	networkResources, _ := cli.NetworkList(ctx, networktypes.ListOptions{})
 	for _, Network := range networkResources {
 		if Network.Name == network {
 			return true, nil
