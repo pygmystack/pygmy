@@ -51,10 +51,11 @@ builds:
 brews:
   - ids:
     - pygmy
-    tap:
+    repository:
       owner: pygmystack
       name: homebrew-pygmy
-    folder: Formula
+      branch: main
+      token: "${{ .Env.GITHUB_TOKEN }}"
     homepage: "https://github.com/pygmystack/pygmy"
     description: "amazee.io's local development helper tool"
     skip_upload: false
