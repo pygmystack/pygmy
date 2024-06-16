@@ -242,7 +242,7 @@ func DockerNetworkCreate(network *types.NetworkResource) error {
 
 	config := types.NetworkCreate{
 		Driver:     network.Driver,
-		EnableIPv6: network.EnableIPv6,
+		EnableIPv6: &network.EnableIPv6,
 		IPAM:       &network.IPAM,
 		Internal:   network.Internal,
 		Attachable: network.Attachable,
