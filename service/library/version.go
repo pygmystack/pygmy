@@ -2,18 +2,17 @@ package library
 
 import (
 	"fmt"
+	"runtime/debug"
 )
 
 // Version describes which version of Pygmy is running.
 func Version(c Config) {
+	info, _ := debug.ReadBuildInfo()
 
-	// printversion is updated as static content via GitHub Actions.
-	// If this version is not injected as static content, the version
-	// is deemed unidentifiable - it should be assumed the binary was
-	// compiled outside of official release management.
-	if printversion() {
+	if info.Main.Version == "(devel)" {
+		fmt.Println("Development version")
 		return
 	}
 
-	fmt.Printf("Pygmy version unidentifiable.\n")
+	fmt.Printf("Pygmy v%s\n", info.Main.Version)
 }

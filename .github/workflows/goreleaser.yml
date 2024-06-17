@@ -30,25 +30,6 @@ jobs:
         with:
           go-version: '1.21'
       -
-        name: Create version helper
-        run: |
-          cat > service/library/version_state.go << EOF
-          package library
-          import (
-            "fmt"
-            "strings"
-          )
-          var PYGMY_VERSION = "${GITHUB_REF}"
-          func printversion() bool {
-          parts := strings.Split(PYGMY_VERSION, "/")
-          	if PYGMY_VERSION == "" {
-          	  return false
-          	}
-          	fmt.Printf("Pygmy version v%v\n", parts[len(parts)-1])
-          	return true
-          }
-          EOF
-      -
         name: Fetch Dependencies
         run: go mod vendor
       -
@@ -65,13 +46,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
-        name: Check GoReleaser
+        name: Dry-Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         if: ${{ startsWith(github.ref, 'refs/tags/v') }}
         with:
           distribution: goreleaser
           version: '~> v2'
-          args: release --clean --skip=docker --skip=homebrew --skip=publish
+          args: release --clean --snapshot --skip=docker --skip=homebrew --skip=publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       -
