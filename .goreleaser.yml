@@ -60,6 +60,9 @@ builds:
       - arm
       - arm64
 
+snapshot:
+  name_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
+
 brews:
   - ids:
     - pygmy
