@@ -14,5 +14,5 @@ func Version(c Config) {
 		return
 	}
 
-	fmt.Printf("Pygmy v%s\n", info.Main.Version)
+	fmt.Printf("Pygmy %s\n", info.Main.Version)
 }
