@@ -12,10 +12,17 @@ archives:
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
     builds:
       - pygmy-static
+
 builds:
   - id: pygmy
     env:
       - CGO_ENABLED=0
+    ldflags:
+      - -X main.Version={{.Tag}}
+      - -X main.CommitSHA={{.FullCommit}}
+      - -X main.BuildDate={{.CommitDate}}
+      - -X main.GoOS={{.Os}}
+      - -X main.GoArch={{.Arch}}
     goos:
       - linux
       - darwin
@@ -39,6 +46,11 @@ builds:
     flags:
       - -a
     ldflags:
+      - -X main.Version={{.Tag}}
+      - -X main.CommitSHA={{.FullCommit}}
+      - -X main.BuildDate={{.CommitDate}}
+      - -X main.GoOS={{.Os}}
+      - -X main.GoArch={{.Arch}}
       - -extldflags "-static"
     goos:
       - linux
@@ -47,6 +59,9 @@ builds:
       - amd64
       - arm
       - arm64
+
+snapshot:
+  name_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
 
 brews:
   - ids:
