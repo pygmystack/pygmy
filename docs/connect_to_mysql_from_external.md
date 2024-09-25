@@ -11,20 +11,26 @@ Docker assigns a randomly published port for MySQL during each container start. 
 
 To get the published port via `docker`:
 
+```
     $ docker port changeme.net.docker.amazee.io
     3306/tcp -> 0.0.0.0:32797
+```
 
 Or via `docker-compose` inside a Drupal repository
 
+```
     $ docker-compose port drupal 3306
     0.0.0.0:32797
+```
 
 ### `linux` Get ip from container
 
 If you are on Linux and run docker native, you also need to get the IP of the container
 
+```
     $ docker inspect --format '{{ .NetworkSettings.IPAddress }}' changeme.net.docker.amazee.io
     172.17.0.4
+```
 
 ### Connect to MySQL
 
