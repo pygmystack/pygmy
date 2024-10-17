@@ -5,11 +5,11 @@ env:
 
 archives:
   - id: pygmy
-    version_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
     builds:
       - pygmy
   - id: pygmy-static
-    version_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
     builds:
       - pygmy-static
 
@@ -61,7 +61,7 @@ builds:
       - arm64
 
 snapshot:
-  name_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
+  version_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
 
 brews:
   - ids:
