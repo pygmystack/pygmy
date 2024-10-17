@@ -238,39 +238,39 @@ jobs:
       - name: "[Example] Drupal OpenSearch"
         run: |
           cd lagoon-examples/drupal-opensearch;
-          docker-compose -p drupal-opensearch up -d;
-          docker-compose -p drupal-opensearch exec -T cli composer install;
+          docker compose -p drupal-opensearch up -d;
+          docker compose -p drupal-opensearch exec -T cli composer install;
           dockerize -wait http://drupal-opensearch.docker.amazee.io:80 -timeout 10s;
           curl -I http://drupal-opensearch.docker.amazee.io;
           curl -I http://drupal-opensearch.docker.amazee.io | grep -i "x-lagoon";
           ../../pygmy-linux-amd64 status | grep '\- http://drupal-opensearch.docker.amazee.io';
-          docker-compose -p drupal-base down;
-          docker-compose -p drupal-base rm;
+          docker compose -p drupal-base down;
+          docker compose -p drupal-base rm;
           cd ../../;
 
       - name: "[Example] Drupal Postgres"
         run: |
           cd lagoon-examples/drupal-postgres;
-          docker-compose -p drupal-postgres up -d;
-          docker-compose -p drupal-postgres exec -T cli composer install;
+          docker compose -p drupal-postgres up -d;
+          docker compose -p drupal-postgres exec -T cli composer install;
           dockerize -wait http://drupal-postgres.docker.amazee.io:80 -timeout 10s;
           curl -I http://drupal-postgres.docker.amazee.io;
           curl -I http://drupal-postgres.docker.amazee.io | grep -i "x-lagoon";
           ../../pygmy-linux-amd64 status | grep '\- http://drupal-postgres.docker.amazee.io';
-          docker-compose -p drupal-postgres down;
-          docker-compose -p drupal-postgres rm;
+          docker compose -p drupal-postgres down;
+          docker compose -p drupal-postgres rm;
           cd ../../;
 
 #      - name: Node
 #        run: |
 #          cd lagoon-examples/node-example;
 #          npm install;
-#          docker-compose -p node up -d;
+#          docker compose -p node up -d;
 #          curl -I http://node.docker.amazee.io;
 #          curl -I http://node.docker.amazee.io | grep -i "x-lagoon";
 #          ../../pygmy-linux-amd64 --config ../../examples/pygmy.basic.yml status | grep '\- http://node.docker.amazee.io';
-#          docker-compose -p node down;
-#          docker-compose -p node rm;
+#          docker compose -p node down;
+#          docker compose -p node rm;
 #          cd ../../;
 
       - name: Lando test - running Pygmy along-side Lando
