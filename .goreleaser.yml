@@ -61,7 +61,7 @@ builds:
       - arm64
 
 snapshot:
-  name_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
+  version_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
 
 brews:
   - ids:
