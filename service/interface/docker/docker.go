@@ -11,7 +11,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/containerd/containerd/platforms"
+	"github.com/containerd/platforms"
 	"github.com/docker/docker/api/types"
 	containertypes "github.com/docker/docker/api/types/container"
 	img "github.com/docker/docker/api/types/image"
