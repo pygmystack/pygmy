@@ -200,10 +200,10 @@ func TestCustom(t *testing.T) {
 	configuration := &config{
 		name:               "custom",
 		configpath:         "/examples/pygmy.complex.yml",
-		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://portainer.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
-		images:             []string{"pygmystack/ssh-agent", "pygmystack/mailhog", "phpmyadmin/phpmyadmin", "portainer/portainer", "library/traefik:v2.1.3"},
-		services:           []string{"unofficial-portainer", "unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
-		servicewithports:   []string{"amazeeio-mailhog", "unofficial-portainer", "unofficial-phpmyadmin", "unofficial-traefik-2"},
+		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
+		images:             []string{"pygmystack/ssh-agent", "pygmystack/mailhog", "phpmyadmin/phpmyadmin", "library/traefik:v2.1.3"},
+		services:           []string{"unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
+		servicewithports:   []string{"amazeeio-mailhog", "unofficial-phpmyadmin", "unofficial-traefik-2"},
 		skipendpointchecks: false,
 	}
 	setup(t, configuration)
