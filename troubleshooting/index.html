@@ -1,0 +1,1296 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="The pygmystack authors">
+      
+      
+        <link rel="canonical" href="https://pygmystack.github.io/pygmy/troubleshooting/">
+      
+      
+        <link rel="prev" href="../update/">
+      
+      
+        <link rel="next" href="../ssh_agent/">
+      
+      
+      <link rel="icon" href="../images/pygmystack_icon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
+    
+    
+      
+        <title>Troubleshooting - Pygmy</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bcfcd587.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#troubleshooting-local-development-environments" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Pygmy" class="md-header__button md-logo" aria-label="Pygmy" data-md-component="logo">
+      
+  <img src="../images/pygmystack_icon_wh.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Pygmy
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Troubleshooting
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/pygmystack/pygmy/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pygmystack/pygmy
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Pygmy" class="md-nav__button md-logo" aria-label="Pygmy" data-md-component="logo">
+      
+  <img src="../images/pygmystack_icon_wh.png" alt="logo">
+
+    </a>
+    Pygmy
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/pygmystack/pygmy/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    pygmystack/pygmy
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pygmy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../usage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../update/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Update
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-local-development-environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting local development environments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generic Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restart-shared-docker-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Restart shared Docker containers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restart-drupal-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Restart Drupal Containers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drupal-container-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drupal Container logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-container-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared container logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-permission-denied-publickey-and-i-only-see-an-alias-for-none-in-drush-sa" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Permission denied (publickey). and I only see an alias for @none in drush sa
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-conflict-the-name-amazee_iodockeramazeeio-is-already-in-use-by-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove a container
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-all-containers-and-all-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove all containers and all volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-space-left-on-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      No space left on device
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-port-is-already-allocated-during-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like port is already allocated. during start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-service-drupal-mounts-volumes-from-amazeeio-ssh-agent-which-is-not-the-name-of-a-service-or-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Service "drupal" mounts volumes from "amazeeio-ssh-agent", which is not the name of a service or container.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#working-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Working Offline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-entry-if-using-pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Host entry if using pygmy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-cant-connect-to-an-app-running-in-docker-from-another-vm-commonly-to-test-in-ie" class="md-nav__link">
+    <span class="md-ellipsis">
+      I can't connect to an app running in docker from another VM (commonly to test in IE)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I can't connect to an app running in docker from another VM (commonly to test in IE)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      For pygmy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-no-such-service-amazeeio-ssh-agent-when-using-docker-compose-up-d-even-after-pygmy-started-fine" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like no such service: amazeeio-ssh-agent when using docker-compose up -d even after pygmy started fine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like no such service: amazeeio-ssh-agent when using docker-compose up -d even after pygmy started fine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-desktop-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker Desktop users
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      pygmy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pygmy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-listen-tcp-000053-bind-address-already-in-use-during-pygmy-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like listen tcp 0.0.0.0:53: bind: address already in use during pygmy up
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like listen tcp 0.0.0.0:53: bind: address already in use during pygmy up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-before-1804" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ubuntu before 18.04
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-1804-and-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ubuntu 18.04 and later
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../ssh_agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SSH Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local_docker_development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Local Docker Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../drupal_site_containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Drupal Site Containers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../connect_to_mysql_from_external/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Connecting to MySQL externally
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../map_addtitional_ports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mapping additional ports
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Customisation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Customisation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../customisation/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting-local-development-environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Troubleshooting local development environments
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#generic-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Generic Issues
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Generic Issues">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#restart-shared-docker-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Restart shared Docker containers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restart-drupal-containers" class="md-nav__link">
+    <span class="md-ellipsis">
+      Restart Drupal Containers
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#drupal-container-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Drupal Container logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#shared-container-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Shared container logs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-permission-denied-publickey-and-i-only-see-an-alias-for-none-in-drush-sa" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Permission denied (publickey). and I only see an alias for @none in drush sa
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-conflict-the-name-amazee_iodockeramazeeio-is-already-in-use-by-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#remove-a-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove a container
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remove-all-containers-and-all-volumes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remove all containers and all volumes
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#no-space-left-on-device" class="md-nav__link">
+    <span class="md-ellipsis">
+      No space left on device
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-port-is-already-allocated-during-start" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like port is already allocated. during start
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-service-drupal-mounts-volumes-from-amazeeio-ssh-agent-which-is-not-the-name-of-a-service-or-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like Service "drupal" mounts volumes from "amazeeio-ssh-agent", which is not the name of a service or container.
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#working-offline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Working Offline
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#host-entry-if-using-pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      Host entry if using pygmy
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-cant-connect-to-an-app-running-in-docker-from-another-vm-commonly-to-test-in-ie" class="md-nav__link">
+    <span class="md-ellipsis">
+      I can't connect to an app running in docker from another VM (commonly to test in IE)
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I can't connect to an app running in docker from another VM (commonly to test in IE)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#for-pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      For pygmy
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-no-such-service-amazeeio-ssh-agent-when-using-docker-compose-up-d-even-after-pygmy-started-fine" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like no such service: amazeeio-ssh-agent when using docker-compose up -d even after pygmy started fine
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like no such service: amazeeio-ssh-agent when using docker-compose up -d even after pygmy started fine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#docker-desktop-users" class="md-nav__link">
+    <span class="md-ellipsis">
+      Docker Desktop users
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pygmy" class="md-nav__link">
+    <span class="md-ellipsis">
+      pygmy
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pygmy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#i-get-an-error-like-listen-tcp-000053-bind-address-already-in-use-during-pygmy-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      I get an error like listen tcp 0.0.0.0:53: bind: address already in use during pygmy up
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="I get an error like listen tcp 0.0.0.0:53: bind: address already in use during pygmy up">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-before-1804" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ubuntu before 18.04
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ubuntu-1804-and-later" class="md-nav__link">
+    <span class="md-ellipsis">
+      Ubuntu 18.04 and later
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+  <h1>Troubleshooting</h1>
+
+<h2 id="troubleshooting-local-development-environments">Troubleshooting local development environments<a class="headerlink" href="#troubleshooting-local-development-environments" title="Permanent link">#</a></h2>
+<h2 id="generic-issues">Generic Issues<a class="headerlink" href="#generic-issues" title="Permanent link">#</a></h2>
+<p>For most problems with the Docker Development environment, it's the best to restart all shared and Drupal specific Docker containers.</p>
+<h4 id="restart-shared-docker-containers">Restart shared Docker containers<a class="headerlink" href="#restart-shared-docker-containers" title="Permanent link">#</a></h4>
+<p>This is done either in <code>pygmy</code></p>
+<div class="highlight"><pre><span></span><code>pygmy restart -d
+</code></pre></div>
+<p>now you should also restart the Drupal specific Containers:</p>
+<h4 id="restart-drupal-containers">Restart Drupal Containers<a class="headerlink" href="#restart-drupal-containers" title="Permanent link">#</a></h4>
+<p>needs to be done separate for each Drupal container. Run this command where the <code>docker-compose.yml</code> is:</p>
+<div class="highlight"><pre><span></span><code>docker-compose restart
+</code></pre></div>
+<p>sometimes this is not enough, we can tell docker compose to recreate the containers:</p>
+<div class="highlight"><pre><span></span><code>docker-compose up -d --force-recreate
+</code></pre></div>
+<p>If this still is not enough, this is the 🔨  method:</p>
+<div class="highlight"><pre><span></span><code>docker-compose down -v
+docker-compose up
+</code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).</p>
+</div>
+<h4 id="drupal-container-logs">Drupal Container logs<a class="headerlink" href="#drupal-container-logs" title="Permanent link">#</a></h4>
+<p>The above commands all assume that something is wrong with the containers, sometimes though the issue lies somewhere else.
+To find such issues, we need to analyze the docker logs, do that via:</p>
+<div class="highlight"><pre><span></span><code>docker-compose logs
+Attaching to amazee_io.docker.amazee.io
+amazee_io.docker.amazee.io | *** Running /etc/my_init.d/00_regen_ssh_host_keys.sh...
+amazee_io.docker.amazee.io | *** Running /etc/my_init.d/20_virtual_host_replace.sh...
+amazee_io.docker.amazee.io | *** Running /etc/rc.local...
+amazee_io.docker.amazee.io | *** Booting runit daemon...
+amazee_io.docker.amazee.io | *** Runit started as PID 33
+amazee_io.docker.amazee.io | tail: cannot open ‘/var/log/nginx/10fe-drupal.error.log’ for reading: No such file or directory
+amazee_io.docker.amazee.io | tail: cannot open ‘/var/log/nginx/20be-drupal.error.log’ for reading: No such file or directory
+amazee_io.docker.amazee.io | tail: cannot open ‘/var/log/nginx/error.log’ for reading: No such file or directory
+amazee_io.docker.amazee.io | tail: cannot open ‘/var/log/nginx/ssl-10fe-drupal.error.log’ for reading: No such file or directory
+amazee_io.docker.amazee.io | 160502 05:13:44 mysqld_safe Logging to syslog.
+amazee_io.docker.amazee.io | child (246) Started
+amazee_io.docker.amazee.io | Child (246) said Child starts
+</code></pre></div>
+<p>Check the latest few lines of code and you probably see the issue.</p>
+<h4 id="shared-container-logs">Shared container logs<a class="headerlink" href="#shared-container-logs" title="Permanent link">#</a></h4>
+<p>To see the logs of the shared container started via <code>pygmy</code>, first display all docker containers:</p>
+<div class="highlight"><pre><span></span><code>docker ps
+
+CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS              PORTS                                      NAMES
+9e27b9eadc67        amazeeio/drupal:php70-basic   &quot;/sbin/my_init&quot;          5 minutes ago       Up 5 minutes        80/tcp, 443/tcp, 0.0.0.0:32782-&gt;3306/tcp   amazee_io.docker.amazee.io
+5ce655cd369f        andyshinn/dnsmasq:2.75        &quot;dnsmasq -k -A /docke&quot;   24 minutes ago      Up 24 minutes       0.0.0.0:53-&gt;53/tcp, 0.0.0.0:53-&gt;53/udp     amazeeio-dnsmasq
+124b3919e89a        amazeeio/ssh-agent            &quot;/run.sh ssh-agent&quot;      24 minutes ago      Up 24 minutes                                                  amazeeio-ssh-agent
+93eb7a384640        amazeeio/haproxy              &quot;/app/docker-entrypoi&quot;   24 minutes ago      Up 24 minutes       0.0.0.0:80-&gt;80/tcp, 0.0.0.0:443-&gt;443/tcp   amazeeio-haproxy
+</code></pre></div>
+<p>You can see three containers that have names with starting <code>amazeeio-</code> these are the shared containers.</p>
+<p>You can view each container's logs via:</p>
+<div class="highlight"><pre><span></span><code>docker logs -f [container name]
+</code></pre></div>
+<p>Btw, you can also see the logs of the Drupal Containers, via that command.</p>
+<h4 id="i-get-an-error-like-permission-denied-publickey-and-i-only-see-an-alias-for-none-in-drush-sa">I get an error like <code>Permission denied (publickey).</code> and I only see an alias for <code>@none</code> in <code>drush sa</code><a class="headerlink" href="#i-get-an-error-like-permission-denied-publickey-and-i-only-see-an-alias-for-none-in-drush-sa" title="Permanent link">#</a></h4>
+<p>First try restarting your container, it may have lost the volume mount to the ssh-agent</p>
+<div class="highlight"><pre><span></span><code>docker-compose up --force -d
+</code></pre></div>
+<p>If that does not resolve the issue, restart pygmy</p>
+<div class="highlight"><pre><span></span><code>pygmy restart -d
+</code></pre></div>
+<h4 id="i-get-an-error-like-conflict-the-name-amazee_iodockeramazeeio-is-already-in-use-by-container">I get an error like <code>Conflict. The name "/amazee_io.docker.amazee.io" is already in use by container</code><a class="headerlink" href="#i-get-an-error-like-conflict-the-name-amazee_iodockeramazeeio-is-already-in-use-by-container" title="Permanent link">#</a></h4>
+<p>It happened to all of us, you remove a local <code>docker-compose.yml</code> file, recreate it and now during <code>docker-compose up -d</code>, docker yells at you and tells you this container exists already.</p>
+<p>The easiest way would be to just give your new container another name, but there are better ways:</p>
+<h5 id="remove-a-container">Remove a container<a class="headerlink" href="#remove-a-container" title="Permanent link">#</a></h5>
+<ol>
+<li>
+<p>Find the name of the container you would like to completely remove via:</p>
+<div class="highlight"><pre><span></span><code>docker ps
+
+CONTAINER ID        IMAGE                         COMMAND                  CREATED             STATUS              PORTS                                      NAMES
+9e27b9eadc67        amazeeio/drupal:php70-basic   &quot;/sbin/my_init&quot;          10 minutes ago      Up 10 minutes       80/tcp, 443/tcp, 0.0.0.0:32782-&gt;3306/tcp   amazee_io.docker.amazee.io
+</code></pre></div>
+</li>
+<li>
+<p>Stop the container</p>
+<div class="highlight"><pre><span></span><code>docker stop amazee_io.docker.amazee.io
+</code></pre></div>
+</li>
+<li>
+<p>Remove the container with it's volumes:</p>
+<div class="highlight"><pre><span></span><code>docker rm -v amazee_io.docker.amazee.io
+</code></pre></div>
+</li>
+</ol>
+<h5 id="remove-all-containers-and-all-volumes">Remove all containers and all volumes<a class="headerlink" href="#remove-all-containers-and-all-volumes" title="Permanent link">#</a></h5>
+<p>You shouldn't really need to do this, and if you think so, first try the above help. But sometimes the best way is to completely restart:</p>
+<div class="highlight"><pre><span></span><code>docker rm -vf $(docker ps -q -a)
+</code></pre></div>
+<p>This will stop and remove <strong>all</strong> containers and <strong>all</strong> attached volumes.</p>
+<div class="admonition danger">
+<p class="admonition-title">Danger</p>
+<p>This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).</p>
+</div>
+<p>If you get an error like <code>cannot create temp file for here-document: No space left on device</code> then you can free up space by removing old volumes and images that we don't need anymore:</p>
+<div class="highlight"><pre><span></span><code>docker volume rm $(docker volume ls -q)
+</code></pre></div>
+<p>If you also want to get rid of all the docker images you can run:</p>
+<div class="highlight"><pre><span></span><code>docker rmi $(docker images -q)
+</code></pre></div>
+<p>Now you have a completely empty Docker, now it's time to start again with <code>pygmy</code>.</p>
+<h4 id="no-space-left-on-device">No space left on device<a class="headerlink" href="#no-space-left-on-device" title="Permanent link">#</a></h4>
+<p>If you need to free up some disk space, you can do this:
+  - start all containers that you need to preserve
+  - run the following commands
+    <div class="highlight"><pre><span></span><code>docker system prune
+docker image prune -a
+docker volume prune
+</code></pre></div></p>
+<h4 id="i-get-an-error-like-port-is-already-allocated-during-start">I get an error like <code>port is already allocated.</code> during start<a class="headerlink" href="#i-get-an-error-like-port-is-already-allocated-during-start" title="Permanent link">#</a></h4>
+<p>If during the start of Docker containers you see an error like that:</p>
+<div class="highlight"><pre><span></span><code>docker: Error response from daemon: driver failed programming external connectivity on endpoint
+amazeeio-haproxy (654d1f1c17b0f7304570a763e1017808b214b81648045a5c64ed6a395daeec92):
+Bind for 0.0.0.0:443 failed: port is already allocated.
+</code></pre></div>
+<p>This means that another service (can be another Docker container, or in case of Linux based systems another service like an installed nginx) is already using this Port.</p>
+<p>You should stop this service or Docker container first.</p>
+<h4 id="i-get-an-error-like-service-drupal-mounts-volumes-from-amazeeio-ssh-agent-which-is-not-the-name-of-a-service-or-container">I get an error like <code>Service "drupal" mounts volumes from "amazeeio-ssh-agent", which is not the name of a service or container.</code><a class="headerlink" href="#i-get-an-error-like-service-drupal-mounts-volumes-from-amazeeio-ssh-agent-which-is-not-the-name-of-a-service-or-container" title="Permanent link">#</a></h4>
+<p>This can happen when you start a Drupal Container via <code>docker-compose up -d</code> and the pygmy service has stopped</p>
+<div class="highlight"><pre><span></span><code>docker-compose up -d
+ERROR: Service &quot;drupal&quot; mounts volumes from &quot;amazeeio-ssh-agent&quot;, which is not the name of a service or container.
+</code></pre></div>
+<p>The Drupal Containers are depending on the <code>ssh-agent</code> shared Docker container (this is in order to have shared ssh-keys) and somehow this container is missing.</p>
+<p>Try to restart <code>pygmy</code> , this will create the <code>ssh-agent</code> container with the name <code>amazeeio-ssh-agent</code> and then try again.</p>
+<h4 id="working-offline">Working Offline<a class="headerlink" href="#working-offline" title="Permanent link">#</a></h4>
+<p>Amazeeio uses a remote DNS server to resolve your <code>*.docker.amazee.io</code> addresses which means if you don't have an internet connection you are not going to be able to get to your site. However, you can use your <code>hosts</code> file in this scenario. This file is typically located at <code>/etc/hosts</code> on Linux and macOS and <code>C:\Windows\System32\Drivers\etc\host</code> on Windows. You will need administrative privileges to edit this file.</p>
+<p>If you are unfamiliar with this process, follow this tutorial at <a href="http://www.howtogeek.com/howto/27350/beginner-geek-how-to-edit-your-hosts-file/">How-To Geek</a>.</p>
+<h4 id="host-entry-if-using-pygmy">Host entry if using pygmy<a class="headerlink" href="#host-entry-if-using-pygmy" title="Permanent link">#</a></h4>
+<div class="highlight"><pre><span></span><code><span class="m">127</span>.0.0.1<span class="w"> </span>awesomesauce.docker.amazee.io
+</code></pre></div>
+<h4 id="i-cant-connect-to-an-app-running-in-docker-from-another-vm-commonly-to-test-in-ie">I can't connect to an app running in docker from another VM (commonly to test in IE)<a class="headerlink" href="#i-cant-connect-to-an-app-running-in-docker-from-another-vm-commonly-to-test-in-ie" title="Permanent link">#</a></h4>
+<p>If you are running the Windows VM in VirtualBox, you can configure it to use the host DNS resolver:</p>
+<div class="highlight"><pre><span></span><code>VBoxManage modifyvm &quot;IE11 - Win10&quot; --natdnshostresolver1 on
+</code></pre></div>
+<p>Replace <code>"IE11 - Win10"</code> with the name of your VM. This will allow the VM to resolve and connect directly to your <code>http://*.docker.amazee.io</code> services running in pygmy.</p>
+<h5 id="for-pygmy">For pygmy<a class="headerlink" href="#for-pygmy" title="Permanent link">#</a></h5>
+<p>An additional step is required if you use pygmy. Domains have to be added to Windows <code>hosts</code> file. They should point to the gateway IP address.</p>
+<p>To get the gateway IP, run <code>ipconfig</code> in Windows terminal, and search for <code>Default Gateway</code> in the output.</p>
+<p>Example <code>hosts</code> file contents:</p>
+<div class="highlight"><pre><span></span><code>10.0.2.2 my-local-website.com.docker.amazee.io
+</code></pre></div>
+<h4 id="i-get-an-error-like-no-such-service-amazeeio-ssh-agent-when-using-docker-compose-up-d-even-after-pygmy-started-fine">I get an error like <code>no such service: amazeeio-ssh-agent</code> when using <code>docker-compose up -d</code> even after pygmy started fine<a class="headerlink" href="#i-get-an-error-like-no-such-service-amazeeio-ssh-agent-when-using-docker-compose-up-d-even-after-pygmy-started-fine" title="Permanent link">#</a></h4>
+<p>Restart pygmy and make sure that pygmy could start the ssh-agent container.</p>
+<div class="highlight"><pre><span></span><code>pygmy restart
+pygmy status
+</code></pre></div>
+<p>You could see a message like this:</p>
+<div class="highlight"><pre><span></span><code>[*] ssh-agent: Running as docker container amazeeio-ssh-agent, loaded keys:
+</code></pre></div>
+<h5 id="docker-desktop-users">Docker Desktop users<a class="headerlink" href="#docker-desktop-users" title="Permanent link">#</a></h5>
+<p>If you have recently updated Docker Desktop you should ensure that your turn off Docker Compose v2 support.</p>
+<ol>
+<li>Open Docker Desktop Preferences</li>
+<li>Uncheck the option labelled "Use Docker Compose v2"</li>
+<li>Click Apply and Restart</li>
+</ol>
+<p>Once completed, try starting pygmy and run your <code>docker-compose up -d</code> commands again.</p>
+<div class="highlight"><pre><span></span><code>pygmy up
+docker-compose up -d
+</code></pre></div>
+<h3 id="pygmy">pygmy<a class="headerlink" href="#pygmy" title="Permanent link">#</a></h3>
+<p>Most issues with <code>pygmy</code> can be resolved with:</p>
+<p><img alt="Have you tried turning it off and on again?" src="/assets/itsupport.gif" /></p>
+<div class="highlight"><pre><span></span><code>pygmy restart -d
+</code></pre></div>
+<p>If that does not help, try and restart other services, in this order:</p>
+<ol>
+<li>Docker</li>
+<li>Reboot your computer</li>
+</ol>
+<h4 id="i-get-an-error-like-listen-tcp-000053-bind-address-already-in-use-during-pygmy-up">I get an error like <code>listen tcp 0.0.0.0:53: bind: address already in use</code> during <code>pygmy up</code><a class="headerlink" href="#i-get-an-error-like-listen-tcp-000053-bind-address-already-in-use-during-pygmy-up" title="Permanent link">#</a></h4>
+<p>If during starting of <code>pygmy</code> you see an error like that:</p>
+<div class="highlight"><pre><span></span><code>    Error response from daemon: driver failed programming external connectivity on endpoint amazeeio-dnsmasq:
+    Error starting userland proxy: listen tcp 0.0.0.0:53: bind: address already in use
+    Error: failed to start containers: amazeeio-dnsmasq
+</code></pre></div>
+<p>You are probably on Ubuntu and the by default started DNS server by Ubuntu conflicts with the one we provide with <code>pygmy</code>. The resolution depends on Ubuntu version.</p>
+<h5 id="ubuntu-before-1804">Ubuntu before 18.04<a class="headerlink" href="#ubuntu-before-1804" title="Permanent link">#</a></h5>
+<p>You should disable it, see here: http://askubuntu.com/a/233223 (no worries, the default started DNS server is actually not used, so it's safe to disable it).</p>
+<h5 id="ubuntu-1804-and-later">Ubuntu 18.04 and later<a class="headerlink" href="#ubuntu-1804-and-later" title="Permanent link">#</a></h5>
+<p>You should disable it as described https://mmoapi.com/post/how-to-disable-dnsmasq-port-53-listening-on-ubuntu-18-04.
+Instead of reboot the system, remove <em>/etc/resolv.conf</em>  file (still symlinking to a systemd-resolved file) and create an empty one.</p>
+<div class="highlight"><pre><span></span><code>sudo rm /etc/resolv.conf
+sudo touch /etc/resolv.conf
+</code></pre></div>
+<p>If you still run into the error run following command <code>sudo netstat -tulpn</code> to see the processlist look for the service running on port 53 (you should find that process in the <code>Local Address</code> column). Look for the Process ID (PID)</p>
+<p>With the Process ID you can now run following command:</p>
+<blockquote>
+<p>sudo kill [Process ID]</p>
+</blockquote>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.1e8ae164.min.js"></script>
+      
+    
+  </body>
+</html>
