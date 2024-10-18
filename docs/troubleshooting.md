@@ -28,9 +28,8 @@ If this still is not enough, this is the 🔨  method:
     docker-compose down -v
     docker-compose up
 
-{% hint style='danger' %}
-This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).
-{% endhint %}
+!!! danger
+    This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).
 
 ### Drupal Container logs
 
@@ -120,9 +119,8 @@ You shouldn't really need to do this, and if you think so, first try the above h
 
 This will stop and remove **all** containers and **all** attached volumes.
 
-{% hint style='danger' %}
-This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).
-{% endhint %}
+!!! danger
+    This will remove your whole local MySQL database and maybe existing other local created volumes (like the solr search index).
 
 
 If you get an error like `cannot create temp file for here-document: No space left on device` then you can free up space by removing old volumes and images that we don't need anymore:
