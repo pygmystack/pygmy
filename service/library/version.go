@@ -33,8 +33,17 @@ func getVersion() string {
 				commit = setting.Value[:8] // Short commit hash
 			case "vcs.time":
 				date = setting.Value
+			case "vcs.modified":
+				if setting.Value == "true" {
+					commit += "-dirty"
+				}
 			}
 		}
 	}
+
+	if version == "dev" {
+		return fmt.Sprintf("%s-%s", version, commit)
+	}
+
 	return strings.TrimPrefix(version, "v")
 }
