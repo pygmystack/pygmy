@@ -15,7 +15,6 @@ archives:
 
 builds:
   - id: pygmy
-#    binary: '{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
     env:
       - CGO_ENABLED=0
     ldflags:
@@ -35,7 +34,6 @@ builds:
       - arm
       - arm64
   - id: pygmy-windows
-#    binary: '{{ .ProjectName }}-windows_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
     env:
       - CGO_ENABLED=0
     goos:
@@ -55,7 +53,6 @@ builds:
       - -X 'main.GoOS={{.Os}}'
       - -X 'main.GoArch={{.Arch}}'
   - id: pygmy-static
-#    binary: '{{ .ProjectName }}-static_{{ .Version }}_{{ .Os }}_{{ .Arch }}'
     env:
       - CGO_ENABLED=0
     flags:
