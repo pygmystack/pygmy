@@ -42,6 +42,16 @@ builds:
       - 386
       - amd64
       - arm
+    flags:
+      - -a
+    ldflags:
+      - -s
+      - -w
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
+      - -X main.GoOS={{.Os}}
+      - -X main.GoArch={{.Arch}}
   - id: pygmy-static
     env:
       - CGO_ENABLED=0
