@@ -18,9 +18,9 @@ builds:
     env:
       - CGO_ENABLED=0
     ldflags:
-      - -X main.Version={{.Tag}}
-      - -X main.CommitSHA={{.FullCommit}}
-      - -X main.BuildDate={{.CommitDate}}
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
       - -X main.GoOS={{.Os}}
       - -X main.GoArch={{.Arch}}
     goos:
@@ -46,9 +46,9 @@ builds:
     flags:
       - -a
     ldflags:
-      - -X main.Version={{.Tag}}
-      - -X main.CommitSHA={{.FullCommit}}
-      - -X main.BuildDate={{.CommitDate}}
+      - -X main.version={{.Version}}
+      - -X main.commit={{.Commit}}
+      - -X main.date={{.Date}}
       - -X main.GoOS={{.Os}}
       - -X main.GoArch={{.Arch}}
       - -extldflags "-static"
