@@ -2,6 +2,9 @@ package library
 
 import (
 	"fmt"
+	runtimecontainers "github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"os"
 	"strings"
 
@@ -10,7 +13,6 @@ import (
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
-	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // Up will bring Pygmy up.
@@ -33,8 +35,8 @@ func Up(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.DockerVolumeExists(volume.Name); !s {
-			_, err := docker.DockerVolumeCreate(volume)
+		if s, _ := volumes.VolumeExists(volume.Name); !s {
+			_, err := volumes.VolumeCreate(volume)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {
@@ -87,7 +89,7 @@ func Up(c Config) {
 	// Docker network(s) creation
 	for _, Network := range c.Networks {
 		if Network.Name != "" {
-			netVal, _ := docker.DockerNetworkStatus(Network.Name)
+			netVal, _ := networks.Status(Network.Name)
 			if !netVal {
 				if err := NetworkCreate(Network); err == nil {
 					color.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
@@ -104,7 +106,7 @@ func Up(c Config) {
 		name, nameErr := service.GetFieldString("name")
 		// If the network is configured at the container level, connect it.
 		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
-			if s, _ := docker.DockerNetworkConnected(Network, name); !s {
+			if s, _ := networks.Connected(Network, name); !s {
 				if s := NetworkConnect(Network, name); s == nil {
 					color.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
@@ -148,11 +150,11 @@ func Up(c Config) {
 	}
 
 	// List out all running projects to get their URL.
-	containers, _ := docker.DockerContainerList()
+	containers, _ := runtimecontainers.List()
 	var urls []string
 	for _, container := range containers {
 		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
-			obj, _ := docker.DockerInspect(container.ID)
+			obj, _ := runtimecontainers.Inspect(container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {
 				// Look for the environment variable $LAGOON_ROUTE.

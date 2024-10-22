@@ -6,15 +6,16 @@ import (
 
 	. "github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
 	"github.com/pygmystack/pygmy/service/color"
-	"github.com/pygmystack/pygmy/service/interface/docker"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
 func Clean(c Config) {
 
 	Setup(&c)
-	Containers, _ := docker.DockerContainerList()
+	Containers, _ := containers.List()
 	NetworksToClean := []string{}
 
 	for _, Container := range Containers {
@@ -31,12 +32,12 @@ func Clean(c Config) {
 		}
 
 		if target {
-			err := docker.DockerKill(Container.ID)
+			err := containers.Kill(Container.ID)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", ContainerName)))
 			}
 
-			err = docker.DockerRemove(Container.ID)
+			err = containers.Remove(Container.ID)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", ContainerName)))
 			}
@@ -48,12 +49,12 @@ func Clean(c Config) {
 	}
 
 	for n := range unique(NetworksToClean) {
-		if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); s {
-			e := docker.DockerNetworkRemove(NetworksToClean[n])
+		if s, _ := networks.Status(NetworksToClean[n]); s {
+			e := networks.Remove(NetworksToClean[n])
 			if e != nil {
 				fmt.Println(e)
 			}
-			if s, _ := docker.DockerNetworkStatus(NetworksToClean[n]); !s {
+			if s, _ := networks.Status(NetworksToClean[n]); !s {
 				color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
 				color.Print(Red(fmt.Sprintf("Failed to remove %s\n", NetworksToClean[n])))

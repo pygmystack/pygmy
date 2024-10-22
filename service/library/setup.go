@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 	networktypes "github.com/docker/docker/api/types/network"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"os"
 	"runtime"
 	"sort"
@@ -14,7 +15,6 @@ import (
 	"github.com/pygmystack/pygmy/service/dnsmasq"
 	"github.com/pygmystack/pygmy/service/haproxy"
 	model "github.com/pygmystack/pygmy/service/interface"
-	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/mailhog"
 	"github.com/pygmystack/pygmy/service/network"
 	"github.com/pygmystack/pygmy/service/resolv"
@@ -167,7 +167,7 @@ func Setup(c *Config) {
 
 		for _, v := range c.Volumes {
 			// Get the potentially existing volume:
-			c.Volumes[v.Name], _ = docker.DockerVolumeGet(v.Name)
+			c.Volumes[v.Name], _ = volumes.VolumeGet(v.Name)
 			// Merge the volume with the provided configuration:
 			c.Volumes[v.Name] = getVolume(c.Volumes[v.Name], c.Volumes[v.Name])
 		}

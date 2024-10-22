@@ -22,11 +22,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
 
 	. "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/service/color"
-	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
@@ -65,7 +65,7 @@ var addkeyCmd = &cobra.Command{
 			purpose, _ := service.GetFieldString("purpose")
 			if purpose == "sshagent" {
 				name, _ := service.GetFieldString("name")
-				d, _ := docker.DockerExec(name, "ssh-add -l")
+				d, _ := containers.Exec(name, "ssh-add -l")
 				fmt.Println(string(d))
 			}
 		}

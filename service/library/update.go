@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/pygmystack/pygmy/service/interface/docker"
+	runtimeimages "github.com/pygmystack/pygmy/internal/runtimes/docker/images"
 )
 
-// Update will update the the images for all configured services.
+// Update will update the images for all configured services.
 func Update(c Config) {
 
 	// Import the configuration.
@@ -22,7 +22,7 @@ func Update(c Config) {
 		var result string
 		var err error
 		if purpose == "" || purpose == "sshagent" {
-			result, err = docker.DockerPull(service.Config.Image)
+			result, err = runtimeimages.Pull(service.Config.Image)
 			if err == nil {
 				fmt.Println(result)
 			} else {
@@ -46,11 +46,11 @@ func Update(c Config) {
 		}
 	}
 
-	images, _ := docker.DockerImageList()
+	images, _ := runtimeimages.List()
 	for _, image := range images {
 		for _, tag := range image.RepoTags {
 			if strings.Contains(tag, "uselagoon") {
-				result, err := docker.DockerPull(tag)
+				result, err := runtimeimages.Pull(tag)
 				if err == nil {
 					fmt.Println(result)
 				}

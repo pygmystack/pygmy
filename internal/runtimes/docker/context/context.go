@@ -1,4 +1,4 @@
-package docker
+package context
 
 import (
 	"encoding/json"
@@ -28,7 +28,7 @@ func filePathInHomeDir(elem ...string) (string, error) {
 	return filepath.Join(append([]string{home}, elem...)...), nil
 }
 
-func CurrentContext() (string, error) {
+func currentContext() (string, error) {
 	configPath, err := filePathInHomeDir(".docker", "config.json")
 	if err != nil {
 		return "", err
@@ -51,7 +51,7 @@ func CurrentContext() (string, error) {
 	return dockerConfig.CurrentContext, nil
 }
 
-func EndpointFromContext(context string) (string, error) {
+func endpointFromContext(context string) (string, error) {
 	manifestDir, err := filePathInHomeDir(".docker", "contexts", "meta")
 	if err != nil {
 		return "", err
@@ -92,14 +92,14 @@ func EndpointFromContext(context string) (string, error) {
 }
 
 func CurrentDockerHost() (string, error) {
-	dockerCurrentContext, err := CurrentContext()
+	dockerCurrentContext, err := currentContext()
 	if err != nil {
 		return "", err
 	}
 
 	currentDockerHost := ""
 	if dockerCurrentContext != "" {
-		currentDockerHost, err = EndpointFromContext(dockerCurrentContext)
+		currentDockerHost, err = endpointFromContext(dockerCurrentContext)
 		if err != nil {
 			return "", err
 		}

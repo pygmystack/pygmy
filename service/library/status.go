@@ -3,13 +3,16 @@ package library
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/logrusorgru/aurora"
 	"strings"
 
+	"github.com/logrusorgru/aurora"
+
+	runtimecontainers "github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	model "github.com/pygmystack/pygmy/service/interface"
-	"github.com/pygmystack/pygmy/service/interface/docker"
 	"github.com/pygmystack/pygmy/service/resolv"
 )
 
@@ -28,7 +31,7 @@ func Status(c Config) {
 	// Ensure the services struct is not nil.
 	c.JSONStatus.Services = make(map[string]StatusJSONStatus)
 
-	Containers, _ := docker.DockerContainerList()
+	Containers, _ := runtimecontainers.List()
 	for _, Container := range Containers {
 		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
@@ -75,7 +78,7 @@ func Status(c Config) {
 
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
-			if x, _ := docker.DockerNetworkConnected(Network.Name, Container.Name); !x {
+			if x, _ := networks.Connected(Network.Name, Container.Name); !x {
 				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is not connected to the network %s", Container.Name, Network.Name))
 			} else {
 				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is connected to the network %s", Container.Name, Network.Name))
@@ -93,7 +96,7 @@ func Status(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := docker.DockerVolumeExists(volume.Name); s {
+		if s, _ := volumes.VolumeExists(volume.Name); s {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has been created", volume.Name))
 		} else {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has not been created", volume.Name))
@@ -105,7 +108,7 @@ func Status(c Config) {
 		for _, v := range c.Services {
 			purpose, _ := v.GetFieldString("purpose")
 			if purpose == "sshagent" {
-				l, _ := docker.DockerExec(v.Config.Labels["pygmy.name"], "ssh-add -l")
+				l, _ := runtimecontainers.Exec(v.Config.Labels["pygmy.name"], "ssh-add -l")
 				// Remove \u0000 & \u0001 from output messages.
 				output := strings.ReplaceAll(string(l), "\u0000", "")
 				output = strings.ReplaceAll(output, "\u0001", "")
@@ -126,10 +129,10 @@ func Status(c Config) {
 		}
 	}
 
-	containers, _ := docker.DockerContainerList()
+	containers, _ := runtimecontainers.List()
 	for _, container := range containers {
 		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
-			obj, _ := docker.DockerInspect(container.ID)
+			obj, _ := runtimecontainers.Inspect(container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {
 				// Look for the environment variable $LAGOON_ROUTE.

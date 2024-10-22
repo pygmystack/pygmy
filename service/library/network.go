@@ -3,23 +3,24 @@ package library
 import (
 	"context"
 	"fmt"
-	networktypes "github.com/docker/docker/api/types/network"
 
+	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	"github.com/pygmystack/pygmy/service/interface/docker"
+
+	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
 )
 
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
 func NetworkCreate(network networktypes.Inspect) error {
-	return docker.DockerNetworkCreate(&network)
+	return networks.Create(&network)
 }
 
 // NetworkConnect is part of a centralised abstraction of the Docker API
 // and will connect a created container to a docker network with a
 // specified name.
 func NetworkConnect(network string, containerName string) error {
-	return docker.DockerNetworkConnect(network, containerName)
+	return networks.Connect(network, containerName)
 }
 
 // NetworkStatus will check the state of a Docker network to test if it has
