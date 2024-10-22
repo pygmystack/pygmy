@@ -3,6 +3,8 @@ package agent
 import (
 	"errors"
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"os"
 	"strings"
 
@@ -10,7 +12,6 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 )
 
@@ -44,7 +45,7 @@ func New() docker.Service {
 // List will grab the output of all running containers with the proper
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
-func List(service *docker.Service) ([]byte, error) {
+func List(service *runtime.Service) ([]byte, error) {
 	name, _ := service.GetFieldString("name")
 	purpose, _ := service.GetFieldString("purpose")
 	if purpose == "showkeys" {
@@ -74,7 +75,7 @@ func Validate(filePath string) (bool, error) {
 }
 
 // Search will determine if an SSH key has been added to the agent.
-func Search(service *docker.Service, key string) (bool, error) {
+func Search(service *runtime.Service, key string) (bool, error) {
 	result := false
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 		stripped := strings.Trim(key, ".pub")

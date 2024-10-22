@@ -6,8 +6,8 @@ import (
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
-	"github.com/pygmystack/pygmy/internal/services/color"
-	"github.com/pygmystack/pygmy/internal/services/endpoint"
+	"github.com/pygmystack/pygmy/internal/utils/color"
+	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 	"os"
 	"strings"
 

@@ -20,7 +20,7 @@ import (
 //}
 
 func TestExampleSearch(t *testing.T) {
-	_, err := agent.Search(runtime.Service{}, "id_rsa.pub")
+	_, err := agent.Search(&runtime.Service{}, "id_rsa.pub")
 	if err != nil {
 		t.Fail()
 	}

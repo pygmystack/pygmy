@@ -1,7 +1,7 @@
 package commands_test
 
 import (
-	commands2 "github.com/pygmystack/pygmy/external/commands"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/pygmystack/pygmy/internal/runtime"
 	"testing"
 
@@ -11,7 +11,7 @@ import (
 // Tests the setup process.
 func TestSetup(t *testing.T) {
 	// Get our configuration object
-	c := &commands2.Config{
+	c := &commands.Config{
 		Services: map[string]runtime.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
@@ -23,8 +23,8 @@ func TestSetup(t *testing.T) {
 			},
 		},
 	}
-	commands2.Setup(c)
-	c.SortedServices = commands2.GetServicesSorted(c)
+	commands.Setup(c)
+	c.SortedServices = commands.GetServicesSorted(c)
 
 	Convey("Setup Tests", t, func() {
 		// SSH Agent must be 5 items long by default.

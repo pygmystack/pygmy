@@ -7,9 +7,9 @@ import (
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
-	"github.com/pygmystack/pygmy/internal/services/color"
-	"github.com/pygmystack/pygmy/internal/services/endpoint"
-	"github.com/pygmystack/pygmy/internal/services/resolv"
+	"github.com/pygmystack/pygmy/internal/utils/color"
+	"github.com/pygmystack/pygmy/internal/utils/endpoint"
+	"github.com/pygmystack/pygmy/internal/utils/resolv"
 	"strings"
 
 	"github.com/logrusorgru/aurora"

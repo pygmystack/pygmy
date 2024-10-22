@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"fmt"
-	commands2 "github.com/pygmystack/pygmy/external/commands"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -41,7 +41,7 @@ var restartCmd = &cobra.Command{
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []commands2.Key{}
+			c.Keys = []commands.Key{}
 		} else {
 			FoundKey := false
 			for _, v := range c.Keys {
@@ -51,14 +51,14 @@ var restartCmd = &cobra.Command{
 			}
 
 			if !FoundKey {
-				thisKey := commands2.Key{
+				thisKey := commands.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
-		commands2.Restart(c)
+		commands.Restart(c)
 
 	},
 }

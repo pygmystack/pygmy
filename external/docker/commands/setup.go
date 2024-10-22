@@ -2,24 +2,24 @@ package commands
 
 import (
 	"fmt"
-	networktypes "github.com/docker/docker/api/types/network"
-	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
-	"github.com/pygmystack/pygmy/internal/services/dnsmasq"
-	"github.com/pygmystack/pygmy/internal/services/haproxy"
-	"github.com/pygmystack/pygmy/internal/services/mailhog"
-	"github.com/pygmystack/pygmy/internal/services/network"
-	"github.com/pygmystack/pygmy/internal/services/resolv"
-	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
-	"github.com/pygmystack/pygmy/internal/services/ssh/key"
 	"os"
 	"runtime"
 	"sort"
 	"strings"
 
+	networktypes "github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/api/types/volume"
 	"github.com/spf13/viper"
 
-	"github.com/docker/docker/api/types/volume"
+	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
+	"github.com/pygmystack/pygmy/internal/services/dnsmasq"
+	"github.com/pygmystack/pygmy/internal/services/haproxy"
+	"github.com/pygmystack/pygmy/internal/services/mailhog"
+	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
+	"github.com/pygmystack/pygmy/internal/services/ssh/key"
+	"github.com/pygmystack/pygmy/internal/utils/network"
+	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
 
 // ImportDefaults is an exported function which allows third-party applications

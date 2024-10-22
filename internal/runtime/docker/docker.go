@@ -3,7 +3,7 @@ package docker
 import (
 	"context"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/services/color"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 	"io"
 	"os"
 	"strings"

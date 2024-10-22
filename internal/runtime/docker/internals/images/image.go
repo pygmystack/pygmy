@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
-	"github.com/pygmystack/pygmy/internal/services/endpoint"
+	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 	"io"
 	"regexp"
 	"strings"

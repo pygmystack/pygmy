@@ -6,7 +6,7 @@ package resolv
 import (
 	"fmt"
 	runtime2 "github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/color"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 	"os"
 	"os/exec"
 	"runtime"

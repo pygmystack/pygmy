@@ -6,8 +6,8 @@ import (
 	networktypes "github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/imdario/mergo"
-	"github.com/pygmystack/pygmy/internal/runtime/docker"
-	"github.com/pygmystack/pygmy/internal/services/resolv"
+	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
 
 // Config is a struct of configurable options which can
@@ -21,7 +21,7 @@ type Config struct {
 	Domain string `yaml:"domain"`
 
 	// Services is a []model.Service for an index of all Services.
-	Services map[string]docker.Service `yaml:"services"`
+	Services map[string]dockerruntime.Service `yaml:"services"`
 
 	SortedServices []string
 
@@ -65,7 +65,7 @@ type Key struct {
 	Path string `yaml:"path"`
 }
 
-func mergeService(destination docker.Service, src *docker.Service) (*docker.Service, error) {
+func mergeService(destination dockerruntime.Service, src *dockerruntime.Service) (*dockerruntime.Service, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -73,7 +73,7 @@ func mergeService(destination docker.Service, src *docker.Service) (*docker.Serv
 	return &destination, nil
 }
 
-func getService(s docker.Service, c docker.Service) docker.Service {
+func getService(s dockerruntime.Service, c dockerruntime.Service) dockerruntime.Service {
 	Service, _ := mergeService(s, &c)
 	return *Service
 }
