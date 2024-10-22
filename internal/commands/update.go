@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	runtimeimages "github.com/pygmystack/pygmy/internal/runtimes/docker/images"
+	runtimeimages "github.com/pygmystack/pygmy/internal/runtime/docker/docker/images"
 )
 
 // Update will update the images for all configured services.

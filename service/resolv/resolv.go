@@ -5,7 +5,7 @@ package resolv
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes"
+	runtime2 "github.com/pygmystack/pygmy/internal/runtime"
 	"os"
 	"os/exec"
 	"runtime"
@@ -34,7 +34,7 @@ func run(args []string) error {
 // this function:
 // * sudo ifconfig lo0 alias 172.16.172.16
 // * sudo killall mDNSResponder
-func (resolv Resolv) Configure(c *runtimes.Params) {
+func (resolv Resolv) Configure(c *runtime2.Params) {
 
 	var cmdOut []byte
 	var tmpFile *os.File
@@ -199,7 +199,7 @@ func (resolv Resolv) Clean() {
 // Status is an exported state function which will check the file contents
 // matches Data on Linux, or return the result of three independent checks
 // on MacOS including the file, network and data checks.
-func (resolv Resolv) Status(c *runtimes.Params) bool {
+func (resolv Resolv) Status(c *runtime2.Params) bool {
 
 	if runtime.GOOS == "darwin" {
 		return resolv.statusFile() && resolv.statusNet() && resolv.statusFileData()

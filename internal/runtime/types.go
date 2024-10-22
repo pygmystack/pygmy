@@ -1,4 +1,4 @@
-package runtimes
+package runtime
 
 import (
 	containertypes "github.com/docker/docker/api/types/container"

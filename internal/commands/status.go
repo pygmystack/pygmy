@@ -3,14 +3,14 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes"
+	"github.com/pygmystack/pygmy/internal/runtime"
+	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/volumes"
 	"strings"
 
 	"github.com/logrusorgru/aurora"
 
-	runtimecontainers "github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
 	"github.com/pygmystack/pygmy/service/resolv"
@@ -88,7 +88,7 @@ func Status(c Config) {
 
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
-		if s := r.Status(&runtimes.Params{Domain: c.Domain}); s {
+		if s := r.Status(&runtime.Params{Domain: c.Domain}); s {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is properly connected", resolver.Name))
 		} else {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is not properly connected", resolver.Name))
@@ -96,7 +96,7 @@ func Status(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := volumes.VolumeExists(volume.Name); s {
+		if s, _ := volumes.Exists(volume.Name); s {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has been created", volume.Name))
 		} else {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has not been created", volume.Name))

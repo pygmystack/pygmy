@@ -3,7 +3,6 @@ package agent
 import (
 	"errors"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes"
 	"os"
 	"strings"
 
@@ -11,11 +10,13 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
 )
 
 // New will provide the standard object for the SSH agent container.
-func New() runtimes.Service {
-	return runtimes.Service{
+func New() docker.Service {
+	return docker.Service{
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{
@@ -43,7 +44,8 @@ func New() runtimes.Service {
 // List will grab the output of all running containers with the proper
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
-func List(service runtimes.Service) ([]byte, error) {
+func List(service *docker.Service) ([]byte, error) {
+	name, _ := service.GetFieldString("name")
 	purpose, _ := service.GetFieldString("purpose")
 	if purpose == "showkeys" {
 		e := service.Start()
@@ -51,7 +53,7 @@ func List(service runtimes.Service) ([]byte, error) {
 			return []byte{}, e
 		}
 	}
-	return service.DockerLogs()
+	return containers.Logs(name)
 }
 
 // Validate will validate if an SSH key is valid.
@@ -72,7 +74,7 @@ func Validate(filePath string) (bool, error) {
 }
 
 // Search will determine if an SSH key has been added to the agent.
-func Search(service runtimes.Service, key string) (bool, error) {
+func Search(service *docker.Service, key string) (bool, error) {
 	result := false
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 		stripped := strings.Trim(key, ".pub")

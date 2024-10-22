@@ -2,12 +2,12 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
 
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
 	"github.com/pygmystack/pygmy/service/color"
 )
 

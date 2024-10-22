@@ -2,11 +2,10 @@ package networks
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
 
 	networktypes "github.com/docker/docker/api/types/network"
-
-	"github.com/pygmystack/pygmy/internal/runtimes/docker"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
 )
 
 // Create is an abstraction layer on top of the Docker API call

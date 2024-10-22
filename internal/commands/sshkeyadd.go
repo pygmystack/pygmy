@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
 	"os"
 	"runtime"
 	"strings"
@@ -61,8 +62,9 @@ func SshKeyAdd(c Config, key string) error {
 			}
 
 			interactive, _ := Container.GetFieldBool("interactive")
+			name, _ := Container.GetFieldString("name")
 			if !interactive {
-				l, _ := Container.DockerLogs()
+				l, _ := containers.Logs(name)
 				handled := false
 				// We need tighter control on the output of this container...
 				for _, line := range strings.Split(string(l), "\n") {

@@ -3,7 +3,7 @@ package images
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
 	"io"
 	"regexp"
 	"strings"

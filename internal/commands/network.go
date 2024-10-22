@@ -3,11 +3,10 @@ package commands
 import (
 	"context"
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
 
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
 )
 
 // NetworkCreate is part of a centralised abstraction of the Docker API

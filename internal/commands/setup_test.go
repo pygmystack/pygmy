@@ -2,7 +2,7 @@ package commands_test
 
 import (
 	"github.com/pygmystack/pygmy/internal/commands"
-	"github.com/pygmystack/pygmy/internal/runtimes"
+	"github.com/pygmystack/pygmy/internal/runtime"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -12,7 +12,7 @@ import (
 func TestSetup(t *testing.T) {
 	// Get our configuration object
 	c := &commands.Config{
-		Services: map[string]runtimes.Service{
+		Services: map[string]runtime.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
 				Image: "example-amazeeio-dnsmasq",

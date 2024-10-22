@@ -1,8 +1,10 @@
-package runtimes
+package docker
 
 import (
 	"context"
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/images"
 	"io"
 	"os"
 	"strings"
@@ -12,8 +14,6 @@ import (
 	. "github.com/logrusorgru/aurora"
 	"golang.org/x/term"
 
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/images"
 	"github.com/pygmystack/pygmy/service/color"
 )
 

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
 	"io"
 	"runtime"
 	"strings"
@@ -13,8 +14,6 @@ import (
 	containertypes "github.com/docker/docker/api/types/container"
 	networktypes "github.com/docker/docker/api/types/network"
 	v1 "github.com/opencontainers/image-spec/specs-go/v1"
-
-	"github.com/pygmystack/pygmy/internal/runtimes/docker"
 )
 
 // Stop will stop the container.

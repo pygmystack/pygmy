@@ -2,16 +2,15 @@ package haproxy
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
 )
 
 // New will provide the standard object for the haproxy container.
-func New(c *runtimes.Params) runtimes.Service {
-	return runtimes.Service{
+func New(c *docker.Params) docker.Service {
+	return docker.Service{
 		Config: container.Config{
 			Image: "pygmystack/haproxy",
 			Labels: map[string]string{
@@ -41,8 +40,8 @@ func New(c *runtimes.Params) runtimes.Service {
 
 // NewDefaultPorts will provide the standard ports used for merging into the
 // haproxy config.
-func NewDefaultPorts() runtimes.Service {
-	return runtimes.Service{
+func NewDefaultPorts() docker.Service {
+	return docker.Service{
 		HostConfig: container.HostConfig{
 			PortBindings: nat.PortMap{
 				"80/tcp": []nat.PortBinding{

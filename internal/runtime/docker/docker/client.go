@@ -3,7 +3,7 @@ package docker
 import (
 	"context"
 	"github.com/docker/docker/client"
-	containercontext "github.com/pygmystack/pygmy/internal/runtimes/docker/context"
+	containercontext "github.com/pygmystack/pygmy/internal/runtime/docker/docker/context"
 	"os"
 )
 

@@ -1,7 +1,7 @@
 package agent_test
 
 import (
-	"github.com/pygmystack/pygmy/internal/runtimes"
+	"github.com/pygmystack/pygmy/internal/runtime"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
@@ -20,7 +20,7 @@ import (
 //}
 
 func TestExampleSearch(t *testing.T) {
-	_, err := agent.Search(runtimes.Service{}, "id_rsa.pub")
+	_, err := agent.Search(runtime.Service{}, "id_rsa.pub")
 	if err != nil {
 		t.Fail()
 	}

@@ -2,10 +2,10 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes"
-	runtimecontainers "github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
+	"github.com/pygmystack/pygmy/internal/runtime"
+	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/volumes"
 	"os"
 	"strings"
 
@@ -35,8 +35,8 @@ func Up(c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := volumes.VolumeExists(volume.Name); !s {
-			_, err := volumes.VolumeCreate(volume)
+		if s, _ := volumes.Exists(volume.Name); !s {
+			_, err := volumes.Create(volume)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {
@@ -122,8 +122,8 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status(&runtimes.Params{Domain: c.Domain}) {
-			resolver.Configure(&runtimes.Params{Domain: c.Domain})
+		if !resolver.Status(&runtime.Params{Domain: c.Domain}) {
+			resolver.Configure(&runtime.Params{Domain: c.Domain})
 		}
 	}
 
