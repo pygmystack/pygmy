@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/commands"
+	commands2 "github.com/pygmystack/pygmy/external/commands"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -45,7 +45,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []commands.Key{}
+			c.Keys = []commands2.Key{}
 		} else {
 
 			keyExistsInConfig := false
@@ -56,14 +56,14 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 
 			if !keyExistsInConfig {
-				thisKey := commands.Key{
+				thisKey := commands2.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
-		commands.Up(c)
+		commands2.Up(c)
 
 	},
 }

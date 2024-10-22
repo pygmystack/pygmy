@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/internal/commands"
+	"github.com/pygmystack/pygmy/external/commands"
 	"github.com/spf13/cobra"
 )
 

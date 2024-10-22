@@ -22,7 +22,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/commands"
+	"github.com/pygmystack/pygmy/external/commands"
 	"os"
 	"runtime"
 	"strings"

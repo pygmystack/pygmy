@@ -23,7 +23,7 @@ package cmd
 import (
 	"fmt"
 	. "github.com/logrusorgru/aurora"
-	"github.com/pygmystack/pygmy/internal/commands"
+	commands2 "github.com/pygmystack/pygmy/external/commands"
 	"github.com/pygmystack/pygmy/internal/services/color"
 
 	"github.com/spf13/cobra"
@@ -38,22 +38,22 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		var Keys []commands.Key
+		var Keys []commands2.Key
 
 		if Key != "" {
-			thisKey := commands.Key{
+			thisKey := commands2.Key{
 				Path: Key,
 			}
 			Keys = append(Keys, thisKey)
 		} else {
 			if len(Keys) == 0 {
-				commands.Setup(&c)
+				commands2.Setup(&c)
 				Keys = c.Keys
 			}
 		}
 
 		for _, k := range Keys {
-			if e := commands.SshKeyAdd(c, k.Path); e != nil {
+			if e := commands2.SshKeyAdd(c, k.Path); e != nil {
 				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
