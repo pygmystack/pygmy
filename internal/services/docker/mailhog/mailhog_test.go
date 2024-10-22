@@ -3,7 +3,7 @@ package mailhog_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/mailhog"
+	"github.com/pygmystack/pygmy/internal/services/docker/mailhog"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"

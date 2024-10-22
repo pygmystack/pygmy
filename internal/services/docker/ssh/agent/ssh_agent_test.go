@@ -2,7 +2,7 @@ package agent_test
 
 import (
 	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
+	"github.com/pygmystack/pygmy/internal/services/docker/ssh/agent"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"

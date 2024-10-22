@@ -3,7 +3,7 @@ package commands
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
-	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
+	"github.com/pygmystack/pygmy/internal/services/docker/ssh/agent"
 	"github.com/pygmystack/pygmy/internal/utils/color"
 	"os"
 	"runtime"

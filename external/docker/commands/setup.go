@@ -2,6 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/services/docker/dnsmasq"
+	"github.com/pygmystack/pygmy/internal/services/docker/haproxy"
+	"github.com/pygmystack/pygmy/internal/services/docker/mailhog"
+	"github.com/pygmystack/pygmy/internal/services/docker/ssh/agent"
+	"github.com/pygmystack/pygmy/internal/services/docker/ssh/key"
 	"os"
 	"runtime"
 	"sort"
@@ -13,11 +18,6 @@ import (
 
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
-	"github.com/pygmystack/pygmy/internal/services/dnsmasq"
-	"github.com/pygmystack/pygmy/internal/services/haproxy"
-	"github.com/pygmystack/pygmy/internal/services/mailhog"
-	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
-	"github.com/pygmystack/pygmy/internal/services/ssh/key"
 	"github.com/pygmystack/pygmy/internal/utils/network"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )

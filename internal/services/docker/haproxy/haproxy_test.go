@@ -3,7 +3,7 @@ package haproxy_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/haproxy"
+	"github.com/pygmystack/pygmy/internal/services/docker/haproxy"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"

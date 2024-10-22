@@ -3,7 +3,7 @@ package dnsmasq_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/dnsmasq"
+	"github.com/pygmystack/pygmy/internal/services/docker/dnsmasq"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
