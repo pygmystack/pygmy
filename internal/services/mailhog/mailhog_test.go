@@ -3,11 +3,11 @@ package mailhog_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/services/mailhog"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/pygmystack/pygmy/service/mailhog"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

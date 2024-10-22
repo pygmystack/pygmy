@@ -2,12 +2,12 @@ package agent_test
 
 import (
 	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/services/ssh/agent"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 
-	"github.com/pygmystack/pygmy/service/ssh/agent"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

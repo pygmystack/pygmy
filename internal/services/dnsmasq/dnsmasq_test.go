@@ -3,11 +3,11 @@ package dnsmasq_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/services/dnsmasq"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/pygmystack/pygmy/service/dnsmasq"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

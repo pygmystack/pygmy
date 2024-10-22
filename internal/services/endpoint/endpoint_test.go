@@ -1,9 +1,9 @@
 package endpoint_test
 
 import (
+	"github.com/pygmystack/pygmy/internal/services/endpoint"
 	"testing"
 
-	"github.com/pygmystack/pygmy/service/endpoint"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

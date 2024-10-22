@@ -2,8 +2,8 @@ package networks
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 
 	networktypes "github.com/docker/docker/api/types/network"
 )
@@ -16,7 +16,7 @@ func Create(network *networktypes.Inspect) error {
 		return fmt.Errorf("docker network %v already exists", network.Name)
 	}
 
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func Create(network *networktypes.Inspect) error {
 // Remove will attempt to remove a Docker network
 // and will not apply force to removal.
 func Remove(network string) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -55,7 +55,7 @@ func Remove(network string) error {
 // Status will identify if a network with a
 // specified name is present been created and return a boolean.
 func Status(network string) (bool, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return false, err
 	}
@@ -77,7 +77,7 @@ func Status(network string) (bool, error) {
 // Get will use the Docker API to retrieve a Docker network
 // which has a given name.
 func Get(name string) (networktypes.Inspect, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return networktypes.Inspect{}, err
 	}
@@ -97,7 +97,7 @@ func Get(name string) (networktypes.Inspect, error) {
 
 // Connect will connect a container to a network.
 func Connect(network string, containerName string) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}

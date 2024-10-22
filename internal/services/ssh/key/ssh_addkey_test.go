@@ -2,9 +2,9 @@ package key_test
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/services/ssh/key"
 	"testing"
 
-	"github.com/pygmystack/pygmy/service/ssh/key"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

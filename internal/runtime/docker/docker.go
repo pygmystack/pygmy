@@ -3,8 +3,7 @@ package docker
 import (
 	"context"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/images"
+	"github.com/pygmystack/pygmy/internal/services/color"
 	"io"
 	"os"
 	"strings"
@@ -14,7 +13,8 @@ import (
 	. "github.com/logrusorgru/aurora"
 	"golang.org/x/term"
 
-	"github.com/pygmystack/pygmy/service/color"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/images"
 )
 
 // Setup will detect if the Service's image reference exists and will

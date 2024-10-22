@@ -3,11 +3,11 @@ package haproxy_test
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/services/haproxy"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-	"github.com/pygmystack/pygmy/service/haproxy"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

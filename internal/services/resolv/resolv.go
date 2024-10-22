@@ -6,14 +6,13 @@ package resolv
 import (
 	"fmt"
 	runtime2 "github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/services/color"
 	"os"
 	"os/exec"
 	"runtime"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
-
-	"github.com/pygmystack/pygmy/service/color"
 )
 
 // run will run a shell command and is not exported.

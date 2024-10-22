@@ -3,9 +3,9 @@ package network_test
 import (
 	"fmt"
 	"github.com/docker/docker/api/types/network"
+	n "github.com/pygmystack/pygmy/internal/services/network"
 	"testing"
 
-	n "github.com/pygmystack/pygmy/service/network"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

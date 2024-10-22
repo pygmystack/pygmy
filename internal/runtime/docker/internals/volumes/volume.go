@@ -2,12 +2,12 @@ package volumes
 
 import (
 	"github.com/docker/docker/api/types/volume"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 // Exists will check if a Docker volume has been created.
 func Exists(volume string) (bool, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return false, err
 	}
@@ -21,7 +21,7 @@ func Exists(volume string) (bool, error) {
 
 // Get will return the full contents of a types.Volume from the API.
 func Get(name string) (volume.Volume, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 
 	if err != nil {
 		return volume.Volume{
@@ -49,7 +49,7 @@ func Get(name string) (volume.Volume, error) {
 
 // Create will create a Docker Volume as configured.
 func Create(volumeInput volume.Volume) (volume.Volume, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return volume.Volume{}, err
 	}

@@ -4,7 +4,7 @@ COPY main.go /go/src/github.com/pygmystack/pygmy/
 COPY go.sum /go/src/github.com/pygmystack/pygmy/
 COPY go.mod /go/src/github.com/pygmystack/pygmy/
 COPY cmd/ /go/src/github.com/pygmystack/pygmy/cmd/
-COPY service/ /go/src/github.com/pygmystack/pygmy/service/
+COPY internal/service/ /go/src/github.com/pygmystack/pygmy/service/
 
 WORKDIR /go/src/github.com/pygmystack/pygmy/
 RUN GO111MODULE=on go mod verify

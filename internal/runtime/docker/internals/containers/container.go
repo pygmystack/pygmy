@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"io"
 	"runtime"
 	"strings"
@@ -18,7 +18,7 @@ import (
 
 // Stop will stop the container.
 func Stop(name string) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func Stop(name string) error {
 
 // Kill will kill the container.
 func Kill(name string) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -46,7 +46,7 @@ func Kill(name string) error {
 // Remove will remove the container.
 // It will not remove the image.
 func Remove(id string) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func Remove(id string) error {
 
 // Inspect will return the full container object.
 func Inspect(container string) (types.ContainerJSON, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return types.ContainerJSON{}, err
 	}
@@ -69,7 +69,7 @@ func Inspect(container string) (types.ContainerJSON, error) {
 
 // Exec will run a command in a Docker container and return the output.
 func Exec(container string, command string) ([]byte, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return []byte{}, err
 	}
@@ -97,7 +97,7 @@ func Exec(container string, command string) ([]byte, error) {
 
 // List will return a slice of containers
 func List() ([]types.Container, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -115,7 +115,7 @@ func List() ([]types.Container, error) {
 
 // Create will create a container, but will not run it.
 func Create(ID string, config containertypes.Config, hostconfig containertypes.HostConfig, networkconfig networktypes.NetworkingConfig) (containertypes.CreateResponse, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return containertypes.CreateResponse{}, err
 	}
@@ -132,7 +132,7 @@ func Create(ID string, config containertypes.Config, hostconfig containertypes.H
 
 // Attach will return an attached response to a container.
 func Attach(ID string, options containertypes.AttachOptions) (types.HijackedResponse, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return types.HijackedResponse{}, err
 	}
@@ -145,7 +145,7 @@ func Attach(ID string, options containertypes.AttachOptions) (types.HijackedResp
 
 // Start will run an existing container.
 func Start(ID string, options containertypes.StartOptions) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func Start(ID string, options containertypes.StartOptions) error {
 
 // Wait will wait for the specificied container condition.
 func Wait(ID string, condition containertypes.WaitCondition) error {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func Wait(ID string, condition containertypes.WaitCondition) error {
 // logs to stdout and stderr, useful for quick containers with a small amount
 // of output which are expected to exit quickly.
 func Logs(ID string) ([]byte, error) {
-	cli, ctx, err := docker.NewClient()
+	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return []byte{}, err
 	}

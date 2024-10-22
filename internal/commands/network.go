@@ -3,7 +3,7 @@ package commands
 import (
 	"context"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"

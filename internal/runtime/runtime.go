@@ -1,14 +1,13 @@
 package runtime
 
-// TODO.
-
-// ServiceRuntime is ...
+// ServiceRuntime is the definition of a Container Runtime for compatability with Pygmy.
 type ServiceRuntime interface {
 	Setup() error
 	Start() error
 	Create() error
 	Status() (bool, error)
 	Labels() (map[string]string, error)
+	// @TODO: Does ID() work better as retrieving digests?
 	ID() (string, error)
 	Clean() error
 	Stop() error

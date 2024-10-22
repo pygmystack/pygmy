@@ -1,9 +1,9 @@
-package docker
+package internals
 
 import (
 	"context"
 	"github.com/docker/docker/client"
-	containercontext "github.com/pygmystack/pygmy/internal/runtime/docker/docker/context"
+	containercontext "github.com/pygmystack/pygmy/internal/runtime/docker/internals/context"
 	"os"
 )
 

@@ -24,8 +24,8 @@ import (
 	"fmt"
 	. "github.com/logrusorgru/aurora"
 	"github.com/pygmystack/pygmy/internal/commands"
+	"github.com/pygmystack/pygmy/internal/services/color"
 
-	"github.com/pygmystack/pygmy/service/color"
 	"github.com/spf13/cobra"
 )
 

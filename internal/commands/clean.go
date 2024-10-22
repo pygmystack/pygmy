@@ -2,13 +2,12 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/containers"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/docker/networks"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
+	"github.com/pygmystack/pygmy/internal/services/color"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
-
-	"github.com/pygmystack/pygmy/service/color"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon

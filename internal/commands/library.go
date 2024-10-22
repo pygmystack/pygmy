@@ -7,7 +7,7 @@ import (
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/imdario/mergo"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
-	"github.com/pygmystack/pygmy/service/resolv"
+	"github.com/pygmystack/pygmy/internal/services/resolv"
 )
 
 // Config is a struct of configurable options which can
