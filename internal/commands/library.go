@@ -1,5 +1,5 @@
 // Package library is a package which exposes the commands externally to the compiled binaries.
-package library
+package commands
 
 import (
 	"fmt"

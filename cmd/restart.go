@@ -22,12 +22,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/commands"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 // restartCmd represents the restart command
@@ -42,7 +41,7 @@ var restartCmd = &cobra.Command{
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []library.Key{}
+			c.Keys = []commands.Key{}
 		} else {
 			FoundKey := false
 			for _, v := range c.Keys {
@@ -52,14 +51,14 @@ var restartCmd = &cobra.Command{
 			}
 
 			if !FoundKey {
-				thisKey := library.Key{
+				thisKey := commands.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
-		library.Restart(c)
+		commands.Restart(c)
 
 	},
 }

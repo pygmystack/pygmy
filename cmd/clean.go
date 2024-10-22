@@ -21,9 +21,8 @@
 package cmd
 
 import (
+	"github.com/pygmystack/pygmy/internal/commands"
 	"github.com/spf13/cobra"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 // stopCmd represents the stop command
@@ -38,7 +37,7 @@ This command does not check if the containers are running
 because other checks do for speed convenience.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Clean(c)
+		commands.Clean(c)
 
 	},
 }

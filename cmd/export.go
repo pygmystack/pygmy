@@ -22,12 +22,11 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/commands"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 var exportPath string
@@ -40,7 +39,7 @@ var exportCmd = &cobra.Command{
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Export(c, exportPath)
+		commands.Export(c, exportPath)
 
 	},
 }

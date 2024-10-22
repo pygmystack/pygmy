@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +35,7 @@ var updateCmd = &cobra.Command{
 the string 'uselagoon', which encompasses all lagoon images.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Update(c)
+		commands.Update(c)
 
 	},
 }

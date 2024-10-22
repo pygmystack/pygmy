@@ -30,8 +30,8 @@ func (Service *Service) GetFieldString(field string) (string, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if container, running := Service.GetRunning(); running == nil {
-		if val, ok := container.Labels[f]; ok {
+	if labels, running := Service.Labels(); running == nil {
+		if val, ok := labels[f]; ok {
 			return val, nil
 		}
 	}
@@ -49,8 +49,8 @@ func (Service *Service) GetFieldInt(field string) (int, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if container, running := Service.GetRunning(); running == nil {
-		if val, ok := container.Labels[f]; ok {
+	if labels, running := Service.Labels(); running == nil {
+		if val, ok := labels[f]; ok {
 			i, e := strconv.ParseInt(val, 10, 10)
 			if e != nil {
 				return 0, e
@@ -76,9 +76,9 @@ func (Service *Service) GetFieldBool(field string) (bool, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if container, running := Service.GetRunning(); running == nil {
-		if Service.Config.Labels[f] == container.Labels[f] {
-			if val, ok := container.Labels[f]; ok {
+	if labels, running := Service.Labels(); running == nil {
+		if Service.Config.Labels[f] == labels[f] {
+			if val, ok := labels[f]; ok {
 				if val == "true" {
 					return true, nil
 				} else if val == "false" {

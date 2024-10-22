@@ -1,18 +1,17 @@
-package library_test
+package commands_test
 
 import (
+	"github.com/pygmystack/pygmy/internal/commands"
 	"github.com/pygmystack/pygmy/internal/runtimes"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 // Tests the setup process.
 func TestSetup(t *testing.T) {
 	// Get our configuration object
-	c := &library.Config{
+	c := &commands.Config{
 		Services: map[string]runtimes.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
@@ -24,8 +23,8 @@ func TestSetup(t *testing.T) {
 			},
 		},
 	}
-	library.Setup(c)
-	c.SortedServices = library.GetServicesSorted(c)
+	commands.Setup(c)
+	c.SortedServices = commands.GetServicesSorted(c)
 
 	Convey("Setup Tests", t, func() {
 		// SSH Agent must be 5 items long by default.

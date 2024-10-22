@@ -21,9 +21,8 @@
 package cmd
 
 import (
+	"github.com/pygmystack/pygmy/internal/commands"
 	"github.com/spf13/cobra"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 // stopCmd represents the stop command
@@ -36,7 +35,7 @@ then if they are, it will not attempt to remove any
 services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Stop(c)
+		commands.Stop(c)
 
 	},
 }

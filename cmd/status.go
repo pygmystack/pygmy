@@ -21,7 +21,7 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/internal/commands"
 	"github.com/spf13/cobra"
 )
 
@@ -39,7 +39,7 @@ This includes the docker services, the resolver and SSH key status`,
 		if jsonOutput {
 			c.JSONFormat = true
 		}
-		library.Status(c)
+		commands.Status(c)
 
 	},
 }

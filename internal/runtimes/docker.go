@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	. "github.com/logrusorgru/aurora"
@@ -100,7 +99,7 @@ func (Service *Service) Start() error {
 			fmt.Println(string(l))
 		}
 
-		if c, err := Service.GetRunning(); c.ID != "" {
+		if c, err := Service.ID(); c != "" {
 			return nil
 		} else if err != nil {
 			return err
@@ -137,7 +136,7 @@ func (Service *Service) Create() error {
 		fmt.Println(string(l))
 	}
 
-	if c, err := Service.GetRunning(); c.ID != "" {
+	if c, err := Service.ID(); c != "" {
 		return err
 	}
 
@@ -168,18 +167,33 @@ func (Service *Service) Status() (bool, error) {
 
 }
 
-// GetRunning will get a types.Container variable for a given running container
+// ID will get a types.Container variable for a given running container
 // and it will not retrieve any information on containers that are not running.
-func (Service *Service) GetRunning() (types.Container, error) {
+// todo: digests instead of name?
+func (Service *Service) ID() (string, error) {
 	containers, _ := containers.List()
 	for _, container := range containers {
 		if _, ok := container.Labels["pygmy.name"]; ok {
 			if strings.Contains(container.Labels["pygmy.name"], Service.Config.Labels["pygmy.name"]) {
-				return container, nil
+				return container.ID, nil
 			}
 		}
 	}
-	return types.Container{}, fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
+	return "", fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
+}
+
+// Labels will get a types.Container variable for a given running container
+// and it will not retrieve any information on containers that are not running.
+func (Service *Service) Labels() (map[string]string, error) {
+	containers, _ := containers.List()
+	for _, container := range containers {
+		if _, ok := container.Labels["pygmy.name"]; ok {
+			if strings.Contains(container.Labels["pygmy.name"], Service.Config.Labels["pygmy.name"]) {
+				return container.Labels, nil
+			}
+		}
+	}
+	return nil, fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
 }
 
 // Clean will cleanup and remove the container.
@@ -227,7 +241,7 @@ func (Service *Service) Stop() error {
 		return nil
 	}
 
-	container, err := Service.GetRunning()
+	id, err := Service.ID()
 	if err != nil {
 		if !discrete {
 			color.Print(Red(fmt.Sprintf("Not running %s\n", name)))
@@ -235,12 +249,10 @@ func (Service *Service) Stop() error {
 		return nil
 	}
 
-	for _, name := range container.Names {
-		if e := containers.Stop(container.ID); e == nil {
-			if !discrete {
-				containerName := strings.Trim(name, "/")
-				color.Print(Green(fmt.Sprintf("Successfully stopped %v\n", containerName)))
-			}
+	if e := containers.Stop(id); e == nil {
+		if !discrete {
+			containerName := strings.Trim(name, "/")
+			color.Print(Green(fmt.Sprintf("Successfully stopped %v\n", containerName)))
 		}
 	}
 
@@ -256,25 +268,23 @@ func (Service *Service) StopAndRemove() error {
 		return nil
 	}
 
-	container, err := Service.GetRunning()
+	id, err := Service.ID()
 	if err != nil {
 		if !discrete {
-			color.Print(Red(fmt.Sprintf("Not running %v\n", name)))
+			color.Print(Red(fmt.Sprintf("Not running %v\n", id)))
 		}
 		return nil
 	}
 
-	for _, name := range container.Names {
-		if e := containers.Stop(container.ID); e == nil {
-			if e := containers.Remove(container.ID); e == nil {
-				if !discrete {
-					containerName := strings.Trim(name, "/")
-					fmt.Print(Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
-				}
+	if e := containers.Stop(id); e == nil {
+		if e := containers.Remove(id); e == nil {
+			if !discrete {
+				containerName := strings.Trim(name, "/")
+				fmt.Print(Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
 			}
-		} else {
-			return e
 		}
+	} else {
+		return e
 	}
 
 	return nil
@@ -284,17 +294,15 @@ func (Service *Service) StopAndRemove() error {
 func (Service *Service) Remove() error {
 
 	discrete, _ := Service.GetFieldBool("discrete")
-	container, _ := Service.GetRunning()
+	id, _ := Service.ID()
 
-	for _, name := range container.Names {
-		containerName := strings.Trim(name, "/")
-		if e := containers.Remove(container.ID); e == nil {
-			if !discrete {
-				fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
-			}
-		} else {
-			return e
+	containerName := strings.Trim(id, "/")
+	if e := containers.Remove(id); e == nil {
+		if !discrete {
+			fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
 		}
+	} else {
+		return e
 	}
 
 	return nil

@@ -22,12 +22,10 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
-
 	. "github.com/logrusorgru/aurora"
+	"github.com/pygmystack/pygmy/internal/commands"
 
 	"github.com/pygmystack/pygmy/service/color"
-	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
 )
 
@@ -40,34 +38,35 @@ var addkeyCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
-		var Keys []library.Key
+		var Keys []commands.Key
 
 		if Key != "" {
-			thisKey := library.Key{
+			thisKey := commands.Key{
 				Path: Key,
 			}
 			Keys = append(Keys, thisKey)
 		} else {
 			if len(Keys) == 0 {
-				library.Setup(&c)
+				commands.Setup(&c)
 				Keys = c.Keys
 			}
 		}
 
 		for _, k := range Keys {
-			if e := library.SshKeyAdd(c, k.Path); e != nil {
+			if e := commands.SshKeyAdd(c, k.Path); e != nil {
 				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 
 		for _, s := range c.SortedServices {
 			service := c.Services[s]
-			purpose, _ := service.GetFieldString("purpose")
-			if purpose == "sshagent" {
-				name, _ := service.GetFieldString("name")
-				d, _ := containers.Exec(name, "ssh-add -l")
-				fmt.Println(string(d))
-			}
+			fmt.Sprint(service)
+			//purpose, _ := service.GetFieldString("purpose")
+			//if purpose == "sshagent" {
+			//	name, _ := service.GetFieldString("name")
+			//	d, _ := containers.Exec(name, "ssh-add -l")
+			//	fmt.Println(string(d))
+			//}
 		}
 
 	},

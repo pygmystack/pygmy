@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/commands"
 	"os"
 	"runtime"
 	"strings"
@@ -29,13 +30,11 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 var (
 	cfgFile   string
-	c         library.Config
+	c         commands.Config
 	validArgs = []string{"addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version"}
 )
 
