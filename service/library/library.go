@@ -3,12 +3,12 @@ package library
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 
 	networktypes "github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
 	"github.com/imdario/mergo"
 
-	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/resolv"
 )
 
@@ -23,7 +23,7 @@ type Config struct {
 	Domain string `yaml:"domain"`
 
 	// Services is a []model.Service for an index of all Services.
-	Services map[string]model.Service `yaml:"services"`
+	Services map[string]runtimes.Service `yaml:"services"`
 
 	SortedServices []string
 
@@ -67,7 +67,7 @@ type Key struct {
 	Path string `yaml:"path"`
 }
 
-func mergeService(destination model.Service, src *model.Service) (*model.Service, error) {
+func mergeService(destination runtimes.Service, src *runtimes.Service) (*runtimes.Service, error) {
 	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
 		fmt.Println(err)
 		return src, err
@@ -75,7 +75,7 @@ func mergeService(destination model.Service, src *model.Service) (*model.Service
 	return &destination, nil
 }
 
-func getService(s model.Service, c model.Service) model.Service {
+func getService(s runtimes.Service, c runtimes.Service) runtimes.Service {
 	Service, _ := mergeService(s, &c)
 	return *Service
 }

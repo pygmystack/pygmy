@@ -3,6 +3,7 @@ package library
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 	"strings"
 
 	"github.com/logrusorgru/aurora"
@@ -12,7 +13,6 @@ import (
 	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
-	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/resolv"
 )
 
@@ -88,7 +88,7 @@ func Status(c Config) {
 
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
-		if s := r.Status(&model.Params{Domain: c.Domain}); s {
+		if s := r.Status(&runtimes.Params{Domain: c.Domain}); s {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is properly connected", resolver.Name))
 		} else {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is not properly connected", resolver.Name))

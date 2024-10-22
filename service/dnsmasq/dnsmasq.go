@@ -2,16 +2,16 @@ package dnsmasq
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // New will provide the standard object for the dnsmasq container.
-func New(c *model.Params) model.Service {
-	return model.Service{
+func New(c *runtimes.Params) runtimes.Service {
+	return runtimes.Service{
 		Config: container.Config{
 			Image: "pygmystack/dnsmasq",
 			Cmd: []string{

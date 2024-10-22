@@ -2,22 +2,22 @@ package dnsmasq_test
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	"github.com/pygmystack/pygmy/service/dnsmasq"
-	model "github.com/pygmystack/pygmy/service/interface"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func Example() {
-	dnsmasq.New(&model.Params{})
+	dnsmasq.New(&runtimes.Params{})
 }
 
 func Test(t *testing.T) {
 	Convey("DNSMasq: Field equality tests...", t, func() {
-		obj := dnsmasq.New(&model.Params{Domain: "docker.amazee.io"})
+		obj := dnsmasq.New(&runtimes.Params{Domain: "docker.amazee.io"})
 
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/dnsmasq")
 		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"--log-facility=-", "-A", "/docker.amazee.io/127.0.0.1"}))

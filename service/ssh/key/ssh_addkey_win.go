@@ -7,12 +7,12 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 
-	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 )
 
 // NewAdder will provide the standard object for the SSH key adder container.
-func NewAdder() model.Service {
-	return model.Service{
+func NewAdder() runtimes.Service {
+	return runtimes.Service{
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{

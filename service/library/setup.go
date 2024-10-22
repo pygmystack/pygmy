@@ -3,6 +3,7 @@ package library
 import (
 	"fmt"
 	networktypes "github.com/docker/docker/api/types/network"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
 	"os"
 	"runtime"
@@ -14,7 +15,6 @@ import (
 	"github.com/docker/docker/api/types/volume"
 	"github.com/pygmystack/pygmy/service/dnsmasq"
 	"github.com/pygmystack/pygmy/service/haproxy"
-	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/mailhog"
 	"github.com/pygmystack/pygmy/service/network"
 	"github.com/pygmystack/pygmy/service/resolv"
@@ -27,7 +27,7 @@ import (
 // that Pygmy is more extendable via API. It's here so that we have one common
 // import functionality that respects the users' decision to import config
 // defaults in a centralized way.
-func ImportDefaults(c *Config, service string, importer model.Service) bool {
+func ImportDefaults(c *Config, service string, importer runtimes.Service) bool {
 	if _, ok := c.Services[service]; ok {
 
 		container := c.Services[service]
@@ -36,7 +36,7 @@ func ImportDefaults(c *Config, service string, importer model.Service) bool {
 		if val, ok := container.Config.Labels["pygmy.defaults"]; ok {
 			if val == "1" || val == "true" {
 				// Clear destination Service to a new nil value.
-				c.Services[service] = model.Service{}
+				c.Services[service] = runtimes.Service{}
 				// Import the provided Service to the map entry.
 				c.Services[service] = getService(importer, c.Services[service])
 				// This is now successful, so return true.
@@ -130,14 +130,14 @@ func Setup(c *Config) {
 		// this will override the defaults allowing any value to
 		// be changed by the user in the configuration file ~/.pygmy.yml
 		if c.Services == nil || len(c.Services) == 0 {
-			c.Services = make(map[string]model.Service, 6)
+			c.Services = make(map[string]runtimes.Service, 6)
 		}
 
 		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
-		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New(&model.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&model.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-mailhog", mailhog.New(&model.Params{Domain: c.Domain}))
+		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New(&runtimes.Params{Domain: c.Domain}))
+		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&runtimes.Params{Domain: c.Domain}))
+		ImportDefaults(c, "amazeeio-mailhog", mailhog.New(&runtimes.Params{Domain: c.Domain}))
 
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,

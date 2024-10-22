@@ -1,11 +1,11 @@
 package library_test
 
 import (
+	"github.com/pygmystack/pygmy/internal/runtimes"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	model "github.com/pygmystack/pygmy/service/interface"
 	"github.com/pygmystack/pygmy/service/library"
 )
 
@@ -13,7 +13,7 @@ import (
 func TestSetup(t *testing.T) {
 	// Get our configuration object
 	c := &library.Config{
-		Services: map[string]model.Service{
+		Services: map[string]runtimes.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
 				Image: "example-amazeeio-dnsmasq",

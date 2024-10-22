@@ -1,4 +1,4 @@
-package model
+package runtimes
 
 import (
 	"context"
@@ -300,8 +300,7 @@ func (Service *Service) Remove() error {
 	return nil
 }
 
-// _ will ensure DockerService is implemented by Service.
-var _ DockerService = (*Service)(nil)
+/// BELOW IS NOT IN SPEC TO THE INTERFACE.
 
 // DockerLogs will return the logs from the container.
 func (Service *Service) DockerLogs() ([]byte, error) {

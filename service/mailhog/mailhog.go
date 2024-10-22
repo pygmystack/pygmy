@@ -2,16 +2,16 @@ package mailhog
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // New will provide the standard object for the mailhog container.
-func New(c *model.Params) model.Service {
-	return model.Service{
+func New(c *runtimes.Params) runtimes.Service {
+	return runtimes.Service{
 		Config: container.Config{
 			User: "0",
 			ExposedPorts: nat.PortSet{
@@ -49,8 +49,8 @@ func New(c *model.Params) model.Service {
 
 // NewDefaultPorts will provide the standard ports used for merging into the
 // mailhog config.
-func NewDefaultPorts() model.Service {
-	return model.Service{
+func NewDefaultPorts() runtimes.Service {
+	return runtimes.Service{
 		HostConfig: container.HostConfig{
 			PortBindings: nat.PortMap{
 				"1025/tcp": []nat.PortBinding{

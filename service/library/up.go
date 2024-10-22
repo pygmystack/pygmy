@@ -2,6 +2,7 @@ package library
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtimes/docker/containers"
 	"github.com/pygmystack/pygmy/internal/runtimes/docker/networks"
 	"github.com/pygmystack/pygmy/internal/runtimes/docker/volumes"
@@ -12,7 +13,6 @@ import (
 
 	"github.com/pygmystack/pygmy/service/color"
 	"github.com/pygmystack/pygmy/service/endpoint"
-	model "github.com/pygmystack/pygmy/service/interface"
 )
 
 // Up will bring Pygmy up.
@@ -122,8 +122,8 @@ func Up(c Config) {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status(&model.Params{Domain: c.Domain}) {
-			resolver.Configure(&model.Params{Domain: c.Domain})
+		if !resolver.Status(&runtimes.Params{Domain: c.Domain}) {
+			resolver.Configure(&runtimes.Params{Domain: c.Domain})
 		}
 	}
 

@@ -8,7 +8,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/pygmystack/pygmy/service/interface/docker"
+	"github.com/pygmystack/pygmy/internal/runtimes/docker"
 	. "github.com/smartystreets/goconvey/convey"
 )
 

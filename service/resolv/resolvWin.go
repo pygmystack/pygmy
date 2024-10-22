@@ -10,7 +10,7 @@ import (
 	"strings"
 	"sync"
 
-	model "github.com/pygmystack/pygmy/service/interface"
+	"github.com/pygmystack/pygmy/internal/runtimes"
 )
 
 // run will run a shell command and is not exported.
@@ -55,7 +55,7 @@ func (resolv Resolv) Clean() {
 		fmt.Println(error.Error())
 	}
 }
-func (resolv Resolv) Configure(c *model.Params) {
+func (resolv Resolv) Configure(c *runtimes.Params) {
 	if resolv.Enabled {
 		_, error := run([]string{fmt.Sprintf("Set-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters -Name Domain -Value %s", c.Domain)})
 		if error != nil {
@@ -64,7 +64,7 @@ func (resolv Resolv) Configure(c *model.Params) {
 	}
 }
 
-func (resolv Resolv) Status(c *model.Params) bool {
+func (resolv Resolv) Status(c *runtimes.Params) bool {
 	data, error := run([]string{"Get-ItemProperty -Path HKLM:\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters"})
 	if error != nil {
 		return false
