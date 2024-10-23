@@ -68,7 +68,6 @@ var addkeyCmd = &cobra.Command{
 
 		for _, s := range c.SortedServices {
 			service := c.Services[s]
-			fmt.Sprint(service)
 			purpose, _ := service.GetFieldString(ctx, cli, "purpose")
 			if purpose == "sshagent" {
 				name, _ := service.GetFieldString(ctx, cli, "name")

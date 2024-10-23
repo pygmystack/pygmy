@@ -218,7 +218,11 @@ func PrintStatusHumanReadable(c Config) {
 	}
 
 	for _, v := range c.JSONStatus.URLValidations {
-		fmt.Printf("%s\n", v)
+		if v.Success {
+			fmt.Printf(" - %s\n", v.Endpoint)
+		} else {
+			fmt.Printf(" ! %s\n", v.Endpoint)
+		}
 	}
 
 }

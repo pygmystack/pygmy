@@ -1,14 +1,14 @@
 package agent_test
 
 import (
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 )
 
@@ -26,7 +26,7 @@ func TestExampleSearch(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	_, err = agent.Search(ctx, cli, &runtime.Service{}, "id_rsa.pub")
+	_, err = agent.Search(ctx, cli, &docker.Service{}, "id_rsa.pub")
 	if err != nil {
 		t.Fail()
 	}
