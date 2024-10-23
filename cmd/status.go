@@ -21,8 +21,12 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/external/docker/commands"
+	"fmt"
+
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 var jsonOutput bool
@@ -39,7 +43,13 @@ This includes the docker services, the resolver and SSH key status`,
 		if jsonOutput {
 			c.JSONFormat = true
 		}
-		commands.Status(c)
+
+		cli, ctx, err := internals.NewClient()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		commands.Status(ctx, cli, c)
 
 	},
 }

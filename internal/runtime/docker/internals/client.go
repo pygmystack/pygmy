@@ -2,9 +2,11 @@ package internals
 
 import (
 	"context"
-	"github.com/docker/docker/client"
-	containercontext "github.com/pygmystack/pygmy/internal/runtime/docker/internals/context"
 	"os"
+
+	"github.com/docker/docker/client"
+
+	containercontext "github.com/pygmystack/pygmy/internal/runtime/docker/internals/context"
 )
 
 func NewClient() (*client.Client, context.Context, error) {

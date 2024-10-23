@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+	"github.com/docker/docker/client"
 	"golang.org/x/crypto/ssh"
 
 	"github.com/pygmystack/pygmy/internal/runtime"
@@ -45,7 +47,7 @@ func New() docker.Service {
 // List will grab the output of all running containers with the proper
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
-func List(service *runtime.Service) ([]byte, error) {
+func List(ctx context.Context, cli *client.Client, service *runtime.Service) ([]byte, error) {
 	name, _ := service.GetFieldString("name")
 	purpose, _ := service.GetFieldString("purpose")
 	if purpose == "showkeys" {
@@ -54,7 +56,7 @@ func List(service *runtime.Service) ([]byte, error) {
 			return []byte{}, e
 		}
 	}
-	return containers.Logs(name)
+	return containers.Logs(ctx, cli, name)
 }
 
 // Validate will validate if an SSH key is valid.
@@ -75,7 +77,7 @@ func Validate(filePath string) (bool, error) {
 }
 
 // Search will determine if an SSH key has been added to the agent.
-func Search(service *runtime.Service, key string) (bool, error) {
+func Search(ctx context.Context, cli *client.Client, service *runtime.Service, key string) (bool, error) {
 	result := false
 	if _, err := os.Stat(key); !os.IsNotExist(err) {
 		stripped := strings.Trim(key, ".pub")
@@ -84,7 +86,7 @@ func Search(service *runtime.Service, key string) (bool, error) {
 			return false, err
 		}
 
-		items, _ := List(service)
+		items, _ := List(ctx, cli, service)
 
 		if len(items) == 0 {
 			return false, nil

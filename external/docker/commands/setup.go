@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"context"
 	"fmt"
+	"github.com/docker/docker/client"
 	"os"
 	"runtime"
 	"sort"
@@ -27,7 +29,7 @@ import (
 // that Pygmy is more extendable via API. It's here so that we have one common
 // import functionality that respects the users' decision to import config
 // defaults in a centralized way.
-func ImportDefaults(c *Config, service string, importer dockerruntime.Service) bool {
+func ImportDefaults(ctx context.Context, cli *client.Client, c *Config, service string, importer dockerruntime.Service) bool {
 	if _, ok := c.Services[service]; ok {
 
 		container := c.Services[service]
@@ -45,7 +47,7 @@ func ImportDefaults(c *Config, service string, importer dockerruntime.Service) b
 		}
 
 		// If container has a value for the defaults label
-		if defaultsNeeded, _ := container.GetFieldBool("defaults"); defaultsNeeded {
+		if defaultsNeeded, _ := container.GetFieldBool(ctx, cli, "defaults"); defaultsNeeded {
 			c.Services[service] = getService(importer, c.Services[service])
 			return true
 		}
@@ -58,7 +60,7 @@ func ImportDefaults(c *Config, service string, importer dockerruntime.Service) b
 			}
 		}
 	} else {
-		if defaultsNeeded, _ := importer.GetFieldBool("defaults"); defaultsNeeded {
+		if defaultsNeeded, _ := importer.GetFieldBool(ctx, cli, "defaults"); defaultsNeeded {
 			c.Services[service] = getService(importer, c.Services[service])
 			return true
 		}
@@ -69,7 +71,7 @@ func ImportDefaults(c *Config, service string, importer dockerruntime.Service) b
 
 // Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
-func Setup(c *Config) {
+func Setup(ctx context.Context, cli *client.Client, c *Config) {
 
 	// All Viper API calls for default values go here.
 
@@ -133,11 +135,11 @@ func Setup(c *Config) {
 			c.Services = make(map[string]dockerruntime.Service, 6)
 		}
 
-		ImportDefaults(c, "amazeeio-ssh-agent", agent.New())
-		ImportDefaults(c, "amazeeio-ssh-agent-add-key", key.NewAdder())
-		ImportDefaults(c, "amazeeio-dnsmasq", dnsmasq.New(&dockerruntime.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}))
-		ImportDefaults(c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
+		ImportDefaults(ctx, cli, c, "amazeeio-ssh-agent", agent.New())
+		ImportDefaults(ctx, cli, c, "amazeeio-ssh-agent-add-key", key.NewAdder())
+		ImportDefaults(ctx, cli, c, "amazeeio-dnsmasq", dnsmasq.New(&dockerruntime.Params{Domain: c.Domain}))
+		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}))
+		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
 
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,
@@ -175,7 +177,7 @@ func Setup(c *Config) {
 
 	// Mandatory validation check.
 	for id, service := range c.Services {
-		if name, err := service.GetFieldString("name"); err != nil && name != "" {
+		if name, err := service.GetFieldString(ctx, cli, "name"); err != nil && name != "" {
 			fmt.Printf("service '%v' does not have have a value for label 'pygmy.name'\n", id)
 			os.Exit(2)
 		}
@@ -199,21 +201,21 @@ func Setup(c *Config) {
 	}
 
 	// Determine the slice of sorted services
-	c.SortedServices = GetServicesSorted(c)
+	c.SortedServices = GetServicesSorted(ctx, cli, c)
 }
 
 // GetServicesSorted will return a list of services as plain text.
 // due to some weirdness the ssh agent must be the first value.
-func GetServicesSorted(c *Config) []string {
+func GetServicesSorted(ctx context.Context, cli *client.Client, c *Config) []string {
 
 	SortedServices := make([]string, 0)
 	SSHAgentServiceName := ""
 
 	// Do not add ssh-agent in the first run.
 	for key, service := range c.Services {
-		name, _ := service.GetFieldString("name")
-		purpose, _ := service.GetFieldString("purpose")
-		weight, _ := service.GetFieldInt("weight")
+		name, _ := service.GetFieldString(ctx, cli, "name")
+		purpose, _ := service.GetFieldString(ctx, cli, "purpose")
+		weight, _ := service.GetFieldInt(ctx, cli, "weight")
 		if purpose == "sshagent" {
 			SSHAgentServiceName = name
 		} else {

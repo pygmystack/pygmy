@@ -1,10 +1,11 @@
 package endpoint_test
 
 import (
-	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 )
 
 func Example() {

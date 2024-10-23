@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/external/docker/commands"
 	"os"
 	"runtime"
 	"strings"
@@ -30,6 +29,8 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 var (

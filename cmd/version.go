@@ -21,8 +21,9 @@
 package cmd
 
 import (
-	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 // versionCmd represents the version command

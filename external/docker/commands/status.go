@@ -1,10 +1,12 @@
 package commands
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
+	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/internal/runtime"
@@ -17,9 +19,9 @@ import (
 )
 
 // Status will show the state of all the things Pygmy manages.
-func Status(c Config) {
-	Setup(&c)
-	checks := DryRun(&c)
+func Status(ctx context.Context, cli *client.Client, c Config) {
+	Setup(ctx, cli, &c)
+	checks, _ := DryRun(ctx, cli, &c)
 	agentPresent := false
 
 	if len(checks) > 0 {
@@ -31,21 +33,21 @@ func Status(c Config) {
 	// Ensure the services struct is not nil.
 	c.JSONStatus.Services = make(map[string]StatusJSONStatus)
 
-	Containers, _ := runtimecontainers.List()
+	Containers, _ := runtimecontainers.List(ctx, cli)
 	for _, Container := range Containers {
 		if Container.Labels["pygmy.enable"] == "true" || Container.Labels["pygmy.enable"] == "1" {
 			Service := c.Services[strings.Trim(Container.Names[0], "/")]
-			if s, _ := Service.Status(); s {
-				name, _ := Service.GetFieldString("name")
-				enabled, _ := Service.GetFieldBool("enable")
-				discrete, _ := Service.GetFieldBool("discrete")
-				purpose, _ := Service.GetFieldString("purpose")
+			if s, _ := Service.Status(ctx, cli); s {
+				name, _ := Service.GetFieldString(ctx, cli, "name")
+				enabled, _ := Service.GetFieldBool(ctx, cli, "enable")
+				discrete, _ := Service.GetFieldBool(ctx, cli, "discrete")
+				purpose, _ := Service.GetFieldString(ctx, cli, "purpose")
 				if name != "" {
 					if purpose == "sshagent" {
 						agentPresent = true
 					}
 					if enabled && !discrete && name != "" {
-						if s, _ := Service.Status(); s {
+						if s, _ := Service.Status(ctx, cli); s {
 							c.JSONStatus.Services[name] = StatusJSONStatus{
 								Container: name,
 								ImageRef:  Service.Image,
@@ -64,9 +66,9 @@ func Status(c Config) {
 	}
 
 	for _, Service := range c.Services {
-		if s, _ := Service.Status(); !s {
-			name, _ := Service.GetFieldString("name")
-			discrete, _ := Service.GetFieldBool("discrete")
+		if s, _ := Service.Status(ctx, cli); !s {
+			name, _ := Service.GetFieldString(ctx, cli, "name")
+			discrete, _ := Service.GetFieldBool(ctx, cli, "discrete")
 			if !discrete {
 				c.JSONStatus.Services[name] = StatusJSONStatus{
 					Container: name,
@@ -78,7 +80,7 @@ func Status(c Config) {
 
 	for _, Network := range c.Networks {
 		for _, Container := range Network.Containers {
-			if x, _ := networks.Connected(Network.Name, Container.Name); !x {
+			if x, _ := networks.Connected(ctx, cli, Network.Name, Container.Name); !x {
 				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is not connected to the network %s", Container.Name, Network.Name))
 			} else {
 				c.JSONStatus.Networks = append(c.JSONStatus.Networks, fmt.Sprintf("%s is connected to the network %s", Container.Name, Network.Name))
@@ -106,9 +108,9 @@ func Status(c Config) {
 	// Show ssh-keys in the agent
 	if agentPresent {
 		for _, v := range c.Services {
-			purpose, _ := v.GetFieldString("purpose")
+			purpose, _ := v.GetFieldString(ctx, cli, "purpose")
 			if purpose == "sshagent" {
-				l, _ := runtimecontainers.Exec(v.Config.Labels["pygmy.name"], "ssh-add -l")
+				l, _ := runtimecontainers.Exec(ctx, cli, v.Config.Labels["pygmy.name"], "ssh-add -l")
 				// Remove \u0000 & \u0001 from output messages.
 				output := strings.ReplaceAll(string(l), "\u0000", "")
 				output = strings.ReplaceAll(output, "\u0001", "")
@@ -122,17 +124,17 @@ func Status(c Config) {
 	var urls []string
 
 	for _, Container := range c.Services {
-		Status, _ := Container.Status()
-		url, _ := Container.GetFieldString("url")
+		Status, _ := Container.Status(ctx, cli)
+		url, _ := Container.GetFieldString(ctx, cli, "url")
 		if url != "" && Status {
 			urls = append(urls, url)
 		}
 	}
 
-	containers, _ := runtimecontainers.List()
+	containers, _ := runtimecontainers.List(ctx, cli)
 	for _, container := range containers {
 		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
-			obj, _ := runtimecontainers.Inspect(container.ID)
+			obj, _ := runtimecontainers.Inspect(ctx, cli, container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {
 				// Look for the environment variable $LAGOON_ROUTE.

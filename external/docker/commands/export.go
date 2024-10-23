@@ -5,20 +5,26 @@ import (
 	"os"
 
 	"github.com/ghodss/yaml"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 // Export will export validated configuration to a given path, or it will
 // export by default to $HOME/.pygmy.yml
-func Export(c Config, output string) {
+func Export(c Config, output string) error {
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		return err
+	}
 
 	// Set up the configuration.
-	Setup(&c)
+	Setup(ctx, cli, &c)
 
 	// Marshal to Yaml.
 	x, err := yaml.Marshal(c)
 	if err != nil {
 		fmt.Println(err)
-		return
+		return err
 	}
 
 	// Provide output for state.
@@ -29,7 +35,7 @@ func Export(c Config, output string) {
 		// Remove the existing file.
 		if err := os.Remove(output); err != nil {
 			fmt.Println(err)
-			return
+			return err
 		}
 
 		// Provide output for state.
@@ -43,7 +49,7 @@ func Export(c Config, output string) {
 		file, err := os.Create(output)
 		if err != nil {
 			fmt.Println(err)
-			return
+			return err
 		}
 
 		// Provide output for state.
@@ -55,7 +61,7 @@ func Export(c Config, output string) {
 		_, err = file.WriteString(string(x))
 		if err != nil {
 			fmt.Println(err)
-			return
+			return err
 		}
 
 		// Provide output for state.
@@ -64,11 +70,12 @@ func Export(c Config, output string) {
 		err = file.Sync()
 		if err != nil {
 			fmt.Println(err)
-			return
+			return err
 		}
 
 		// Provide output for state.
 		fmt.Println("Operation completed successfully")
 	}
 
+	return nil
 }

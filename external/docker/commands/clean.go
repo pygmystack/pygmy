@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"strings"
 
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
@@ -12,10 +13,14 @@ import (
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
-func Clean(c Config) {
+func Clean(c Config) error {
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		return err
+	}
 
-	Setup(&c)
-	Containers, _ := containers.List()
+	Setup(ctx, cli, &c)
+	Containers, _ := containers.List(ctx, cli)
 	NetworksToClean := []string{}
 
 	for _, Container := range Containers {
@@ -32,12 +37,12 @@ func Clean(c Config) {
 		}
 
 		if target {
-			err := containers.Kill(Container.ID)
+			err := containers.Kill(ctx, cli, Container.ID)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", ContainerName)))
 			}
 
-			err = containers.Remove(Container.ID)
+			err = containers.Remove(ctx, cli, Container.ID)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", ContainerName)))
 			}
@@ -49,12 +54,12 @@ func Clean(c Config) {
 	}
 
 	for n := range unique(NetworksToClean) {
-		if s, _ := networks.Status(NetworksToClean[n]); s {
-			e := networks.Remove(NetworksToClean[n])
+		if s, _ := networks.Status(ctx, cli, NetworksToClean[n]); s {
+			e := networks.Remove(ctx, cli, NetworksToClean[n])
 			if e != nil {
 				fmt.Println(e)
 			}
-			if s, _ := networks.Status(NetworksToClean[n]); !s {
+			if s, _ := networks.Status(ctx, cli, NetworksToClean[n]); !s {
 				color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
 				color.Print(Red(fmt.Sprintf("Failed to remove %s\n", NetworksToClean[n])))
@@ -65,4 +70,6 @@ func Clean(c Config) {
 	for _, resolver := range c.Resolvers {
 		resolver.Clean()
 	}
+
+	return nil
 }

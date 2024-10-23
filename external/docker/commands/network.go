@@ -13,16 +13,16 @@ import (
 // NetworkCreate is part of a centralised abstraction of the Docker API
 // and will create a Docker network with a specified configuration.
 // TODO: To be migrated to the Docker runtime provider.
-func NetworkCreate(network networktypes.Inspect) error {
-	return networks.Create(&network)
+func NetworkCreate(ctx context.Context, cli *client.Client, network networktypes.Inspect) error {
+	return networks.Create(ctx, cli, &network)
 }
 
 // NetworkConnect is part of a centralised abstraction of the Docker API
 // and will connect a created container to a docker network with a
 // specified name.
 // TODO: To be migrated to the Docker runtime provider.
-func NetworkConnect(network string, containerName string) error {
-	return networks.Connect(network, containerName)
+func NetworkConnect(ctx context.Context, cli *client.Client, network string, containerName string) error {
+	return networks.Connect(ctx, cli, network, containerName)
 }
 
 // NetworkStatus will check the state of a Docker network to test if it has

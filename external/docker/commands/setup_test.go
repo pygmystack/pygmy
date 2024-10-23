@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
@@ -24,8 +25,14 @@ func TestSetup(t *testing.T) {
 			},
 		},
 	}
-	commands.Setup(c)
-	c.SortedServices = commands.GetServicesSorted(c)
+
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	commands.Setup(ctx, cli, c)
+	c.SortedServices = commands.GetServicesSorted(ctx, cli, c)
 
 	Convey("Setup Tests", t, func() {
 		// SSH Agent must be 5 items long by default.

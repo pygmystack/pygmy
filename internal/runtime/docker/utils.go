@@ -1,20 +1,23 @@
 package docker
 
 import (
+	"context"
 	"fmt"
 	"strconv"
+
+	"github.com/docker/docker/client"
 )
 
 // SetField will set a pygmy label to be equal to the string equal of
 // an interface{}, even if it already exists. It should not matter if
 // this container is running or not.
-func (Service *Service) SetField(name string, value interface{}) error {
+func (Service *Service) SetField(ctx context.Context, cli *client.Client, name string, value interface{}) error {
 	if _, ok := Service.Config.Labels["pygmy."+fmt.Sprint(name)]; !ok {
 		//
 	} else {
-		old, _ := Service.GetFieldString(name)
+		old, _ := Service.GetFieldString(ctx, cli, name)
 		Service.Config.Labels["pygmy."+name] = fmt.Sprint(value)
-		new, _ := Service.GetFieldString(name)
+		new, _ := Service.GetFieldString(ctx, cli, name)
 
 		if old == new {
 			return fmt.Errorf("tag was not set")
@@ -26,11 +29,11 @@ func (Service *Service) SetField(name string, value interface{}) error {
 
 // GetFieldString will get and return a tag on the service using the pygmy
 // convention ("pygmy.*") and return it as a string.
-func (Service *Service) GetFieldString(field string) (string, error) {
+func (Service *Service) GetFieldString(ctx context.Context, cli *client.Client, field string) (string, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if labels, running := Service.Labels(); running == nil {
+	if labels, running := Service.Labels(ctx, cli); running == nil {
 		if val, ok := labels[f]; ok {
 			return val, nil
 		}
@@ -45,11 +48,11 @@ func (Service *Service) GetFieldString(field string) (string, error) {
 
 // GetFieldInt will get and return a tag on the service using the pygmy
 // convention ("pygmy.*") and return it as an int.
-func (Service *Service) GetFieldInt(field string) (int, error) {
+func (Service *Service) GetFieldInt(ctx context.Context, cli *client.Client, field string) (int, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if labels, running := Service.Labels(); running == nil {
+	if labels, running := Service.Labels(ctx, cli); running == nil {
 		if val, ok := labels[f]; ok {
 			i, e := strconv.ParseInt(val, 10, 10)
 			if e != nil {
@@ -72,11 +75,11 @@ func (Service *Service) GetFieldInt(field string) (int, error) {
 
 // GetFieldBool will get and return a tag on the service using the pygmy
 // convention ("pygmy.*") and return it as a bool.
-func (Service *Service) GetFieldBool(field string) (bool, error) {
+func (Service *Service) GetFieldBool(ctx context.Context, cli *client.Client, field string) (bool, error) {
 
 	f := fmt.Sprintf("pygmy.%v", field)
 
-	if labels, running := Service.Labels(); running == nil {
+	if labels, running := Service.Labels(ctx, cli); running == nil {
 		if Service.Config.Labels[f] == labels[f] {
 			if val, ok := labels[f]; ok {
 				if val == "true" {

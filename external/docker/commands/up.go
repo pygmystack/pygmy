@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"strings"
 
@@ -16,10 +17,14 @@ import (
 )
 
 // Up will bring Pygmy up.
-func Up(c Config) {
+func Up(c Config) error {
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		return err
+	}
 
-	Setup(&c)
-	checks := DryRun(&c)
+	Setup(ctx, cli, &c)
+	checks, _ := DryRun(ctx, cli, &c)
 	agentPresent := false
 
 	foundIssues := 0
@@ -53,24 +58,24 @@ func Up(c Config) {
 	// an ssh-agent like amazeeio-ssh-agent.
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
-		enabled, _ := service.GetFieldBool("enable")
-		purpose, _ := service.GetFieldString("purpose")
-		name, _ := service.GetFieldString("name")
+		enabled, _ := service.GetFieldBool(ctx, cli, "enable")
+		purpose, _ := service.GetFieldString(ctx, cli, "purpose")
+		name, _ := service.GetFieldString(ctx, cli, "name")
 
 		// Do not show or add keys:
 		if enabled && purpose != "addkeys" {
 
-			if se := service.Setup(); se == nil {
+			if se := service.Setup(ctx, cli); se == nil {
 				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
 			}
-			if status, _ := service.Status(); !status {
-				if ce := service.Create(); ce != nil {
+			if status, _ := service.Status(ctx, cli); !status {
+				if ce := service.Create(ctx, cli); ce != nil {
 					// If the status is false but the container is already created, we can ignore that error.
 					if !strings.Contains(ce.Error(), "namespace is already taken") {
 						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
 					}
 				}
-				if se := service.Start(); se == nil {
+				if se := service.Start(ctx, cli); se == nil {
 					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
 				} else {
 					fmt.Printf("Failed to start %s: %s\n", Red(name), se)
@@ -89,9 +94,9 @@ func Up(c Config) {
 	// Docker network(s) creation
 	for _, Network := range c.Networks {
 		if Network.Name != "" {
-			netVal, _ := networks.Status(Network.Name)
+			netVal, _ := networks.Status(ctx, cli, Network.Name)
 			if !netVal {
-				if err := NetworkCreate(Network); err == nil {
+				if err := NetworkCreate(ctx, cli, Network); err == nil {
 					color.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
 				} else {
 					color.Print(Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
@@ -103,14 +108,14 @@ func Up(c Config) {
 	// Container network connection(s)
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
-		name, nameErr := service.GetFieldString("name")
+		name, nameErr := service.GetFieldString(ctx, cli, "name")
 		// If the network is configured at the container level, connect it.
-		if Network, _ := service.GetFieldString("network"); Network != "" && nameErr == nil {
-			if s, _ := networks.Connected(Network, name); !s {
-				if s := NetworkConnect(Network, name); s == nil {
+		if Network, _ := service.GetFieldString(ctx, cli, "network"); Network != "" && nameErr == nil {
+			if s, _ := networks.Connected(ctx, cli, Network, name); !s {
+				if s := NetworkConnect(ctx, cli, Network, name); s == nil {
 					color.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
-					discrete, _ := service.GetFieldBool("discrete")
+					discrete, _ := service.GetFieldBool(ctx, cli, "discrete")
 					if !discrete {
 						color.Print(Red(fmt.Sprintf("Could not connect %s to %s\n", name, Network)))
 					}
@@ -137,9 +142,9 @@ func Up(c Config) {
 	}
 
 	for _, service := range c.Services {
-		name, _ := service.GetFieldString("name")
-		url, _ := service.GetFieldString("url")
-		if s, _ := service.Status(); s && url != "" {
+		name, _ := service.GetFieldString(ctx, cli, "name")
+		url, _ := service.GetFieldString(ctx, cli, "url")
+		if s, _ := service.Status(ctx, cli); s && url != "" {
 			endpoint.Validate(url)
 			if r := endpoint.Validate(url); r {
 				fmt.Printf(" - %v (%v)\n", url, name)
@@ -150,11 +155,11 @@ func Up(c Config) {
 	}
 
 	// List out all running projects to get their URL.
-	containers, _ := runtimecontainers.List()
+	containers, _ := runtimecontainers.List(ctx, cli)
 	var urls []string
 	for _, container := range containers {
 		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
-			obj, _ := runtimecontainers.Inspect(container.ID)
+			obj, _ := runtimecontainers.Inspect(ctx, cli, container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {
 				// Look for the environment variable $LAGOON_ROUTE.
@@ -178,4 +183,6 @@ func Up(c Config) {
 			fmt.Printf(" ! %v\n", url)
 		}
 	}
+
+	return nil
 }

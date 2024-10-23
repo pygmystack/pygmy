@@ -2,6 +2,7 @@ package commands
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"runtime"
 	"strings"
@@ -15,8 +16,12 @@ import (
 
 // SshKeyAdd will add a given key to the ssh agent.
 func SshKeyAdd(c Config, key string) error {
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		return err
+	}
 
-	Setup(&c)
+	Setup(ctx, cli, &c)
 
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {
@@ -28,7 +33,7 @@ func SshKeyAdd(c Config, key string) error {
 	}
 
 	for _, Container := range c.Services {
-		purpose, _ := Container.GetFieldString("purpose")
+		purpose, _ := Container.GetFieldString(ctx, cli, "purpose")
 		if purpose == "addkeys" {
 
 			// Validate SSH Key before adding.
@@ -52,19 +57,19 @@ func SshKeyAdd(c Config, key string) error {
 				Container.HostConfig.Binds = append(Container.HostConfig.Binds, fmt.Sprintf("%v:%v", key, key))
 			}
 
-			if err := Container.Create(); err != nil {
-				_ = Container.Remove()
+			if err := Container.Create(ctx, cli); err != nil {
+				_ = Container.Remove(ctx, cli)
 				return err
 			}
-			if err := Container.Start(); err != nil {
-				_ = Container.Remove()
+			if err := Container.Start(ctx, cli); err != nil {
+				_ = Container.Remove(ctx, cli)
 				return err
 			}
 
-			interactive, _ := Container.GetFieldBool("interactive")
-			name, _ := Container.GetFieldString("name")
+			interactive, _ := Container.GetFieldBool(ctx, cli, "interactive")
+			name, _ := Container.GetFieldString(ctx, cli, "name")
 			if !interactive {
-				l, _ := containers.Logs(name)
+				l, _ := containers.Logs(ctx, cli, name)
 				handled := false
 				// We need tighter control on the output of this container...
 				for _, line := range strings.Split(string(l), "\n") {
@@ -87,7 +92,7 @@ func SshKeyAdd(c Config, key string) error {
 				}
 			}
 
-			_ = Container.Remove()
+			_ = Container.Remove(ctx, cli)
 
 		}
 

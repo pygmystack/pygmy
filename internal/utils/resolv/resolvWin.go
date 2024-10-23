@@ -6,10 +6,11 @@ package resolv
 import (
 	"bytes"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime"
 	"os/exec"
 	"strings"
 	"sync"
+
+	"github.com/pygmystack/pygmy/internal/runtime"
 )
 
 // run will run a shell command and is not exported.

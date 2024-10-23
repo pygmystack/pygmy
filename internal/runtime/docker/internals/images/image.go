@@ -1,24 +1,22 @@
 package images
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
-	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 	"io"
 	"regexp"
 	"strings"
 
 	img "github.com/docker/docker/api/types/image"
+	"github.com/docker/docker/client"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
+	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 )
 
 // List will return a slice of Docker images.
-func List() ([]img.Summary, error) {
-	cli, ctx, err := internals.NewClient()
-	if err != nil {
-		fmt.Println(err)
-	}
-
+func List(ctx context.Context, cli *client.Client) ([]img.Summary, error) {
 	images, err := cli.ImageList(ctx, img.ListOptions{
 		All: true,
 	})
@@ -31,7 +29,7 @@ func List() ([]img.Summary, error) {
 }
 
 // Pull will pull a Docker image into the daemon.
-func Pull(image string) (string, error) {
+func Pull(ctx context.Context, cli *client.Client, image string) (string, error) {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		fmt.Println(err)

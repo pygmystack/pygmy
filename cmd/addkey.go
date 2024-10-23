@@ -22,11 +22,14 @@ package cmd
 
 import (
 	"fmt"
-	. "github.com/logrusorgru/aurora"
-	"github.com/pygmystack/pygmy/external/docker/commands"
-	"github.com/pygmystack/pygmy/internal/utils/color"
 
+	. "github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 )
 
 // addkeyCmd is the SSH key add command.
@@ -36,6 +39,11 @@ var addkeyCmd = &cobra.Command{
 	Short:   "Add/re-add an SSH key to the agent",
 	Long:    `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		cli, ctx, err := internals.NewClient()
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		Key, _ := cmd.Flags().GetString("key")
 		var Keys []commands.Key
@@ -47,7 +55,7 @@ var addkeyCmd = &cobra.Command{
 			Keys = append(Keys, thisKey)
 		} else {
 			if len(Keys) == 0 {
-				commands.Setup(&c)
+				commands.Setup(ctx, cli, &c)
 				Keys = c.Keys
 			}
 		}
@@ -61,12 +69,12 @@ var addkeyCmd = &cobra.Command{
 		for _, s := range c.SortedServices {
 			service := c.Services[s]
 			fmt.Sprint(service)
-			//purpose, _ := service.GetFieldString("purpose")
-			//if purpose == "sshagent" {
-			//	name, _ := service.GetFieldString("name")
-			//	d, _ := containers.Exec(name, "ssh-add -l")
-			//	fmt.Println(string(d))
-			//}
+			purpose, _ := service.GetFieldString(ctx, cli, "purpose")
+			if purpose == "sshagent" {
+				name, _ := service.GetFieldString(ctx, cli, "name")
+				d, _ := containers.Exec(ctx, cli, name, "ssh-add -l")
+				fmt.Println(string(d))
+			}
 		}
 
 	},

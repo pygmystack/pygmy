@@ -1,7 +1,9 @@
 package commands
 
 import (
+	"context"
 	"fmt"
+	"github.com/docker/docker/client"
 	"net"
 	"strings"
 )
@@ -15,15 +17,15 @@ type CompatibilityCheck struct {
 
 // DryRun will check for. It is here to check for port compatibility before
 // Pygmy attempts to start any containers and provide the user with a report.
-func DryRun(c *Config) []CompatibilityCheck {
+func DryRun(ctx context.Context, cli *client.Client, c *Config) ([]CompatibilityCheck, error) {
 
 	messages := []CompatibilityCheck{}
 
 	for _, Service := range c.Services {
-		name, _ := Service.GetFieldString("name")
-		enabled, _ := Service.GetFieldBool("enable")
+		name, _ := Service.GetFieldString(ctx, cli, "name")
+		enabled, _ := Service.GetFieldBool(ctx, cli, "enable")
 		if enabled {
-			if s, _ := Service.Status(); !s {
+			if s, _ := Service.Status(ctx, cli); !s {
 				for PortBinding, Ports := range Service.HostConfig.PortBindings {
 					if strings.Contains(string(PortBinding), "tcp") {
 						for _, Port := range Ports {
@@ -58,5 +60,5 @@ func DryRun(c *Config) []CompatibilityCheck {
 		}
 	}
 
-	return messages
+	return messages, nil
 }
