@@ -2,13 +2,13 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
 
-	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
@@ -127,8 +127,8 @@ func Up(c Config) error {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status(&runtime.Params{Domain: c.Domain}) {
-			resolver.Configure(&runtime.Params{Domain: c.Domain})
+		if !resolver.Status(&docker.Params{Domain: c.Domain}) {
+			resolver.Configure(&docker.Params{Domain: c.Domain})
 		}
 	}
 

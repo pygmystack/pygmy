@@ -9,7 +9,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
 
-	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
@@ -90,7 +90,7 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 
 	for _, resolver := range c.Resolvers {
 		r := resolv.Resolv{Name: resolver.Name, Data: resolver.Data, Folder: resolver.Folder, File: resolver.File}
-		if s := r.Status(&runtime.Params{Domain: c.Domain}); s {
+		if s := r.Status(&docker.Params{Domain: c.Domain}); s {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is properly connected", resolver.Name))
 		} else {
 			c.JSONStatus.Resolvers = append(c.JSONStatus.Resolvers, fmt.Sprintf("Resolv %s is not properly connected", resolver.Name))
