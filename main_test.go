@@ -2,6 +2,7 @@ package main_test
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"testing"
 	"time"
@@ -37,6 +38,11 @@ type config struct {
 // run to keep the consistency for as many tests as are required.
 func setup(t *testing.T, config *config) {
 
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	var cleanCmd = fmt.Sprintf("/builds/%v clean", binaryReference)
 	var statusCmd = fmt.Sprintf("/builds/%v status", binaryReference)
 	var upCmd = fmt.Sprintf("/builds/%v up", binaryReference)
@@ -53,14 +59,14 @@ func setup(t *testing.T, config *config) {
 
 		Convey("Provision environment", func() {
 			Convey("Image pulled", func() {
-				_, e := images.Pull("library/docker:dind")
+				_, e := images.Pull(ctx, cli, "library/docker:dind")
 				So(e, ShouldBeNil)
 			})
 
 			Convey("Container created", func() {
 				currentWorkingDirectory, err := os.Getwd()
 				So(err, ShouldBeNil)
-				x, _ := containers.Create(dindContainerName, container.Config{
+				x, _ := containers.Create(ctx, cli, dindContainerName, container.Config{
 					Image: "docker:dind",
 				}, container.HostConfig{
 					AutoRemove: false,
@@ -76,7 +82,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container started", func() {
-				err := containers.Start(dindContainerName, container.StartOptions{})
+				err := containers.Start(ctx, cli, dindContainerName, container.StartOptions{})
 				So(err, ShouldEqual, nil)
 			})
 		})
@@ -84,19 +90,19 @@ func setup(t *testing.T, config *config) {
 		Convey("Populating Daemon", func() {
 
 			Convey("Container has started the daemon", func() {
-				_, e := containers.Exec(dindContainerName, "dockerd")
+				_, e := containers.Exec(ctx, cli, dindContainerName, "dockerd")
 				So(e, ShouldEqual, nil)
 				time.Sleep(time.Second * 2)
 			})
 
-			e := containers.Start(dindContainerName, container.StartOptions{})
+			e := containers.Start(ctx, cli, dindContainerName, container.StartOptions{})
 			if e != nil {
 				fmt.Println(e)
 			}
 
 			for _, image := range config.images {
 				Convey("Pulling "+image, func() {
-					_, e := containers.Exec(dindContainerName, "docker pull "+image)
+					_, e := containers.Exec(ctx, cli, dindContainerName, "docker pull "+image)
 					time.Sleep(time.Second * 2)
 					So(e, ShouldBeNil)
 				})
@@ -106,7 +112,7 @@ func setup(t *testing.T, config *config) {
 		Convey("Application Tests", func() {
 
 			Convey("Container has configuration file ("+config.configpath+")", func() {
-				d, _ := containers.Exec(dindContainerName, "stat "+config.configpath)
+				d, _ := containers.Exec(ctx, cli, dindContainerName, "stat "+config.configpath)
 				if config.configpath == "" {
 					SkipSo(string(d), ShouldContainSubstring, config.configpath)
 				} else {
@@ -115,30 +121,30 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container has compiled binary from host", func() {
-				d, _ := containers.Exec(dindContainerName, fmt.Sprintf("stat /builds/%v", binaryReference))
+				d, _ := containers.Exec(ctx, cli, dindContainerName, fmt.Sprintf("stat /builds/%v", binaryReference))
 				So(string(d), ShouldContainSubstring, fmt.Sprintf("/builds/%v", binaryReference))
 			})
 
-			d, _ := containers.Exec(dindContainerName, fmt.Sprintf("/builds/%v", binaryReference))
+			d, _ := containers.Exec(ctx, cli, dindContainerName, fmt.Sprintf("/builds/%v", binaryReference))
 			Convey("Container can run pygmy", func() {
 				So(string(d), ShouldContainSubstring, "local containers for local development")
 			})
 
 			// While it's safe, we should clean the environment.
-			_, e := containers.Exec(dindContainerName, cleanCmd)
+			_, e := containers.Exec(ctx, cli, dindContainerName, cleanCmd)
 			if e != nil {
 				fmt.Println(e)
 			}
 
 			Convey("Default ports are not allocated", func() {
-				g, _ := containers.Exec(dindContainerName, statusCmd)
+				g, _ := containers.Exec(ctx, cli, dindContainerName, statusCmd)
 				for _, service := range config.servicewithports {
 					So(string(g), ShouldContainSubstring, service+" is able to start")
 				}
 			})
 
 			Convey("Pygmy started", func() {
-				d, _ = containers.Exec(dindContainerName, upCmd)
+				d, _ = containers.Exec(ctx, cli, dindContainerName, upCmd)
 				if config.configpath != "" {
 					So(string(d), ShouldContainSubstring, "Using config file: "+config.configpath)
 				}
@@ -148,7 +154,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Endpoints are serving", func() {
-				d, _ = containers.Exec(dindContainerName, statusCmd)
+				d, _ = containers.Exec(ctx, cli, dindContainerName, statusCmd)
 				for _, endpoint := range config.endpoints {
 					if config.skipendpointchecks {
 						SkipSo(string(d), ShouldNotContainSubstring, "! "+endpoint)
@@ -162,11 +168,11 @@ func setup(t *testing.T, config *config) {
 		Convey("Environment Cleanup", func() {
 			Convey("Pygmy has cleaned the environment", func() {
 
-				_, e := containers.Exec(dindContainerName, downCmd)
+				_, e := containers.Exec(ctx, cli, dindContainerName, downCmd)
 				So(e, ShouldBeNil)
-				_, e = containers.Exec(dindContainerName, cleanCmd)
+				_, e = containers.Exec(ctx, cli, dindContainerName, cleanCmd)
 				So(e, ShouldBeNil)
-				d, _ := containers.Exec(dindContainerName, statusCmd)
+				d, _ := containers.Exec(ctx, cli, dindContainerName, statusCmd)
 				for _, service := range config.services {
 					So(string(d), ShouldContainSubstring, service+" is not running")
 				}
@@ -174,9 +180,9 @@ func setup(t *testing.T, config *config) {
 			})
 			// System prune container...
 			Convey("Removing DinD Container", func() {
-				err := containers.Kill("exampleTestContainer")
+				err := containers.Kill(ctx, cli, "exampleTestContainer")
 				So(err, ShouldBeNil)
-				err = containers.Remove("exampleTestContainer")
+				err = containers.Remove(ctx, cli, "exampleTestContainer")
 				So(err, ShouldBeNil)
 			})
 		})
