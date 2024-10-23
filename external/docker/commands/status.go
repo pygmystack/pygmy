@@ -151,12 +151,11 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 
 	cleanurls := unique(urls)
 	for _, url := range cleanurls {
-		endpoint.Validate(url)
-		if r := endpoint.Validate(url); !r {
-			c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" ! %v\n", url))
-		} else {
-			c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, fmt.Sprintf(" - %v\n", url))
-		}
+		result := endpoint.Validate(url)
+		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, StatusJSONURLValidation{
+			Endpoint: url,
+			Success:  result,
+		})
 	}
 
 	if c.JSONFormat {

@@ -53,7 +53,12 @@ type StatusJSON struct {
 	Resolvers        []string                    `json:"resolvers"`
 	Volumes          []string                    `json:"volumes"`
 	SSHMessages      []string                    `json:"ssh_messages"`
-	URLValidations   []string                    `json:"url_validations"`
+	URLValidations   []StatusJSONURLValidation   `json:"url_validations"`
+}
+
+type StatusJSONURLValidation struct {
+	Endpoint string `json:"endpoint"`
+	Success  bool   `json:"success"`
 }
 
 type StatusJSONStatus struct {
