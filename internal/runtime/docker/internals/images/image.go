@@ -11,7 +11,6 @@ import (
 	img "github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
 
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 )
 
@@ -39,11 +38,6 @@ func List(ctx context.Context, cli *client.Client) ([]img.Summary, error) {
 
 // Pull will pull a Docker image into the daemon.
 func Pull(ctx context.Context, cli *client.Client, image string) (string, error) {
-	cli, ctx, err := internals.NewClient()
-	if err != nil {
-		fmt.Println(err)
-	}
-
 	{
 
 		// To support image references from external sources to docker.io we need to check

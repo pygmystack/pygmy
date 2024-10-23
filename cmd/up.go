@@ -64,7 +64,10 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 		}
 
-		commands.Up(c)
+		err := commands.Up(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

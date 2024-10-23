@@ -30,11 +30,13 @@ func sampleData() (container.Config, container.HostConfig, network.NetworkingCon
 
 // randomString will generate a random string.
 func randomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
 	result := make([]byte, length)
 	for i := range result {
-		result[i] = charset[rand.Intn(len(charset))]
+		result[i] = charset[r.Intn(len(charset))]
 	}
 	return string(result)
 }

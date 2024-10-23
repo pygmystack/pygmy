@@ -2,6 +2,7 @@ package docker
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -37,7 +38,7 @@ func (Service *Service) Setup(ctx context.Context, cli *client.Client) error {
 		if msg, err := images.Pull(ctx, cli, Service.Config.Image); err != nil {
 			return err
 		} else if strings.Contains(msg, "already up to date") {
-			return fmt.Errorf(msg)
+			return errors.New(msg)
 		}
 	} else {
 		return fmt.Errorf("image already in registry, skipping")

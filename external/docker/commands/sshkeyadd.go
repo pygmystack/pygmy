@@ -2,13 +2,13 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"runtime"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 	"github.com/pygmystack/pygmy/internal/utils/color"
@@ -45,7 +45,7 @@ func SshKeyAdd(c Config, key string) error {
 					color.Print(Green(fmt.Sprintf("Validation success for protected SSH key %v\n", key)))
 				}
 				if err.Error() == "ssh: no key found" {
-					return fmt.Errorf(fmt.Sprintf("[ ] Validation failure for SSH key %v\n", key))
+					return fmt.Errorf("[ ] Validation failure for SSH key %v\n", key)
 				}
 			}
 

@@ -34,11 +34,13 @@ func testSetup() (context.Context, *client.Client) {
 
 // randomString will generate a random string.
 func randomString(length int) string {
-	rand.Seed(time.Now().UnixNano())
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	source := rand.NewSource(time.Now().UnixNano())
+	r := rand.New(source)
+
 	result := make([]byte, length)
 	for i := range result {
-		result[i] = charset[rand.Intn(len(charset))]
+		result[i] = charset[r.Intn(len(charset))]
 	}
 	return string(result)
 }
@@ -317,6 +319,7 @@ func TestAttach(t *testing.T) {
 		Stderr: true,
 		Logs:   true,
 	})
+	assert.NoError(t, err)
 
 	// Read the output from the container.
 	stdout, err := attacher.Reader.ReadString('\n')

@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
@@ -36,7 +37,10 @@ then if they are, it will not attempt to remove any
 services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		commands.Stop(c)
+		err := commands.Stop(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

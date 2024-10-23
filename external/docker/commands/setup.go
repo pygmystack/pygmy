@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"fmt"
-	"github.com/docker/docker/client"
 	"os"
 	"runtime"
 	"sort"
@@ -11,6 +10,7 @@ import (
 
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
+	"github.com/docker/docker/client"
 	"github.com/spf13/viper"
 
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -131,7 +131,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		// If Services have been provided in complete or partially,
 		// this will override the defaults allowing any value to
 		// be changed by the user in the configuration file ~/.pygmy.yml
-		if c.Services == nil || len(c.Services) == 0 {
+		if len(c.Services) == 0 {
 			c.Services = make(map[string]dockerruntime.Service, 6)
 		}
 

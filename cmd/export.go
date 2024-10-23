@@ -40,7 +40,10 @@ var exportCmd = &cobra.Command{
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		commands.Export(c, exportPath)
+		err := commands.Export(c, exportPath)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

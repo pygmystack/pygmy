@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
@@ -38,7 +39,10 @@ This command does not check if the containers are running
 because other checks do for speed convenience.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		commands.Clean(c)
+		err := commands.Clean(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

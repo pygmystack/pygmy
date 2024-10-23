@@ -1,13 +1,13 @@
 package commands_test
 
 import (
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 // Tests the setup process.

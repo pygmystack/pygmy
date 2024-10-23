@@ -21,6 +21,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
@@ -36,7 +37,10 @@ var updateCmd = &cobra.Command{
 the string 'uselagoon', which encompasses all lagoon images.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		commands.Update(c)
+		err := commands.Update(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

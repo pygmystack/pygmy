@@ -27,8 +27,8 @@ func TestPullAndList(t *testing.T) {
 	id := "nginx:latest"
 
 	// Remove the image from the registry.
-	// Do not check this error.
-	Remove(ctx, cli, id)
+	// We specifically do not want check this error.
+	_, _ = Remove(ctx, cli, id)
 
 	// Pull the image into the registry.
 	pullResponse, err := Pull(ctx, cli, id)
