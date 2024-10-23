@@ -2,16 +2,17 @@ package commands
 
 import (
 	"fmt"
+	"os"
+	"strings"
+
+	. "github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/internal/runtime"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
 	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
-	"os"
-	"strings"
-
-	. "github.com/logrusorgru/aurora"
 )
 
 // Up will bring Pygmy up.

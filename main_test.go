@@ -8,8 +8,10 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/pygmystack/pygmy/internal/runtimes/docker"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/images"
 )
 
 const (
@@ -51,14 +53,14 @@ func setup(t *testing.T, config *config) {
 
 		Convey("Provision environment", func() {
 			Convey("Image pulled", func() {
-				_, e := docker.DockerPull("library/docker:dind")
+				_, e := images.Pull("library/docker:dind")
 				So(e, ShouldBeNil)
 			})
 
 			Convey("Container created", func() {
 				currentWorkingDirectory, err := os.Getwd()
 				So(err, ShouldBeNil)
-				x, _ := docker.DockerContainerCreate(dindContainerName, container.Config{
+				x, _ := containers.Create(dindContainerName, container.Config{
 					Image: "docker:dind",
 				}, container.HostConfig{
 					AutoRemove: false,
@@ -74,7 +76,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container started", func() {
-				err := docker.DockerContainerStart(dindContainerName, container.StartOptions{})
+				err := containers.Start(dindContainerName, container.StartOptions{})
 				So(err, ShouldEqual, nil)
 			})
 		})
@@ -82,19 +84,19 @@ func setup(t *testing.T, config *config) {
 		Convey("Populating Daemon", func() {
 
 			Convey("Container has started the daemon", func() {
-				_, e := docker.DockerExec(dindContainerName, "dockerd")
+				_, e := containers.Exec(dindContainerName, "dockerd")
 				So(e, ShouldEqual, nil)
 				time.Sleep(time.Second * 2)
 			})
 
-			e := docker.DockerContainerStart(dindContainerName, container.StartOptions{})
+			e := containers.Start(dindContainerName, container.StartOptions{})
 			if e != nil {
 				fmt.Println(e)
 			}
 
 			for _, image := range config.images {
 				Convey("Pulling "+image, func() {
-					_, e := docker.DockerExec(dindContainerName, "docker pull "+image)
+					_, e := containers.Exec(dindContainerName, "docker pull "+image)
 					time.Sleep(time.Second * 2)
 					So(e, ShouldBeNil)
 				})
@@ -104,7 +106,7 @@ func setup(t *testing.T, config *config) {
 		Convey("Application Tests", func() {
 
 			Convey("Container has configuration file ("+config.configpath+")", func() {
-				d, _ := docker.DockerExec(dindContainerName, "stat "+config.configpath)
+				d, _ := containers.Exec(dindContainerName, "stat "+config.configpath)
 				if config.configpath == "" {
 					SkipSo(string(d), ShouldContainSubstring, config.configpath)
 				} else {
@@ -113,30 +115,30 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Container has compiled binary from host", func() {
-				d, _ := docker.DockerExec(dindContainerName, fmt.Sprintf("stat /builds/%v", binaryReference))
+				d, _ := containers.Exec(dindContainerName, fmt.Sprintf("stat /builds/%v", binaryReference))
 				So(string(d), ShouldContainSubstring, fmt.Sprintf("/builds/%v", binaryReference))
 			})
 
-			d, _ := docker.DockerExec(dindContainerName, fmt.Sprintf("/builds/%v", binaryReference))
+			d, _ := containers.Exec(dindContainerName, fmt.Sprintf("/builds/%v", binaryReference))
 			Convey("Container can run pygmy", func() {
 				So(string(d), ShouldContainSubstring, "local containers for local development")
 			})
 
 			// While it's safe, we should clean the environment.
-			_, e := docker.DockerExec(dindContainerName, cleanCmd)
+			_, e := containers.Exec(dindContainerName, cleanCmd)
 			if e != nil {
 				fmt.Println(e)
 			}
 
 			Convey("Default ports are not allocated", func() {
-				g, _ := docker.DockerExec(dindContainerName, statusCmd)
+				g, _ := containers.Exec(dindContainerName, statusCmd)
 				for _, service := range config.servicewithports {
 					So(string(g), ShouldContainSubstring, service+" is able to start")
 				}
 			})
 
 			Convey("Pygmy started", func() {
-				d, _ = docker.DockerExec(dindContainerName, upCmd)
+				d, _ = containers.Exec(dindContainerName, upCmd)
 				if config.configpath != "" {
 					So(string(d), ShouldContainSubstring, "Using config file: "+config.configpath)
 				}
@@ -146,7 +148,7 @@ func setup(t *testing.T, config *config) {
 			})
 
 			Convey("Endpoints are serving", func() {
-				d, _ = docker.DockerExec(dindContainerName, statusCmd)
+				d, _ = containers.Exec(dindContainerName, statusCmd)
 				for _, endpoint := range config.endpoints {
 					if config.skipendpointchecks {
 						SkipSo(string(d), ShouldNotContainSubstring, "! "+endpoint)
@@ -160,11 +162,11 @@ func setup(t *testing.T, config *config) {
 		Convey("Environment Cleanup", func() {
 			Convey("Pygmy has cleaned the environment", func() {
 
-				_, e := docker.DockerExec(dindContainerName, downCmd)
+				_, e := containers.Exec(dindContainerName, downCmd)
 				So(e, ShouldBeNil)
-				_, e = docker.DockerExec(dindContainerName, cleanCmd)
+				_, e = containers.Exec(dindContainerName, cleanCmd)
 				So(e, ShouldBeNil)
-				d, _ := docker.DockerExec(dindContainerName, statusCmd)
+				d, _ := containers.Exec(dindContainerName, statusCmd)
 				for _, service := range config.services {
 					So(string(d), ShouldContainSubstring, service+" is not running")
 				}
@@ -172,9 +174,9 @@ func setup(t *testing.T, config *config) {
 			})
 			// System prune container...
 			Convey("Removing DinD Container", func() {
-				err := docker.DockerKill("exampleTestContainer")
+				err := containers.Kill("exampleTestContainer")
 				So(err, ShouldBeNil)
-				err = docker.DockerRemove("exampleTestContainer")
+				err = containers.Remove("exampleTestContainer")
 				So(err, ShouldBeNil)
 			})
 		})

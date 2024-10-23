@@ -3,15 +3,15 @@ package agent
 import (
 	"errors"
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"os"
 	"strings"
 
-	"golang.org/x/crypto/ssh"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
+	"golang.org/x/crypto/ssh"
+
+	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 )
 

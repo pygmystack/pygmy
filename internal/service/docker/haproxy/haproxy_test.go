@@ -2,23 +2,24 @@ package haproxy_test
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/docker/haproxy"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/service/docker/haproxy"
 )
 
 func Example() {
-	haproxy.New(&runtime.Params{})
+	haproxy.New(&docker.Params{})
 	haproxy.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New(&runtime.Params{Domain: "docker.amazee.io"})
+		obj := haproxy.New(&docker.Params{Domain: "docker.amazee.io"})
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")

@@ -1,18 +1,19 @@
 package commands_test
 
 import (
-	"github.com/pygmystack/pygmy/external/docker/commands"
-	"github.com/pygmystack/pygmy/internal/runtime"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
 )
 
 // Tests the setup process.
 func TestSetup(t *testing.T) {
 	// Get our configuration object
 	c := &commands.Config{
-		Services: map[string]runtime.Service{
+		Services: map[string]docker.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
 				Image: "example-amazeeio-dnsmasq",

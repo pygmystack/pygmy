@@ -2,14 +2,15 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
-	"github.com/pygmystack/pygmy/internal/services/docker/ssh/agent"
-	"github.com/pygmystack/pygmy/internal/utils/color"
 	"os"
 	"runtime"
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 )
 
 // SshKeyAdd will add a given key to the ssh agent.

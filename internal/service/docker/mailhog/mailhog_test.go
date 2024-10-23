@@ -2,23 +2,24 @@ package mailhog_test
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/docker/mailhog"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker"
+	"github.com/pygmystack/pygmy/internal/service/docker/mailhog"
 )
 
 func Example() {
-	mailhog.New(&runtime.Params{})
+	mailhog.New(&docker.Params{})
 	mailhog.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("MailHog: Field equality tests...", t, func() {
-		obj := mailhog.New(&runtime.Params{Domain: "docker.amazee.io"})
+		obj := mailhog.New(&docker.Params{Domain: "docker.amazee.io"})
 		objPorts := mailhog.NewDefaultPorts()
 		So(obj.Config.User, ShouldEqual, "0")
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/mailhog")

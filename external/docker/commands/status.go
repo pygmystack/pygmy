@@ -3,6 +3,10 @@ package commands
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/logrusorgru/aurora"
+
 	"github.com/pygmystack/pygmy/internal/runtime"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
@@ -10,9 +14,6 @@ import (
 	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
-	"strings"
-
-	"github.com/logrusorgru/aurora"
 )
 
 // Status will show the state of all the things Pygmy manages.

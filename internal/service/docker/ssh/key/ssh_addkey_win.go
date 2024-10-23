@@ -1,17 +1,18 @@
-//go:build !windows
-// +build !windows
+//go:build windows
+// +build windows
 
 package key
 
 import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
-	"github.com/pygmystack/pygmy/internal/runtime/docker"
+
+	"github.com/pygmystack/pygmy/internal/runtime"
 )
 
 // NewAdder will provide the standard object for the SSH key adder container.
-func NewAdder() docker.Service {
-	return docker.Service{
+func NewAdder() runtime.Service {
+	return runtime.Service{
 		Config: container.Config{
 			Image: "pygmystack/ssh-agent",
 			Labels: map[string]string{

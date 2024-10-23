@@ -1,14 +1,14 @@
 package agent_test
 
 import (
-	"github.com/pygmystack/pygmy/internal/runtime"
-	"github.com/pygmystack/pygmy/internal/services/docker/ssh/agent"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/go-connections/nat"
-
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/runtime"
+	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 )
 
 //func TestExampleList(t *testing.T) {

@@ -2,10 +2,11 @@ package key_test
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/services/docker/ssh/key"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/pygmystack/pygmy/internal/service/docker/ssh/key"
 )
 
 //func ExampleAdd() {
