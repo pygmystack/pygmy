@@ -98,7 +98,7 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := volumes.Exists(volume.Name); s {
+		if s, _ := volumes.Exists(ctx, cli, volume.Name); s {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has been created", volume.Name))
 		} else {
 			c.JSONStatus.Volumes = append(c.JSONStatus.Volumes, fmt.Sprintf("Volume %s has not been created", volume.Name))

@@ -40,8 +40,8 @@ func Up(c Config) error {
 	}
 
 	for _, volume := range c.Volumes {
-		if s, _ := volumes.Exists(volume.Name); !s {
-			_, err := volumes.Create(volume)
+		if s, _ := volumes.Exists(ctx, cli, volume.Name); !s {
+			_, err := volumes.Create(ctx, cli, volume)
 			if err == nil {
 				color.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {

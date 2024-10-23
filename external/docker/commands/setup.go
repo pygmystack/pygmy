@@ -169,7 +169,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 
 		for _, v := range c.Volumes {
 			// Get the potentially existing volume:
-			c.Volumes[v.Name], _ = volumes.Get(v.Name)
+			c.Volumes[v.Name], _ = volumes.Get(ctx, cli, v.Name)
 			// Merge the volume with the provided configuration:
 			c.Volumes[v.Name] = getVolume(c.Volumes[v.Name], c.Volumes[v.Name])
 		}

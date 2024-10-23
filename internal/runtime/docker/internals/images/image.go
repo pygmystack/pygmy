@@ -15,6 +15,16 @@ import (
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 )
 
+// Remove will remove an image from the registry.
+// Pygmy doesn't need this, but it serves as a tool for testing this package.
+func Remove(ctx context.Context, cli *client.Client, id string) ([]img.DeleteResponse, error) {
+	images, err := cli.ImageRemove(ctx, id, img.RemoveOptions{})
+	if err != nil {
+		return []img.DeleteResponse{}, err
+	}
+	return images, nil
+}
+
 // List will return a slice of Docker images.
 func List(ctx context.Context, cli *client.Client) ([]img.Summary, error) {
 	images, err := cli.ImageList(ctx, img.ListOptions{
@@ -23,7 +33,6 @@ func List(ctx context.Context, cli *client.Client) ([]img.Summary, error) {
 	if err != nil {
 		return []img.Summary{}, err
 	}
-
 	return images, nil
 
 }
