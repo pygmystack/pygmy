@@ -48,10 +48,10 @@ func New() docker.Service {
 // config after starting them, and return it.
 // which is indicated by the purpose tag.
 func List(ctx context.Context, cli *client.Client, service *runtime.Service) ([]byte, error) {
-	name, _ := service.GetFieldString("name")
-	purpose, _ := service.GetFieldString("purpose")
+	name, _ := service.GetFieldString(ctx, cli, "name")
+	purpose, _ := service.GetFieldString(ctx, cli, "purpose")
 	if purpose == "showkeys" {
-		e := service.Start()
+		e := service.Start(ctx, cli)
 		if e != nil {
 			return []byte{}, e
 		}
