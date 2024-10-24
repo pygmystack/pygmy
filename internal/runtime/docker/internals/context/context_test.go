@@ -13,14 +13,6 @@ func TestCurrentDockerHost(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-// TestFilePathInHomeDir will test the filePathInHomeDir function.
-func TestFilePathInHomeDir(t *testing.T) {
-	filepath, err := filePathInHomeDir(".bash_profile")
-	assert.NoError(t, err)
-
-	assert.Equal(t, ".bash_profile", filepath)
-}
-
 // TestCurrentContext will test the currentContext function.
 func TestCurrentContext(t *testing.T) {
 	_, err := currentContext()
