@@ -1,10 +1,11 @@
-FROM golang:alpine as builder
+FROM golang:alpine AS builder
 LABEL stage=builder
 COPY main.go /go/src/github.com/pygmystack/pygmy/
 COPY go.sum /go/src/github.com/pygmystack/pygmy/
 COPY go.mod /go/src/github.com/pygmystack/pygmy/
 COPY cmd/ /go/src/github.com/pygmystack/pygmy/cmd/
-COPY service/ /go/src/github.com/pygmystack/pygmy/service/
+COPY internal/ /go/src/github.com/pygmystack/pygmy/internal/
+COPY external/ /go/src/github.com/pygmystack/pygmy/external/
 
 WORKDIR /go/src/github.com/pygmystack/pygmy/
 RUN GO111MODULE=on go mod verify

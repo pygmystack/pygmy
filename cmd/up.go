@@ -27,7 +27,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 // upCmd represents the up command
@@ -46,7 +46,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []library.Key{}
+			c.Keys = []commands.Key{}
 		} else {
 
 			keyExistsInConfig := false
@@ -57,14 +57,17 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 
 			if !keyExistsInConfig {
-				thisKey := library.Key{
+				thisKey := commands.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
 			}
 		}
 
-		library.Up(c)
+		err := commands.Up(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }
