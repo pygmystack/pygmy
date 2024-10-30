@@ -1,4 +1,4 @@
-package commands
+package setup
 
 import (
 	"context"
@@ -40,7 +40,7 @@ func ImportDefaults(ctx context.Context, cli *client.Client, c *Config, service 
 				// Clear destination Service to a new nil value.
 				c.Services[service] = dockerruntime.Service{}
 				// Import the provided Service to the map entry.
-				c.Services[service] = getService(importer, c.Services[service])
+				c.Services[service] = GetService(importer, c.Services[service])
 				// This is now successful, so return true.
 				return true
 			}
@@ -48,20 +48,20 @@ func ImportDefaults(ctx context.Context, cli *client.Client, c *Config, service 
 
 		// If container has a value for the defaults label
 		if defaultsNeeded, _ := container.GetFieldBool(ctx, cli, "defaults"); defaultsNeeded {
-			c.Services[service] = getService(importer, c.Services[service])
+			c.Services[service] = GetService(importer, c.Services[service])
 			return true
 		}
 
 		// If default configuration has a value for the defaults label
 		if val, ok := importer.Config.Labels["pygmy.defaults"]; ok {
 			if val == "1" || val == "true" {
-				c.Services[service] = getService(importer, c.Services[service])
+				c.Services[service] = GetService(importer, c.Services[service])
 				return true
 			}
 		}
 	} else {
 		if defaultsNeeded, _ := importer.GetFieldBool(ctx, cli, "defaults"); defaultsNeeded {
-			c.Services[service] = getService(importer, c.Services[service])
+			c.Services[service] = GetService(importer, c.Services[service])
 			return true
 		}
 	}
@@ -146,20 +146,20 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		// then we should set this value. This is far more creative
 		// than needed, so feel free to revisit if you can compile it.
 		if c.Services["amazeeio-haproxy"].HostConfig.PortBindings == nil {
-			c.Services["amazeeio-haproxy"] = getService(haproxy.NewDefaultPorts(), c.Services["amazeeio-haproxy"])
+			c.Services["amazeeio-haproxy"] = GetService(haproxy.NewDefaultPorts(), c.Services["amazeeio-haproxy"])
 		}
 
 		// It's sensible to use the same logic for port 1025.
 		// If a user needs to configure it, the default value should not be set also.
 		if c.Services["amazeeio-mailhog"].HostConfig.PortBindings == nil {
-			c.Services["amazeeio-mailhog"] = getService(mailhog.NewDefaultPorts(), c.Services["amazeeio-mailhog"])
+			c.Services["amazeeio-mailhog"] = GetService(mailhog.NewDefaultPorts(), c.Services["amazeeio-mailhog"])
 		}
 
 		// Ensure Networks has a at least a zero value.
 		// We should provide defaults for amazeeio-network when no value is provided.
 		if c.Networks == nil {
 			c.Networks = make(map[string]networktypes.Inspect)
-			c.Networks["amazeeio-network"] = getNetwork(network.New(), c.Networks["amazeeio-network"])
+			c.Networks["amazeeio-network"] = GetNetwork(network.New(), c.Networks["amazeeio-network"])
 		}
 
 		// Ensure Volumes has a at least a zero value.
@@ -171,7 +171,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 			// Get the potentially existing volume:
 			c.Volumes[v.Name], _ = volumes.Get(ctx, cli, v.Name)
 			// Merge the volume with the provided configuration:
-			c.Volumes[v.Name] = getVolume(c.Volumes[v.Name], c.Volumes[v.Name])
+			c.Volumes[v.Name] = GetVolume(c.Volumes[v.Name], c.Volumes[v.Name])
 		}
 	}
 

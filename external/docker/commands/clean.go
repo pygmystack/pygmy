@@ -2,24 +2,25 @@ package commands
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"strings"
 
+	. "github.com/logrusorgru/aurora"
+
+	"github.com/pygmystack/pygmy/external/docker/setup"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/utils/color"
-
-	. "github.com/logrusorgru/aurora"
 )
 
 // Clean will forcibly kill and remove all of pygmy's containers in the daemon
-func Clean(c Config) error {
+func Clean(c setup.Config) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 	Containers, _ := containers.List(ctx, cli)
 	NetworksToClean := []string{}
 
@@ -53,7 +54,7 @@ func Clean(c Config) error {
 		NetworksToClean = append(NetworksToClean, network.Name)
 	}
 
-	for n := range unique(NetworksToClean) {
+	for n := range setup.Unique(NetworksToClean) {
 		if s, _ := networks.Status(ctx, cli, NetworksToClean[n]); s {
 			e := networks.Remove(ctx, cli, NetworksToClean[n])
 			if e != nil {

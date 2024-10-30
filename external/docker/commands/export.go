@@ -6,19 +6,20 @@ import (
 
 	"github.com/ghodss/yaml"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 // Export will export validated configuration to a given path, or it will
 // export by default to $HOME/.pygmy.yml
-func Export(c Config, output string) error {
+func Export(c setup.Config, output string) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
 	// Set up the configuration.
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 
 	// Marshal to Yaml.
 	x, err := yaml.Marshal(c)

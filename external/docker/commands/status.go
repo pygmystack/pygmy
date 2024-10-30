@@ -9,6 +9,7 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
@@ -19,8 +20,8 @@ import (
 )
 
 // Status will show the state of all the things Pygmy manages.
-func Status(ctx context.Context, cli *client.Client, c Config) {
-	Setup(ctx, cli, &c)
+func Status(ctx context.Context, cli *client.Client, c setup.Config) {
+	setup.Setup(ctx, cli, &c)
 	checks, _ := DryRun(ctx, cli, &c)
 	agentPresent := false
 
@@ -31,7 +32,7 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 	}
 
 	// Ensure the services struct is not nil.
-	c.JSONStatus.Services = make(map[string]StatusJSONStatus)
+	c.JSONStatus.Services = make(map[string]setup.StatusJSONStatus)
 
 	Containers, _ := runtimecontainers.List(ctx, cli)
 	for _, Container := range Containers {
@@ -48,13 +49,13 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(ctx, cli); s {
-							c.JSONStatus.Services[name] = StatusJSONStatus{
+							c.JSONStatus.Services[name] = setup.StatusJSONStatus{
 								Container: name,
 								ImageRef:  Service.Image,
 								State:     true,
 							}
 						} else {
-							c.JSONStatus.Services[name] = StatusJSONStatus{
+							c.JSONStatus.Services[name] = setup.StatusJSONStatus{
 								Container: name,
 								ImageRef:  Service.Image,
 							}
@@ -70,7 +71,7 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 			name, _ := Service.GetFieldString(ctx, cli, "name")
 			discrete, _ := Service.GetFieldBool(ctx, cli, "discrete")
 			if !discrete {
-				c.JSONStatus.Services[name] = StatusJSONStatus{
+				c.JSONStatus.Services[name] = setup.StatusJSONStatus{
 					Container: name,
 					ImageRef:  Service.Image,
 				}
@@ -149,10 +150,10 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 		}
 	}
 
-	cleanurls := unique(urls)
+	cleanurls := setup.Unique(urls)
 	for _, url := range cleanurls {
 		result := endpoint.Validate(url)
-		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, StatusJSONURLValidation{
+		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, setup.StatusJSONURLValidation{
 			Endpoint: url,
 			Success:  result,
 		})
@@ -167,12 +168,12 @@ func Status(ctx context.Context, cli *client.Client, c Config) {
 
 }
 
-func PrintStatusJSON(c Config) {
+func PrintStatusJSON(c setup.Config) {
 	jsonData, _ := json.Marshal(c.JSONStatus)
 	fmt.Println(string(jsonData))
 
 }
-func PrintStatusHumanReadable(c Config) {
+func PrintStatusHumanReadable(c setup.Config) {
 	for _, v := range c.JSONStatus.PortAvailability {
 		if strings.Contains(v, "is not able to start on port") {
 			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))

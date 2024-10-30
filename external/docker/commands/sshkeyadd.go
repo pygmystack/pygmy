@@ -8,6 +8,7 @@ import (
 
 	. "github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
@@ -15,13 +16,13 @@ import (
 )
 
 // SshKeyAdd will add a given key to the ssh agent.
-func SshKeyAdd(c Config, key string) error {
+func SshKeyAdd(c setup.Config, key string) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 
 	if key != "" {
 		if _, err := os.Stat(key); err != nil {

@@ -7,6 +7,7 @@ import (
 
 	. "github.com/logrusorgru/aurora"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
@@ -17,13 +18,13 @@ import (
 )
 
 // Up will bring Pygmy up.
-func Up(c Config) error {
+func Up(c setup.Config) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 	checks, _ := DryRun(ctx, cli, &c)
 	agentPresent := false
 
@@ -96,7 +97,7 @@ func Up(c Config) error {
 		if Network.Name != "" {
 			netVal, _ := networks.Status(ctx, cli, Network.Name)
 			if !netVal {
-				if err := NetworkCreate(ctx, cli, Network); err == nil {
+				if err := networks.Create(ctx, cli, &Network); err == nil {
 					color.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
 				} else {
 					color.Print(Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
@@ -112,7 +113,7 @@ func Up(c Config) error {
 		// If the network is configured at the container level, connect it.
 		if Network, _ := service.GetFieldString(ctx, cli, "network"); Network != "" && nameErr == nil {
 			if s, _ := networks.Connected(ctx, cli, Network, name); !s {
-				if s := NetworkConnect(ctx, cli, Network, name); s == nil {
+				if s := networks.Connect(ctx, cli, Network, name); s == nil {
 					color.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
 					discrete, _ := service.GetFieldBool(ctx, cli, "discrete")
@@ -174,7 +175,7 @@ func Up(c Config) error {
 		}
 	}
 
-	cleanurls := unique(urls)
+	cleanurls := setup.Unique(urls)
 	for _, url := range cleanurls {
 		endpoint.Validate(url)
 		if r := endpoint.Validate(url); r {

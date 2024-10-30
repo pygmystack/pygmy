@@ -3,9 +3,11 @@ package commands
 import (
 	"context"
 	"fmt"
-	"github.com/docker/docker/client"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"net"
 	"strings"
+
+	"github.com/docker/docker/client"
 )
 
 // CompatibilityCheck is a struct of fields associated to reporting of
@@ -17,7 +19,7 @@ type CompatibilityCheck struct {
 
 // DryRun will check for. It is here to check for port compatibility before
 // Pygmy attempts to start any containers and provide the user with a report.
-func DryRun(ctx context.Context, cli *client.Client, c *Config) ([]CompatibilityCheck, error) {
+func DryRun(ctx context.Context, cli *client.Client, c *setup.Config) ([]CompatibilityCheck, error) {
 
 	messages := []CompatibilityCheck{}
 

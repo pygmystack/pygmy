@@ -1,11 +1,11 @@
-package commands_test
+package setup_test
 
 import (
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
@@ -13,7 +13,7 @@ import (
 // Tests the setup process.
 func TestSetup(t *testing.T) {
 	// Get our configuration object
-	c := &commands.Config{
+	c := &setup.Config{
 		Services: map[string]docker.Service{
 			"amazeeio-dnsmasq": {
 				// Set an override config value so it can be tested.
@@ -31,8 +31,8 @@ func TestSetup(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	commands.Setup(ctx, cli, c)
-	c.SortedServices = commands.GetServicesSorted(ctx, cli, c)
+	setup.Setup(ctx, cli, c)
+	c.SortedServices = setup.GetServicesSorted(ctx, cli, c)
 
 	Convey("Setup Tests", t, func() {
 		// SSH Agent must be 5 items long by default.

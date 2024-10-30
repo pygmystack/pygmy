@@ -3,17 +3,18 @@ package commands
 import (
 	"fmt"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 )
 
 // Stop will bring pygmy down safely
-func Stop(c Config) error {
+func Stop(c setup.Config) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool(ctx, cli, "enable")

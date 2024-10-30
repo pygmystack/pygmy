@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 
 	. "github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
@@ -46,16 +47,16 @@ var addkeyCmd = &cobra.Command{
 		}
 
 		Key, _ := cmd.Flags().GetString("key")
-		var Keys []commands.Key
+		var Keys []setup.Key
 
 		if Key != "" {
-			thisKey := commands.Key{
+			thisKey := setup.Key{
 				Path: Key,
 			}
 			Keys = append(Keys, thisKey)
 		} else {
 			if len(Keys) == 0 {
-				commands.Setup(ctx, cli, &c)
+				setup.Setup(ctx, cli, &c)
 				Keys = c.Keys
 			}
 		}

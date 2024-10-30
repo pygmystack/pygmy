@@ -4,19 +4,20 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	runtimeimages "github.com/pygmystack/pygmy/internal/runtime/docker/internals/images"
 )
 
 // Update will update the images for all configured services.
-func Update(c Config) error {
+func Update(c setup.Config) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
 	}
 
 	// Import the configuration.
-	Setup(ctx, cli, &c)
+	setup.Setup(ctx, cli, &c)
 
 	// Loop over services.
 	for s := range c.Services {

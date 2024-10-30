@@ -1,13 +1,9 @@
-// Package library is a package which exposes the commands externally to the compiled binaries.
-package commands
+// Package setup is a package which exposes the commands externally to the compiled binaries.
+package setup
 
 import (
-	"fmt"
-
 	networktypes "github.com/docker/docker/api/types/network"
 	volumetypes "github.com/docker/docker/api/types/volume"
-	"github.com/imdario/mergo"
-
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
@@ -70,61 +66,4 @@ type StatusJSONStatus struct {
 // Key is a struct with SSH key details.
 type Key struct {
 	Path string `yaml:"path"`
-}
-
-func mergeService(destination dockerruntime.Service, src *dockerruntime.Service) (*dockerruntime.Service, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
-		fmt.Println(err)
-		return src, err
-	}
-	return &destination, nil
-}
-
-func getService(s dockerruntime.Service, c dockerruntime.Service) dockerruntime.Service {
-	Service, _ := mergeService(s, &c)
-	return *Service
-}
-
-func mergeNetwork(destination networktypes.Inspect, src *networktypes.Inspect) (*networktypes.Inspect, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
-		fmt.Println(err)
-		return src, err
-	}
-	return &destination, nil
-}
-
-func getNetwork(s networktypes.Inspect, c networktypes.Inspect) networktypes.Inspect {
-	Network, _ := mergeNetwork(s, &c)
-	return *Network
-}
-
-func mergeVolume(destination volumetypes.Volume, src *volumetypes.Volume) (*volumetypes.Volume, error) {
-	if err := mergo.Merge(&destination, src, mergo.WithOverride); err != nil {
-		fmt.Println(err)
-		return src, err
-	}
-	return &destination, nil
-}
-
-func getVolume(s volumetypes.Volume, c volumetypes.Volume) volumetypes.Volume {
-	Volume, _ := mergeVolume(s, &c)
-	return *Volume
-}
-
-// unique will return a slice with duplicates
-// removed. It performs a similar function to
-// the linux program `uniq`
-func unique(stringSlice []string) []string {
-	m := make(map[string]bool)
-	for _, item := range stringSlice {
-		if _, ok := m[item]; !ok {
-			m[item] = true
-		}
-	}
-
-	var result []string
-	for item := range m {
-		result = append(result, item)
-	}
-	return result
 }

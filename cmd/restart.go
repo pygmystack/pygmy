@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -42,7 +43,7 @@ var restartCmd = &cobra.Command{
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []commands.Key{}
+			c.Keys = []setup.Key{}
 		} else {
 			FoundKey := false
 			for _, v := range c.Keys {
@@ -52,7 +53,7 @@ var restartCmd = &cobra.Command{
 			}
 
 			if !FoundKey {
-				thisKey := commands.Key{
+				thisKey := setup.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)

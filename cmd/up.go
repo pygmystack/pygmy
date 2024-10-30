@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -46,7 +47,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
-			c.Keys = []commands.Key{}
+			c.Keys = []setup.Key{}
 		} else {
 
 			keyExistsInConfig := false
@@ -57,7 +58,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 
 			if !keyExistsInConfig {
-				thisKey := commands.Key{
+				thisKey := setup.Key{
 					Path: Key,
 				}
 				c.Keys = append(c.Keys, thisKey)
