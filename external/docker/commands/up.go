@@ -25,7 +25,7 @@ func Up(c setup.Config) error {
 	}
 
 	setup.Setup(ctx, cli, &c)
-	checks, _ := DryRun(ctx, cli, &c)
+	checks, _ := setup.DryRun(ctx, cli, &c)
 	agentPresent := false
 
 	foundIssues := 0

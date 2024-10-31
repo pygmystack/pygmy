@@ -22,7 +22,7 @@ import (
 // Status will show the state of all the things Pygmy manages.
 func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	setup.Setup(ctx, cli, &c)
-	checks, _ := DryRun(ctx, cli, &c)
+	checks, _ := setup.DryRun(ctx, cli, &c)
 	agentPresent := false
 
 	if len(checks) > 0 {
