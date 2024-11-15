@@ -103,8 +103,8 @@ volumes: []
 
 # keys is all of the SSH key paths which you're utilising.
 keys:
-  - Path: /home/user1/.ssh/id_rsa
-  - Path: /home/user2/.ssh/id_rsa
+  - path: /home/user1/.ssh/id_rsa
+  - path: /home/user2/.ssh/id_rsa
 ```
 
 ## Applied examples
