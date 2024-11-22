@@ -3,8 +3,9 @@ package setup
 import (
 	"fmt"
 
-	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/imdario/mergo"
+
+	networktypes "github.com/docker/docker/api/types/network"
 )
 
 // mergeNetwork will merge two Network objects.
