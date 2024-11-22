@@ -81,7 +81,7 @@ func Pull(ctx context.Context, cli *client.Client, image string) (string, error)
 			image = fmt.Sprintf("docker.io/%v:latest", image)
 		} else {
 			// Validation not successful
-			return "", fmt.Errorf("error: regexp validation for %v failed", image)
+			return image, fmt.Errorf("error: regexp validation for %v failed", image)
 		}
 	}
 
@@ -90,7 +90,7 @@ func Pull(ctx context.Context, cli *client.Client, image string) (string, error)
 	// tell the user the service is down momentarily, and to try again shortly.
 	if strings.HasPrefix(image, "docker.io") {
 		if s := endpoint.Validate("https://registry-1.docker.io/v2/"); !s {
-			return "", fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes")
+			return image, fmt.Errorf("cannot reach the Docker Hub Registry, please try again in a few minutes")
 		}
 	}
 
@@ -136,5 +136,5 @@ func Pull(ctx context.Context, cli *client.Client, image string) (string, error)
 		return fmt.Sprintf("Error trying to update image %v: pull access denied", image), nil
 	}
 
-	return "", nil
+	return image, nil
 }
