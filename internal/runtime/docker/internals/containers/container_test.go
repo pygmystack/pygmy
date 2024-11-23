@@ -199,9 +199,7 @@ func TestExec(t *testing.T) {
 
 	// Container ID.
 	id := fmt.Sprintf("testContainer-%s", randomString(10))
-
-	// Container command
-	config.Cmd = []string{"sh", "-c", "echo hello"}
+	config.Cmd = []string{"sleep", "2"}
 
 	// Create a container to kill.
 	_, err := Create(ctx, cli, id, config, hostconfig, networkconfig)
@@ -211,12 +209,11 @@ func TestExec(t *testing.T) {
 	err = Start(ctx, cli, id, container.StartOptions{})
 	assert.NoError(t, err)
 
-	// Get the container logs
-	data, err := Logs(ctx, cli, id)
+	containerOutput, err := Exec(ctx, cli, id, "echo hello")
 	assert.NoError(t, err)
 
 	// Assert the output
-	assert.Contains(t, string(data), "hello")
+	assert.Contains(t, string(containerOutput), "hello")
 
 	// Stop the container.
 	err = Stop(ctx, cli, id)
