@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 	"os"
 	"runtime"
 	"strings"
@@ -29,13 +30,11 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/pygmystack/pygmy/service/library"
 )
 
 var (
 	cfgFile   string
-	c         library.Config
+	c         setup.Config
 	validArgs = []string{"addkey", "clean", "down", "export", "pull", "restart", "status", "up", "update", "version"}
 )
 
@@ -43,8 +42,8 @@ var (
 var rootCmd = &cobra.Command{
 	Use:       "pygmy",
 	ValidArgs: validArgs,
-	Short:     "Amazeeio's local development tool",
-	Long: `Amazeeio's local development tool,
+	Short:     "amazeeio's local development tool",
+	Long: `amazeeio's local development tool,
 	
 Runs DNSMasq, HAProxy, MailHog and an SSH Agent in local containers for local development.`,
 	// Uncomment the following line if your bare application

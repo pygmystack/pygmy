@@ -22,13 +22,15 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 
 	. "github.com/logrusorgru/aurora"
-
-	"github.com/pygmystack/pygmy/service/color"
-	"github.com/pygmystack/pygmy/service/interface/docker"
-	"github.com/pygmystack/pygmy/service/library"
 	"github.com/spf13/cobra"
+
+	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 )
 
 // addkeyCmd is the SSH key add command.
@@ -39,33 +41,38 @@ var addkeyCmd = &cobra.Command{
 	Long:    `Add or re-add an SSH key to Pygmy's SSH Agent by specifying the path to the private key.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
+		cli, ctx, err := internals.NewClient()
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		Key, _ := cmd.Flags().GetString("key")
-		var Keys []library.Key
+		var Keys []setup.Key
 
 		if Key != "" {
-			thisKey := library.Key{
+			thisKey := setup.Key{
 				Path: Key,
 			}
 			Keys = append(Keys, thisKey)
 		} else {
 			if len(Keys) == 0 {
-				library.Setup(&c)
+				setup.Setup(ctx, cli, &c)
 				Keys = c.Keys
 			}
 		}
 
 		for _, k := range Keys {
-			if e := library.SshKeyAdd(c, k.Path); e != nil {
+			if e := commands.SshKeyAdd(c, k.Path); e != nil {
 				color.Print(Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 
 		for _, s := range c.SortedServices {
 			service := c.Services[s]
-			purpose, _ := service.GetFieldString("purpose")
+			purpose, _ := service.GetFieldString(ctx, cli, "purpose")
 			if purpose == "sshagent" {
-				name, _ := service.GetFieldString("name")
-				d, _ := docker.DockerExec(name, "ssh-add -l")
+				name, _ := service.GetFieldString(ctx, cli, "name")
+				d, _ := containers.Exec(ctx, cli, name, "ssh-add -l")
 				fmt.Println(string(d))
 			}
 		}

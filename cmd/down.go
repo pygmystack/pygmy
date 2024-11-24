@@ -21,9 +21,10 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 // downCmd represents the down command
@@ -36,7 +37,10 @@ then if they are, it will attempt to remove any
 services which are not running.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Down(c)
+		err := commands.Down(c)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }
