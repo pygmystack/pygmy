@@ -20,7 +20,7 @@ import (
 	"github.com/pygmystack/pygmy/internal/service/docker/mailhog"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/key"
-	"github.com/pygmystack/pygmy/internal/utils/network"
+	"github.com/pygmystack/pygmy/internal/utils/network/docker"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
 
@@ -159,7 +159,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		// We should provide defaults for amazeeio-network when no value is provided.
 		if c.Networks == nil {
 			c.Networks = make(map[string]networktypes.Inspect)
-			c.Networks["amazeeio-network"] = GetNetwork(network.New(), c.Networks["amazeeio-network"])
+			c.Networks["amazeeio-network"] = GetNetwork(docker.New(), c.Networks["amazeeio-network"])
 		}
 
 		// Ensure Volumes has a at least a zero value.

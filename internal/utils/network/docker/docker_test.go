@@ -1,12 +1,11 @@
-package network_test
+package docker_test
 
 import (
 	"fmt"
+	n "github.com/pygmystack/pygmy/internal/utils/network/docker"
 	"testing"
 
 	"github.com/docker/docker/api/types/network"
-	n "github.com/pygmystack/pygmy/internal/utils/network"
-
 	. "github.com/smartystreets/goconvey/convey"
 )
 

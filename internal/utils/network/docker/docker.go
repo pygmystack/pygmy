@@ -1,4 +1,4 @@
-package network
+package docker
 
 import (
 	networktypes "github.com/docker/docker/api/types/network"
