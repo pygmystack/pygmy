@@ -32,18 +32,14 @@ func TestPullAndList(t *testing.T) {
 
 	// Pull the image into the registry.
 	pullResponse, err := Pull(ctx, cli, id)
-	if err != nil {
-		t.Fatal()
-	}
+	assert.NoError(t, err)
 
 	// Ensure the output from this test contains some expected text.
 	assert.Contains(t, pullResponse, "docker.io/nginx:latest")
 
 	// List the images in the registry.
 	list, err := List(ctx, cli)
-	if err != nil {
-		t.Fatal()
-	}
+	assert.NoError(t, err)
 
 	// Check for the image in the registry.
 	foundNginxImage := false
@@ -56,7 +52,5 @@ func TestPullAndList(t *testing.T) {
 
 	// Clean-up for this test.
 	_, err = Remove(ctx, cli, id)
-	if err != nil {
-		t.Fatal()
-	}
+	assert.NoError(t, err)
 }
