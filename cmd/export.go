@@ -27,7 +27,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 var exportPath string
@@ -40,7 +40,10 @@ var exportCmd = &cobra.Command{
 	Long:    `Export configuration which has validated into a specified path`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Export(c, exportPath)
+		err := commands.Export(c, exportPath)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 	},
 }

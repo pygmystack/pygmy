@@ -23,7 +23,7 @@ package cmd
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/pygmystack/pygmy/service/library"
+	"github.com/pygmystack/pygmy/external/docker/commands"
 )
 
 // versionCmd represents the version command
@@ -34,7 +34,7 @@ var versionCmd = &cobra.Command{
 	Long:    ``,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		library.Version(c)
+		commands.Version(c)
 
 	},
 }
