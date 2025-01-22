@@ -6,7 +6,7 @@ toolchain go1.23.2
 
 require (
 	github.com/containerd/platforms v0.2.1
-	github.com/docker/docker v27.5.0+incompatible
+	github.com/docker/docker v27.5.1+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/imdario/mergo v0.3.16
