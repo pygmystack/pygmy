@@ -27,7 +27,6 @@ builds:
       - linux
       - darwin
     goarch:
-      - amd
       - amd64
       - arm64
   - id: pygmy-static
@@ -45,7 +44,6 @@ builds:
     goos:
       - linux
     goarch:
-      - amd
       - amd64
       - arm64
 
