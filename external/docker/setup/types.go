@@ -36,7 +36,7 @@ type Config struct {
 	JSONStatus StatusJSON
 
 	// ResolversDisabled will disable the creation of any resolv configurations.
-	ResolversDisabled bool
+	ResolversDisabled bool `yaml:"resolversDisabled"`
 
 	// Resolvers is for all resolvers
 	Resolvers []resolv.Resolv `yaml:"resolvers"`
