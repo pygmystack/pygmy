@@ -128,8 +128,10 @@ func Up(c setup.Config) error {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !resolver.Status(&docker.Params{Domain: c.Domain}) {
-			resolver.Configure(&docker.Params{Domain: c.Domain})
+		if !c.ResolversDisabled {
+			if !resolver.Status(&docker.Params{Domain: c.Domain}) {
+				resolver.Configure(&docker.Params{Domain: c.Domain})
+			}
 		}
 	}
 
