@@ -102,6 +102,7 @@ jobs:
           ./pygmy-linux-amd64 version;
 
       - name: Test Pygmy with resolvers disabled
+        run: |
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml pull;
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml up;
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml status --json > pygmy.noresolv.json
