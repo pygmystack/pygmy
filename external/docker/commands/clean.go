@@ -69,9 +69,7 @@ func Clean(c setup.Config) error {
 	}
 
 	for _, resolver := range c.Resolvers {
-		if !c.ResolversDisabled {
-			resolver.Clean()
-		}
+		resolver.Clean()
 	}
 
 	return nil
