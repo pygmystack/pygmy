@@ -45,10 +45,10 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
-		noResolv, _ := cmd.Flags().GetBool("no-resolv")
+		noResolv, _ := cmd.Flags().GetBool("no-resolver")
 
 		if noResolv {
-			c.ResolversDisabled = true
+			fmt.Println("No DNS resolution enabled. Nothing to do.")
 		}
 
 		if NoKey {
