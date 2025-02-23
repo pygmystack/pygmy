@@ -107,18 +107,16 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 			Name:    "Linux Resolver",
 		}
 
-		if !c.ResolversDisabled || viper.GetBool("no-resolver") {
-			if runtime.GOOS == "darwin" {
-				viper.SetDefault("resolvers", []resolv.Resolv{
-					ResolvMacOS,
-				})
-			} else if runtime.GOOS == "linux" {
-				viper.SetDefault("resolvers", []resolv.Resolv{
-					ResolvLinux,
-				})
-			} else if runtime.GOOS == "windows" {
-				viper.SetDefault("resolvers", []resolv.Resolv{})
-			}
+		if runtime.GOOS == "darwin" {
+			viper.SetDefault("resolvers", []resolv.Resolv{
+				ResolvMacOS,
+			})
+		} else if runtime.GOOS == "linux" {
+			viper.SetDefault("resolvers", []resolv.Resolv{
+				ResolvLinux,
+			})
+		} else if runtime.GOOS == "windows" {
+			viper.SetDefault("resolvers", []resolv.Resolv{})
 		}
 	}
 
@@ -142,6 +140,11 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		ImportDefaults(ctx, cli, c, "amazeeio-dnsmasq", dnsmasq.New(&dockerruntime.Params{Domain: c.Domain}))
 		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}))
 		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
+
+		// Disable Resolvers if needed.
+		if c.ResolversDisabled {
+			c.Resolvers = nil
+		}
 
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,

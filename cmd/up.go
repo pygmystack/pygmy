@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/external/docker/setup"
+	"github.com/spf13/viper"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
@@ -49,6 +50,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 
 		if noResolv {
 			c.ResolversDisabled = true
+			viper.Set("no-resolver", true)
 		}
 
 		if NoKey {
