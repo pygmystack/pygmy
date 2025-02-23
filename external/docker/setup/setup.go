@@ -107,7 +107,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 			Name:    "Linux Resolver",
 		}
 
-		if viper.GetBool("no-resolver") {
+		if !c.ResolversDisabled || viper.GetBool("no-resolver") {
 			if runtime.GOOS == "darwin" {
 				viper.SetDefault("resolvers", []resolv.Resolv{
 					ResolvMacOS,
