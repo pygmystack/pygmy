@@ -141,6 +141,11 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}))
 		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
 
+		// Disable Resolvers if needed.
+		if c.ResolversDisabled {
+			c.Resolvers = nil
+		}
+
 		// We need Port 80 to be configured by default.
 		// If a port on amazeeio-haproxy isn't explicitly declared,
 		// then we should set this value. This is far more creative
