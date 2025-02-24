@@ -22,14 +22,14 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/external/docker/setup"
-	"github.com/spf13/viper"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/external/docker/setup"
 )
 
 // upCmd represents the up command
