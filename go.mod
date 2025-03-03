@@ -1,7 +1,6 @@
 module github.com/pygmystack/pygmy
 
 go 1.21.0
-
 toolchain go1.23.2
 
 require (
@@ -18,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.35.0
 	golang.org/x/term v0.29.0
 )
 
