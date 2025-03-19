@@ -22,13 +22,12 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/external/docker/setup"
 	"os"
 
 	"github.com/mitchellh/go-homedir"
-	"github.com/spf13/cobra"
-
 	"github.com/pygmystack/pygmy/external/docker/commands"
+	"github.com/pygmystack/pygmy/external/docker/setup"
+	"github.com/spf13/cobra"
 )
 
 // upCmd represents the up command
@@ -45,6 +44,11 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
+		noResolv, _ := cmd.Flags().GetBool("no-resolver")
+
+		if noResolv {
+			c.ResolversDisabled = true
+		}
 
 		if NoKey {
 			c.Keys = []setup.Key{}
