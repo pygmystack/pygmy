@@ -127,11 +127,17 @@ func Up(c setup.Config) error {
 		}
 	}
 
-	for _, resolver := range c.Resolvers {
-		if !resolver.Status(&docker.Params{Domain: c.Domain}) {
-			resolver.Configure(&docker.Params{Domain: c.Domain})
+	if c.Resolver.Enabled {
+		fmt.Printf("Resolver Enabled: %v\n", c.Resolver.Enabled)
+		for _, resolver := range c.Resolvers {
+			if !resolver.Status(&docker.Params{Domain: c.Domain}) {
+				resolver.Configure(&docker.Params{Domain: c.Domain})
+			}
 		}
+	} else {
+		fmt.Println("Skipping resolver setup because --no-resolver was used.")
 	}
+	
 
 	// Add ssh-keys to the agent
 	if agentPresent {

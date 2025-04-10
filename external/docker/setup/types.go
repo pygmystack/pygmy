@@ -40,8 +40,12 @@ type Config struct {
 
 	// Volumes will ensure names volumes are created
 	Volumes map[string]volumetypes.Volume
-}
 
+	Resolver ResolverConfig `yaml:"resolver"`
+}
+type ResolverConfig struct {
+	Enabled bool `yaml:"enabled"`
+}
 type StatusJSON struct {
 	PortAvailability []string                    `json:"port_availability"`
 	Services         map[string]StatusJSONStatus `json:"service_status"`
