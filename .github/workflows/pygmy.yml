@@ -101,6 +101,14 @@ jobs:
           go build -o pygmy-linux-amd64;
           ./pygmy-linux-amd64 version;
 
+      - name: Test Pygmy with resolvers disabled
+        run: |
+          ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml pull;
+          ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml up;
+          ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml status --json > pygmy.noresolv.json
+          cat pygmy.noresolv.json | jq -r '.resolvers' | grep 'null'
+          ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml clean;
+
       - name: Switch pygmy configs from vanilla to basic
         run: |
           ./pygmy-linux-amd64 status;
