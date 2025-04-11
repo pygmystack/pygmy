@@ -6,11 +6,11 @@ env:
 archives:
   - id: pygmy
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-    builds:
+    ids:
       - pygmy
   - id: pygmy-static
     name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}_static"
-    builds:
+    ids:
       - pygmy-static
 
 builds:
