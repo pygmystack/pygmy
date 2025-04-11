@@ -1,8 +1,7 @@
 module github.com/pygmystack/pygmy
 
 go 1.21.0
-
-toolchain go1.23.2
+toolchain go1.24.1
 
 require (
 	github.com/containerd/platforms v0.2.1
@@ -19,7 +18,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/crypto v0.33.0
-	golang.org/x/term v0.29.0
+	golang.org/x/term v0.31.0
 )
 
 require (
@@ -64,7 +63,7 @@ require (
 	go.opentelemetry.io/otel/metric v1.29.0 // indirect
 	go.opentelemetry.io/otel/trace v1.29.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
