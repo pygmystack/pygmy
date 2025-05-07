@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/docker/docker/api/types/filters"
 	"io"
 	"runtime"
 	"strings"
@@ -76,8 +77,11 @@ func Exec(ctx context.Context, client *client.Client, container string, command 
 
 // List will return a slice of containers
 func List(ctx context.Context, client *client.Client) ([]container.Summary, error) {
+	filter := filters.NewArgs()
+	filter.Add("label", "pygmy.enable=true")
 	containers, err := client.ContainerList(ctx, containertypes.ListOptions{
-		All: true,
+		All:     true,
+		Filters: filter,
 	})
 	if err != nil {
 		return []container.Summary{}, err
