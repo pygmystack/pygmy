@@ -21,6 +21,9 @@ import (
 func sampleData() (container.Config, container.HostConfig, network.NetworkingConfig) {
 	config := container.Config{
 		Image: "nginx",
+		Labels: map[string]string{
+			"pygmy.enable": "true",
+		},
 	}
 	hostConfig := container.HostConfig{}
 	networkConfig := network.NetworkingConfig{}
@@ -191,7 +194,8 @@ func TestConnected(t *testing.T) {
 	containerName := fmt.Sprintf("testContainer-%s", randomString(10))
 
 	config.Labels = map[string]string{
-		"pygmy.name": containerName,
+		"pygmy.name":   containerName,
+		"pygmy.enable": "true",
 	}
 
 	// Pull the image

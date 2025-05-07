@@ -49,6 +49,9 @@ func randomString(length int) string {
 func sampleData() (container.Config, container.HostConfig, network.NetworkingConfig) {
 	config := container.Config{
 		Image: "nginx",
+		Labels: map[string]string{
+			"pygmy.enable": "true",
+		},
 	}
 	hostConfig := container.HostConfig{}
 	networkConfig := network.NetworkingConfig{}
