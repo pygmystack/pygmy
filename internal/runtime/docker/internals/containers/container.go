@@ -92,9 +92,7 @@ func List(ctx context.Context, client *client.Client) ([]container.Summary, erro
 			return []container.Summary{}, err
 		}
 
-		for _, c := range containers {
-			results = append(results, c)
-		}
+		results = append(results, containers...)
 	}
 
 	return results, nil
