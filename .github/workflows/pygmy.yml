@@ -242,7 +242,7 @@ jobs:
       - name: "[Example] Drupal OpenSearch"
         run: |
           cd lagoon-examples/drupal-opensearch;
-          docker-compose build cli;
+          docker compose build cli;
           docker compose -p drupal-opensearch up -d;
           docker compose -p drupal-opensearch exec -T cli composer install;
           dockerize -wait http://drupal-opensearch.docker.amazee.io:80 -timeout 10s;
