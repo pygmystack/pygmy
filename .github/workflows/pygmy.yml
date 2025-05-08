@@ -185,6 +185,7 @@ jobs:
         run: |
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml status;
           ./pygmy-linux-amd64 --config examples/pygmy.basic.yml clean;
+          ./pygmy-linux-amd64 clean;
           ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml pull;
           ./pygmy-linux-amd64 --config examples/pygmy.overrides.yml up;
           sleep 10;
