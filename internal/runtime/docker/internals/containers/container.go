@@ -77,17 +77,27 @@ func Exec(ctx context.Context, client *client.Client, container string, command 
 
 // List will return a slice of containers
 func List(ctx context.Context, client *client.Client) ([]container.Summary, error) {
-	filter := filters.NewArgs()
-	filter.Add("label", "pygmy.enable=true")
-	containers, err := client.ContainerList(ctx, containertypes.ListOptions{
-		All:     true,
-		Filters: filter,
-	})
-	if err != nil {
-		return []container.Summary{}, err
+
+	containerListFilters := []string{"1", "true"}
+	results := []container.Summary{}
+
+	for _, filter := range containerListFilters {
+		f := filters.NewArgs()
+		f.Add("label", fmt.Sprintf("pygmy.enable=%s", filter))
+		containers, err := client.ContainerList(ctx, containertypes.ListOptions{
+			All:     true,
+			Filters: f,
+		})
+		if err != nil {
+			return []container.Summary{}, err
+		}
+
+		for _, c := range containers {
+			results = append(results, c)
+		}
 	}
 
-	return containers, nil
+	return results, nil
 }
 
 // Create will create a container, but will not run it.
