@@ -28,7 +28,7 @@ func TestAdd(t *testing.T) {
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "31")
 		So(obj.Config.Tty, ShouldEqual, true)
 		So(obj.Config.OpenStdin, ShouldEqual, true)
-		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
+		So(obj.HostConfig.AutoRemove, ShouldBeTrue)
 		So(obj.HostConfig.IpcMode.IsPrivate(), ShouldBeTrue)
 		So(fmt.Sprint(obj.HostConfig.VolumesFrom), ShouldEqual, fmt.Sprint([]string{"amazeeio-ssh-agent"}))
 	})

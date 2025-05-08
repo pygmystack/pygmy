@@ -30,7 +30,7 @@ func NewAdder() docker.Service {
 			OpenStdin: true,
 		},
 		HostConfig: container.HostConfig{
-			AutoRemove:  false,
+			AutoRemove:  true,
 			IpcMode:     "private",
 			VolumesFrom: []string{"amazeeio-ssh-agent"},
 		},
