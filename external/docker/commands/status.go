@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
@@ -151,11 +152,33 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	cleanurls := setup.Unique(urls)
+	
+	// Validate URLs in parallel for better performance
+	type urlResult struct {
+		url    string
+		result bool
+	}
+	
+	results := make(chan urlResult, len(cleanurls))
+	var wg sync.WaitGroup
+	
 	for _, url := range cleanurls {
-		result := endpoint.Validate(url)
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
+			results <- urlResult{u, endpoint.Validate(u)}
+		}(url)
+	}
+	
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	
+	for result := range results {
 		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, setup.StatusJSONURLValidation{
-			Endpoint: url,
-			Success:  result,
+			Endpoint: result.url,
+			Success:  result.result,
 		})
 	}
 
