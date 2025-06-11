@@ -108,7 +108,10 @@ func SshKeyAdd(c setup.Config, key string) error {
 			}
 
 			viper.Set("keys", writeKeys)
-			viper.WriteConfig()
+			err = viper.WriteConfig()
+			if err != nil {
+				return err
+			}
 		}
 
 	}
