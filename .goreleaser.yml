@@ -49,17 +49,3 @@ builds:
 
 snapshot:
   version_template: "{{ .Version }}-SNAPSHOT-{{.ShortCommit}}"
-
-brews:
-  - ids:
-    - pygmy
-    repository:
-      owner: pygmystack
-      name: homebrew-pygmy
-      branch: main
-      token: "${{ .Env.GITHUB_TOKEN }}"
-    homepage: "https://github.com/pygmystack/pygmy"
-    description: "amazee.io's local development helper tool"
-    skip_upload: false
-    test: system "#{bin}/pygmy version"
-    install: bin.install "pygmy"
