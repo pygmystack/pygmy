@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	. "github.com/logrusorgru/aurora"
+	"github.com/spf13/viper"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
@@ -94,7 +95,20 @@ func SshKeyAdd(c setup.Config, key string) error {
 			}
 
 			_ = Container.Remove(ctx, cli)
+			writeKeys := []setup.Key{
+				{
+					Path: key,
+				},
+			}
 
+			for _, key := range c.Keys {
+				if key.Path != writeKeys[0].Path {
+					writeKeys = append(writeKeys, key)
+				}
+			}
+
+			viper.Set("keys", writeKeys)
+			viper.WriteConfig()
 		}
 
 	}
