@@ -72,7 +72,6 @@ func Up(c setup.Config) error {
 			if se := service.Setup(ctx, cli); se == nil {
 				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
 			}
-
 			if status, _ := service.Status(ctx, cli); !status {
 				if ce := service.Create(ctx, cli); ce != nil {
 					// If the status is false but the container is already created, we can ignore that error.
@@ -80,7 +79,6 @@ func Up(c setup.Config) error {
 						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
 					}
 				}
-
 				if se := service.Start(ctx, cli); se == nil {
 					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
 				} else {

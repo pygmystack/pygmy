@@ -22,6 +22,7 @@ package cmd
 
 import (
 	"fmt"
+
 	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/spf13/cobra"
@@ -80,5 +81,4 @@ func init() {
 	upCmd.Flags().StringP("key", "", "", "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-	upCmd.Flags().BoolVarP(&debugFlag, "debug", "", false, "Debug mode")
 }

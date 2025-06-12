@@ -51,7 +51,6 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 						agentPresent = true
 					}
 					if enabled && !discrete && name != "" {
-						start(c.Debug, fmt.Sprintf("Checking Service for SSH Role: %s", Container.Names[0]))
 						if s, _ := Service.Status(ctx, cli); s {
 							c.JSONStatus.Services[name] = setup.StatusJSONStatus{
 								Container: name,
@@ -64,14 +63,13 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 								ImageRef:  Service.Image,
 							}
 						}
-						finish(c.Debug, fmt.Sprintf("Checking Service for SSH Role: %s", Container.Names[0]))
 					}
 				}
 			}
 		}
 	}
 
-	for n, Service := range c.Services {
+	for _, Service := range c.Services {
 		if s, _ := Service.Status(ctx, cli); !s {
 			name, _ := Service.GetFieldString(ctx, cli, "name")
 			discrete, _ := Service.GetFieldBool(ctx, cli, "discrete")
