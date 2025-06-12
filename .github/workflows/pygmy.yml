@@ -106,7 +106,7 @@ jobs:
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml pull;
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml up;
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml status --json > pygmy.noresolv.json
-          cat pygmy.noresolv.json | jq -r '.resolvers' | grep 'null'
+          cat pygmy.noresolv.json | jq -r '.resolvers' | grep 'not properly connected'
           ./pygmy-linux-amd64 --config examples/pygmy.noresolv.yml clean;
 
       - name: Switch pygmy configs from vanilla to basic

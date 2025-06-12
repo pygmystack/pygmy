@@ -139,7 +139,6 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 		if Status {
 			if strings.Contains(cleanUrl.String(), "docker.amazee.io") {
 				finalUrl := strings.Trim(cleanUrl.String(), "[]")
-				fmt.Printf("Added %s\n", finalUrl)
 				urls = append(urls, finalUrl)
 			}
 		}
