@@ -22,7 +22,6 @@ package cmd
 
 import (
 	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
@@ -48,7 +47,6 @@ This includes the docker services, the resolver and SSH key status`,
 		if err != nil {
 			fmt.Println(err)
 		}
-
 		commands.Status(ctx, cli, c)
 
 	},
