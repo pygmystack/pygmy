@@ -138,15 +138,19 @@ func Up(c setup.Config) error {
 
 	// Add ssh-keys to the agent
 	if agentPresent {
-		for _, v := range c.Keys {
-			if v.Path != "" {
-				_, err := os.Stat(v.Path)
-				if !errors.Is(err, os.ErrNotExist) {
-					if e := SshKeyAdd(c, v.Path); e != nil {
-						color.Print(Red(fmt.Sprintf("%v\n", e)))
+		if len(c.Keys) == 0 || c.Keys[0].Path == "" {
+			color.Print(Red(fmt.Sprintf("No SSH keys are configured, use `pygmy addkey --key=/path/to/key` to add one.\n")))
+		} else {
+			for _, v := range c.Keys {
+				if v.Path != "" {
+					_, err := os.Stat(v.Path)
+					if !errors.Is(err, os.ErrNotExist) {
+						if e := SshKeyAdd(c, v.Path); e != nil {
+							color.Print(Red(fmt.Sprintf("%v\n", e)))
+						}
+					} else {
+						color.Print(Red(fmt.Sprintf("Unable to add SSH key '%s': does not exist\n", v.Path)))
 					}
-				} else {
-					color.Print(Red(fmt.Sprintf("Unable to add SSH key '%s': does not exist\n", v.Path)))
 				}
 			}
 		}

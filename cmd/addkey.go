@@ -23,6 +23,7 @@ package cmd
 import (
 	"fmt"
 	"github.com/pygmystack/pygmy/external/docker/setup"
+	"strings"
 
 	. "github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
@@ -73,7 +74,12 @@ var addkeyCmd = &cobra.Command{
 			if purpose == "sshagent" {
 				name, _ := service.GetFieldString(ctx, cli, "name")
 				d, _ := containers.Exec(ctx, cli, name, "ssh-add -l")
-				fmt.Println(string(d))
+				if strings.Contains(string(d), "The agent has no identities.") {
+					fmt.Println(Red("Agent has no identities, the key could not be added."))
+					fmt.Println(Red("Start the SSH Agent, add the SSH key and try again."))
+				} else {
+					fmt.Println(string(d))
+				}
 			}
 		}
 

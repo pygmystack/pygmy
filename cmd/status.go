@@ -50,6 +50,7 @@ This includes the docker services, the resolver and SSH key status`,
 		}
 
 		commands.Status(ctx, cli, c)
+
 	},
 }
 
