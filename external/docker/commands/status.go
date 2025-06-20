@@ -8,6 +8,7 @@ import (
 	urltools "net/url"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/docker/docker/client"
 	"github.com/logrusorgru/aurora"
@@ -163,22 +164,33 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	cleanurls := setup.Unique(urls)
+	
+	// Validate URLs in parallel for better performance
+	type urlResult struct {
+		url    string
+		result bool
+	}
+	
+	results := make(chan urlResult, len(cleanurls))
+	var wg sync.WaitGroup
+	
 	for _, url := range cleanurls {
-
-		cleanUrl, err := urltools.Parse(url)
-		if err != nil {
-			fmt.Println(err.Error())
-			continue
-		}
-		if os.Getenv("PYGMY_WEB_PORT") != "" {
-			cleanUrl.Host = net.JoinHostPort(cleanUrl.Host, os.Getenv("PYGMY_WEB_PORT"))
-		}
-		finalUrl := strings.Trim(cleanUrl.String(), "[]")
-
-		result := endpoint.Validate(finalUrl)
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
+			results <- urlResult{u, endpoint.Validate(u)}
+		}(url)
+	}
+	
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	
+	for result := range results {
 		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, setup.StatusJSONURLValidation{
-			Endpoint: finalUrl,
-			Success:  result,
+			Endpoint: result.url,
+			Success:  result.result,
 		})
 	}
 
