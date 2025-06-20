@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net"
+	urltools "net/url"
+	"os"
 	"strings"
 	"sync"
 
@@ -128,8 +131,17 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	for _, Container := range c.Services {
 		Status, _ := Container.Status(ctx, cli)
 		url, _ := Container.GetFieldString(ctx, cli, "url")
-		if url != "" && Status {
-			urls = append(urls, url)
+
+		cleanUrl, err := urltools.Parse(url)
+		if err != nil {
+			fmt.Println(err.Error())
+			continue
+		}
+		if Status {
+			if strings.Contains(cleanUrl.String(), "docker.amazee.io") {
+				finalUrl := strings.Trim(cleanUrl.String(), "[]")
+				urls = append(urls, finalUrl)
+			}
 		}
 	}
 

@@ -1,7 +1,10 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
+	"net"
+	urltools "net/url"
 	"os"
 	"strings"
 
@@ -135,9 +138,20 @@ func Up(c setup.Config) error {
 
 	// Add ssh-keys to the agent
 	if agentPresent {
-		for _, v := range c.Keys {
-			if e := SshKeyAdd(c, v.Path); e != nil {
-				color.Print(Red(fmt.Sprintf("%v\n", e)))
+		if len(c.Keys) == 0 || c.Keys[0].Path == "" {
+			color.Print(Red("No SSH keys are configured, use `pygmy addkey --key=/path/to/key` to add one.\n"))
+		} else {
+			for _, v := range c.Keys {
+				if v.Path != "" {
+					_, err := os.Stat(v.Path)
+					if !errors.Is(err, os.ErrNotExist) {
+						if e := SshKeyAdd(c, v.Path); e != nil {
+							color.Print(Red(fmt.Sprintf("%v\n", e)))
+						}
+					} else {
+						color.Print(Red(fmt.Sprintf("Unable to add SSH key '%s': does not exist\n", v.Path)))
+					}
+				}
 			}
 		}
 	}
@@ -166,10 +180,18 @@ func Up(c setup.Config) error {
 				// Look for the environment variable $LAGOON_ROUTE.
 				if strings.Contains(v, "LAGOON_ROUTE=") {
 					url := strings.TrimPrefix(v, "LAGOON_ROUTE=")
-					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
-						url = "http://" + url
+					cleanUrl, err := urltools.Parse(url)
+					if err != nil {
+						fmt.Println(err.Error())
+						continue
 					}
-					urls = append(urls, url)
+					if os.Getenv("PYGMY_WEB_PORT") != "" {
+						cleanUrl.Host = net.JoinHostPort(cleanUrl.Host, os.Getenv("PYGMY_WEB_PORT"))
+					}
+					if strings.Contains(cleanUrl.String(), "docker.amazee.io") {
+						finalUrl := strings.Trim(cleanUrl.String(), "[]")
+						urls = append(urls, finalUrl)
+					}
 				}
 			}
 		}
