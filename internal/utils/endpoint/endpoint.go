@@ -3,8 +3,10 @@
 package endpoint
 
 import (
+	"context"
 	"crypto/tls"
 	"net/http"
+	"time"
 )
 
 // Validate will submit a web request to test the container service.
@@ -13,14 +15,19 @@ import (
 //
 // This is to provided to the user through the up and status commands.
 func Validate(url string) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
+			DisableKeepAlives: true,
+		},
 	}
-	client := &http.Client{Transport: tr}
 
-	// Create a web request
-	req, err := http.NewRequest("GET", url, nil)
+	// Create a web request using HEAD for faster response
+	req, err := http.NewRequestWithContext(ctx, "HEAD", url, nil)
 	if err != nil {
 		// Test failed.
 		return false
