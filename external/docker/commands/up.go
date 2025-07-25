@@ -43,7 +43,7 @@ func Up(c setup.Config) error {
 	}
 
 	if runtime.GOOS == "darwin" {
-		color.Print(Cyan(fmt.Sprint("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n")))
+		color.Print(Cyan("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n"))
 	}
 
 	for _, volume := range c.Volumes {

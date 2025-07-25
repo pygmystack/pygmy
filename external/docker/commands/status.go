@@ -189,7 +189,7 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	if runtime.GOOS == "darwin" {
-		color.Print(Cyan(fmt.Sprint("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n")))
+		color.Print(Cyan("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n"))
 	}
 	PrintStatusHumanReadable(c)
 
