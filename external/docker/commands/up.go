@@ -3,6 +3,7 @@ package commands
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
@@ -39,6 +40,10 @@ func Up(c setup.Config) error {
 	if foundIssues > 0 {
 		fmt.Println("Please address the above issues before you attempt to start Pygmy again.")
 		os.Exit(1)
+	}
+
+	if runtime.GOOS == "darwin" {
+		color.Print(Cyan(fmt.Sprint("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n")))
 	}
 
 	for _, volume := range c.Volumes {

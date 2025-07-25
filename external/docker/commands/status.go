@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"runtime"
 	"strings"
 	"sync"
 
 	"github.com/docker/docker/client"
-	"github.com/logrusorgru/aurora"
+	. "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -187,6 +188,9 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 		return
 	}
 
+	if runtime.GOOS == "darwin" {
+		color.Print(Cyan(fmt.Sprint("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n")))
+	}
 	PrintStatusHumanReadable(c)
 
 }
@@ -199,41 +203,41 @@ func PrintStatusJSON(c setup.Config) {
 func PrintStatusHumanReadable(c setup.Config) {
 	for _, v := range c.JSONStatus.PortAvailability {
 		if strings.Contains(v, "is not able to start on port") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+			color.Print(Red(fmt.Sprintf("[ ] %s\n", v)))
 		} else {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+			color.Print(Green(fmt.Sprintf("[*] %s\n", v)))
 		}
 	}
 
 	for k, v := range c.JSONStatus.Services {
 		if v.State {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s: Running as container %s\n", k, v.Container)))
+			color.Print(Green(fmt.Sprintf("[*] %s: Running as container %s\n", k, v.Container)))
 		} else {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s is not running\n", k)))
+			color.Print(Red(fmt.Sprintf("[ ] %s is not running\n", k)))
 		}
 	}
 
 	for _, v := range c.JSONStatus.Resolvers {
 		if strings.Contains(v, "not properly connected") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+			color.Print(Red(fmt.Sprintf("[ ] %s\n", v)))
 		} else {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+			color.Print(Green(fmt.Sprintf("[*] %s\n", v)))
 		}
 	}
 
 	for _, v := range c.JSONStatus.Networks {
 		if strings.Contains(v, "is not connected to network") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+			color.Print(Red(fmt.Sprintf("[ ] %s\n", v)))
 		} else {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+			color.Print(Green(fmt.Sprintf("[*] %s\n", v)))
 		}
 	}
 
 	for _, v := range c.JSONStatus.Volumes {
 		if strings.Contains(v, "has not been created") {
-			color.Print(aurora.Red(fmt.Sprintf("[ ] %s\n", v)))
+			color.Print(Red(fmt.Sprintf("[ ] %s\n", v)))
 		} else {
-			color.Print(aurora.Green(fmt.Sprintf("[*] %s\n", v)))
+			color.Print(Green(fmt.Sprintf("[*] %s\n", v)))
 		}
 	}
 
