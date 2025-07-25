@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
 	"github.com/docker/docker/api/types/container"
+	. "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -16,7 +16,6 @@ import (
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
 	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
-
 )
 
 // Up will bring Pygmy up.
@@ -146,16 +145,15 @@ func Up(c setup.Config) error {
 
 	// ------------------------------------------------------------------------
 	// Restart the haproxy container.
-	// This is an intermin fix that for some reason solves
+	// This is an interim fix that for some reason solves
 	// https://github.com/pygmystack/pygmy/issues/644
-	haproxyContainer := "amazeeio-haproxy"
-	opts := container.StopOptions{}
-    
-	if err := cli.ContainerRestart(ctx, haproxyContainer, opts); err != nil {
-		color.Print(Red(fmt.Sprintf("Failed to restart %s: %v\n", haproxyContainer, err)))
-	} 
-	// -------------------------------------------------------------------------
-
+	for name := range c.Services {
+		if name == "amazeeio-haproxy" {
+			if err := cli.ContainerRestart(ctx, name, container.StopOptions{}); err != nil {
+				color.Print(Red(fmt.Sprintf("Failed to restart %s: %v\n", name, err)))
+			}
+		}
+	}
 
 	for _, service := range c.Services {
 		name, _ := service.GetFieldString(ctx, cli, "name")
