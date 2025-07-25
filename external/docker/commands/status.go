@@ -152,16 +152,16 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	cleanurls := setup.Unique(urls)
-	
+
 	// Validate URLs in parallel for better performance
 	type urlResult struct {
 		url    string
 		result bool
 	}
-	
+
 	results := make(chan urlResult, len(cleanurls))
 	var wg sync.WaitGroup
-	
+
 	for _, url := range cleanurls {
 		wg.Add(1)
 		go func(u string) {
@@ -169,12 +169,12 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 			results <- urlResult{u, endpoint.Validate(u)}
 		}(url)
 	}
-	
+
 	go func() {
 		wg.Wait()
 		close(results)
 	}()
-	
+
 	for result := range results {
 		c.JSONStatus.URLValidations = append(c.JSONStatus.URLValidations, setup.StatusJSONURLValidation{
 			Endpoint: result.url,
