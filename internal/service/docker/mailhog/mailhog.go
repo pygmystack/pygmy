@@ -60,6 +60,12 @@ func NewDefaultPorts() docker.Service {
 						HostPort: "1025",
 					},
 				},
+				"80/tcp": []nat.PortBinding{
+					{
+						HostIP:   "",
+						HostPort: "8081",
+					},
+				},
 			},
 		},
 	}
