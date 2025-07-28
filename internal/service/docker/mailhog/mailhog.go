@@ -2,11 +2,12 @@ package mailhog
 
 import (
 	"fmt"
+	"net"
+	"runtime"
+
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
-	"net"
-	"runtime"
 
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 )
@@ -66,7 +67,7 @@ func NewDefaultPorts() docker.Service {
 	}
 
 	if runtime.GOOS == "darwin" {
-		randomPort, _ := getRandomUnusedPort()
+		randomPort, _ := GetRandomUnusedPort()
 		portConfig.HostConfig.PortBindings["80/tcp"] = []nat.PortBinding{
 			{
 				HostPort: fmt.Sprint(randomPort),
@@ -77,7 +78,8 @@ func NewDefaultPorts() docker.Service {
 	return portConfig
 }
 
-func getRandomUnusedPort() (int, error) {
+// GetRandomUnusedPort will identify a random port.
+func GetRandomUnusedPort() (int, error) {
 	// Let the OS pick an available port on localhost
 	ln, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
