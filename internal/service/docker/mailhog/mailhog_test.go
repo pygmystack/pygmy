@@ -2,6 +2,7 @@ package mailhog_test
 
 import (
 	"fmt"
+	"net"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
@@ -37,4 +38,21 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
 		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"1025/tcp": []nat.PortBinding{{HostIP: "", HostPort: "1025"}}}))
 	})
+}
+
+func TestGetFreePort(t *testing.T) {
+	port, err := mailhog.GetRandomUnusedPort()
+	if err != nil {
+		t.Fatalf("GetRandomUnusedPort returned error: %v", err)
+	}
+	if port <= 0 || port > 65535 {
+		t.Fatalf("GetRandomUnusedPort returned invalid port: %d", port)
+	}
+
+	// Test that the port can be bound again (means it actually is free now)
+	ln, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", port))
+	if err != nil {
+		t.Fatalf("Failed to bind to port %d: %v", port, err)
+	}
+	ln.Close()
 }
