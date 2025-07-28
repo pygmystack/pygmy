@@ -5,6 +5,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/docker/docker/api/types/container"
 	. "github.com/logrusorgru/aurora"
@@ -156,6 +157,9 @@ func Up(c setup.Config) error {
 		if name == "amazeeio-haproxy" {
 			if err := cli.ContainerRestart(ctx, name, container.StopOptions{}); err != nil {
 				color.Print(Red(fmt.Sprintf("Failed to restart %s: %v\n", name, err)))
+			} else {
+				// Wait for HAProxy to fully restart and rediscover containers
+				time.Sleep(2 * time.Second)
 			}
 		}
 	}

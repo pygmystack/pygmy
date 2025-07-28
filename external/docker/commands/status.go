@@ -7,7 +7,9 @@ import (
 	"runtime"
 	"strings"
 	"sync"
+	"time"
 
+	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 	. "github.com/logrusorgru/aurora"
 
@@ -26,6 +28,7 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	setup.Setup(ctx, cli, &c)
 	checks, _ := setup.DryRun(ctx, cli, &c)
 	agentPresent := false
+	haproxyRunning := false
 
 	if len(checks) > 0 {
 		for _, check := range checks {
@@ -48,6 +51,9 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 				if name != "" {
 					if purpose == "sshagent" {
 						agentPresent = true
+					}
+					if name == "amazeeio-haproxy" && s {
+						haproxyRunning = true
 					}
 					if enabled && !discrete && name != "" {
 						if s, _ := Service.Status(ctx, cli); s {
@@ -153,6 +159,16 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	cleanurls := setup.Unique(urls)
+
+	// Restart HAProxy if it's running to ensure proper container discovery
+	// This helps with Docker 28+ compatibility issues
+	if haproxyRunning && runtime.GOOS == "darwin" {
+		opts := container.StopOptions{}
+		if err := cli.ContainerRestart(ctx, "amazeeio-haproxy", opts); err == nil {
+			// Wait for HAProxy to fully restart and rediscover containers
+			time.Sleep(2 * time.Second)
+		}
+	}
 
 	// Validate URLs in parallel for better performance
 	type urlResult struct {
