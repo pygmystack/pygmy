@@ -2,10 +2,11 @@ package mailhog
 
 import (
 	"fmt"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/go-connections/nat"
+	"net"
+	"runtime"
 
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 )
@@ -51,7 +52,7 @@ func New(c *docker.Params) docker.Service {
 // NewDefaultPorts will provide the standard ports used for merging into the
 // mailhog config.
 func NewDefaultPorts() docker.Service {
-	return docker.Service{
+	portConfig := docker.Service{
 		HostConfig: container.HostConfig{
 			PortBindings: nat.PortMap{
 				"1025/tcp": []nat.PortBinding{
@@ -69,4 +70,27 @@ func NewDefaultPorts() docker.Service {
 			},
 		},
 	}
+
+	if runtime.GOOS == "darwin" {
+		randomPort, _ := getRandomUnusedPort()
+		portConfig.HostConfig.PortBindings["80/tcp"] = []nat.PortBinding{
+			{
+				HostPort: fmt.Sprint(randomPort),
+			},
+		}
+	}
+
+	return portConfig
+}
+
+func getRandomUnusedPort() (int, error) {
+	// Let the OS pick an available port on localhost
+	ln, err := net.Listen("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
+	}
+	defer ln.Close()
+
+	// Extract the assigned port number
+	return ln.Addr().(*net.TCPAddr).Port, nil
 }
