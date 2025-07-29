@@ -32,7 +32,7 @@ func DryRun(ctx context.Context, cli *client.Client, c *Config) ([]Compatibility
 		if !enabled {
 			continue
 		}
-		
+
 		s, _ := Service.Status(ctx, cli)
 		if s {
 			continue
@@ -107,7 +107,7 @@ func getBlockingProcess(rawPort string, ctx context.Context, cli *client.Client)
 		proc, err := process.NewProcess(conn.Pid)
 		if err != nil {
 			return 0, "", fmt.Errorf("could not get process info for PID %d\n", conn.Pid)
-		}	
+		}
 
 		name, _ := proc.Name()
 		if strings.Contains(name, "docker") {
