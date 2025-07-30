@@ -45,6 +45,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 		noResolv, _ := cmd.Flags().GetBool("no-resolver")
+		TLSCert, _ := cmd.Flags().GetString("tls-cert")
 
 		if noResolv {
 			c.ResolversDisabled = true
@@ -69,6 +70,14 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 		}
 
+		if TLSCert != "" {
+			if _, err := os.Stat(TLSCert); os.IsNotExist(err) {
+				fmt.Printf("TLS certificate file %s does not exist.\n", TLSCert)
+				os.Exit(1)
+			}
+			c.TLSCertPath = TLSCert
+		}
+
 		err := commands.Up(c)
 		if err != nil {
 			fmt.Println(err)
@@ -86,4 +95,5 @@ func init() {
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
+	upCmd.Flags().StringP("tls-cert", "", "", "Path to TLS certificate to use with the Pygmy haproxy")
 }
