@@ -13,13 +13,13 @@ import (
 )
 
 func Example() {
-	haproxy.New(&docker.Params{})
+	haproxy.New(&docker.Params{}, "")
 	haproxy.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New(&docker.Params{Domain: "docker.amazee.io"})
+		obj := haproxy.New(&docker.Params{Domain: "docker.amazee.io"}, "/path/to/ssl/cert.pem")
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
@@ -29,7 +29,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
-		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock"}))
+		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock", "/path/to/ssl/cert.pem:/app/server.pem:ro"}))
 		So(obj.HostConfig.PortBindings, ShouldEqual, nat.PortMap(nil))
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, container.RestartPolicyMode("unless-stopped"))
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)

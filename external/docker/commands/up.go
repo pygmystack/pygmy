@@ -185,7 +185,11 @@ func Up(c setup.Config) error {
 				if strings.Contains(v, "LAGOON_ROUTE=") {
 					url := strings.TrimPrefix(v, "LAGOON_ROUTE=")
 					if !strings.HasPrefix(url, "http") && !strings.HasPrefix(url, "https") {
-						url = "http://" + url
+						if c.TLSCertPath != "" { // If a TLS cert is provided, we assume HTTPS.
+							url = "https://" + url
+						} else {
+							url = "http://" + url
+						}
 					}
 					urls = append(urls, url)
 				}
