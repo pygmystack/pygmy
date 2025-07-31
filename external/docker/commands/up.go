@@ -30,14 +30,17 @@ func Up(c setup.Config) error {
 	checks, _ := setup.DryRun(ctx, cli, &c)
 	agentPresent := false
 
-	foundIssues := 0
+	foundIssues := []setup.CompatibilityCheck{}
 	for _, check := range checks {
 		if !check.State {
-			fmt.Println(check.Message)
-			foundIssues++
+			foundIssues = append(foundIssues, check)
 		}
 	}
-	if foundIssues > 0 {
+	if len(foundIssues) > 0 {
+		fmt.Println("Pygmy has found the following issues:")
+		for _, issue := range foundIssues {
+			fmt.Printf("  - %v\n", issue.Message)
+		}
 		fmt.Println("Please address the above issues before you attempt to start Pygmy again.")
 		os.Exit(1)
 	}
