@@ -27,6 +27,7 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/pygmystack/pygmy/external/docker/setup"
+	"github.com/pygmystack/pygmy/internal/utils/cert"
 	"github.com/spf13/cobra"
 )
 
@@ -38,10 +39,8 @@ var upCmd = &cobra.Command{
 	Short:   "Bring up pygmy services (dnsmasq, haproxy, mailhog, resolv, ssh-agent)",
 	Long: `Launch Pygmy - a set of containers and a resolver with very specific
 configurations designed for use with Amazee.io local development.
-
 It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 		noResolv, _ := cmd.Flags().GetBool("no-resolver")
@@ -50,18 +49,15 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		if noResolv {
 			c.ResolversDisabled = true
 		}
-
 		if NoKey {
 			c.Keys = []setup.Key{}
 		} else {
-
 			keyExistsInConfig := false
 			for _, key := range c.Keys {
 				if key.Path == Key {
 					keyExistsInConfig = true
 				}
 			}
-
 			if !keyExistsInConfig {
 				thisKey := setup.Key{
 					Path: Key,
@@ -70,19 +66,22 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 		}
 
-		if TLSCert != "" {
-			if _, err := os.Stat(TLSCert); os.IsNotExist(err) {
-				fmt.Printf("TLS certificate file %s does not exist.\n", TLSCert)
+		tlsCertPath, certErr := cert.ResolveCertPath(TLSCert)
+		if certErr != nil {
+			if certErr == cert.ErrNoDefaultCertError {
+				fmt.Println("No default TLS certificate path provided, skipping TLS setup.")
+			} else {
+				fmt.Printf("Error resolving TLS certificate path: %v", certErr)
 				os.Exit(1)
 			}
-			c.TLSCertPath = TLSCert
 		}
+
+		c.TLSCertPath = tlsCertPath
 
 		err := commands.Up(c)
 		if err != nil {
 			fmt.Println(err)
 		}
-
 	},
 }
 
@@ -90,10 +89,11 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
+	tlsCertdefault := cert.GetDefaultCertPath()
 
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-	upCmd.Flags().StringP("tls-cert", "", "", "Path to TLS certificate to use with the Pygmy haproxy")
+	upCmd.Flags().StringP("tls-cert", "", tlsCertdefault, "Path to TLS certificate to use with the Pygmy haproxy")
 }
