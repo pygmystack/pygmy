@@ -18,6 +18,9 @@ type Config struct {
 	// Domain is the default domain suffix to use.
 	Domain string `yaml:"domain"`
 
+	// TLSCertPath is the path to the TLS certificate to use with the Pygmy haproxy.
+	TLSCertPath string `yaml:"tlsCertPath"`
+
 	// Services is a []model.Service for an index of all Services.
 	Services map[string]dockerruntime.Service `yaml:"services"`
 
