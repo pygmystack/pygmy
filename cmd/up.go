@@ -44,7 +44,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		Key, _ := cmd.Flags().GetString("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 		noResolv, _ := cmd.Flags().GetBool("no-resolver")
-		TLSCert, _ := cmd.Flags().GetString("tls-cert")
+		c.TLSCertPath, _ = cmd.Flags().GetString("tls-cert")
 
 		if noResolv {
 			c.ResolversDisabled = true
@@ -65,8 +65,6 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 				c.Keys = append(c.Keys, thisKey)
 			}
 		}
-
-		c.TLSCertPath = TLSCert
 
 		err := commands.Up(c)
 		if err != nil {
