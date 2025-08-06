@@ -92,7 +92,6 @@ func verifyCertificate(certPath string) error {
 			if err != nil {
 				return fmt.Errorf("failed to parse EC private key: %w", err)
 			}
-			break
 		default:
 			fmt.Println("Unknown PEM block type:", block.Type)
 		}
