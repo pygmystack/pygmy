@@ -154,7 +154,7 @@ To generate a certificate pair for use with HAProxy, you typically use the defau
    Example for macOS:  
    ```shell
    brew install mkcert
-   mkcert -install
+   mkcert -install # generates and installs the local CA
    ```
 
 2. **Generate a wildcard certificate and key**  
@@ -162,7 +162,7 @@ To generate a certificate pair for use with HAProxy, you typically use the defau
    ```shell
    mkcert "*.docker.amazee.io"
    ```
-   This creates `_wildcard.docker.amazee.io-key.pem` (certificate) and `_wildcard.docker.amazee.io-key.pem` (private key).
+   This creates `_wildcard.docker.amazee.io.pem` (certificate) and `_wildcard.docker.amazee.io-key.pem` (private key).
 
 3. **Combine certificate and key for HAProxy**  
    Run:  
