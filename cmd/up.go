@@ -66,17 +66,7 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 			}
 		}
 
-		tlsCertPath, certErr := cert.ResolveCertPath(TLSCert)
-		if certErr != nil {
-			if certErr == cert.ErrNoDefaultCertError {
-				fmt.Println("No default TLS certificate path provided, skipping TLS setup.")
-			} else {
-				fmt.Printf("Error resolving TLS certificate path: %v", certErr)
-				os.Exit(1)
-			}
-		}
-
-		c.TLSCertPath = tlsCertPath
+		c.TLSCertPath = TLSCert
 
 		err := commands.Up(c)
 		if err != nil {

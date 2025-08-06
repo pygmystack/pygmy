@@ -140,7 +140,43 @@ It will use `dind` and your local daemon to walk through several tests which sho
    ```
    go test -v
    ```
- 
+
+## Generating local certificates with mkcert
+
+To generate a certificate pair for use with HAProxy, you typically use the default domain `*.docker.amazee.io`, but you can substitute any domain as needed for your local development environment:
+
+1. **Install mkcert**  
+   Follow instructions at [mkcert GitHub](https://github.com/FiloSottile/mkcert).  
+   Example for macOS:  
+   ```shell
+   brew install mkcert
+   mkcert -install
+   ```
+
+2. **Generate a wildcard certificate and key**  
+   Run:  
+   ```shell
+   mkcert "*.docker.amazee.io"
+   ```
+   This creates `_wildcard.docker.amazee.io-key.pem` (certificate) and `_wildcard.docker.amazee.io-key.pem` (private key).
+
+3. **Combine certificate and key for HAProxy**  
+   Run:  
+   ```shell
+   mkdir -p ~/pygmy/
+   cat _wildcard.docker.amazee.io.pem _wildcard.docker.amazee.io-key.pem > ~/pygmy/server.pem
+   ```
+   This combined certificate can either be passed as an argument when starting pygmy
+   
+   ```
+   pygmy up --tls-cert=/location_to/haproxy.pem
+   ```
+   or can be stored in the default location of `~/pygmy/server.pem`.
+
+
+**Notes:**  
+- mkcert certificates are for local development and testing only.
+
 ## Releasing
  
 We use GitHub Actions for simulating the automated release tagging locally. Using [Act](https://github.com/nektos/act) locally, you can simulate this process and have the same build artifacts in your `dist` folder.
