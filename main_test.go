@@ -2,7 +2,6 @@ package main_test
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"os"
 	"testing"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types/network"
 	. "github.com/smartystreets/goconvey/convey"
 
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/images"
 )
@@ -194,7 +194,7 @@ func TestDefault(t *testing.T) {
 	configuration := &config{
 		name:               "default",
 		configpath:         "/examples/pygmy.basic.yml",
-		endpoints:          []string{"http://docker.amazee.io/stats", "http://mailhog.docker.amazee.io"},
+		endpoints:          []string{"docker.amazee.io/stats", "mailhog.docker.amazee.io"},
 		images:             []string{"pygmystack/haproxy", "pygmystack/dnsmasq", "pygmystack/mailhog"},
 		services:           []string{"amazeeio-haproxy", "amazeeio-dnsmasq", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-haproxy", "amazeeio-mailhog"},
@@ -208,7 +208,7 @@ func TestCustom(t *testing.T) {
 	configuration := &config{
 		name:               "custom",
 		configpath:         "/examples/pygmy.complex.yml",
-		endpoints:          []string{"http://traefik.docker.amazee.io", "http://mailhog.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
+		endpoints:          []string{"traefik.docker.amazee.io", "mailhog.docker.amazee.io", "http://phpmyadmin.docker.amazee.io"},
 		images:             []string{"pygmystack/ssh-agent", "pygmystack/mailhog", "phpmyadmin/phpmyadmin", "library/traefik:v2.1.3"},
 		services:           []string{"unofficial-traefik-2", "unofficial-phpmyadmin", "amazeeio-mailhog"},
 		servicewithports:   []string{"amazeeio-mailhog", "unofficial-phpmyadmin", "unofficial-traefik-2"},

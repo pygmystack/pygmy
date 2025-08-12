@@ -26,7 +26,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-haproxy")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
-		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
+		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "docker.amazee.io/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.Binds), ShouldEqual, fmt.Sprint([]string{"/var/run/docker.sock:/tmp/docker.sock", "/path/to/ssl/cert.pem:/app/server.pem:ro"}))

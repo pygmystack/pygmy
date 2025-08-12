@@ -186,11 +186,17 @@ func Up(c setup.Config) error {
 		name, _ := service.GetFieldString(ctx, cli, "name")
 		url, _ := service.GetFieldString(ctx, cli, "url")
 		if s, _ := service.Status(ctx, cli); s && url != "" {
-			endpoint.Validate(url)
-			if r := endpoint.Validate(url); r {
-				fmt.Printf(" - %v (%v)\n", url, name)
-			} else {
-				fmt.Printf(" ! %v (%v)\n", url, name)
+			var endpointTestStatus bool
+			for _, protocol := range []string{"https", "http"} {
+				route := fmt.Sprintf("%s://%s", protocol, url)
+				if r := endpoint.Validate(route); r {
+					fmt.Printf(" - %v (%v)\n", route, name)
+					endpointTestStatus = true
+					break
+				}
+			}
+			if !endpointTestStatus {
+				fmt.Printf(" ! http://%v (%v)\n", url, name)
 			}
 		}
 	}

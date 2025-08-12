@@ -24,7 +24,7 @@ func New(c *docker.Params, tlsCertPath string) docker.Service {
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-haproxy",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      fmt.Sprintf("http://%s/stats", c.Domain),
+				"pygmy.url":      fmt.Sprintf("%s/stats", c.Domain),
 				"pygmy.weight":   "14",
 			},
 			Env: []string{
