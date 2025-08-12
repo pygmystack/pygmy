@@ -153,6 +153,7 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 	}
 
 	cleanurls := setup.Unique(urls)
+	fmt.Println(cleanurls)
 
 	// Validate URLs in parallel for better performance
 	type urlResult struct {
