@@ -186,17 +186,12 @@ func Up(c setup.Config) error {
 		name, _ := service.GetFieldString(ctx, cli, "name")
 		url, _ := service.GetFieldString(ctx, cli, "url")
 		if s, _ := service.Status(ctx, cli); s && url != "" {
-			for _, envVar := range service.Config.Env {
-				if strings.HasPrefix(envVar, "LAGOON_ROUTE=") {
-					route := strings.TrimPrefix(envVar, "LAGOON_ROUTE=")
-					if r := endpoint.Validate(route); r {
-						fmt.Printf(" - %v (%v)\n", route, name)
-					} else {
-						fmt.Printf(" ! %v (%v)\n", route, name)
-					}
-				}
+			endpoint.Validate(url)
+			if r := endpoint.Validate(url); r {
+				fmt.Printf(" - %v (%v)\n", url, name)
+			} else {
+				fmt.Printf(" ! %v (%v)\n", url, name)
 			}
-
 		}
 	}
 

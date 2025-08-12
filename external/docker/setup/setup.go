@@ -139,7 +139,7 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		ImportDefaults(ctx, cli, c, "amazeeio-ssh-agent-add-key", key.NewAdder())
 		ImportDefaults(ctx, cli, c, "amazeeio-dnsmasq", dnsmasq.New(&dockerruntime.Params{Domain: c.Domain}))
 		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}, c.TLSCertPath))
-		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
+		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}, c.TLSCertPath))
 
 		// Disable Resolvers if needed.
 		if c.ResolversDisabled {
