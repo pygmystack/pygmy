@@ -20,7 +20,7 @@ func Example() {
 
 func Test(t *testing.T) {
 	Convey("MailHog: Field equality tests...", t, func() {
-		obj := mailhog.New(&docker.Params{Domain: "docker.amazee.io"})
+		obj := mailhog.New(&docker.Params{Domain: "docker.amazee.io", TLSCertPath: ""})
 		objPorts := mailhog.NewDefaultPorts()
 		So(obj.Config.User, ShouldEqual, "0")
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/mailhog")

@@ -11,10 +11,10 @@ import (
 )
 
 // New will provide the standard object for the haproxy container.
-func New(c *docker.Params, tlsCertPath string) docker.Service {
+func New(c *docker.Params) docker.Service {
 	binds := []string{"/var/run/docker.sock:/tmp/docker.sock"}
-	if tlsCertPath != "" {
-		binds = append(binds, fmt.Sprintf("%s:/app/server.pem:ro", tlsCertPath))
+	if c.TLSCertPath != "" {
+		binds = append(binds, fmt.Sprintf("%s:/app/server.pem:ro", c.TLSCertPath))
 	}
 	return docker.Service{
 		Config: container.Config{

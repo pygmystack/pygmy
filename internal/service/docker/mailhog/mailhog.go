@@ -13,7 +13,7 @@ import (
 )
 
 // New will provide the standard object for the mailhog container.
-func New(c *docker.Params, tlsCertPath string) docker.Service {
+func New(c *docker.Params) docker.Service {
 	serviceSpec := docker.Service{
 		Config: container.Config{
 			User: "0",
@@ -47,7 +47,7 @@ func New(c *docker.Params, tlsCertPath string) docker.Service {
 		NetworkConfig: network.NetworkingConfig{},
 	}
 
-	if tlsCertPath != "" {
+	if c.TLSCertPath != "" {
 		serviceSpec.Config.Env = append(serviceSpec.Config.Env, "LAGOON_ROUTE=https://mailhog.docker.amazee.io")
 		serviceSpec.Config.Labels["pygmy.url"] = fmt.Sprintf("https://mailhog.%s", c.Domain)
 	} else {
