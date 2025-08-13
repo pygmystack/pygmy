@@ -18,4 +18,6 @@ type Service struct {
 type Params struct {
 	// Domain is the target domain for Pygmy to use.
 	Domain string
+	// TLSCertPath is the TLS Certificate Path.
+	TLSCertPath string
 }
