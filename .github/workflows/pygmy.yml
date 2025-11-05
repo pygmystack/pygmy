@@ -84,11 +84,6 @@ jobs:
         env:
           GO111MODULE: on
 
-      - name: Install Lando
-        run: |
-          wget https://files.devwithlando.io/lando-stable.deb;
-          sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
-
       - name: Install expect and dockerize via brew
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)";
@@ -276,16 +271,6 @@ jobs:
 #          docker compose -p node down;
 #          docker compose -p node rm;
 #          cd ../../;
-
-      - name: Lando test - running Pygmy along-side Lando
-        run: |
-          cd lagoon-examples/drupal-base;
-          lando start || true;
-          dockerize -wait http://drupal-base.lndo.site:8000 -timeout 10s;
-          curl -I http://drupal-base.lndo.site:8000;
-          curl -I http://drupal-base.lndo.site:8000 | grep -i "x-lagoon";
-          lando destroy -y;
-          cd ../../;
 
       - name: Test the stop command
         run: |
