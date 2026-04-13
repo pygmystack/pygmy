@@ -149,22 +149,28 @@ A simple way to generate and manage local certificates is using `mkcert`, as it 
 
 To generate a certificate pair for use with HAProxy, you typically use the default domain `*.docker.amazee.io`, but you can substitute any domain as needed for your local development environment:
 
-1. **Install mkcert**  
-   Follow instructions at [mkcert GitHub](https://github.com/FiloSottile/mkcert).  
-   Example for macOS:  
+### 1. Install mkcert and nss
+
+   **Linux**:
+
+  Follow instructions at [mkcert GitHub](https://github.com/FiloSottile/mkcert) and [nss GitHub](https://github.com/nss-dev/nss).
+   
+  **macOS**:  
    ```shell
-   brew install mkcert
+   brew install mkcert nss
    mkcert -install # generates and installs the local CA
    ```
 
-2. **Generate a wildcard certificate and key**  
-   Run:  
+### 2. Generate a wildcard certificate and key
+
+   Run:
    ```shell
    mkcert "*.docker.amazee.io"
    ```
    This creates `_wildcard.docker.amazee.io.pem` (certificate) and `_wildcard.docker.amazee.io-key.pem` (private key).
 
-3. **Combine certificate and key for HAProxy**  
+### 3. Combine certificate and key for HAProxy
+
    Run:  
    ```shell
    mkdir -p ~/pygmy/
@@ -175,7 +181,7 @@ To generate a certificate pair for use with HAProxy, you typically use the defau
    ```
    pygmy up --tls-cert=/location_to/haproxy.pem
    ```
-   or can be stored in the default location of `~/pygmy/server.pem`.
+   or can be stored in the default location of `~/pygmy/server.pem` - which will attempt to load every time pygmy is started.
 
 
 **Notes:**  

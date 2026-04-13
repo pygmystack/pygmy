@@ -13,13 +13,13 @@ import (
 )
 
 func Example() {
-	haproxy.New(&docker.Params{}, "")
+	haproxy.New(&docker.Params{})
 	haproxy.NewDefaultPorts()
 }
 
 func Test(t *testing.T) {
 	Convey("HAProxy: Field equality tests...", t, func() {
-		obj := haproxy.New(&docker.Params{Domain: "docker.amazee.io"}, "/path/to/ssl/cert.pem")
+		obj := haproxy.New(&docker.Params{Domain: "docker.amazee.io", TLSCertPath: "/path/to/ssl/cert.pem"})
 		objPorts := haproxy.NewDefaultPorts()
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
