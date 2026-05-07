@@ -54,5 +54,7 @@ func TestGetFreePort(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to bind to port %d: %v", port, err)
 	}
-	ln.Close()
+	if err := ln.Close(); err != nil {
+		t.Fatalf("Failed to close listener: %v", err)
+	}
 }

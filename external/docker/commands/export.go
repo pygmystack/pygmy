@@ -57,7 +57,7 @@ func Export(c setup.Config, output string) error {
 		fmt.Printf("Path %v has been created\n", output)
 
 		// Housekeeping.
-		defer file.Close()
+		defer func() { _ = file.Close() }()
 
 		_, err = file.WriteString(string(x))
 		if err != nil {

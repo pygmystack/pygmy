@@ -107,15 +107,16 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 			Name:    "Linux Resolver",
 		}
 
-		if runtime.GOOS == "darwin" {
+		switch runtime.GOOS {
+		case "darwin":
 			viper.SetDefault("resolvers", []resolv.Resolv{
 				ResolvMacOS,
 			})
-		} else if runtime.GOOS == "linux" {
+		case "linux":
 			viper.SetDefault("resolvers", []resolv.Resolv{
 				ResolvLinux,
 			})
-		} else if runtime.GOOS == "windows" {
+		case "windows":
 			viper.SetDefault("resolvers", []resolv.Resolv{})
 		}
 	}
