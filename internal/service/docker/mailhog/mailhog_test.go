@@ -3,6 +3,7 @@ package mailhog_test
 import (
 	"fmt"
 	"net"
+	"runtime"
 	"testing"
 
 	"github.com/docker/docker/api/types/container"
@@ -36,7 +37,15 @@ func Test(t *testing.T) {
 		So(obj.HostConfig.PortBindings, ShouldEqual, nat.PortMap(nil))
 		So(obj.HostConfig.RestartPolicy.Name, ShouldEqual, container.RestartPolicyMode("unless-stopped"))
 		So(obj.HostConfig.RestartPolicy.MaximumRetryCount, ShouldEqual, 0)
-		So(fmt.Sprint(objPorts.HostConfig.PortBindings), ShouldEqual, fmt.Sprint(nat.PortMap{"1025/tcp": []nat.PortBinding{{HostIP: "", HostPort: "1025"}}}))
+		bindings := objPorts.HostConfig.PortBindings
+		So(bindings["1025/tcp"], ShouldResemble, []nat.PortBinding{{HostIP: "", HostPort: "1025"}})
+		if runtime.GOOS == "darwin" {
+			So(bindings["80/tcp"], ShouldNotBeNil)
+			So(len(bindings["80/tcp"]), ShouldEqual, 1)
+			So(bindings["80/tcp"][0].HostPort, ShouldNotEqual, "")
+		} else {
+			So(bindings["80/tcp"], ShouldBeNil)
+		}
 	})
 }
 
