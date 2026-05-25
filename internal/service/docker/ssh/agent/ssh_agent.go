@@ -24,7 +24,7 @@ func New() docker.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-ssh-agent",
+				"pygmy.name":     "pygmy-ssh",
 				"pygmy.network":  "amazeeio-network",
 				"pygmy.output":   "false",
 				"pygmy.purpose":  "sshagent",

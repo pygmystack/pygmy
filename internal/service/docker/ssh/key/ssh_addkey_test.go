@@ -22,7 +22,7 @@ func TestAdd(t *testing.T) {
 		So(obj.Config.Labels["pygmy.output"], ShouldEqual, "false")
 		So(obj.Config.Labels["pygmy.discrete"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.interactive"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-ssh-agent-add-key")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-ssh-add-key")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "addkeys")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "31")
@@ -30,6 +30,6 @@ func TestAdd(t *testing.T) {
 		So(obj.Config.OpenStdin, ShouldEqual, true)
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(obj.HostConfig.IpcMode.IsPrivate(), ShouldBeTrue)
-		So(fmt.Sprint(obj.HostConfig.VolumesFrom), ShouldEqual, fmt.Sprint([]string{"amazeeio-ssh-agent"}))
+		So(fmt.Sprint(obj.HostConfig.VolumesFrom), ShouldEqual, fmt.Sprint([]string{"pygmy-ssh"}))
 	})
 }

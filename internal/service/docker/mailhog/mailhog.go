@@ -32,7 +32,7 @@ func New(c *docker.Params) docker.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-mailhog",
+				"pygmy.name":     "pygmy-mail",
 				"pygmy.network":  "amazeeio-network",
 				"pygmy.url":      fmt.Sprintf("http://mailhog.%s", c.Domain),
 				"pygmy.weight":   "15",

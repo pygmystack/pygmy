@@ -23,7 +23,7 @@ func New(c *docker.Params) docker.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-dnsmasq",
+				"pygmy.name":     "pygmy-dns",
 				"pygmy.weight":   "13",
 			},
 		},

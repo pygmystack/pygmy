@@ -18,7 +18,7 @@ func NewAdder() docker.Service {
 			Labels: map[string]string{
 				"pygmy.defaults":    "true",
 				"pygmy.enable":      "true",
-				"pygmy.name":        "amazeeio-ssh-agent-add-key",
+				"pygmy.name":        "pygmy-ssh-add-key",
 				"pygmy.network":     "amazeeio-network",
 				"pygmy.discrete":    "true",
 				"pygmy.interactive": "true",
@@ -32,7 +32,7 @@ func NewAdder() docker.Service {
 		HostConfig: container.HostConfig{
 			AutoRemove:  false,
 			IpcMode:     "private",
-			VolumesFrom: []string{"amazeeio-ssh-agent"},
+			VolumesFrom: []string{"pygmy-ssh"},
 		},
 		NetworkConfig: network.NetworkingConfig{},
 	}

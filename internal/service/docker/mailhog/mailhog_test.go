@@ -28,7 +28,7 @@ func Test(t *testing.T) {
 		So(fmt.Sprint(obj.Config.Env), ShouldEqual, fmt.Sprint([]string{"MH_UI_BIND_ADDR=0.0.0.0:80", "MH_API_BIND_ADDR=0.0.0.0:80", "AMAZEEIO=AMAZEEIO", "AMAZEEIO_URL=mailhog.docker.amazee.io"}))
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-mailhog")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-mail")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://mailhog.docker.amazee.io")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "15")

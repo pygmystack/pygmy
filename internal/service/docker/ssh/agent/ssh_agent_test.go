@@ -39,7 +39,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.output"], ShouldEqual, "false")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-ssh-agent")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-ssh")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.purpose"], ShouldEqual, "sshagent")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "10")

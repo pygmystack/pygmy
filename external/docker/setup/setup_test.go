@@ -15,13 +15,13 @@ func TestSetup(t *testing.T) {
 	// Get our configuration object
 	c := &setup.Config{
 		Services: map[string]docker.Service{
-			"amazeeio-dnsmasq": {
+			"pygmy-dns": {
 				// Set an override config value so it can be tested.
-				Image: "example-amazeeio-dnsmasq",
+				Image: "example-pygmy-dns",
 			},
-			"amazeeio-mailhog": {
+			"pygmy-mail": {
 				// Set an override config value so it can be tested.
-				Image: "example-amazeeio-mailhog",
+				Image: "example-pygmy-mail",
 			},
 		},
 	}
@@ -38,20 +38,20 @@ func TestSetup(t *testing.T) {
 		// SSH Agent must be 5 items long by default.
 		So(c.SortedServices, ShouldHaveLength, 5)
 		// SSH Agent must be the first item in the sorted list.
-		So(c.SortedServices[0], ShouldEqual, "amazeeio-ssh-agent")
-		// Test sorting result.
-		So(c.SortedServices[1], ShouldEqual, "amazeeio-dnsmasq")
-		So(c.SortedServices[2], ShouldEqual, "amazeeio-haproxy")
-		So(c.SortedServices[3], ShouldEqual, "amazeeio-mailhog")
-		So(c.SortedServices[4], ShouldEqual, "amazeeio-ssh-agent-add-key")
+		So(c.SortedServices[0], ShouldEqual, "pygmy-ssh")
+		// Test sorting result (ordered by pygmy.weight: 13, 14, 15, 31).
+		So(c.SortedServices[1], ShouldEqual, "pygmy-dns")
+		So(c.SortedServices[2], ShouldEqual, "pygmy-proxy")
+		So(c.SortedServices[3], ShouldEqual, "pygmy-mail")
+		So(c.SortedServices[4], ShouldEqual, "pygmy-ssh-add-key")
 		// Test Image Override configuration.
-		So(c.Services["amazeeio-dnsmasq"].Image, ShouldEqual, "example-amazeeio-dnsmasq")
-		So(c.Services["amazeeio-dnsmasq"].Config.Image, ShouldEqual, "example-amazeeio-dnsmasq")
-		So(c.Services["amazeeio-haproxy"].Image, ShouldEqual, "pygmystack/haproxy")
-		So(c.Services["amazeeio-haproxy"].Config.Image, ShouldEqual, "pygmystack/haproxy")
-		So(c.Services["amazeeio-mailhog"].Image, ShouldEqual, "example-amazeeio-mailhog")
-		So(c.Services["amazeeio-mailhog"].Config.Image, ShouldEqual, "example-amazeeio-mailhog")
-		So(c.Services["amazeeio-ssh-agent"].Image, ShouldEqual, "pygmystack/ssh-agent")
-		So(c.Services["amazeeio-ssh-agent"].Config.Image, ShouldEqual, "pygmystack/ssh-agent")
+		So(c.Services["pygmy-dns"].Image, ShouldEqual, "example-pygmy-dns")
+		So(c.Services["pygmy-dns"].Config.Image, ShouldEqual, "example-pygmy-dns")
+		So(c.Services["pygmy-proxy"].Image, ShouldEqual, "pygmystack/haproxy")
+		So(c.Services["pygmy-proxy"].Config.Image, ShouldEqual, "pygmystack/haproxy")
+		So(c.Services["pygmy-mail"].Image, ShouldEqual, "example-pygmy-mail")
+		So(c.Services["pygmy-mail"].Config.Image, ShouldEqual, "example-pygmy-mail")
+		So(c.Services["pygmy-ssh"].Image, ShouldEqual, "pygmystack/ssh-agent")
+		So(c.Services["pygmy-ssh"].Config.Image, ShouldEqual, "pygmystack/ssh-agent")
 	})
 }

@@ -84,7 +84,7 @@ func Up(c setup.Config) error {
 	// Maps are... bad for predictable sequencing.
 	// Look over the sorted slice and start them in
 	// alphabetical order - so that one can configure
-	// an ssh-agent like amazeeio-ssh-agent.
+	// an ssh-agent like pygmy-ssh.
 	for _, s := range c.SortedServices {
 		service := c.Services[s]
 		enabled, _ := service.GetFieldBool(ctx, cli, "enable")
@@ -175,7 +175,7 @@ func Up(c setup.Config) error {
 	// This is an interim fix that for some reason solves
 	// https://github.com/pygmystack/pygmy/issues/644
 	for name := range c.Services {
-		if name == "amazeeio-haproxy" {
+		if name == "pygmy-proxy" {
 			if err := cli.ContainerRestart(ctx, name, container.StopOptions{}); err != nil {
 				color.Print(Red(fmt.Sprintf("Failed to restart %s: %v\n", name, err)))
 			}
@@ -199,7 +199,7 @@ func Up(c setup.Config) error {
 	containers, _ := runtimecontainers.List(ctx, cli)
 	var urls []string
 	for _, container := range containers {
-		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "pygmy-") {
 			obj, _ := runtimecontainers.Inspect(ctx, cli, container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {

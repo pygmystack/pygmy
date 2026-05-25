@@ -136,7 +136,7 @@ func Status(ctx context.Context, cli *client.Client, c setup.Config) {
 
 	containers, _ := runtimecontainers.List(ctx, cli)
 	for _, container := range containers {
-		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "amazeeio") {
+		if container.State == "running" && !strings.Contains(fmt.Sprint(container.Names), "pygmy-") {
 			obj, _ := runtimecontainers.Inspect(ctx, cli, container.ID)
 			vars := obj.Config.Env
 			for _, v := range vars {

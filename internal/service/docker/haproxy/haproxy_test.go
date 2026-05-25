@@ -24,7 +24,7 @@ func Test(t *testing.T) {
 		So(obj.Config.Image, ShouldContainSubstring, "pygmystack/haproxy")
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-haproxy")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-proxy")
 		So(obj.Config.Labels["pygmy.network"], ShouldEqual, "amazeeio-network")
 		So(obj.Config.Labels["pygmy.url"], ShouldEqual, "http://docker.amazee.io/stats")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "14")

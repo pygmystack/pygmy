@@ -24,7 +24,7 @@ func Test(t *testing.T) {
 		So(fmt.Sprint(obj.Config.Cmd), ShouldEqual, fmt.Sprint([]string{"--log-facility=-", "-A", "/docker.amazee.io/127.0.0.1"}))
 		So(obj.Config.Labels["pygmy.defaults"], ShouldEqual, "true")
 		So(obj.Config.Labels["pygmy.enable"], ShouldEqual, "true")
-		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "amazeeio-dnsmasq")
+		So(obj.Config.Labels["pygmy.name"], ShouldEqual, "pygmy-dns")
 		So(obj.Config.Labels["pygmy.weight"], ShouldEqual, "13")
 		So(obj.HostConfig.AutoRemove, ShouldBeFalse)
 		So(fmt.Sprint(obj.HostConfig.CapAdd), ShouldEqual, fmt.Sprint([]string{"NET_ADMIN"}))

@@ -22,7 +22,7 @@ func New(c *docker.Params, tlsCertPath string) docker.Service {
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",
-				"pygmy.name":     "amazeeio-haproxy",
+				"pygmy.name":     "pygmy-proxy",
 				"pygmy.network":  "amazeeio-network",
 				"pygmy.url":      fmt.Sprintf("http://%s/stats", c.Domain),
 				"pygmy.weight":   "14",
