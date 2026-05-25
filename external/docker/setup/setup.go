@@ -180,19 +180,8 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		}
 	}
 
-	// Mandatory validation check.
-	for id, service := range c.Services {
-		if name, err := service.GetFieldString(ctx, cli, "name"); err != nil && name != "" {
-			fmt.Printf("service '%v' does not have have a value for label 'pygmy.name'\n", id)
-			os.Exit(2)
-		}
-		if service.Config.Image == "" {
-			fmt.Printf("service '%v' does not have have a value for {{.Config.Image}}\n", id)
-			os.Exit(2)
-		}
-	}
-
-	// Image overrides when specified.
+	// Image overrides when specified. This must run before validation so that
+	// a user-provided top-level `image:` value is visible to the checks below.
 	for name, service := range c.Services {
 		if service.Image != "" {
 			// Re-apply the image reference.
@@ -203,6 +192,36 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		}
 		// Replace the Service object.
 		c.Services[name] = service
+	}
+
+	// Legacy service names from pygmy v1 and their v2 replacements.
+	legacyServiceNames := map[string]string{
+		"amazeeio-dnsmasq":           "pygmy-dns",
+		"amazeeio-haproxy":           "pygmy-proxy",
+		"amazeeio-mailhog":           "pygmy-mail",
+		"amazeeio-ssh-agent":         "pygmy-ssh",
+		"amazeeio-ssh-agent-add-key": "pygmy-ssh-add-key",
+	}
+
+	// Mandatory validation check.
+	valid := true
+	for id, service := range c.Services {
+		if newName, isLegacy := legacyServiceNames[id]; isLegacy {
+			fmt.Printf("error: '%v' is no longer a valid service name.\n  Rename it to '%v' in your ~/.pygmy.yml and run 'pygmy clean' to remove the old container.\n", id, newName)
+			valid = false
+			continue
+		}
+		if name, err := service.GetFieldString(ctx, cli, "name"); err != nil && name != "" {
+			fmt.Printf("error: service '%v' is missing the 'pygmy.name' label.\n", id)
+			valid = false
+		}
+		if service.Config.Image == "" {
+			fmt.Printf("error: service '%v' has no image configured. Add 'image: <image-name>' under this service in your ~/.pygmy.yml.\n", id)
+			valid = false
+		}
+	}
+	if !valid {
+		os.Exit(2)
 	}
 
 	// Determine the slice of sorted services
