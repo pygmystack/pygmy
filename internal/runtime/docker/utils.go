@@ -82,9 +82,10 @@ func (Service *Service) GetFieldBool(ctx context.Context, cli *client.Client, fi
 	if labels, running := Service.Labels(ctx, cli); running == nil {
 		if Service.Config.Labels[f] == labels[f] {
 			if val, ok := labels[f]; ok {
-				if val == "true" {
+				switch val {
+				case "true":
 					return true, nil
-				} else if val == "false" {
+				case "false":
 					return false, nil
 				}
 			}
@@ -92,9 +93,10 @@ func (Service *Service) GetFieldBool(ctx context.Context, cli *client.Client, fi
 	}
 
 	if val, ok := Service.Config.Labels[f]; ok {
-		if val == "true" || val == "1" {
+		switch val {
+		case "true", "1":
 			return true, nil
-		} else if val == "false" || val == "0" {
+		case "false", "0":
 			return false, nil
 		}
 	}

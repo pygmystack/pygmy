@@ -10,5 +10,5 @@ var colorableOutput = colorable.NewColorableStdout()
 
 // Print will print text to an interface using a colour via go-colourable.
 func Print(input interface{}) {
-	fmt.Fprint(colorableOutput, input)
+	_, _ = fmt.Fprint(colorableOutput, input)
 }

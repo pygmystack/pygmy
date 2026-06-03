@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
@@ -40,12 +40,12 @@ func Clean(c setup.Config) error {
 		if target {
 			err := containers.Kill(ctx, cli, Container.ID)
 			if err == nil {
-				color.Print(Green(fmt.Sprintf("Successfully killed %s\n", ContainerName)))
+				color.Print(aur.Green(fmt.Sprintf("Successfully killed %s\n", ContainerName)))
 			}
 
 			err = containers.Remove(ctx, cli, Container.ID)
 			if err == nil {
-				color.Print(Green(fmt.Sprintf("Successfully removed %s\n", ContainerName)))
+				color.Print(aur.Green(fmt.Sprintf("Successfully removed %s\n", ContainerName)))
 			}
 		}
 	}
@@ -61,9 +61,9 @@ func Clean(c setup.Config) error {
 				fmt.Println(e)
 			}
 			if s, _ := networks.Status(ctx, cli, NetworksToClean[n]); !s {
-				color.Print(Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
+				color.Print(aur.Green(fmt.Sprintf("Successfully removed network %s\n", NetworksToClean[n])))
 			} else {
-				color.Print(Red(fmt.Sprintf("Failed to remove %s\n", NetworksToClean[n])))
+				color.Print(aur.Red(fmt.Sprintf("Failed to remove %s\n", NetworksToClean[n])))
 			}
 		}
 	}

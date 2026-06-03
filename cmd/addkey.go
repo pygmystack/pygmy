@@ -24,7 +24,7 @@ import (
 	"fmt"
 	"github.com/pygmystack/pygmy/external/docker/setup"
 
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 	"github.com/spf13/cobra"
 
 	"github.com/pygmystack/pygmy/external/docker/commands"
@@ -63,7 +63,7 @@ var addkeyCmd = &cobra.Command{
 
 		for _, k := range Keys {
 			if e := commands.SshKeyAdd(c, k.Path); e != nil {
-				color.Print(Red(fmt.Sprintf("%v\n", e)))
+				color.Print(aur.Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 

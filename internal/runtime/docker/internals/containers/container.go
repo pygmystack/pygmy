@@ -10,7 +10,6 @@ import (
 
 	"github.com/containerd/platforms"
 	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/container"
 	containertypes "github.com/docker/docker/api/types/container"
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
@@ -47,7 +46,7 @@ func Remove(ctx context.Context, client *client.Client, id string) error {
 }
 
 // Inspect will return the full container object.
-func Inspect(ctx context.Context, client *client.Client, container string) (container.InspectResponse, error) {
+func Inspect(ctx context.Context, client *client.Client, container string) (containertypes.InspectResponse, error) {
 	return client.ContainerInspect(ctx, container)
 }
 
@@ -75,12 +74,12 @@ func Exec(ctx context.Context, client *client.Client, container string, command 
 }
 
 // List will return a slice of containers
-func List(ctx context.Context, client *client.Client) ([]container.Summary, error) {
+func List(ctx context.Context, client *client.Client) ([]containertypes.Summary, error) {
 	containers, err := client.ContainerList(ctx, containertypes.ListOptions{
 		All: true,
 	})
 	if err != nil {
-		return []container.Summary{}, err
+		return []containertypes.Summary{}, err
 	}
 
 	return containers, nil

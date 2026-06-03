@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
 	"github.com/pygmystack/pygmy/internal/utils/color"
@@ -43,7 +43,7 @@ func (resolv Resolv) Configure(c *docker.Params) {
 		return
 	}
 	if resolv.Status(c) {
-		color.Print(Green(fmt.Sprintf("Already configured resolvr %s\n", resolv.Name)))
+		color.Print(aur.Green(fmt.Sprintf("Already configured resolvr %s\n", resolv.Name)))
 	} else {
 		fullPath := fmt.Sprintf("%v%v%v", resolv.Folder, string(os.PathSeparator), resolv.File)
 		if _, err := os.Stat(fullPath); os.IsNotExist(err) {
@@ -112,16 +112,16 @@ func (resolv Resolv) Configure(c *docker.Params) {
 		if runtime.GOOS == "darwin" {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 alias 172.16.172.16")
 			if err := ifConfig.Run(); err != nil {
-				color.Print(Sprintf(Red("error creating loopback UP alias")))
+				color.Print(aur.Sprintf(aur.Red("error creating loopback UP alias")))
 			}
 			killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder")
 			if err := killAll.Run(); err != nil {
-				color.Print(Sprintf(Red("error restarting mDNSResponder")))
+				color.Print(aur.Sprintf(aur.Red("error restarting mDNSResponder")))
 			}
 		}
 
 		if resolv.Status(c) {
-			color.Print(Green(fmt.Sprintf("Successfully configured resolvr %s\n", resolv.Name)))
+			color.Print(aur.Green(fmt.Sprintf("Successfully configured resolvr %s\n", resolv.Name)))
 		}
 	}
 }
@@ -139,7 +139,7 @@ func (resolv Resolv) Clean() {
 				fmt.Println(cmdErr.Error())
 			} else {
 				if strings.Contains(string(cmdOut), resolv.Data) {
-					newFile := strings.Replace(string(cmdOut), resolv.Data, "", -1)
+					newFile := strings.ReplaceAll(string(cmdOut), resolv.Data, "")
 					if tmpFile, err := os.CreateTemp("", "pygmy-"); err != nil {
 						fmt.Println(err)
 					} else {
@@ -167,7 +167,7 @@ func (resolv Resolv) Clean() {
 			fmt.Println(err)
 		}
 		if !resolv.statusFile() {
-			color.Print(Sprintf(Green("Successfully removed resolver file")))
+			color.Print(aur.Sprintf(aur.Green("Successfully removed resolver file")))
 		}
 	}
 
@@ -178,10 +178,10 @@ func (resolv Resolv) Clean() {
 			ifConfig := exec.Command("/bin/sh", "-c", "sudo ifconfig lo0 -alias 172.16.172.16")
 			err := ifConfig.Run()
 			if err != nil {
-				color.Print(Sprintf(Red("error removing loopback UP alias\n"), Red(err)))
+				color.Print(aur.Sprintf(aur.Red("error removing loopback UP alias\n"), aur.Red(err)))
 			} else {
 				if !resolv.statusNet() {
-					color.Print(Sprintf(Green("Successfully removed loopback alias IP.\n")))
+					color.Print(aur.Sprintf(aur.Green("Successfully removed loopback alias IP.\n")))
 				}
 			}
 		}
@@ -189,9 +189,9 @@ func (resolv Resolv) Clean() {
 		killAll := exec.Command("/bin/sh", "-c", "sudo killall mDNSResponder\n")
 		err := killAll.Run()
 		if err != nil {
-			color.Print(Sprintf(Red("error restarting mDNSResponder\n")))
+			color.Print(aur.Sprintf(aur.Red("error restarting mDNSResponder\n")))
 		} else {
-			color.Print(Sprintf(Green("Successfully restarted mDNSResponder\n")))
+			color.Print(aur.Sprintf(aur.Green("Successfully restarted mDNSResponder\n")))
 		}
 	}
 }

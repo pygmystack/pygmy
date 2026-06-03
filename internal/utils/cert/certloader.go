@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 	"github.com/mitchellh/go-homedir"
 	"github.com/pygmystack/pygmy/internal/utils/color"
 )
@@ -103,6 +103,6 @@ func verifyCertificate(certPath string) error {
 		return fmt.Errorf("no private key found in the provided file")
 	}
 
-	color.Print(Green(fmt.Sprintf("Successfully verified certificate and private key pair at %s.\n", certPath)))
+	color.Print(aur.Green(fmt.Sprintf("Successfully verified certificate and private key pair at %s.\n", certPath)))
 	return nil
 }

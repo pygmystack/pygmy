@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/docker/docker/api/types/container"
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -32,7 +32,7 @@ func Up(c setup.Config) error {
 	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
 	if certErr != nil {
 		if certErr == cert.ErrNoDefaultCertError {
-			color.Print(Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
+			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
 		} else {
 			fmt.Printf(
 				"Error resolving TLS certificate path: %v.\n"+
@@ -65,19 +65,19 @@ func Up(c setup.Config) error {
 	}
 
 	if runtime.GOOS == "darwin" {
-		color.Print(Cyan("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n"))
+		color.Print(aur.Cyan("Some issues are being experienced with Docker for Mac, please run `pygmy restart` if necessary.\n"))
 	}
 
 	for _, volume := range c.Volumes {
 		if s, _ := volumes.Exists(ctx, cli, volume.Name); !s {
 			_, err := volumes.Create(ctx, cli, volume)
 			if err == nil {
-				color.Print(Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
+				color.Print(aur.Green(fmt.Sprintf("Created volume %s\n", volume.Name)))
 			} else {
 				fmt.Println(err)
 			}
 		} else {
-			color.Print(Green(fmt.Sprintf("Already created volume %s\n", volume.Name)))
+			color.Print(aur.Green(fmt.Sprintf("Already created volume %s\n", volume.Name)))
 		}
 	}
 
@@ -95,22 +95,22 @@ func Up(c setup.Config) error {
 		if enabled && purpose != "addkeys" {
 
 			if se := service.Setup(ctx, cli); se == nil {
-				fmt.Print(Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
+				fmt.Print(aur.Green(fmt.Sprintf("Successfully pulled %s\n", service.Config.Image)))
 			}
 			if status, _ := service.Status(ctx, cli); !status {
 				if ce := service.Create(ctx, cli); ce != nil {
 					// If the status is false but the container is already created, we can ignore that error.
 					if !strings.Contains(ce.Error(), "namespace is already taken") {
-						fmt.Printf("Failed to create %s: %s\n", Red(name), ce)
+						fmt.Printf("Failed to create %s: %s\n", aur.Red(name), ce)
 					}
 				}
 				if se := service.Start(ctx, cli); se == nil {
-					fmt.Print(Green(fmt.Sprintf("Successfully started %s\n", name)))
+					fmt.Print(aur.Green(fmt.Sprintf("Successfully started %s\n", name)))
 				} else {
-					fmt.Printf("Failed to start %s: %s\n", Red(name), se)
+					fmt.Printf("Failed to start %s: %s\n", aur.Red(name), se)
 				}
 			} else {
-				fmt.Print(Green(fmt.Sprintf("Already started %s\n", name)))
+				fmt.Print(aur.Green(fmt.Sprintf("Already started %s\n", name)))
 			}
 		}
 
@@ -126,9 +126,9 @@ func Up(c setup.Config) error {
 			netVal, _ := networks.Status(ctx, cli, Network.Name)
 			if !netVal {
 				if err := networks.Create(ctx, cli, &Network); err == nil {
-					color.Print(Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
+					color.Print(aur.Green(fmt.Sprintf("Successfully created network %s\n", Network.Name)))
 				} else {
-					color.Print(Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
+					color.Print(aur.Red(fmt.Sprintf("Could not create network %s\n", Network.Name)))
 				}
 			}
 		}
@@ -142,15 +142,15 @@ func Up(c setup.Config) error {
 		if Network, _ := service.GetFieldString(ctx, cli, "network"); Network != "" && nameErr == nil {
 			if s, _ := networks.Connected(ctx, cli, Network, name); !s {
 				if s := networks.Connect(ctx, cli, Network, name); s == nil {
-					color.Print(Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
+					color.Print(aur.Green(fmt.Sprintf("Successfully connected %s to %s\n", name, Network)))
 				} else {
 					discrete, _ := service.GetFieldBool(ctx, cli, "discrete")
 					if !discrete {
-						color.Print(Red(fmt.Sprintf("Could not connect %s to %s\n", name, Network)))
+						color.Print(aur.Red(fmt.Sprintf("Could not connect %s to %s\n", name, Network)))
 					}
 				}
 			} else {
-				color.Print(Green(fmt.Sprintf("Already connected %s to %s\n", name, Network)))
+				color.Print(aur.Green(fmt.Sprintf("Already connected %s to %s\n", name, Network)))
 			}
 		}
 	}
@@ -165,7 +165,7 @@ func Up(c setup.Config) error {
 	if agentPresent {
 		for _, v := range c.Keys {
 			if e := SshKeyAdd(c, v.Path); e != nil {
-				color.Print(Red(fmt.Sprintf("%v\n", e)))
+				color.Print(aur.Red(fmt.Sprintf("%v\n", e)))
 			}
 		}
 	}
@@ -177,7 +177,7 @@ func Up(c setup.Config) error {
 	for name := range c.Services {
 		if name == "amazeeio-haproxy" {
 			if err := cli.ContainerRestart(ctx, name, container.StopOptions{}); err != nil {
-				color.Print(Red(fmt.Sprintf("Failed to restart %s: %v\n", name, err)))
+				color.Print(aur.Red(fmt.Sprintf("Failed to restart %s: %v\n", name, err)))
 			}
 		}
 	}

@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 
 	"github.com/pygmystack/pygmy/external/docker/setup"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
@@ -40,13 +40,13 @@ func SshKeyAdd(c setup.Config, key string) error {
 			// Validate SSH Key before adding.
 			valid, err := agent.Validate(key)
 			if valid {
-				color.Print(Green(fmt.Sprintf("Validation success for SSH key %v\n", key)))
+				color.Print(aur.Green(fmt.Sprintf("Validation success for SSH key %v\n", key)))
 			} else {
 				if err.Error() == "ssh: this private key is passphrase protected" {
-					color.Print(Green(fmt.Sprintf("Validation success for protected SSH key %v\n", key)))
+					color.Print(aur.Green(fmt.Sprintf("Validation success for protected SSH key %v\n", key)))
 				}
 				if err.Error() == "ssh: no key found" {
-					return fmt.Errorf("[ ] Validation failure for SSH key %v\n", key)
+					return fmt.Errorf("[ ] Validation failure for SSH key %v", key)
 				}
 			}
 
@@ -76,17 +76,17 @@ func SshKeyAdd(c setup.Config, key string) error {
 				for _, line := range strings.Split(string(l), "\n") {
 					if strings.Contains(line, "Identity added:") {
 						handled = true
-						color.Print(Green(fmt.Sprintf("Successfully added SSH key %v to agent\n", key)))
+						color.Print(aur.Green(fmt.Sprintf("Successfully added SSH key %v to agent\n", key)))
 					}
 					if strings.Contains(line, "Enter passphrase for") {
 						handled = true
-						color.Print(Yellow("Warning: Passphrase protected SSH keys can only be added in interactive mode, the key will not be added.\n"))
+						color.Print(aur.Yellow("Warning: Passphrase protected SSH keys can only be added in interactive mode, the key will not be added.\n"))
 					}
 				}
 
 				// Logs didn't contain known messages, log all in case of error.
 				if !handled {
-					color.Print(Red("Unknown error while adding SSH key:\n"))
+					color.Print(aur.Red("Unknown error while adding SSH key:\n"))
 					for _, line := range strings.Split(string(l), "\n") {
 						fmt.Println(line)
 					}

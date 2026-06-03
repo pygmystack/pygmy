@@ -22,8 +22,9 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/pygmystack/pygmy/external/docker/setup"
 	"os"
+
+	"github.com/pygmystack/pygmy/external/docker/setup"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -40,11 +41,22 @@ var restartCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		Key, _ := cmd.Flags().GetString("key")
+		keyProvided := cmd.Flags().Changed("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 
 		if NoKey {
 			c.Keys = []setup.Key{}
 		} else {
+			// If the user did not explicitly pass --key and the default key is missing,
+			// skip auto-adding it (useful for CI/container environments).
+			if !keyProvided {
+				if _, err := os.Stat(Key); err != nil {
+					if os.IsNotExist(err) {
+						Key = ""
+					}
+				}
+			}
+
 			FoundKey := false
 			for _, v := range c.Keys {
 				if v.Path == Key {
@@ -52,7 +64,7 @@ var restartCmd = &cobra.Command{
 				}
 			}
 
-			if !FoundKey {
+			if Key != "" && !FoundKey {
 				thisKey := setup.Key{
 					Path: Key,
 				}

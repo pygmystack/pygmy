@@ -423,6 +423,9 @@ func TestLogs(t *testing.T) {
 	err = Start(ctx, cli, id, container.StartOptions{})
 	assert.NoError(t, err)
 
+	// Add small delay to ensure logs are written before reading
+	time.Sleep(500 * time.Millisecond)
+
 	// Get the container logs
 	data, err := Logs(ctx, cli, id)
 	assert.NoError(t, err)
