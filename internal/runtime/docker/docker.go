@@ -277,15 +277,17 @@ func (Service *Service) StopAndRemove(ctx context.Context, cli *client.Client) e
 		return nil
 	}
 
-	if e := containers.Stop(ctx, cli, id); e == nil {
-		if e := containers.Remove(ctx, cli, id); e == nil {
-			if !discrete {
-				containerName := strings.Trim(name, "/")
-				fmt.Print(aur.Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
-			}
+	if e := containers.Stop(ctx, cli, id); e != nil {
+		// Ignore "not running" errors — the container already exited on its own.
+		if !strings.Contains(e.Error(), "is not running") {
+			return e
 		}
-	} else {
-		return e
+	}
+	if e := containers.Remove(ctx, cli, id); e == nil {
+		if !discrete {
+			containerName := strings.Trim(name, "/")
+			fmt.Print(aur.Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
+		}
 	}
 
 	return nil
