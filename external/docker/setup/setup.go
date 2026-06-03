@@ -193,6 +193,21 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		}
 	}
 
+	// If ssh-agent has an explicit image override and ssh-agent-add-key does not,
+	// inherit the same image for key-add operations.
+	if sshAgent, ok := c.Services["amazeeio-ssh-agent"]; ok {
+		if sshAgentAddKey, ok := c.Services["amazeeio-ssh-agent-add-key"]; ok {
+			if sshAgentAddKey.Image == "" {
+				if sshAgent.Image != "" {
+					sshAgentAddKey.Config.Image = sshAgent.Image
+				} else {
+					sshAgentAddKey.Config.Image = sshAgent.Config.Image
+				}
+				c.Services["amazeeio-ssh-agent-add-key"] = sshAgentAddKey
+			}
+		}
+	}
+
 	// Image overrides when specified.
 	for name, service := range c.Services {
 		if service.Image != "" {
