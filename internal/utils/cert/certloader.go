@@ -20,8 +20,8 @@ func GetDefaultCertPaths() []string {
 	homedir, _ := homedir.Dir()
 	// Default certificate paths, can be overridden by user.
 	return []string{
-		fmt.Sprint((path.Join(homedir, ".pygmy")) + "server.pem"),
-		fmt.Sprint((path.Join(homedir, "pygmy")) + "server.pem"),
+		path.Join(homedir, ".pygmy", "server.pem"),
+		path.Join(homedir, "pygmy", "server.pem"),
 	}
 }
 
@@ -39,11 +39,13 @@ func ResolveCertPath(flagCertPath string) (string, error) {
 			}
 			foundCertPath = defaultPath
 		}
-	}
-
-	// If we have a cert, we verify it.
-	if err := verifyCertificate(foundCertPath); err != nil {
-		return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
+		if foundCertPath != "" {
+			// If we have a cert, we verify it.
+			if err := verifyCertificate(foundCertPath); err != nil {
+				return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
+			}
+			return foundCertPath, nil
+		}
 	}
 
 	if flagCertPath != "" {
