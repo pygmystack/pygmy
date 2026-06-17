@@ -88,7 +88,9 @@ func init() {
 
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
-	tlsCertdefault := cert.GetDefaultCertPath()
+
+	// Keep certificate in ~/pygmy/ by default for now (indicated by [1].
+	tlsCertdefault := cert.GetDefaultCertPaths()[1]
 
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")

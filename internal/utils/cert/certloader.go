@@ -29,20 +29,21 @@ func GetDefaultCertPaths() []string {
 func ResolveCertPath(flagCertPath string) (string, error) {
 
 	defaultCertPaths := GetDefaultCertPaths()
+	var foundCertPath string
 
 	for _, defaultPath := range defaultCertPaths {
 		if flagCertPath == defaultPath { // If a default cert path is provided, check if it exists.
 			// Check if the default certificate path exists.
 			if _, err := os.Stat(defaultPath); os.IsNotExist(err) {
 				return "", ErrNoDefaultCertError
+			}
+			foundCertPath = defaultPath
 		}
+	}
 
-		// If we have a cert, we verify it.
-		if err := verifyCertificate(defaultPath); err != nil {
-			return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
-		}
-
-		return defaultPath, nil
+	// If we have a cert, we verify it.
+	if err := verifyCertificate(foundCertPath); err != nil {
+		return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
 	}
 
 	if flagCertPath != "" {
