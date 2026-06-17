@@ -37,7 +37,7 @@ func Up(c setup.Config) error {
 		} else {
 			fmt.Printf(
 				"Error resolving TLS certificate path: %v.\n"+
-					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure of of the default paths exists at %s.\n"+
+					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure one of the default paths exists at %s.\n"+
 					"See documentation for more details on setting up TLS with Pygmy.\n",
 				certErr,
 				cert.GetDefaultCertPaths(),
