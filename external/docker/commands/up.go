@@ -32,7 +32,7 @@ func Up(c setup.Config) error {
 	var certErr error
 	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
 	if certErr != nil {
-		if errors.Is(cert.ErrNoDefaultCertError, certErr) {
+		if errors.Is(certErr, cert.ErrNoDefaultCertError) {
 			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
 		} else {
 			fmt.Printf(
