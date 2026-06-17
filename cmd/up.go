@@ -42,6 +42,7 @@ configurations designed for use with Amazee.io local development.
 It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		Key, _ := cmd.Flags().GetString("key")
+		keyProvided := cmd.Flags().Changed("key")
 		NoKey, _ := cmd.Flags().GetBool("no-addkey")
 		noResolv, _ := cmd.Flags().GetBool("no-resolver")
 		c.TLSCertPath, _ = cmd.Flags().GetString("tls-cert")
@@ -52,13 +53,23 @@ It includes dnsmasq, haproxy, mailhog, resolv and ssh-agent.`,
 		if NoKey {
 			c.Keys = []setup.Key{}
 		} else {
+			// If the user did not explicitly pass --key and the default key is missing,
+			// skip auto-adding it (useful for CI/container environments).
+			if !keyProvided {
+				if _, err := os.Stat(Key); err != nil {
+					if os.IsNotExist(err) {
+						Key = ""
+					}
+				}
+			}
+
 			keyExistsInConfig := false
 			for _, key := range c.Keys {
 				if key.Path == Key {
 					keyExistsInConfig = true
 				}
 			}
-			if !keyExistsInConfig {
+			if Key != "" && !keyExistsInConfig {
 				thisKey := setup.Key{
 					Path: Key,
 				}

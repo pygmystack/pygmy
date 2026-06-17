@@ -107,15 +107,16 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 			Name:    "Linux Resolver",
 		}
 
-		if runtime.GOOS == "darwin" {
+		switch runtime.GOOS {
+		case "darwin":
 			viper.SetDefault("resolvers", []resolv.Resolv{
 				ResolvMacOS,
 			})
-		} else if runtime.GOOS == "linux" {
+		case "linux":
 			viper.SetDefault("resolvers", []resolv.Resolv{
 				ResolvLinux,
 			})
-		} else if runtime.GOOS == "windows" {
+		case "windows":
 			viper.SetDefault("resolvers", []resolv.Resolv{})
 		}
 	}
@@ -189,6 +190,21 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		if service.Config.Image == "" {
 			fmt.Printf("service '%v' does not have have a value for {{.Config.Image}}\n", id)
 			os.Exit(2)
+		}
+	}
+
+	// If ssh-agent has an explicit image override and ssh-agent-add-key does not,
+	// inherit the same image for key-add operations.
+	if sshAgent, ok := c.Services["amazeeio-ssh-agent"]; ok {
+		if sshAgentAddKey, ok := c.Services["amazeeio-ssh-agent-add-key"]; ok {
+			if sshAgentAddKey.Image == "" {
+				if sshAgent.Image != "" {
+					sshAgentAddKey.Config.Image = sshAgent.Image
+				} else {
+					sshAgentAddKey.Config.Image = sshAgent.Config.Image
+				}
+				c.Services["amazeeio-ssh-agent-add-key"] = sshAgentAddKey
+			}
 		}
 	}
 

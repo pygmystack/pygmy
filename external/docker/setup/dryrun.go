@@ -59,7 +59,7 @@ func DryRun(ctx context.Context, cli *client.Client, c *Config) ([]Compatibility
 				} else {
 					conn, err := net.Listen("tcp", ":"+p)
 					if conn != nil {
-						conn.Close()
+						_ = conn.Close()
 					}
 					if err != nil {
 						blockingProcId, procName, err := getBlockingProcess(p, ctx, cli)
@@ -101,12 +101,12 @@ func getBlockingProcess(rawPort string, ctx context.Context, cli *client.Client)
 		}
 
 		if conn.Pid == 0 {
-			return 0, "", fmt.Errorf("no PID found\n")
+			return 0, "", fmt.Errorf("no PID found")
 		}
 
 		proc, err := process.NewProcess(conn.Pid)
 		if err != nil {
-			return 0, "", fmt.Errorf("could not get process info for PID %d\n", conn.Pid)
+			return 0, "", fmt.Errorf("could not get process info for PID %d", conn.Pid)
 		}
 
 		name, _ := proc.Name()
@@ -117,7 +117,7 @@ func getBlockingProcess(rawPort string, ctx context.Context, cli *client.Client)
 		return int(conn.Pid), name, err
 	}
 
-	return 0, "", fmt.Errorf("no process found listening on port %d\n", port)
+	return 0, "", fmt.Errorf("no process found listening on port %d", port)
 }
 
 func getContainerNameFromPort(port uint32, ctx context.Context, cli *client.Client) (string, error) {

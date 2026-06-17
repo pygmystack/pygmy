@@ -17,7 +17,7 @@ import (
 // Remove will remove an image from the registry.
 // Pygmy doesn't need this, but it serves as a tool for testing this package.
 func Remove(ctx context.Context, cli *client.Client, id string) ([]img.DeleteResponse, error) {
-	images, err := cli.ImageRemove(ctx, id, img.RemoveOptions{})
+	images, err := cli.ImageRemove(ctx, id, img.RemoveOptions{Force: true})
 	if err != nil {
 		return []img.DeleteResponse{}, err
 	}

@@ -48,6 +48,12 @@ func testSetup() (context.Context, *client.Client) {
 		panic(err)
 	}
 
+	// Pull the nginx image for tests that need it
+	_, err = images.Pull(ctx, cli, "nginx")
+	if err != nil {
+		panic(err)
+	}
+
 	return ctx, cli
 }
 

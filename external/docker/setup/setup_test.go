@@ -55,3 +55,27 @@ func TestSetup(t *testing.T) {
 		So(c.Services["amazeeio-ssh-agent"].Config.Image, ShouldEqual, "pygmystack/ssh-agent")
 	})
 }
+
+func TestSetupSSHAgentImageOverride(t *testing.T) {
+	c := &setup.Config{
+		Services: map[string]docker.Service{
+			"amazeeio-ssh-agent": {
+				Image: "ghcr.io/pygmystack/ssh-agent:main",
+			},
+		},
+	}
+
+	cli, ctx, err := internals.NewClient()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	setup.Setup(ctx, cli, c)
+
+	Convey("SSH Agent image override propagates to add-key", t, func() {
+		So(c.Services["amazeeio-ssh-agent"].Image, ShouldEqual, "ghcr.io/pygmystack/ssh-agent:main")
+		So(c.Services["amazeeio-ssh-agent"].Config.Image, ShouldEqual, "ghcr.io/pygmystack/ssh-agent:main")
+		So(c.Services["amazeeio-ssh-agent-add-key"].Image, ShouldEqual, "ghcr.io/pygmystack/ssh-agent:main")
+		So(c.Services["amazeeio-ssh-agent-add-key"].Config.Image, ShouldEqual, "ghcr.io/pygmystack/ssh-agent:main")
+	})
+}

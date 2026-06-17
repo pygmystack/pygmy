@@ -3,8 +3,13 @@ package main_test
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
+	"strings"
 	"testing"
 	"time"
+
+	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
@@ -17,11 +22,20 @@ import (
 
 const (
 	dindContainerName = "exampleTestContainer"
-	binaryReference   = "pygmy-linux-amd64"
 )
 
 var (
-	dindID string
+	dindID          string
+	binaryReference = func() string {
+		switch runtime.GOARCH {
+		case "arm64":
+			return "pygmy-linux-arm64"
+		case "arm":
+			return "pygmy-linux-arm"
+		default:
+			return "pygmy-linux-amd64"
+		}
+	}()
 )
 
 type config struct {
@@ -42,6 +56,8 @@ func setup(t *testing.T, config *config) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	examplesDir := prepareExamplesDir(t)
 
 	var cleanCmd = fmt.Sprintf("/builds/%v clean", binaryReference)
 	var statusCmd = fmt.Sprintf("/builds/%v status", binaryReference)
@@ -72,7 +88,7 @@ func setup(t *testing.T, config *config) {
 					AutoRemove: false,
 					Binds: []string{
 						fmt.Sprintf("%v%vbuilds%v:/builds", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
-						fmt.Sprintf("%v%vexamples%v:/examples", currentWorkingDirectory, string(os.PathSeparator), string(os.PathSeparator)),
+						fmt.Sprintf("%v:/examples", examplesDir),
 					},
 					Privileged: true,
 				}, network.NetworkingConfig{})
@@ -187,6 +203,54 @@ func setup(t *testing.T, config *config) {
 			})
 		})
 	})
+}
+
+func prepareExamplesDir(t *testing.T) string {
+	t.Helper()
+
+	currentWorkingDirectory, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sourceExamplesDir := filepath.Join(currentWorkingDirectory, "examples")
+	tempExamplesDir, err := os.MkdirTemp("", "pygmy-examples-")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Cleanup(func() {
+		_ = os.RemoveAll(tempExamplesDir)
+	})
+
+	entries, err := os.ReadDir(sourceExamplesDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+
+		sourcePath := filepath.Join(sourceExamplesDir, entry.Name())
+		targetPath := filepath.Join(tempExamplesDir, entry.Name())
+
+		data, err := os.ReadFile(sourcePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if entry.Name() == "pygmy.complex.yml" && runtime.GOARCH == "arm64" {
+			data = []byte(strings.ReplaceAll(string(data), "phpmyadmin/phpmyadmin", "arm64v8/phpmyadmin"))
+		}
+
+		if err := os.WriteFile(targetPath, data, 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	return tempExamplesDir
 }
 
 // TestDefault will test an environment with no additional configuration.

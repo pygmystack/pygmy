@@ -17,7 +17,8 @@ func Down(c setup.Config) error {
 	setup.Setup(ctx, cli, &c)
 	for _, Service := range c.Services {
 		enabled, _ := Service.GetFieldBool(ctx, cli, "enable")
-		if enabled {
+		purpose, _ := Service.GetFieldString(ctx, cli, "purpose")
+		if enabled && purpose != "addkeys" {
 			e := Service.StopAndRemove(ctx, cli)
 			if e != nil {
 				name, _ := Service.GetFieldString(ctx, cli, "name")

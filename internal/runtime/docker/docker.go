@@ -10,7 +10,7 @@ import (
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
-	. "github.com/logrusorgru/aurora"
+	aur "github.com/logrusorgru/aurora"
 	"golang.org/x/term"
 
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
@@ -73,19 +73,19 @@ func (Service *Service) Start(ctx context.Context, cli *client.Client) error {
 	}
 
 	if s && !Service.HostConfig.AutoRemove && !discrete {
-		color.Print(Green(fmt.Sprintf("Already running %s\n", name)))
+		color.Print(aur.Green(fmt.Sprintf("Already running %s\n", name)))
 		return nil
 	}
 
 	if purpose == "addkeys" {
 		if e := containers.Kill(ctx, cli, name); e != nil {
-			fmt.Sprintln(e)
+			fmt.Println(e)
 		}
 		if e := containers.Remove(ctx, cli, name); e != nil {
-			fmt.Sprintln(e)
+			fmt.Println(e)
 		}
 		if e := Service.Create(ctx, cli); e != nil {
-			fmt.Sprintln(e)
+			fmt.Println(e)
 		}
 	}
 
@@ -180,7 +180,7 @@ func (Service *Service) ID(ctx context.Context, cli *client.Client) (string, err
 			}
 		}
 	}
-	return "", fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
+	return "", fmt.Errorf("container using image '%v' was not found", Service.Config.Image)
 }
 
 // Labels will get a types.Container variable for a given running container
@@ -194,7 +194,7 @@ func (Service *Service) Labels(ctx context.Context, cli *client.Client) (map[str
 			}
 		}
 	}
-	return nil, fmt.Errorf("container using image '%v' was not found\n", Service.Config.Image)
+	return nil, fmt.Errorf("container using image '%v' was not found", Service.Config.Image)
 }
 
 // Clean will cleanup and remove the container.
@@ -213,17 +213,17 @@ func (Service *Service) Clean(ctx context.Context, cli *client.Client) error {
 				name := strings.TrimLeft(container.Names[0], "/")
 				if e := containers.Kill(ctx, cli, container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
-						color.Print(Green(fmt.Sprintf("Successfully killed %s\n", name)))
+						color.Print(aur.Green(fmt.Sprintf("Successfully killed %s\n", name)))
 					}
 				}
 				if e := containers.Stop(ctx, cli, container.ID); e == nil {
 					if !Service.HostConfig.AutoRemove {
-						color.Print(Green(fmt.Sprintf("Successfully stopped %s\n", name)))
+						color.Print(aur.Green(fmt.Sprintf("Successfully stopped %s\n", name)))
 					}
 				}
 				if e := containers.Remove(ctx, cli, container.ID); e != nil {
 					if !Service.HostConfig.AutoRemove {
-						color.Print(Green(fmt.Sprintf("Successfully removed %s\n", name)))
+						color.Print(aur.Green(fmt.Sprintf("Successfully removed %s\n", name)))
 					}
 				}
 			}
@@ -245,7 +245,7 @@ func (Service *Service) Stop(ctx context.Context, cli *client.Client) error {
 	id, err := Service.ID(ctx, cli)
 	if err != nil {
 		if !discrete {
-			color.Print(Red(fmt.Sprintf("Not running %s\n", name)))
+			color.Print(aur.Red(fmt.Sprintf("Not running %s\n", name)))
 		}
 		return nil
 	}
@@ -253,7 +253,7 @@ func (Service *Service) Stop(ctx context.Context, cli *client.Client) error {
 	if e := containers.Stop(ctx, cli, id); e == nil {
 		if !discrete {
 			containerName := strings.Trim(name, "/")
-			color.Print(Green(fmt.Sprintf("Successfully stopped %v\n", containerName)))
+			color.Print(aur.Green(fmt.Sprintf("Successfully stopped %v\n", containerName)))
 		}
 	}
 
@@ -272,20 +272,22 @@ func (Service *Service) StopAndRemove(ctx context.Context, cli *client.Client) e
 	id, err := Service.ID(ctx, cli)
 	if err != nil {
 		if !discrete {
-			color.Print(Red(fmt.Sprintf("Not running %v\n", id)))
+			color.Print(aur.Red(fmt.Sprintf("Not running %v\n", id)))
 		}
 		return nil
 	}
 
-	if e := containers.Stop(ctx, cli, id); e == nil {
-		if e := containers.Remove(ctx, cli, id); e == nil {
-			if !discrete {
-				containerName := strings.Trim(name, "/")
-				fmt.Print(Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
-			}
+	if e := containers.Stop(ctx, cli, id); e != nil {
+		// Ignore "not running" errors — the container already exited on its own.
+		if !strings.Contains(e.Error(), "is not running") {
+			return e
 		}
-	} else {
-		return e
+	}
+	if e := containers.Remove(ctx, cli, id); e == nil {
+		if !discrete {
+			containerName := strings.Trim(name, "/")
+			fmt.Print(aur.Green(fmt.Sprintf("Successfully removed %v\n", containerName)))
+		}
 	}
 
 	return nil
@@ -300,7 +302,7 @@ func (Service *Service) Remove(ctx context.Context, cli *client.Client) error {
 	containerName := strings.Trim(id, "/")
 	if e := containers.Remove(ctx, cli, id); e == nil {
 		if !discrete {
-			fmt.Print(Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
+			fmt.Print(aur.Green(fmt.Sprintf("Successfully removed %s\n", containerName)))
 		}
 	} else {
 		return e

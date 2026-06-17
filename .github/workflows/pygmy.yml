@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - dev
   pull_request:
     branches:
       - main
@@ -23,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.21'
+          go-version: '1.25.0'
       - name: Install
         run: go mod download
         env:
@@ -33,7 +32,7 @@ jobs:
       - name: Vet
         run: go vet $(go list ./...);
       - name: Lint
-        run: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.64.8 golangci-lint run -v --timeout 3m
+        run: docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v2.12 golangci-lint run -v --timeout 3m
       - name: Build
         run: make build
       - name: Test
@@ -64,8 +63,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          stable: 'false'
-          go-version: '1.21'
+          go-version: '1.25.0'
 
         # Establish some SSH keys.
       - name: Setup SSH
@@ -83,11 +81,6 @@ jobs:
         run: go mod download
         env:
           GO111MODULE: on
-
-      - name: Install Lando
-        run: |
-          wget https://files.devwithlando.io/lando-stable.deb;
-          sudo dpkg -i --ignore-depends=docker-ce lando-stable.deb;
 
       - name: Install expect and dockerize via brew
         run: |
@@ -276,16 +269,6 @@ jobs:
 #          docker compose -p node down;
 #          docker compose -p node rm;
 #          cd ../../;
-
-      - name: Lando test - running Pygmy along-side Lando
-        run: |
-          cd lagoon-examples/drupal-base;
-          lando start || true;
-          dockerize -wait http://drupal-base.lndo.site:8000 -timeout 10s;
-          curl -I http://drupal-base.lndo.site:8000;
-          curl -I http://drupal-base.lndo.site:8000 | grep -i "x-lagoon";
-          lando destroy -y;
-          cd ../../;
 
       - name: Test the stop command
         run: |

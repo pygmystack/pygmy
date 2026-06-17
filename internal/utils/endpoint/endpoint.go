@@ -49,7 +49,7 @@ func Validate(url string) bool {
 	}
 
 	// Housekeeping
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	// The default response for a failed loopback is a 503.
 	// Because server errors are 503, we should make sure
