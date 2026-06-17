@@ -9,8 +9,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/pygmystack/pygmy/internal/runtime/docker/internals"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	. "github.com/smartystreets/goconvey/convey"
