@@ -5,38 +5,44 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"path"
 
 	aur "github.com/logrusorgru/aurora"
 	"github.com/mitchellh/go-homedir"
+
 	"github.com/pygmystack/pygmy/internal/utils/color"
 )
 
 var ErrNoDefaultCertError = fmt.Errorf("no default TLS certificate path provided")
 
-// GetDefaultCertPath returns the default path for the TLS certificate.
-func GetDefaultCertPath() string {
+// GetDefaultCertPaths returns the default path for the TLS certificate.
+func GetDefaultCertPaths() []string {
 	homedir, _ := homedir.Dir()
-	// Default certificate path, can be overridden by user.
-	return fmt.Sprintf("%v%vpygmy%vserver.pem", homedir, string(os.PathSeparator), string(os.PathSeparator))
+	// Default certificate paths, can be overridden by user.
+	return []string{
+		fmt.Sprint((path.Join(homedir, ".pygmy")) + "server.pem"),
+		fmt.Sprint((path.Join(homedir, "pygmy")) + "server.pem"),
+	}
 }
 
 // ResolveCertPath checks if the provided TLS certificate path exists.
 func ResolveCertPath(flagCertPath string) (string, error) {
 
-	defaultCertPath := GetDefaultCertPath()
+	defaultCertPaths := GetDefaultCertPaths()
 
-	if flagCertPath == defaultCertPath { // If a default cert path is provided, check if it exists.
-		// Check if the default certificate path exists.
-		if _, err := os.Stat(defaultCertPath); os.IsNotExist(err) {
-			return "", ErrNoDefaultCertError
+	for _, defaultPath := range defaultCertPaths {
+		if flagCertPath == defaultPath { // If a default cert path is provided, check if it exists.
+			// Check if the default certificate path exists.
+			if _, err := os.Stat(defaultPath); os.IsNotExist(err) {
+				return "", ErrNoDefaultCertError
 		}
 
 		// If we have a cert, we verify it.
-		if err := verifyCertificate(defaultCertPath); err != nil {
+		if err := verifyCertificate(defaultPath); err != nil {
 			return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
 		}
 
-		return defaultCertPath, nil
+		return defaultPath, nil
 	}
 
 	if flagCertPath != "" {

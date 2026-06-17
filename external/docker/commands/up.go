@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -31,15 +32,15 @@ func Up(c setup.Config) error {
 	var certErr error
 	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
 	if certErr != nil {
-		if certErr == cert.ErrNoDefaultCertError {
+		if errors.Is(cert.ErrNoDefaultCertError, certErr) {
 			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
 		} else {
 			fmt.Printf(
 				"Error resolving TLS certificate path: %v.\n"+
-					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure the default path exists at %s.\n"+
+					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure of of the default paths exists at %s.\n"+
 					"See documentation for more details on setting up TLS with Pygmy.\n",
 				certErr,
-				cert.GetDefaultCertPath(),
+				cert.GetDefaultCertPaths(),
 			)
 			os.Exit(1)
 		}
