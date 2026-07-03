@@ -13,8 +13,6 @@ import (
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
 	aur "github.com/logrusorgru/aurora"
-	"github.com/pygmystack/pygmy/internal/utils/cert"
-	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/spf13/viper"
 
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -24,6 +22,8 @@ import (
 	"github.com/pygmystack/pygmy/internal/service/docker/mailhog"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/key"
+	"github.com/pygmystack/pygmy/internal/utils/cert"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/network/docker"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
@@ -148,12 +148,11 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 
 	e := viper.Unmarshal(&c)
 
-	err := setupTLS(c)
-	if err != nil {
+	if e != nil {
 		fmt.Println(e)
 	}
 
-	if e != nil {
+	if e = setupTLS(c); e != nil {
 		fmt.Println(e)
 	}
 

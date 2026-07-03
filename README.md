@@ -177,6 +177,7 @@ To generate a certificate pair for use with HAProxy, you typically use the defau
    cat _wildcard.docker.amazee.io.pem _wildcard.docker.amazee.io-key.pem > ~/.pygmy/server.pem
    ```
    This combined certificate can either be passed as an argument when starting pygmy.
+   If you are migrating to this configuration it is advisable to restart pygmy, or if pygmy is not running:
    
    ```
    pygmy up --tls-cert=/location_to/haproxy.pem
