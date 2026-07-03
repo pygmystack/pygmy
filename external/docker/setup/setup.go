@@ -2,6 +2,7 @@ package setup
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -11,6 +12,9 @@ import (
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	aur "github.com/logrusorgru/aurora"
+	"github.com/pygmystack/pygmy/internal/utils/cert"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/spf13/viper"
 
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -122,6 +126,24 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 	}
 
 	e := viper.Unmarshal(&c)
+
+	// before setup we validate the TLS certificate looks like a reasonable PEM file.
+	var certErr error
+	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
+	if certErr != nil {
+		if errors.Is(certErr, cert.ErrNoDefaultCertError) {
+			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
+		} else {
+			fmt.Printf(
+				"Error resolving TLS certificate path: %v.\n"+
+					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure one of the default paths exists at %s.\n"+
+					"See documentation for more details on setting up TLS with Pygmy.\n",
+				certErr,
+				cert.GetDefaultCertPaths(),
+			)
+			os.Exit(1)
+		}
+	}
 
 	if e != nil {
 		fmt.Println(e)

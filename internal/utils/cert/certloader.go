@@ -28,27 +28,23 @@ func GetDefaultCertPaths() []string {
 // ResolveCertPath checks if the provided TLS certificate path exists.
 func ResolveCertPath(flagCertPath string) (string, error) {
 
+	// Fetch the default paths to scan.
 	defaultCertPaths := GetDefaultCertPaths()
-	var foundCertPath string
 
-	for _, defaultPath := range defaultCertPaths {
-		if flagCertPath == defaultPath { // If a default cert path is provided, check if it exists.
-			// Check if the default certificate path exists.
+	// Search default paths if no flag is inputted.
+	if flagCertPath == "" {
+		for _, defaultPath := range defaultCertPaths {
 			if _, err := os.Stat(defaultPath); os.IsNotExist(err) {
-				return "", ErrNoDefaultCertError
+				continue
 			}
-			foundCertPath = defaultPath
-		}
-		if foundCertPath != "" {
-			// If we have a cert, we verify it.
-			if err := verifyCertificate(foundCertPath); err != nil {
-				return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
-			}
-			return foundCertPath, nil
+			return defaultPath, nil
 		}
 	}
 
-	if flagCertPath != "" {
+	// Assume a value has been provided, check for the certificate at the provided path.
+	// If a custom value is provided, add it to the scan.
+	mergedCertificatePaths := append(defaultCertPaths, flagCertPath)
+	for _, filePath := range mergedCertificatePaths {
 		// Check if the provided certificate path exists.
 		if _, err := os.Stat(flagCertPath); os.IsNotExist(err) {
 			return "", fmt.Errorf("TLS certificate file %s does not exist", flagCertPath)
@@ -57,7 +53,7 @@ func ResolveCertPath(flagCertPath string) (string, error) {
 		if err := verifyCertificate(flagCertPath); err != nil {
 			return "", fmt.Errorf("failed to verify TLS certificate at %s: %w", flagCertPath, err)
 		}
-		return flagCertPath, nil
+		return filePath, nil
 	}
 
 	return "", nil

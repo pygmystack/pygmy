@@ -27,7 +27,6 @@ import (
 	"github.com/mitchellh/go-homedir"
 	"github.com/pygmystack/pygmy/external/docker/commands"
 	"github.com/pygmystack/pygmy/external/docker/setup"
-	"github.com/pygmystack/pygmy/internal/utils/cert"
 	"github.com/spf13/cobra"
 )
 
@@ -89,12 +88,9 @@ func init() {
 	homedir, _ := homedir.Dir()
 	keypath := fmt.Sprintf("%v%v.ssh%vid_rsa", homedir, string(os.PathSeparator), string(os.PathSeparator))
 
-	// Keep certificate in ~/pygmy/ by default for now (indicated by [1].
-	tlsCertdefault := cert.GetDefaultCertPaths()[1]
-
 	rootCmd.AddCommand(upCmd)
 	upCmd.Flags().StringP("key", "", keypath, "Path of SSH key to add")
 	upCmd.Flags().BoolP("no-addkey", "", false, "Skip adding the SSH key")
 	upCmd.Flags().BoolP("no-resolver", "", false, "Skip adding or removing the Resolver")
-	upCmd.Flags().StringP("tls-cert", "", tlsCertdefault, "Path to TLS certificate to use with the Pygmy haproxy")
+	upCmd.Flags().StringP("tls-cert", "", "", "Path to TLS certificate to use with the Pygmy haproxy")
 }
