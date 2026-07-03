@@ -73,6 +73,27 @@ func ImportDefaults(ctx context.Context, cli *client.Client, c *Config, service 
 	return false
 }
 
+// setupTLS will setup and validate the TLS certificate looks like a reasonable PEM file.
+func setupTLS(c *Config) error {
+	var certErr error
+	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
+	if certErr != nil {
+		if errors.Is(certErr, cert.ErrNoDefaultCertError) {
+			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
+		} else {
+			fmt.Printf(
+				"Error resolving TLS certificate path: %v.\n"+
+					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure one of the default paths exists at %s.\n"+
+					"See documentation for more details on setting up TLS with Pygmy.\n",
+				certErr,
+				cert.GetDefaultCertPaths(),
+			)
+			os.Exit(1)
+		}
+	}
+	return certErr
+}
+
 // Setup holds the core of configuration management with Pygmy.
 // It will merge in all the configurations and provide defaults.
 func Setup(ctx context.Context, cli *client.Client, c *Config) {
@@ -127,22 +148,9 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 
 	e := viper.Unmarshal(&c)
 
-	// before setup we validate the TLS certificate looks like a reasonable PEM file.
-	var certErr error
-	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
-	if certErr != nil {
-		if errors.Is(certErr, cert.ErrNoDefaultCertError) {
-			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
-		} else {
-			fmt.Printf(
-				"Error resolving TLS certificate path: %v.\n"+
-					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure one of the default paths exists at %s.\n"+
-					"See documentation for more details on setting up TLS with Pygmy.\n",
-				certErr,
-				cert.GetDefaultCertPaths(),
-			)
-			os.Exit(1)
-		}
+	err := setupTLS(c)
+	if err != nil {
+		fmt.Println(e)
 	}
 
 	if e != nil {
