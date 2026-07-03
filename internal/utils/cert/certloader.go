@@ -34,8 +34,12 @@ func ResolveCertPath(flagCertPath string) (string, error) {
 	// Assume a value has been provided, check for the certificate at the provided path.
 	// If a custom value is provided, add it to the scan.
 	if flagCertPath != "" {
+		var anyFound bool
 		mergedCertificatePaths := append(defaultCertPaths, flagCertPath)
 		for _, filePath := range mergedCertificatePaths {
+			if anyFound {
+				continue
+			}
 			// Check if the provided certificate path exists.
 			if _, err := os.Stat(filePath); os.IsNotExist(err) {
 				return "", fmt.Errorf("TLS certificate file %s does not exist", filePath)
@@ -44,6 +48,7 @@ func ResolveCertPath(flagCertPath string) (string, error) {
 			if err := verifyCertificate(filePath); err != nil {
 				return "", fmt.Errorf("failed to verify TLS certificate at %s: %w", filePath, err)
 			}
+			anyFound = true
 		}
 	}
 
