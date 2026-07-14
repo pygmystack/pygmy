@@ -9,7 +9,7 @@ require (
 	github.com/ghodss/yaml v1.0.0
 	github.com/imdario/mergo v0.3.16
 	github.com/logrusorgru/aurora v2.0.3+incompatible
-	github.com/mattn/go-colorable v0.1.14
+	github.com/mattn/go-colorable v0.1.15
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/shirou/gopsutil v3.21.11+incompatible
