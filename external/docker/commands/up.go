@@ -15,7 +15,6 @@ import (
 	runtimecontainers "github.com/pygmystack/pygmy/internal/runtime/docker/internals/containers"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/networks"
 	"github.com/pygmystack/pygmy/internal/runtime/docker/internals/volumes"
-	"github.com/pygmystack/pygmy/internal/utils/cert"
 	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/endpoint"
 )
@@ -25,24 +24,6 @@ func Up(c setup.Config) error {
 	cli, ctx, err := internals.NewClient()
 	if err != nil {
 		return err
-	}
-
-	// before setup we validate the TLS certificate looks like a reasonable PEM file.
-	var certErr error
-	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
-	if certErr != nil {
-		if certErr == cert.ErrNoDefaultCertError {
-			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
-		} else {
-			fmt.Printf(
-				"Error resolving TLS certificate path: %v.\n"+
-					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure the default path exists at %s.\n"+
-					"See documentation for more details on setting up TLS with Pygmy.\n",
-				certErr,
-				cert.GetDefaultCertPath(),
-			)
-			os.Exit(1)
-		}
 	}
 
 	setup.Setup(ctx, cli, &c)

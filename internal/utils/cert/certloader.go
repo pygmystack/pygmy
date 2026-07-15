@@ -5,50 +5,61 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"path"
 
 	aur "github.com/logrusorgru/aurora"
 	"github.com/mitchellh/go-homedir"
+
 	"github.com/pygmystack/pygmy/internal/utils/color"
 )
 
 var ErrNoDefaultCertError = fmt.Errorf("no default TLS certificate path provided")
 
-// GetDefaultCertPath returns the default path for the TLS certificate.
-func GetDefaultCertPath() string {
+// GetDefaultCertPaths returns the default path for the TLS certificate.
+func GetDefaultCertPaths() []string {
 	homedir, _ := homedir.Dir()
-	// Default certificate path, can be overridden by user.
-	return fmt.Sprintf("%v%vpygmy%vserver.pem", homedir, string(os.PathSeparator), string(os.PathSeparator))
+	// Default certificate paths, can be overridden by user.
+	return []string{
+		path.Join(homedir, ".pygmy", "server.pem"),
+		path.Join(homedir, "pygmy", "server.pem"),
+	}
 }
 
 // ResolveCertPath checks if the provided TLS certificate path exists.
 func ResolveCertPath(flagCertPath string) (string, error) {
 
-	defaultCertPath := GetDefaultCertPath()
+	// Fetch the default paths to scan.
+	defaultCertPaths := GetDefaultCertPaths()
 
-	if flagCertPath == defaultCertPath { // If a default cert path is provided, check if it exists.
-		// Check if the default certificate path exists.
-		if _, err := os.Stat(defaultCertPath); os.IsNotExist(err) {
-			return "", ErrNoDefaultCertError
+	// Assume a value has been provided, check for the certificate at the provided path.
+	// If a custom value is provided, add it to the scan.
+	if flagCertPath != "" {
+		var anyFound bool
+		mergedCertificatePaths := append(defaultCertPaths, flagCertPath)
+		for _, filePath := range mergedCertificatePaths {
+			if anyFound {
+				continue
+			}
+			// Check if the provided certificate path exists.
+			if _, err := os.Stat(filePath); os.IsNotExist(err) {
+				return "", fmt.Errorf("TLS certificate file %s does not exist", filePath)
+			}
+			// If we have a cert, we verify it.
+			if err := verifyCertificate(filePath); err != nil {
+				return "", fmt.Errorf("failed to verify TLS certificate at %s: %w", filePath, err)
+			}
+			anyFound = true
 		}
-
-		// If we have a cert, we verify it.
-		if err := verifyCertificate(defaultCertPath); err != nil {
-			return "", fmt.Errorf("failed to verify default TLS certificate: %w", err)
-		}
-
-		return defaultCertPath, nil
 	}
 
-	if flagCertPath != "" {
-		// Check if the provided certificate path exists.
-		if _, err := os.Stat(flagCertPath); os.IsNotExist(err) {
-			return "", fmt.Errorf("TLS certificate file %s does not exist", flagCertPath)
+	// Search default paths if no flag is inputted.
+	if flagCertPath == "" {
+		for _, defaultPath := range defaultCertPaths {
+			if _, err := os.Stat(defaultPath); os.IsNotExist(err) {
+				continue
+			}
+			return defaultPath, nil
 		}
-		// If we have a cert, we verify it.
-		if err := verifyCertificate(flagCertPath); err != nil {
-			return "", fmt.Errorf("failed to verify TLS certificate at %s: %w", flagCertPath, err)
-		}
-		return flagCertPath, nil
 	}
 
 	return "", nil

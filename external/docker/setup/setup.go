@@ -2,6 +2,7 @@ package setup
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"runtime"
@@ -11,6 +12,7 @@ import (
 	networktypes "github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/api/types/volume"
 	"github.com/docker/docker/client"
+	aur "github.com/logrusorgru/aurora"
 	"github.com/spf13/viper"
 
 	dockerruntime "github.com/pygmystack/pygmy/internal/runtime/docker"
@@ -20,6 +22,8 @@ import (
 	"github.com/pygmystack/pygmy/internal/service/docker/mailhog"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/agent"
 	"github.com/pygmystack/pygmy/internal/service/docker/ssh/key"
+	"github.com/pygmystack/pygmy/internal/utils/cert"
+	"github.com/pygmystack/pygmy/internal/utils/color"
 	"github.com/pygmystack/pygmy/internal/utils/network/docker"
 	"github.com/pygmystack/pygmy/internal/utils/resolv"
 )
@@ -67,6 +71,27 @@ func ImportDefaults(ctx context.Context, cli *client.Client, c *Config, service 
 	}
 
 	return false
+}
+
+// setupTLS will setup and validate the TLS certificate looks like a reasonable PEM file.
+func setupTLS(c *Config) error {
+	var certErr error
+	c.TLSCertPath, certErr = cert.ResolveCertPath(c.TLSCertPath)
+	if certErr != nil {
+		if errors.Is(certErr, cert.ErrNoDefaultCertError) {
+			color.Print(aur.Green("No TLS certificate provided, skipping TLS for haproxy.\n"))
+		} else {
+			fmt.Printf(
+				"Error resolving TLS certificate path: %v.\n"+
+					"Please provide a valid TLS certificate path using the --tls-cert flag or ensure one of the default paths exists at %s.\n"+
+					"See documentation for more details on setting up TLS with Pygmy.\n",
+				certErr,
+				cert.GetDefaultCertPaths(),
+			)
+			os.Exit(1)
+		}
+	}
+	return certErr
 }
 
 // Setup holds the core of configuration management with Pygmy.
@@ -127,6 +152,10 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		fmt.Println(e)
 	}
 
+	if e = setupTLS(c); e != nil {
+		fmt.Println(e)
+	}
+
 	if c.Defaults {
 
 		// If Services have been provided in complete or partially,
@@ -139,8 +168,8 @@ func Setup(ctx context.Context, cli *client.Client, c *Config) {
 		ImportDefaults(ctx, cli, c, "amazeeio-ssh-agent", agent.New())
 		ImportDefaults(ctx, cli, c, "amazeeio-ssh-agent-add-key", key.NewAdder())
 		ImportDefaults(ctx, cli, c, "amazeeio-dnsmasq", dnsmasq.New(&dockerruntime.Params{Domain: c.Domain}))
-		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain}, c.TLSCertPath))
-		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain}))
+		ImportDefaults(ctx, cli, c, "amazeeio-haproxy", haproxy.New(&dockerruntime.Params{Domain: c.Domain, TLSCertPath: c.TLSCertPath}))
+		ImportDefaults(ctx, cli, c, "amazeeio-mailhog", mailhog.New(&dockerruntime.Params{Domain: c.Domain, TLSCertPath: c.TLSCertPath}))
 
 		// Disable Resolvers if needed.
 		if c.ResolversDisabled {

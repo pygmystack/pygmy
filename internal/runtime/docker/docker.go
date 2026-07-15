@@ -78,9 +78,6 @@ func (Service *Service) Start(ctx context.Context, cli *client.Client) error {
 	}
 
 	if purpose == "addkeys" {
-		if e := containers.Kill(ctx, cli, name); e != nil {
-			fmt.Println(e)
-		}
 		if e := containers.Remove(ctx, cli, name); e != nil {
 			fmt.Println(e)
 		}

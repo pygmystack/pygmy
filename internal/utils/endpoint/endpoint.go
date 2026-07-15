@@ -6,6 +6,7 @@ import (
 	"context"
 	"crypto/tls"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -19,11 +20,18 @@ func Validate(url string) bool {
 	defer cancel()
 
 	client := &http.Client{
-		Timeout: 5 * time.Second,
+		Timeout: 2 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
 			DisableKeepAlives: true,
 		},
+	}
+
+	if strings.HasPrefix(url, "https://") {
+		client.Transport = &http.Transport{
+			TLSClientConfig:   &tls.Config{InsecureSkipVerify: false},
+			DisableKeepAlives: true,
+		}
 	}
 
 	// Create a web request using HEAD for faster response

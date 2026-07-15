@@ -14,7 +14,7 @@ import (
 
 // New will provide the standard object for the mailhog container.
 func New(c *docker.Params) docker.Service {
-	return docker.Service{
+	serviceSpec := docker.Service{
 		Config: container.Config{
 			User: "0",
 			ExposedPorts: nat.PortSet{
@@ -34,7 +34,6 @@ func New(c *docker.Params) docker.Service {
 				"pygmy.enable":   "true",
 				"pygmy.name":     "amazeeio-mailhog",
 				"pygmy.network":  "amazeeio-network",
-				"pygmy.url":      fmt.Sprintf("http://mailhog.%s", c.Domain),
 				"pygmy.weight":   "15",
 			},
 		},
@@ -48,6 +47,15 @@ func New(c *docker.Params) docker.Service {
 		NetworkConfig: network.NetworkingConfig{},
 	}
 
+	if c.TLSCertPath != "" {
+		serviceSpec.Config.Env = append(serviceSpec.Config.Env, "LAGOON_ROUTE=https://mailhog.docker.amazee.io")
+		serviceSpec.Config.Labels["pygmy.url"] = fmt.Sprintf("https://mailhog.%s", c.Domain)
+	} else {
+		serviceSpec.Config.Env = append(serviceSpec.Config.Env, "LAGOON_ROUTE=http://mailhog.docker.amazee.io")
+		serviceSpec.Config.Labels["pygmy.url"] = fmt.Sprintf("http://mailhog.%s", c.Domain)
+	}
+
+	return serviceSpec
 }
 
 // NewDefaultPorts will provide the standard ports used for merging into the
