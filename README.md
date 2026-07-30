@@ -165,16 +165,16 @@ To generate a certificate pair for use with HAProxy, you typically use the defau
 
    Run:
    ```shell
-   mkcert "*.docker.amazee.io"
+   mkcert "docker.amazee.io" "*.docker.amazee.io"
    ```
-   This creates `_wildcard.docker.amazee.io.pem` (certificate) and `_wildcard.docker.amazee.io-key.pem` (private key).
+   This creates `docker.amazee.io+1.pem` (certificate) and `docker.amazee.io+1-key.pem` (private key).
 
 ### 3. Combine certificate and key for HAProxy
 
    Run:  
    ```shell
    mkdir -p ~/.pygmy/
-   cat _wildcard.docker.amazee.io.pem _wildcard.docker.amazee.io-key.pem > ~/.pygmy/server.pem
+   cat docker.amazee.io+1.pem docker.amazee.io+1-key.pem > ~/.pygmy/server.pem
    ```
    This combined certificate can either be passed as an argument when starting pygmy.
    If you are migrating to this configuration it is advisable to restart pygmy, or if pygmy is not running:
