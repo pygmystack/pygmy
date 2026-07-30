@@ -85,6 +85,7 @@ jobs:
       - name: Install expect and dockerize via brew
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)";
+          brew update;
           brew install expect;
           brew install dockerize;
           echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH;
