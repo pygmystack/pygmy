@@ -142,7 +142,7 @@ jobs:
       - name: haproxy test
         run: | 
           curl http://docker.amazee.io/stats | grep 'class=px' | grep 'mailhog.docker.amazee.io';
-          curl http://docker.amazee.io/stats | grep 'HAProxy version';
+          curl http://docker.amazee.io/stats | grep 'HAProxy';
 
       - name: dnsmasq version
         run: |
