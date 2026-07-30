@@ -16,11 +16,12 @@ import (
 //
 // This is to provided to the user through the up and status commands.
 func Validate(url string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	var timeout = time.Second * 10
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	client := &http.Client{
-		Timeout: 2 * time.Second,
+		Timeout: timeout,
 		Transport: &http.Transport{
 			TLSClientConfig:   &tls.Config{InsecureSkipVerify: true},
 			DisableKeepAlives: true,
@@ -29,8 +30,9 @@ func Validate(url string) bool {
 
 	if strings.HasPrefix(url, "https://") {
 		client.Transport = &http.Transport{
-			TLSClientConfig:   &tls.Config{InsecureSkipVerify: false},
-			DisableKeepAlives: true,
+			TLSClientConfig:     &tls.Config{InsecureSkipVerify: false},
+			DisableKeepAlives:   true,
+			TLSHandshakeTimeout: timeout,
 		}
 	}
 

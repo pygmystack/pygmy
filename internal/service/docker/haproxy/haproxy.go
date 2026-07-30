@@ -18,7 +18,7 @@ func New(c *docker.Params) docker.Service {
 	}
 	return docker.Service{
 		Config: container.Config{
-			Image: "pygmystack/haproxy",
+			Image: "pygmystack/haproxy:main",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",

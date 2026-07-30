@@ -14,7 +14,7 @@ import (
 func NewAdder() docker.Service {
 	return docker.Service{
 		Config: container.Config{
-			Image: "pygmystack/ssh-agent",
+			Image: "pygmystack/ssh-agent:main",
 			Labels: map[string]string{
 				"pygmy.defaults":    "true",
 				"pygmy.enable":      "true",
