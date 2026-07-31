@@ -28,7 +28,7 @@ func New(c *docker.Params) docker.Service {
 				"AMAZEEIO=AMAZEEIO",
 				fmt.Sprintf("AMAZEEIO_URL=mailhog.%s", c.Domain),
 			},
-			Image: "pygmystack/mailhog:main",
+			Image: "pygmystack/mailhog",
 			Labels: map[string]string{
 				"pygmy.defaults": "true",
 				"pygmy.enable":   "true",

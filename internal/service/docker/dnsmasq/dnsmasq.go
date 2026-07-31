@@ -14,7 +14,7 @@ import (
 func New(c *docker.Params) docker.Service {
 	return docker.Service{
 		Config: container.Config{
-			Image: "pygmystack/dnsmasq:main",
+			Image: "pygmystack/dnsmasq",
 			Cmd: []string{
 				"--log-facility=-",
 				"-A",
