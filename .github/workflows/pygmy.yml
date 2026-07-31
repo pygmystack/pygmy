@@ -85,6 +85,7 @@ jobs:
       - name: Install expect and dockerize via brew
         run: |
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)";
+          brew update;
           brew install expect;
           brew install dockerize;
           echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH;
@@ -141,7 +142,7 @@ jobs:
       - name: haproxy test
         run: | 
           curl http://docker.amazee.io/stats | grep 'class=px' | grep 'mailhog.docker.amazee.io';
-          curl http://docker.amazee.io/stats | grep 'HAProxy version';
+          curl http://docker.amazee.io/stats | grep 'HAProxy';
 
       - name: dnsmasq version
         run: |
