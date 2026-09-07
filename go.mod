@@ -1,6 +1,6 @@
 module github.com/pygmystack/pygmy
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/containerd/platforms v0.2.1
@@ -17,7 +17,7 @@ require (
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.21.0
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/crypto v0.55.0
+	golang.org/x/crypto v0.56.0
 	golang.org/x/term v0.45.0
 )
 
